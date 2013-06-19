@@ -1,0 +1,152 @@
+/* phpTrackme
+ *
+ * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Library General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #666;
+}
+a {
+  color: #bce;
+  text-decoration: none;
+}
+:link, :visited {
+  color: #bce;
+}
+select {
+  width: 150px;
+  /*font-size: 0.6em;*/
+  font-weight: normal;
+  padding-top: 0.2em;
+}
+input {
+  width: 150px;
+  text-align: center;
+  border: 1px solid black;
+}
+input[type = "submit"] {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+}
+input[type = "checkbox"] {
+  width: auto;
+}
+#main {
+  height: 100%;
+  margin-right: 165px;
+}
+#map-canvas {
+  height: 100%;
+}
+#menu {
+  font-family: Verdana, sans-serif;
+  font-size: 0.6em;
+  font-weight: bold;
+  color: white;
+  float: right;
+  width: 165px;
+  height: 100%;
+  background-color: #666;
+}
+#menu-content {
+  padding: 10px;
+}
+#footer {
+  position: fixed;
+  bottom:0;
+  padding: 10px;  
+  background-color: #666;
+  color: lightgray;
+}
+#user, #trip, #summary, #export, #other {
+  padding-bottom: 10px;
+}
+#login {
+  font-family: Verdana, sans-serif;  
+  position: relative;
+  top: 10%;
+  background-color: #444;
+  width: 30%;
+  min-width: 200px;
+  margin: auto;
+  padding: 30px;
+  font-size: 0.8em;
+  text-align: center;
+  color: white;
+}
+#title {
+  font-size: 1.3em;
+  padding-bottom: 0.5em;
+  padding-top: 0.6em;
+}
+#subtitle {
+  padding-bottom: 2em;
+}
+#error {
+  padding-top: 1.2em;
+  color: yellow;
+}
+#popup {
+  width:350px;
+  height:150px;
+}
+#pheader {
+  font-weight: bolder;
+  padding-bottom: 5px;
+  border-bottom: 1px solid gray;
+}
+#pleft,#pright {
+  float:left;
+  padding-top: 5px;
+}
+#pleft {
+  padding-right: 20px;
+}
+#pfooter {
+  clear: both;
+  font-size: smaller;
+  padding-top: 20px;
+}
+#bottom {
+  display: none;
+}
+#chart { 
+  position: fixed; 
+  bottom: 0; left:0; right: 0;
+  height: 200px;
+  margin-right: 165px;
+  background-color: white;
+  opacity: 0.8;
+}
+#close {
+  position: absolute;
+  bottom: 175px;
+  right: 175px;
+  z-index: 100;
+  font-family: Verdana, sans-serif;
+  font-size: 0.8em;
+}
+
+#close a, #close:link, #close:visited {
+  color: #5070af;
+}
