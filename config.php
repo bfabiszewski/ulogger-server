@@ -49,9 +49,9 @@ $interval = 10;
 
 // Default language
 // (en, pl, de)
-//$lang = "en";
+$lang = "en";
 //$lang = "pl";
-$lang = "de";
+//$lang = "de";
 
 // units
 // (metric, imperial)
