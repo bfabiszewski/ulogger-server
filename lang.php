@@ -20,7 +20,7 @@
 switch($lang) {
   default:
   case "en":
-    $lang_title = "fabiszewski.net • geolocation";
+    $lang_title = "• phpTrackme •";
     $lang_private = "You need login and password to access this page.";
     $lang_authfail = "Wrong username or password";
     $lang_user = "User";
@@ -51,7 +51,7 @@ switch($lang) {
     break;
     
   case "pl":
-    $lang_title = "fabiszewski.net &bullet; geolocation";
+    $lang_title = "• phpTrackme •";
     $lang_private = "Aby się zalogować musisz podać login i hasło";
     $lang_authfail = "błędny login lub hasło";
     $lang_user = "Użytkownik";
@@ -80,5 +80,36 @@ switch($lang) {
     $lang_newinterval = "Podaj częstotliwość odświeżania (w sekundach)";
     $lang_api = "Map API";    
     break;
+    
+    case "de":
+    $lang_title = "• phpTrackme •";
+    $lang_private = "Sie müssen Benutzernamen und Kennwort eingeben, um auf diese Seite zuzugreifen.";
+    $lang_authfail = "Falscher Benutzername oder Passwort";
+    $lang_user = "Benutzer";
+    $lang_track = "Route";
+    $lang_latest = "letzte Position";
+    $lang_autoreload = "Autoneuladen";
+    $lang_reload = "Neuladen";
+    $lang_download = "Download Daten";
+    $lang_chart = "Höhentabelle";
+    $lang_close = "Schließen";
+    $lang_time = "Zeit";
+    $lang_speed = "Geschwindigkeit";
+    $lang_altitude = "Höhe";
+    $lang_ttime = "Gesamte Zeit";
+    $lang_aspeed = "Durchschnittstempo";
+    $lang_tdistance = "Gesamt Entfernung";
+    $lang_point = "Punkt"; //Punkt x von y
+    $lang_of = "von";
+    $lang_summary = "Streckenzusammenfassung";
+    $lang_suser = "Wähle Benutzer";
+    $lang_logout = "Abmelden";
+    $lang_login = "Anmelden";
+    $lang_username = "Benutzername";
+    $lang_password = "Passwort";
+    $lang_language = "Sprache";
+    $lang_newinterval = "Neuen Intervall-Wert eingeben (in Sekunden)";
+    $lang_api = "Karten API";
+    break;    
 }
 ?>

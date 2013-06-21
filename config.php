@@ -48,9 +48,10 @@ $allow_registration = 0;
 $interval = 10; 
 
 // Default language
-// (en, pl)
-$lang = "en";
+// (en, pl, de)
+//$lang = "en";
 //$lang = "pl";
+$lang = "de";
 
 // units
 // (metric, imperial)
