@@ -105,6 +105,7 @@ print
       var lang_newinterval = "'.$lang_newinterval.'";
       var units = "'.$units.'";
       var mapapi = "'.$mapapi.'";
+      var gkey = '.(isset($gkey)?'"'.$gkey.'"':'null').';
     </script>
     <script type="text/javascript" src="main.js"></script>     
 ';
