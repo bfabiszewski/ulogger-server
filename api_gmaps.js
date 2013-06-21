@@ -171,3 +171,20 @@ function addChartEvent(chart) {
 		}
 	}); 	
 }
+//((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
+function getBounds() {
+	var b =  map.getBounds().toString();
+	var bounds = b.split(',',4);
+	var lat_sw = bounds[0].replace(/\(/g,'');
+	var lon_sw = bounds[1].replace(/[ )]/g,'');
+	var lat_ne = bounds[2].replace(/[ (]/g,'');
+	var lon_ne = bounds[3].replace(/[ )]/g,'');
+	return [lon_sw,lat_sw,lon_ne,lat_ne];
+}
+
+function zoomToBounds(b) {
+	var sw = new google.maps.LatLng(b[1],b[0]);
+	var ne = new google.maps.LatLng(b[3],b[2]);
+  var bounds = new google.maps.LatLngBounds(sw,ne);  	
+	map.fitBounds(bounds);
+}

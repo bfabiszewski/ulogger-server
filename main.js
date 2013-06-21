@@ -282,7 +282,9 @@ function setTime() {
 }
 
 // dynamic change of map api
+var savedBounds;
 function loadMapAPI(api) {
+	savedBounds = getBounds();
 	document.getElementById("map-canvas").innerHTML = '';
 	var url = new Array();
 	if (api=='gmaps') { 
@@ -322,7 +324,8 @@ function waitAndInit(api) {
 		return;
 	}
 	loadTime = 0;
-	loadTrack(userid,trackid,1);
+	zoomToBounds(savedBounds);
+	loadTrack(userid,trackid,0);
 }
 
 function addScript(url) {

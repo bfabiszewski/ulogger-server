@@ -167,3 +167,18 @@ function addChartEvent(chart) {
 		}
 	}); 	
 }
+//20.597985430276808,52.15547181298076,21.363595171488573,52.33750879522563
+function getBounds() {
+	var b = map.getExtent().transform(mercator,wgs84).toString();
+	var bounds = b.split(',',4);
+	var lon_sw = bounds[0];
+	var lat_sw = bounds[1];
+	var lon_ne = bounds[2];
+	var lat_ne = bounds[3];
+	return [lon_sw,lat_sw,lon_ne,lat_ne];
+}
+
+function zoomToBounds(b) {
+	var bounds = new OpenLayers.Bounds(b).transform(wgs84,mercator);
+	map.zoomToExtent(bounds);
+}
