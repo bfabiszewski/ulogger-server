@@ -78,7 +78,7 @@ input[type = "checkbox"] {
   background-color: #666;
   color: lightgray;
 }
-#user, #trip, #summary, #export, #other {
+#user, #trip, #summary, #export, #other, #api {
   padding-bottom: 10px;
 }
 #login {
@@ -107,8 +107,12 @@ input[type = "checkbox"] {
   color: yellow;
 }
 #popup {
-  width:350px;
-  height:150px;
+  width:370px;
+  height:130px;
+}
+#popup * {
+  font-family: Roboto, Verdana, sans-serif;
+  font-size: 12px;
 }
 #pheader {
   font-weight: bolder;
@@ -129,6 +133,8 @@ input[type = "checkbox"] {
 }
 #bottom {
   display: none;
+  position: absolute;
+  z-index: 10000;
 }
 #chart { 
   position: fixed; 
@@ -139,10 +145,10 @@ input[type = "checkbox"] {
   opacity: 0.8;
 }
 #close {
-  position: absolute;
+  position: fixed;
   bottom: 175px;
   right: 175px;
-  z-index: 100;
+  z-index: 10001;
   font-family: Verdana, sans-serif;
   font-size: 0.8em;
 }

@@ -67,6 +67,17 @@ $track_form .= '
 </form>
 ';
 
+// map api select form
+$api_form = '
+<u>'.$lang_api.'</u><br />
+<form>
+<select name="track" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
+<option value="gmaps"'.(($mapapi=="gmaps")?' selected':'').'>Google Maps</option>
+<option value="openlayers"'.(($mapapi=="openlayers")?' selected':'').'>OpenLayers</option>
+</select>
+</form>
+';
+
 print 
 '<!DOCTYPE html>
 <html>
@@ -74,7 +85,7 @@ print
     <title>'.$lang_title.'</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" type="text/css" href="main.css" />
     <script>
       var interval = '.$interval.';
       var userid = '.(($auth)?$auth:-1).';
@@ -93,54 +104,20 @@ print
       var lang_track = "'.$lang_track.'";
       var lang_newinterval = "'.$lang_newinterval.'";
       var units = "'.$units.'";
+      var mapapi = "'.$mapapi.'";
     </script>
-    <script type="text/javascript" src="main.js">
-    </script>     
+    <script type="text/javascript" src="main.js"></script>     
 ';
 if ($mapapi == "gmaps") {
   print       
-'    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?'.(isset($gkey)?'key='.$gkey.'&':'').'sensor=false">
-    </script>    
-    <script type="text/javascript">
-      var map;
-      var polies = new Array();
-      var markers = new Array();
-      var popups = new Array();
-      google.maps.visualRefresh = true;
-      var polyOptions = {
-        strokeColor: \'#FF0000\',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-      }      
-      var mapOptions = {
-        center: new google.maps.LatLng(52.23, 21.01),
-        zoom: 8,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        scaleControl: true
-      };
-      function init() {
-        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-      }
-    </script>    
+'   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?'.(isset($gkey)?'key='.$gkey.'&':'').'sensor=false"></script>    
+    <script type="text/javascript" src="api_gmaps.js"></script>   
 ';
 }
 else {
   print
-'   <script type="text/javascript"
-      src="http://openlayers.org/api/OpenLayers.js">
-    </script>    
-    <script>
-      function init() {
-        map = new OpenLayers.Map("map-canvas");
-        map.addLayer(new OpenLayers.Layer.OSM());
-        var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
-        var toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
-        var position = new OpenLayers.LonLat(21.01,52.23).transform(fromProjection, toProjection);
-        var zoom = 8; 
-        map.setCenter(position, zoom);
-      }
-    </script>
+'   <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>    
+    <script type="text/javascript" src="api_openlayers.js"></script>
 ';
 }
 print '
@@ -163,7 +140,10 @@ print '
         </div>
         <div id="summary"></div>
         <div id="other">
-          <a href="javascript:void(0);" onclick="toggleChart();">'.$lang_chart.'</a><br />
+          <a href="javascript:void(0);" onclick="toggleChart();">'.$lang_chart.'</a>
+        </div>
+        <div id="api">  
+          '.$api_form.'
         </div>
         <div id="export">
         <u>'.$lang_download.'</u><br />

@@ -47,6 +47,7 @@ switch($lang) {
     $lang_password = "Password";
     $lang_language = "Language";
     $lang_newinterval = "Enter new interval value (seconds)";
+    $lang_api = "Map API";
     break;
     
   case "pl":
@@ -77,6 +78,7 @@ switch($lang) {
     $lang_password = "Hasło";
     $lang_language = "Język";
     $lang_newinterval = "Podaj częstotliwość odświeżania (w sekundach)";
+    $lang_api = "Map API";    
     break;
 }
 ?>

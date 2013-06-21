@@ -1,15 +1,15 @@
 This is a simple web viewer for GPS tracks uploaded with mobile client.
 It is designed to work with Android version of great app TrackMe (http://www.luisespinosa.com/trackme_eng.html), 
-but it should be easy to adjust it for other clients.
+but it should be easy to adjust it for other clients (other database tables).
 Interface "look and feel" is based on TrackMe Display (http://forum.xda-developers.com/showthread.php?t=477394).
-It currently uses Google Maps API, but work on OpenStreetMap is in progress.
+It is possible to switch between Google Maps API and OpenLayers API with OpenStreetMap (any other base layer should be easy to add).
 
 Live demo:
 - http://flaa.fabiszewski.net/phptrackme/
 
 Requirements:
-- php 5
-- mysql
+- PHP 5.1.2
+- MYSQL 4.1
 - browser with javascript enabled, cookies for authentication
 
 Features:
@@ -20,12 +20,13 @@ Features:
 - multiple users
 - user authentication
 - Google Maps API v3
+- OpenLayers 2.13
 - ajax 
 - server based configuration
 
 Todo
-- OpenStreetMap API
-- client based configuration
+- install script
+- user level customization, storing settings in cookies?
 - write opensource client?
 
 License

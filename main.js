@@ -16,126 +16,8 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-// google maps
-function displayTrack(xml,update) {
-  altitudes.length = 0;
-  var totalMeters = 0;
-  var totalSeconds = 0;
-  // init polyline
-  var poly = new google.maps.Polyline(polyOptions);
-  poly.setMap(map);  
-  var path = poly.getPath();  
-  var latlngbounds = new google.maps.LatLngBounds( );  
-  var positions = xml.getElementsByTagName('position');
-  var posLen = positions.length;
-  for (var i=0; i<posLen; i++) {
-    var p = parsePosition(positions[i]);
-    totalMeters += p.distance;
-    totalSeconds += p.seconds;
-    p['totalMeters'] = totalMeters;
-    p['totalSeconds'] = totalSeconds;
-    p['coordinates'] = new google.maps.LatLng(p.latitude,p.longitude);
-    // set marker
-    setMarker(p,i,posLen);
-    // update polyline
-    path.push(p.coordinates);    
-    latlngbounds.extend(p.coordinates);
-    // save altitudes for chart
-    altitudes[i] = p.altitude;
-  }  
-  if (update) {
-    map.fitBounds(latlngbounds);
-    if (i==1) {
-      // only one point, zoom out
-      zListener = 
-          google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
-              if (this.getZoom()){
-                  this.setZoom(15);
-              }
-      });
-      setTimeout(function(){google.maps.event.removeListener(zListener)}, 2000);  
-    }
-  }
-  latestTime = p.dateoccured;
-  polies.push(poly);
-  
-  updateSummary(p.dateoccured,totalMeters,totalSeconds);
-  if (p.tid!=trackid) {
-    trackid=p.tid;
-    setTrack(trackid);
-  }
-  if (document.getElementById('bottom').style.display=='block') {
-    // update altitudes chart
-    chart.clearChart();
-    displayChart();
-  }
-}
-
-function clearMap(){
-  if (polies){
-    for (var i=0; i<polies.length; i++){
-      polies[i].setMap(null);
-    }
-  }
-  if (markers){
-    for (var i=0; i<markers.length; i++){
-      google.maps.event.removeListener(popups[i].listener);
-      popups[i].setMap(null);
-      markers[i].setMap(null);
-    }
-  }
-  markers.length = 0;
-  polies.length = 0;
-  popups.lentgth = 0;
-}
-
-var popup;
-function setMarker(p,i,posLen) {
-  // marker
-  var marker = new google.maps.Marker( {
-    map: map,
-    position: p.coordinates,
-    title: p.dateoccured
-  });
-  if (latest==1) { marker.setIcon('http://maps.google.com/mapfiles/dd-end.png') }
-  else if (i==0) { marker.setIcon('http://maps.google.com/mapfiles/marker_greenA.png') }
-  else if (i==posLen-1) { marker.setIcon('http://maps.google.com/mapfiles/markerB.png') }
-  else { marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_gray.png') }
-  // popup
-  var content = '<div id="popup">'+
-    '<div id="pheader">'+lang_user+': '+p.username.toUpperCase()+'<br />'+lang_track+': '+p.trackname.toUpperCase()+
-    '</div>'+
-    '<div id="pbody">'+
-    '<div id="pleft"><b>'+lang_time+':</b> '+p.dateoccured+'<br />'+
-    ((p.speed != null)?'<b>'+lang_speed+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
-    ((p.altitude != null)?'<b>'+lang_altitude+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+'</div>'+
-    ((latest==0)?
-    ('<div id="pright"><b>'+lang_ttime+':</b> '+p.totalSeconds.toHMS()+'<br />'+
-    '<b>'+lang_aspeed+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
-    '<b>'+lang_tdistance+':</b> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>'):'')+
-    '<div id="pfooter">'+lang_point+' '+(i+1)+' '+lang_of+' '+(posLen)+'</div>'+
-    '</div></div>';    
-  popup = new google.maps.InfoWindow();
-  popup.listener = google.maps.event.addListener(marker, 'click', (function(marker,content) {
-    return function() {
-      popup.setContent(content);
-      popup.open(map, marker);
-      if (document.getElementById('bottom').style.display=='block') {
-        chart.setSelection([{row:i,column:null}]);
-      }
-    }
-  })(marker,content));    
-  markers.push(marker);    
-  popups.push(popup);  
-}
-
-
-
-// openstreetmaps
-// TODO
-
-
-// general stuff
+ 
+ // general stuff
 if (units=='imperial') {
   factor_kmh = 0.62; //to mph
   unit_kmh = 'mph';
@@ -177,19 +59,7 @@ function displayChart() {
   chart = new google.visualization.LineChart(document.getElementById('chart'));
   chart.draw(data, options);
   
-  google.visualization.events.addListener(chart, 'select', function() {
-      if (popup) {popup.close(); clearTimeout(altTimeout);} 
-      var selection = chart.getSelection()[0];
-      if (selection) {
-        var id = selection.row;
-        var contentString = '<div style="width:40px; height:20px;padding:10px">'+Math.round(altitudes[id]*factor_m)+' '+unit_m+'</div>';
-        popup = new google.maps.InfoWindow({
-            content: contentString
-        });
-        popup.open(map,markers[id]);
-        altTimeout = setTimeout(function() { if (popup) {popup.close();} },2000);
-      }
-  });  
+  addChartEvent(chart);
 }
 
 function toggleChart(i) {
@@ -408,5 +278,67 @@ function setTime() {
       clearInterval(auto);
       autoReload();
     }
-  }
+  }               
+}
+
+// dynamic change of map api
+function loadMapAPI(api) {
+	document.getElementById("map-canvas").innerHTML = '';
+	var url = new Array();
+	if (api=='gmaps') { 
+		url.push('api_gmaps.js');
+		url.push('https://maps.googleapis.com/maps/api/js?sensor=false&callback=init'); 
+	}
+	else { 
+		url.push('api_openlayers.js'); 
+		url.push('http://openlayers.org/api/OpenLayers.js'); 
+	}
+	addScript(url[0]);
+	waitAndLoad(api,url);	
+}
+var loadTime = 0;
+function waitAndLoad(api,url) {
+	// wait till first script loaded
+	if (loadTime>5000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
+	if (loadedAPI!==api) {
+	setTimeout(function() { loadTime += 50; waitAndLoad(api,url); }, 50);
+		return;
+	}      
+	if(!isScriptLoaded(url[1])){
+		addScript(url[1]);
+	}
+	loadTime = 0;
+	waitAndInit(api);
+}
+
+function waitAndInit(api) {
+	// wait till main api loads
+	if (loadTime>10000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
+	try {
+		init();
+	}
+	catch(e) {
+		setTimeout(function() { loadTime += 50; waitAndInit(api); }, 50);
+		return;
+	}
+	loadTime = 0;
+	loadTrack(userid,trackid,1);
+}
+
+function addScript(url) {
+	var tag = document.createElement('script');
+	tag.setAttribute('type','text/javascript');
+	tag.setAttribute('src', url);
+	if (typeof tag!='undefined') {
+		document.getElementsByTagName('head')[0].appendChild(tag);
+	}	
+}
+
+function isScriptLoaded(url) {
+	scripts = document.getElementsByTagName('script');
+	for (var i = scripts.length; i--;) {
+		// check if url matches src
+		if (scripts[i].src != '' && url.indexOf(scripts[i].src) !== -1) return true;
+	}
+	return false;
 }

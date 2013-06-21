@@ -17,15 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "1.0"; 
+$version = "2.0"; 
+
 // map drawing framework 
-// (gmaps = google maps, osm = openstreetmap (not supported yet))
+// (gmaps = google maps, openlayers = openlayers/osm)
 $mapapi = "gmaps";
+//$mapapi = "openlayers";
+
 // you may add your google maps api key
 // this is not obligatory by now
 //$gkey =
 
-// db
+// MySQL config
 $dbhost = ""; // mysql host, eg. localhost
 $dbuser = ""; // database user
 $dbpass = ""; // database pass
@@ -35,17 +38,23 @@ $salt = ""; // fill in random string here, it will increase security of password
 // other
 // require login/password authentication 
 // (0 = no, 1 = yes)
-$require_authentication = 0;
+$require_authentication = 1;
+
 // allow automatic registration of new users 
 // (0 = no, 1 = yes)
 $allow_registration = 0;
+
 // Default interval in seconds for live auto reload
 $interval = 10; 
+
 // Default language
 // (en, pl)
 $lang = "en";
+//$lang = "pl";
+
 // units
 // (metric, imperial)
 $units = "metric";
+//$units = "imperial";
 
 ?>
