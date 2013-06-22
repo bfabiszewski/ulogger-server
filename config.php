@@ -17,16 +17,24 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "2.0"; 
+$version = "2.1"; 
 
-// map drawing framework 
+// default map drawing framework 
 // (gmaps = google maps, openlayers = openlayers/osm)
-$mapapi = "gmaps";
-//$mapapi = "openlayers";
+//$mapapi = "gmaps";
+$mapapi = "openlayers";
 
-// you may add your google maps api key
+// openlayers additional map layers
+// OpenCycleMap (0 = no, 1 = yes)
+$layer_ocm = 1;
+// MapQuest-OSM (0 = no, 1 = yes)
+$layer_mq = 1;
+// osmapa.pl (0 = no, 1 = yes)
+$layer_osmapa = 1;
+
+// you may set your google maps api key
 // this is not obligatory by now
-//$gkey =
+//$gkey = "";
 
 // MySQL config
 $dbhost = ""; // mysql host, eg. localhost

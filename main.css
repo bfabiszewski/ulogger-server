@@ -38,17 +38,19 @@ select {
   font-weight: normal;
   padding-top: 0.2em;
 }
-input {
+#menu input,
+#login input {
   width: 150px;
   text-align: center;
   border: 1px solid black;
 }
-input[type = "submit"] {
+#menu input[type = "submit"],
+#login input[type = "submit"] {
   background-color: black;
   color: white;
   border: 1px solid white;
 }
-input[type = "checkbox"] {
+#menu input[type = "checkbox"] {
   width: auto;
 }
 #main {
@@ -67,6 +69,7 @@ input[type = "checkbox"] {
   width: 165px;
   height: 100%;
   background-color: #666;
+  overflow: hidden;
 }
 #menu-content {
   padding: 10px;

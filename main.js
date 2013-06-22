@@ -289,7 +289,7 @@ function loadMapAPI(api) {
 	var url = new Array();
 	if (api=='gmaps') { 
 		url.push('api_gmaps.js');
-		url.push('https://maps.googleapis.com/maps/api/js?'+((gkey!==null)?('key='+gkey+'&'):'')+'sensor=false&callback=init'); 
+		url.push('//maps.googleapis.com/maps/api/js?'+((gkey!==null)?('key='+gkey+'&'):'')+'sensor=false&callback=init'); 
 	}
 	else { 
 		url.push('api_openlayers.js'); 
@@ -341,7 +341,8 @@ function isScriptLoaded(url) {
 	scripts = document.getElementsByTagName('script');
 	for (var i = scripts.length; i--;) {
 		// check if url matches src
-		if (scripts[i].src != '' && url.indexOf(scripts[i].src) !== -1) return true;
+		var scriptUrl = scripts[i].src.replace(/https?:/,'');
+		if (scriptUrl != '' && url.indexOf(scriptUrl) !== -1) return true;
 	}
 	return false;
 }

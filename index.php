@@ -106,12 +106,15 @@ print
       var units = "'.$units.'";
       var mapapi = "'.$mapapi.'";
       var gkey = '.(isset($gkey)?'"'.$gkey.'"':'null').';
+      var layer_ocm = "'.$layer_ocm.'";
+      var layer_mq = "'.$layer_mq.'";
+      var layer_osmapa = "'.$layer_osmapa.'";
     </script>
     <script type="text/javascript" src="main.js"></script>     
 ';
 if ($mapapi == "gmaps") {
   print       
-'   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?'.(isset($gkey)?'key='.$gkey.'&':'').'sensor=false"></script>    
+'   <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?'.(isset($gkey)?'key='.$gkey.'&':'').'sensor=false"></script>    
     <script type="text/javascript" src="api_gmaps.js"></script>   
 ';
 }
@@ -122,7 +125,7 @@ else {
 ';
 }
 print '
-   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+   <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
     </script>
@@ -136,7 +139,7 @@ print '
         </div>
         <div id="trip">
           '.$track_form.'
-          <input id="latest" type="checkbox" onchange="autoReload();"> '.$lang_autoreload.' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">'.$interval.'</span></a> s)<br />  
+          <input type="checkbox" onchange="autoReload();"> '.$lang_autoreload.' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">'.$interval.'</span></a> s)<br />  
           <a href="javascript:void(0);" onclick="loadTrack(userid,trackid,0)">'.$lang_reload.'</a><br />
         </div>
         <div id="summary"></div>
@@ -152,7 +155,7 @@ print '
           <a href="javascript:void(0);" onclick="load(\'gpx\',userid,trackid)">gpx</a><br />
         </div>
       </div>
-      <div id="footer">phpTrackme '.$version.'</div>
+      <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/phpTrackme">phpTrackme</a> '.$version.'</div>
     </div>
     <div id="main">
       <div id="map-canvas"></div>

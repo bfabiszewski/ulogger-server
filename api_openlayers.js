@@ -31,25 +31,52 @@ function init() {
 	var options = { controls: [
 		new OpenLayers.Control.ArgParser(), // default
 		new OpenLayers.Control.Attribution(), // default
-		new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+		new OpenLayers.Control.LayerSwitcher(),
 		new OpenLayers.Control.Navigation(), // default
 		new OpenLayers.Control.PanZoomBar(),// do we need it?
 		new OpenLayers.Control.ScaleLine()
 		]	
 	};		
 	map = new OpenLayers.Map('map-canvas', options);
-	map.addLayer(new OpenLayers.Layer.OSM());
+	// default layer: OpenStreetMap
+	var mapnik = new OpenLayers.Layer.OSM();
+	map.addLayer(mapnik);
+	if (layer_ocm==1) {
+	  // OpenCycleMap
+    var ocm = new OpenLayers.Layer.OSM('OpenCycleMap',
+      ['http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png',
+      'http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png',
+      'http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png']);
+    map.addLayer(ocm);
+  }
+	if (layer_mq==1) {
+	  // MapQuest-OSM
+    var mq = new OpenLayers.Layer.OSM('MapQuest-OSM',
+      ['http://otile1.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg',
+      'http://otile2.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg',
+      'http://otile3.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg',
+      'http://otile4.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg']);
+    map.addLayer(mq);
+  }
+	if (layer_osmapa==1) {
+	  // osmapa.pl
+    var osmapa = new OpenLayers.Layer.OSM('osmapa.pl', 
+      ['http://a.osm.trail.pl/osmapa.pl/${z}/${x}/${y}.png',
+      'http://b.osm.trail.pl/osmapa.pl/${z}/${x}/${y}.png',
+      'http://c.osm.trail.pl/osmapa.pl/${z}/${x}/${y}.png']);
+    map.addLayer(osmapa);
+  }
 	var position = new OpenLayers.LonLat(21.01,52.23).transform(wgs84, mercator);
 	var zoom = 8; 
 	map.setCenter(position, zoom);
+  // init layers
+  layerTrack = new OpenLayers.Layer.Vector( 'Track' );
+	layerMarkers = new OpenLayers.Layer.Markers( 'Markers' );	
 }
 function displayTrack(xml,update) {
   altitudes.length = 0;
   var totalMeters = 0;
   var totalSeconds = 0;
-  // init layer
-  layerTrack = new OpenLayers.Layer.Vector( 'Track' );
-	layerMarkers = new OpenLayers.Layer.Markers( 'Markers' );
   var points = new Array();
   var latlngbounds = new OpenLayers.Bounds();
   var positions = xml.getElementsByTagName('position');
@@ -96,7 +123,7 @@ function displayTrack(xml,update) {
   }
 }
 
-function clearMap(){
+function clearMap() {
   if (layerTrack){
     layerTrack.removeAllFeatures();
   }
@@ -152,7 +179,6 @@ function setMarker(p,i,posLen) {
 		}
 	}
   })());    
-
 }
 
 function addChartEvent(chart) {

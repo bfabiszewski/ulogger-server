@@ -26,7 +26,7 @@ var polyOptions;
 var mapOptions;
 var loadedAPI = 'gmaps';
 function init() {
-google.maps.visualRefresh = true;
+  google.maps.visualRefresh = true;
   polyOptions = {
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
@@ -95,7 +95,7 @@ function displayTrack(xml,update) {
   }
 }
 
-function clearMap(){
+function clearMap() {
   if (polies){
     for (var i=0; i<polies.length; i++){
       polies[i].setMap(null);
@@ -161,12 +161,6 @@ function addChartEvent(chart) {
 			var id = selection.row;
 			var icon = markers[id].getIcon();
 			markers[id].setIcon('http://maps.google.com/mapfiles/marker_orange.png');
-			//var contentString = '<div style="width:40px; height:20px;padding:10px">'+Math.round(altitudes[id]*factor_m)+' '+unit_m+'</div>';
-			//popup = new google.maps.InfoWindow({
-			//		content: contentString
-			//});
-			//popup.open(map,markers[id]);
-			//altTimeout = setTimeout(function() { if (popup) {popup.close();} },2000);
 			altTimeout = setTimeout(function() { markers[id].setIcon(icon); },2000);
 		}
 	}); 	
