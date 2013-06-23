@@ -48,6 +48,10 @@ switch($lang) {
     $lang_language = "Language";
     $lang_newinterval = "Enter new interval value (seconds)";
     $lang_api = "Map API";
+    $lang_language = "Language";
+    $lang_units = "Units";
+    $lang_metric = "Metric";
+    $lang_imperial = "Imperial/US";
     break;
     
   case "pl":
@@ -79,6 +83,10 @@ switch($lang) {
     $lang_language = "Język";
     $lang_newinterval = "Podaj częstotliwość odświeżania (w sekundach)";
     $lang_api = "Map API";    
+    $lang_language = "Język";
+    $lang_units = "Jednostki";
+    $lang_metric = "Metryczne";
+    $lang_imperial = "Anglosaskie";
     break;
     
     case "de":
@@ -110,6 +118,10 @@ switch($lang) {
     $lang_language = "Sprache";
     $lang_newinterval = "Neuen Intervall-Wert eingeben (in Sekunden)";
     $lang_api = "Karten API";
+    $lang_language = "Sprache";
+    $lang_units = "Maßsystem";
+    $lang_metric = "Metrisches";
+    $lang_imperial = "Angloamerikanisches";
     break;    
 }
 ?>

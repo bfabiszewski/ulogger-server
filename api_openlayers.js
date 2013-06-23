@@ -66,12 +66,20 @@ function init() {
       'http://c.osm.trail.pl/osmapa.pl/${z}/${x}/${y}.png']);
     map.addLayer(osmapa);
   }
+	if (layer_ump==1) {
+	  // UMP
+    var ump = new OpenLayers.Layer.OSM('UMP', 
+      ['http://1.tiles.ump.waw.pl/ump_tiles/${z}/${x}/${y}.png',
+      'http://2.tiles.ump.waw.pl/ump_tiles/${z}/${x}/${y}.png',
+      'http://3.tiles.ump.waw.pl/ump_tiles/${z}/${x}/${y}.png']);
+    map.addLayer(ump);
+  }  
 	var position = new OpenLayers.LonLat(21.01,52.23).transform(wgs84, mercator);
 	var zoom = 8; 
 	map.setCenter(position, zoom);
   // init layers
-  layerTrack = new OpenLayers.Layer.Vector( 'Track' );
-	layerMarkers = new OpenLayers.Layer.Markers( 'Markers' );	
+  layerTrack = new OpenLayers.Layer.Vector('Track');
+	layerMarkers = new OpenLayers.Layer.Markers('Markers');	
 }
 function displayTrack(xml,update) {
   altitudes.length = 0;
@@ -167,8 +175,8 @@ function setMarker(p,i,posLen) {
 	return function() {
 		// remove popups
 		if (map.popups.length>0) {
-			for (var i = map.popups.length-1; i>=0; i-- ) { 
-				map.removePopup(map.popups[i])
+			for (var j = map.popups.length-1; j>=0; j-- ) { 
+				map.removePopup(map.popups[j])
 			};		
 		}
 		// show popup

@@ -71,9 +71,31 @@ $track_form .= '
 $api_form = '
 <u>'.$lang_api.'</u><br />
 <form>
-<select name="track" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
+<select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
 <option value="gmaps"'.(($mapapi=="gmaps")?' selected':'').'>Google Maps</option>
 <option value="openlayers"'.(($mapapi=="openlayers")?' selected':'').'>OpenLayers</option>
+</select>
+</form>
+';
+
+// language select form
+$lang_form = '
+<u>'.$lang_language.'</u><br />
+<form>
+<select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
+<option value="en"'.(($lang=="en")?' selected':'').'>English</option>
+<option value="pl"'.(($lang=="pl")?' selected':'').'>Polski</option>
+<option value="de"'.(($lang=="de")?' selected':'').'>Deutsch</option>
+</select>
+</form>
+';
+// units select form
+$units_form = '
+<u>'.$lang_units.'</u><br />
+<form>
+<select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
+<option value="metric"'.(($units=="metric")?' selected':'').'>'.$lang_metric.'</option>
+<option value="imperial"'.(($units=="imperial")?' selected':'').'>'.$lang_imperial.'</option>
 </select>
 </form>
 ';
@@ -109,6 +131,7 @@ print
       var layer_ocm = "'.$layer_ocm.'";
       var layer_mq = "'.$layer_mq.'";
       var layer_osmapa = "'.$layer_osmapa.'";
+      var layer_ump = "'.$layer_ump.'";
     </script>
     <script type="text/javascript" src="main.js"></script>     
 ';
@@ -149,8 +172,14 @@ print '
         <div id="api">  
           '.$api_form.'
         </div>
+        <div id="lang">  
+          '.$lang_form.'
+        </div>
+        <div id="units">  
+          '.$units_form.'
+        </div>
         <div id="export">
-        <u>'.$lang_download.'</u><br />
+          <u>'.$lang_download.'</u><br />
           <a href="javascript:void(0);" onclick="load(\'kml\',userid,trackid)">kml</a><br />
           <a href="javascript:void(0);" onclick="load(\'gpx\',userid,trackid)">gpx</a><br />
         </div>

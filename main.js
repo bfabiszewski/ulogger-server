@@ -278,6 +278,8 @@ function setTime() {
       clearInterval(auto);
       autoReload();
     }
+  // save current state as default
+	setCookie('interval',interval,30);
   }               
 }
 
@@ -326,6 +328,8 @@ function waitAndInit(api) {
 	loadTime = 0;
 	zoomToBounds(savedBounds);
 	loadTrack(userid,trackid,0);
+	// save current api as default
+	setCookie('api',api,30);
 }
 
 function addScript(url) {
@@ -345,4 +349,27 @@ function isScriptLoaded(url) {
 		if (scriptUrl != '' && url.indexOf(scriptUrl) !== -1) return true;
 	}
 	return false;
+}
+
+function setCookie(name,value,days) {
+	if (days) {
+    var date = new Date();
+    date.setTime(date.getTime()+(days*24*60*60*1000));
+    var expires = '; expires='+date.toGMTString();
+	}
+	else { 
+    var expires = ''; 
+	}
+	document.cookie = 'phpTrackme_'+name+'='+value+expires+'; path=/';
+}
+
+function setLang(lang) {
+  setCookie('lang',lang,30);
+  location.reload();
+}
+
+function setUnits(unit) {
+  units = unit;
+  setCookie('units',unit,30);
+  location.reload();
 }

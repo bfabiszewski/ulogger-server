@@ -81,7 +81,7 @@ select {
   background-color: #666;
   color: lightgray;
 }
-#user, #trip, #summary, #export, #other, #api {
+#user, #trip, #summary, #export, #other, #units {
   padding-bottom: 10px;
 }
 #login {

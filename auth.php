@@ -18,6 +18,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 require_once("config.php");
+// if is set cookie overwrite config value
+if (isset($_COOKIE["phpTrackme_api"])) { $mapapi = $_COOKIE["phpTrackme_api"]; }
+if (isset($_COOKIE["phpTrackme_lang"])) { $lang = $_COOKIE["phpTrackme_lang"]; }
+if (isset($_COOKIE["phpTrackme_units"])) { $units = $_COOKIE["phpTrackme_units"]; }
+if (isset($_COOKIE["phpTrackme_interval"])) { $interval = $_COOKIE["phpTrackme_interval"]; }
 require_once("lang.php");
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 if ($mysqli->connect_errno) {

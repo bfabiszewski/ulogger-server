@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "2.1"; 
+$version = "2.2"; 
 
 // default map drawing framework 
 // (gmaps = google maps, openlayers = openlayers/osm)
@@ -31,6 +31,8 @@ $layer_ocm = 1;
 $layer_mq = 1;
 // osmapa.pl (0 = no, 1 = yes)
 $layer_osmapa = 1;
+// UMP (0 = no, 1 = yes)
+$layer_ump = 1;
 
 // you may set your google maps api key
 // this is not obligatory by now
