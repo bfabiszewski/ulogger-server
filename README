@@ -10,7 +10,7 @@ Live demo:
 Requirements:
 - PHP 5.1.2
 - MYSQL 4.1
-- browser with javascript enabled, cookies for authentication
+- browser with javascript enabled, cookies for authentication and saving preferences
 
 Features:
 - simple
@@ -23,10 +23,10 @@ Features:
 - OpenLayers 2.13
 - ajax 
 - server based configuration
+- user preferences stored in cookies
 
 Todo
 - install script
-- user level customization, storing settings in cookies
 - custom icons
 - write opensource client?
 
