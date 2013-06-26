@@ -1,3 +1,9 @@
+-- 
+-- Database layout inherited from TrackMe
+-- Some tables/columns are not used by the viewer at the moment.
+-- Kept for compatibility with old data.
+-- 
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `trackme` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;

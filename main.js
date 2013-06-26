@@ -80,6 +80,28 @@ function toggleChart(i) {
   }
 }
 
+function toggleMenu(i) { 
+  var emenu = document.getElementById('menu');
+  var emain = document.getElementById('main');
+  var ebutton = document.getElementById('menu-close');
+  if (arguments.length < 1) {
+    if (ebutton.innerHTML == '»') { i = 0 }
+    else { i = 1; }
+  }  
+  if (i==0) {
+    emenu.style.width = '0';
+    emain.style.marginRight = '0';
+    ebutton.style.right = '0';
+    ebutton.innerHTML = '«';
+  }
+  else {
+    emenu.style.width = '165px';
+    emain.style.marginRight = '165px';
+    ebutton.style.right = '165px';
+    ebutton.innerHTML = '»';
+  }  
+}
+
 function getXHR() {
   var xmlhttp = null;
   if (window.XMLHttpRequest) {

@@ -184,6 +184,7 @@ print '
           <a href="javascript:void(0);" onclick="load(\'gpx\',userid,trackid)">gpx</a><br />
         </div>
       </div>
+      <div id="menu-close" onclick="toggleMenu();">»</div>
       <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/phpTrackme">phpTrackme</a> '.$version.'</div>
     </div>
     <div id="main">

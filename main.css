@@ -76,11 +76,29 @@ select {
 }
 #footer {
   position: fixed;
+  width: 165px;
   bottom:0;
   padding: 10px;  
-  background-color: #666;
+  background-color:rgba(102, 102, 102, 0.9);
   color: lightgray;
 }
+#menu-close {
+  background-color: #666;
+  opacity: 0.9;
+  position: absolute;
+  top: 55px;
+  right: 165px;
+  z-index: 1900;
+  width: 18px;
+  height: 20px;
+  line-height: 18px;
+  text-align: right;
+  font-size: 18px;
+  font-weight: bolder;
+  border-radius: 11px 0 0 11px;
+  cursor: pointer;
+}
+
 #user, #trip, #summary, #export, #other, #units {
   padding-bottom: 10px;
 }
