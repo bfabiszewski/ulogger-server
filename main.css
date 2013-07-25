@@ -129,7 +129,7 @@ select {
 }
 #popup {
   width:370px;
-  height:130px;
+  min-height:130px;
 }
 #popup * {
   font-family: Roboto, Verdana, sans-serif;
@@ -139,6 +139,10 @@ select {
   font-weight: bolder;
   padding-bottom: 5px;
   border-bottom: 1px solid gray;
+}
+#pcomments {
+  clear: both; 
+  color: #903;
 }
 #pleft,#pright {
   float:left;

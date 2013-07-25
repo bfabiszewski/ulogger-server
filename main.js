@@ -141,6 +141,7 @@ function parsePosition(p) {
   if (speed != null) { speed = parseInt(speed); }
   var angle = getNode(p,'angle'); // may be null
   if (angle != null) { angle = parseInt(angle); }
+  var comments = getNode(p,'comments'); // may be null
   var username = getNode(p,'username');
   var trackname = getNode(p,'trackname');
   var tid = getNode(p,'trackid');
@@ -153,6 +154,7 @@ function parsePosition(p) {
     'altitude': altitude,
     'speed': speed,
     'angle': angle,
+    'comments': comments,
     'username': username,
     'trackname': trackname,
     'tid': tid,

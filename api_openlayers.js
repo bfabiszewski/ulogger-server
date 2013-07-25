@@ -162,6 +162,7 @@ function setMarker(p,i,posLen) {
     '<div id="pheader">'+lang_user+': '+p.username.toUpperCase()+'<br />'+lang_track+': '+p.trackname.toUpperCase()+
     '</div>'+
     '<div id="pbody">'+
+    ((p.comments != null)?'<div id="pcomments">'+p.comments+'</div>':'')+
     '<div id="pleft"><b>'+lang_time+':</b> '+p.dateoccured+'<br />'+
     ((p.speed != null)?'<b>'+lang_speed+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
     ((p.altitude != null)?'<b>'+lang_altitude+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+'</div>'+

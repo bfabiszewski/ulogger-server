@@ -36,7 +36,7 @@ else {
   <u>'.$lang_user.'</u><br />
   <form>
   <select name="user" onchange="selectUser(this)">
-  <option value=\"0\">'.$lang_suser.'</option>';  
+  <option value="0">'.$lang_suser.'</option>';  
   $query = "SELECT ID,username FROM users ORDER BY username"; 
   $result = $mysqli->query($query);
   while ($row = $result->fetch_assoc()) {
