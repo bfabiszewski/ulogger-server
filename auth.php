@@ -40,7 +40,7 @@ if ($require_authentication) {
   $auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : "");
   $user = (isset($_REQUEST['user']) ? $_REQUEST['user'] : "");
   $pass = (isset($_REQUEST['pass']) ? md5($salt.$_REQUEST['pass']) : "");
-  @$ssl = ($_SERVER['HTTPS'] == "" ? "http" : "https");
+  $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
   $auth_error = (isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : 0);
   
   // not authenticated and username not submited
