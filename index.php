@@ -35,6 +35,7 @@ else {
   // prepare user select form
   if (($auth == $admin_user) and ($admin_user != "")) {
      $user = $auth;
+     $auth = NULL;
   }
   $user_form = '
   <u>'.$lang_user.'</u><br />
