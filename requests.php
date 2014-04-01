@@ -27,19 +27,23 @@ $requireddb = (isset($_REQUEST['db']) ? $_REQUEST['db'] : 0);
 $tripname = (isset($_REQUEST['tn']) ? $_REQUEST['tn'] : "");
 $action = (isset($_REQUEST['a']) ? $_REQUEST['a'] : "");
 
+// If the client uses Backitude then define the tripname as user-date
+if ($requireddb == 'backitude') {
+   $tripname = $user.'-'.date("Ymd");
+}
 // FIXME what is it for?
-if ($requireddb<8) {
+elseif ($requireddb<8) {
   //Result:5 Incompatible database.
   quit(5);
 }
-  
+
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 if ($mysqli->connect_errno) {
   //Result:4 Unable to connect database.
   quit(4);
 }
 
-if ((!$user) || (!$pass)){ 
+if ((!$user) || (!$pass)){
   //Result:3 User or password not specified.
   quit(3);
 }
@@ -72,22 +76,22 @@ else {
       // Or rather something went wrong while updating database
       quit(2);
     }
-  } 
+  }
   else {
     // User unknown, we don't allow autoregistration
     // Let's use this one:
     //Result:1 User correct, invalid password.
-    quit(1);    
+    quit(1);
   }
 }
 
 switch($action) {
   // action: noop
   case "noop":
-    // test 
+    // test
     quit(0);
     break;
-    
+
   // action: deletetrip
   case "deletetrip":
     if ($tripname) {
@@ -103,10 +107,10 @@ switch($action) {
       $query = $mysqli->prepare($sql);
       $query->bind_param('is', $userid, $tripname);
       $query->execute();
-      $rows = $mysqli->affected_rows;      
-      $query->close();      
+      $rows = $mysqli->affected_rows;
+      $query->close();
       if ($rows) {
-        quit(0);    
+        quit(0);
       }
       else {
         //Result:7 Trip not found
@@ -126,14 +130,14 @@ switch($action) {
       $query = $mysqli->prepare($sql);
       $query->bind_param('is', $userid, $tripname);
       $query->execute();
-      $query->close();      
+      $query->close();
     }
     else {
       //Result:6 Trip not specified.
       quit(6);
     }
-    break;  
-      
+    break;
+
   // action: gettriplist
   case "gettriplist":
     $sql = "SELECT a1.Name,(SELECT MIN(a2.DateOccurred) FROM positions a2 "
@@ -152,16 +156,22 @@ switch($action) {
       }
     }
     $query->free_result();
-    $query->close();    
+    $query->close();
     $param = implode("\n",$triplist);
     quit(0,$param);
     break;
-      
+
   // action: upload
   case "upload":
     $lat = isset($_REQUEST["lat"]) ? $_REQUEST["lat"] : NULL;
     $long = isset($_REQUEST["long"]) ? $_REQUEST["long"] : NULL;
-    $dateoccurred = isset($_REQUEST["do"]) ? $_REQUEST["do"] : NULL;
+    // If the client uses Backitude then convert the date into handled format
+    if ($requireddb == 'backitude') {
+        $dateoccurred = isset($_REQUEST["do"]) ? date("Y-m-d H:i:s",intval($_REQUEST["do"])) : NULL;
+    }
+    else {
+        $dateoccurred = isset($_REQUEST["do"]) ? $_REQUEST["do"] : NULL;
+    }
     $altitude = isset($_REQUEST["alt"]) ? $_REQUEST["alt"] : NULL;
     $angle = isset($_REQUEST["ang"]) ? $_REQUEST["ang"] : NULL;
     $speed = isset($_REQUEST["sp"]) ? $_REQUEST["sp"] : NULL;
@@ -189,7 +199,7 @@ switch($action) {
       if ($num) {
         $iconid = $id;
       }
-    }    
+    }
     $tripid = NULL; // FIXME: not sure what trips with null id are
     if ($tripname) {
       // get tripid
@@ -201,7 +211,7 @@ switch($action) {
       $query->fetch();
       $num = $query->num_rows;
       $query->free_result();
-      $query->close();  
+      $query->close();
       if (!$num) {
         // create trip
         $query = $mysqli->prepare("INSERT INTO trips (FK_Users_ID,Name) VALUES (?,?)");
@@ -242,7 +252,7 @@ switch($action) {
       if ($mysqli->errno) {
         //Result:7|SQLERROR   Insert statement failed.
         quit(7,$mysqli->error);
-      }          
+      }
     }
     quit(0);
     break;
@@ -256,7 +266,7 @@ switch($action) {
   // action: findclosestpositionbytime
   // action: findclosestpositionbyposition
   // action: gettripinfo
-  // action: gettriphighlights    
+  // action: gettriphighlights
 }
 
 function quit($errno,$param=""){
