@@ -17,9 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+require_once("config.php");
 require_once("auth.php");
-  
-if ($auth) {
+
+if (($auth) and ($auth != $admin_user)) {
   // get username
   $query = "SELECT username FROM users WHERE ID='$auth' LIMIT 1"; 
   $result = $mysqli->query($query);
@@ -30,8 +31,11 @@ if ($auth) {
   $user_form = '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
 } 
 else {
-  // free access
+  // free access or admin user
   // prepare user select form
+  if (($auth == $admin_user) and ($admin_user != "")) {
+     $user = $auth;
+  }
   $user_form = '
   <u>'.$lang_user.'</u><br />
   <form>
@@ -45,9 +49,9 @@ else {
 $user_form .= '
 </select>
 </form>
-';  
+';
+  $user_form .= '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
 }
-  
 
 // prepare track select form
 $track_form = '
@@ -56,6 +60,7 @@ $track_form = '
 <select name="track" onchange="selectTrack(this)">';
 $query = "SELECT * FROM trips WHERE FK_Users_ID='$auth' ORDER BY ID DESC"; 
 $result = $mysqli->query($query);
+
 $trackid = "";
 while ($row = $result->fetch_assoc()) {
   if ($trackid == "") { $trackid = $row["ID"]; } // get first row

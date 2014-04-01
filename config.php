@@ -50,6 +50,9 @@ $salt = ""; // fill in random string here, it will increase security of password
 // (0 = no, 1 = yes)
 $require_authentication = 1;
 
+// admin user who has access to all users locations
+$admin_user = "";
+
 // allow automatic registration of new users 
 // (0 = no, 1 = yes)
 $allow_registration = 0;

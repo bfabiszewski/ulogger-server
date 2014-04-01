@@ -74,13 +74,12 @@ if ($require_authentication) {
         </form>
         <div id="error">'.(($auth_error==1) ? $lang_authfail : "").'</div>
       </div>
-      
     </body>
   </html>';
     $mysqli->close();
     exit;
   }
-  
+
   // username submited
   if ((!$auth) && ($user)){
     $query = $mysqli->prepare("SELECT ID,username,password FROM users WHERE username=? LIMIT 1");
@@ -90,6 +89,7 @@ if ($require_authentication) {
     $query->fetch();
     $query->free_result();
     //correct pass
+
     if (($user==$rec_user) && ($pass==$rec_pass)) { 
       // login successful
       //delete old session
@@ -98,8 +98,12 @@ if ($require_authentication) {
       // start new session
       session_name('trackme');    
       session_start();
-      $_SESSION['auth'] = $rec_ID;
-    
+      if (($user==$admin_user) and ($admin_user != "")) {
+          $_SESSION['auth'] = $admin_user;
+      }
+      else {
+          $_SESSION['auth'] = $rec_ID;
+      }
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url");
       exit;    
@@ -117,7 +121,7 @@ if ($require_authentication) {
       header("Location: $ssl://$url$error");
       exit;
     }
-  }  
+  }
   /* end of authentication */
 }
 ?>
