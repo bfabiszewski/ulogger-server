@@ -74,8 +74,8 @@ function init() {
       'http://3.tiles.ump.waw.pl/ump_tiles/${z}/${x}/${y}.png']);
     map.addLayer(ump);
   }  
-	var position = new OpenLayers.LonLat(21.01,52.23).transform(wgs84, mercator);
-	var zoom = 8; 
+        var position = new OpenLayers.LonLat(geoip_longitude(),geoip_latitude()).transform(wgs84, mercator);
+	var zoom = 6; 
 	map.setCenter(position, zoom);
   // init layers
   layerTrack = new OpenLayers.Layer.Vector('Track');

@@ -72,7 +72,6 @@ $track_form .= '
 <input id="latest" type="checkbox" onchange="toggleLatest();"> '.$lang_latest.'<br />
 </form>
 ';
-
 // map api select form
 $api_form = '
 <u>'.$lang_api.'</u><br />
@@ -140,6 +139,8 @@ print
       var layer_ump = "'.$layer_ump.'";
     </script>
     <script type="text/javascript" src="main.js"></script>     
+    <script language="javascript" src="http://j.maxmind.com/app/geoip.js"></script>
+
 ';
 if ($mapapi == "gmaps") {
   print       
