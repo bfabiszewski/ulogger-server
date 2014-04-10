@@ -166,12 +166,7 @@ switch($action) {
     $lat = isset($_REQUEST["lat"]) ? $_REQUEST["lat"] : NULL;
     $long = isset($_REQUEST["long"]) ? $_REQUEST["long"] : NULL;
     // If the client uses Backitude then convert the date into handled format
-    if ($requireddb == 'backitude') {
-        $dateoccurred = isset($_REQUEST["do"]) ? date("Y-m-d H:i:s",intval($_REQUEST["do"])) : NULL;
-    }
-    else {
-        $dateoccurred = isset($_REQUEST["do"]) ? $_REQUEST["do"] : NULL;
-    }
+    $dateoccurred = isset($_REQUEST["do"]) ? $_REQUEST["do"] : NULL;
     $altitude = isset($_REQUEST["alt"]) ? $_REQUEST["alt"] : NULL;
     $angle = isset($_REQUEST["ang"]) ? $_REQUEST["ang"] : NULL;
     $speed = isset($_REQUEST["sp"]) ? $_REQUEST["sp"] : NULL;
@@ -225,10 +220,18 @@ switch($action) {
         }
       }
     }
-    $sql = "INSERT INTO positions "
-          ."(FK_Users_ID,FK_Trips_ID,Latitude,Longitude,DateOccurred,FK_Icons_ID,"
-          ."Speed,Altitude,Comments,ImageURL,Angle,SignalStrength,SignalStrengthMax,"
-          ."SignalStrengthMin,BatteryStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+     if ($requireddb == 'backitude') {
+         $sql = "INSERT INTO positions "
+               ."(FK_Users_ID,FK_Trips_ID,Latitude,Longitude,DateOccurred,FK_Icons_ID,"
+               ."Speed,Altitude,Comments,ImageURL,Angle,SignalStrength,SignalStrengthMax,"
+               ."SignalStrengthMin,BatteryStatus) VALUES (?,?,?,?,FROM_UNIXTIME(?),?,?,?,?,?,?,?,?,?,?)";
+     } else {
+         $sql = "INSERT INTO positions "
+               ."(FK_Users_ID,FK_Trips_ID,Latitude,Longitude,DateOccurred,FK_Icons_ID,"
+               ."Speed,Altitude,Comments,ImageURL,Angle,SignalStrength,SignalStrengthMax,"
+               ."SignalStrengthMin,BatteryStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+     }
+
     $query = $mysqli->prepare($sql);
     $query->bind_param('iiddsiddssdiiii',
             $userid,$tripid,$lat,$long,$dateoccurred,$iconid,
