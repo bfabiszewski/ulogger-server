@@ -34,6 +34,10 @@ $layer_osmapa = 1;
 // UMP (0 = no, 1 = yes)
 $layer_ump = 1;
 
+// default coordinates for initial map
+$init_latitude = 52.23;
+$init_longitude = 21.01;
+
 // you may set your google maps api key
 // this is not obligatory by now
 //$gkey = "";

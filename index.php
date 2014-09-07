@@ -137,10 +137,10 @@ print
       var layer_mq = "'.$layer_mq.'";
       var layer_osmapa = "'.$layer_osmapa.'";
       var layer_ump = "'.$layer_ump.'";
+      var init_latitude = "'.$init_latitude.'";
+      var init_longitude = "'.$init_longitude.'";
     </script>
-    <script type="text/javascript" src="main.js"></script>     
-    <script language="javascript" src="http://j.maxmind.com/app/geoip.js"></script>
-
+    <script type="text/javascript" src="main.js"></script>
 ';
 if ($mapapi == "gmaps") {
   print       

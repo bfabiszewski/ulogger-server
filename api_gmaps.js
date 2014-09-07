@@ -33,7 +33,7 @@ function init() {
     strokeWeight: 2
   }      
   mapOptions = {
-    center: new google.maps.LatLng(geoip_latitude(),geoip_longitude()),
+    center: new google.maps.LatLng(init_latitude,init_longitude),
     zoom: 8,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     scaleControl: true
