@@ -55,6 +55,7 @@ $salt = ""; // fill in random string here, it will increase security of password
 $require_authentication = 1;
 
 // admin user who has access to all users locations
+// none if empty
 $admin_user = "";
 
 // allow automatic registration of new users 
