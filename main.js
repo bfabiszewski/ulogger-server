@@ -243,9 +243,13 @@ function getTrips(userid) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState==4 && xhr.status==200) {
       var xml = xhr.responseXML;
+      var trackSelect =  document.getElementsByName('track')[0];
+      clearOptions(trackSelect);
       var trips = xml.getElementsByTagName('trip');
       if (trips.length>0) {  
         fillOptions(xml);
+      } else {
+        clearMap();
       }
       xhr = null;
     }
@@ -256,7 +260,6 @@ function getTrips(userid) {
 
 function fillOptions(xml) {
   var trackSelect =  document.getElementsByName('track')[0];
-  clearOptions(trackSelect);
   var trips = xml.getElementsByTagName('trip');
   var trpLen = trips.length;
   for (var i=0; i<trpLen; i++) {

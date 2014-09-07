@@ -20,7 +20,7 @@
 require_once("config.php");
 require_once("auth.php");
 
-if (($auth) and ($auth != $admin_user)) {
+if ($auth && !$admin) {
   // get username
   $query = "SELECT username FROM users WHERE ID='$auth' LIMIT 1"; 
   $result = $mysqli->query($query);
@@ -33,25 +33,37 @@ if (($auth) and ($auth != $admin_user)) {
 else {
   // free access or admin user
   // prepare user select form
-  if (($auth == $admin_user) and ($admin_user != "")) {
-     $user = $auth;
-     $auth = NULL;
+  if ($admin) {
+     $user = $admin_user;
   }
   $user_form = '
-  <u>'.$lang_user.'</u><br />
+  <u>'.$lang_user.'</u> ';
+  if ($auth) {
+    $user_form .= '&nbsp;'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
+  }  
+  $user_form .= '
+  <br />
   <form>
   <select name="user" onchange="selectUser(this)">
   <option value="0">'.$lang_suser.'</option>';  
+  // get last position user
+  $query = "SELECT FK_Users_ID FROM positions ORDER BY DateOccurred LIMIT 1";
+  $result = $mysqli->query($query);
+  if ($result->num_rows) {
+    $last = $result->fetch_row();
+    $last_id = $last[0];
+  } else {
+    $last_id = "";
+  }
   $query = "SELECT ID,username FROM users ORDER BY username"; 
   $result = $mysqli->query($query);
   while ($row = $result->fetch_assoc()) {
-    $user_form .= sprintf("<option value=\"%s\">%s</option>\n", $row["ID"], $row["username"]);    
+    $user_form .= sprintf("<option %svalue=\"%s\">%s</option>\n", ($row["ID"] == $last_id)?"selected ":"",$row["ID"], $row["username"]);    
   }
-$user_form .= '
-</select>
-</form>
-';
-  $user_form .= '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
+  $user_form .= '
+  </select>
+  </form>
+  ';
 }
 
 // prepare track select form
@@ -59,7 +71,15 @@ $track_form = '
 <u>'.$lang_track.'</u><br />
 <form>
 <select name="track" onchange="selectTrack(this)">';
-$query = "SELECT * FROM trips WHERE FK_Users_ID='$auth' ORDER BY ID DESC"; 
+$userid = "";
+if ($auth && !$admin) {
+  // display track of authenticated user
+  $userid = $auth;
+} elseif ($last_id) {
+  // or user who did last move
+  $userid = $last_id;
+}
+$query = "SELECT * FROM trips WHERE FK_Users_ID='$userid' ORDER BY ID DESC"; 
 $result = $mysqli->query($query);
 
 $trackid = "";
@@ -115,7 +135,7 @@ print
     <link rel="stylesheet" type="text/css" href="main.css" />
     <script>
       var interval = '.$interval.';
-      var userid = '.(($auth)?$auth:-1).';
+      var userid = '.(($userid)?$userid:-1).';
       var trackid = '.(($trackid)?$trackid:-1).';
       var lang_user = "'.$lang_user.'";
       var lang_time = "'.$lang_time.'";

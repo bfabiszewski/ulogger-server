@@ -31,6 +31,7 @@ if ($mysqli->connect_errno) {
 }
 $mysqli->set_charset("utf8");
 $auth = NULL;
+$admin = NULL;
 if ($require_authentication) {
   /* authentication */
   session_name('trackme');
@@ -38,6 +39,7 @@ if ($require_authentication) {
   $sid = session_id();
   
   $auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : "");
+  $admin = (isset($_SESSION['admin']) ? $_SESSION['admin'] : "");
   $user = (isset($_REQUEST['user']) ? $_REQUEST['user'] : "");
   $pass = (isset($_REQUEST['pass']) ? md5($salt.$_REQUEST['pass']) : "");
   $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
@@ -98,12 +100,10 @@ if ($require_authentication) {
       // start new session
       session_name('trackme');    
       session_start();
-      if (($user==$admin_user) and ($admin_user != "")) {
-          $_SESSION['auth'] = $admin_user;
+      if (($user==$admin_user) && ($admin_user != "")) {
+          $_SESSION['admin'] = $admin_user;
       }
-      else {
-          $_SESSION['auth'] = $rec_ID;
-      }
+      $_SESSION['auth'] = $rec_ID;
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url");
       exit;    

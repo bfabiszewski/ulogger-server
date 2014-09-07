@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "2.2"; 
+$version = "2.3"; 
 
 // default map drawing framework 
 // (gmaps = google maps, openlayers = openlayers/osm)
