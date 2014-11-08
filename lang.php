@@ -123,5 +123,40 @@ switch($lang) {
     $lang_metric = "Metrisches";
     $lang_imperial = "Angloamerikanisches";
     break;    
+
+  case "hu":
+    $lang_title = "• phpTrackme •";
+    $lang_private = "Felhasználónév és jelszó szükséges a belépéshez";
+    $lang_authfail = "Hibás név vagy jelszó";
+    $lang_user = "Felhasználó";
+    $lang_track = "Útvonal";
+    $lang_latest = "Utolsó rögzített pont";
+    $lang_autoreload = "Automatikus frissítés";
+    $lang_reload = "Frissítés most";
+    $lang_download = "Adatok letöltése";
+    $lang_chart = "Magasság diagramm";
+    $lang_close = "Bezár";
+    $lang_time = "Rögzítés ideje";
+    $lang_speed = "Sebesség";
+    $lang_altitude = "Magasság";
+    $lang_ttime = "Menetidő";
+    $lang_aspeed = "Átlagsebesség";
+    $lang_tdistance = "Megtett út";
+    $lang_suser = "Felhasználónév";
+    $lang_point = "Rögzített pontok száma";
+    $lang_of = "/";
+    $lang_summary = "Utazás adatai";    
+    $lang_logout = "Kilépés";
+    $lang_login = "Belépés";
+    $lang_username = "Felhasználó";
+    $lang_password = "Jelszó";
+    $lang_language = "Nyelv";
+    $lang_newinterval = "Automatikus frissítés ideje (másodpercben)";
+    $lang_api = "Map API";    
+    $lang_language = "Nyelv";
+    $lang_units = "Mértékegység";
+    $lang_metric = "Metrikus";
+    $lang_imperial = "Imperal/US";
+    break;
 }
 ?>
