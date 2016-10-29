@@ -23,7 +23,7 @@ $_SESSION = NULL;
 if (isset($_COOKIE[session_name('trackme')])) {
   setcookie(session_name('trackme'),'',time()-42000,'/');
 }
-session_destroy(); 
+session_destroy();
 $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
 $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
 header("Location: $ssl://$url");

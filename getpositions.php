@@ -42,7 +42,7 @@ if ($userid) {
   else {
     // get data only for latest point
     $query = $mysqli->prepare("SELECT positions.ID,positions.Latitude,positions.Longitude,positions.Altitude,positions.Speed,positions.Angle,positions.DateOccurred,positions.Comments,users.username,trips.Name,trips.ID FROM positions LEFT JOIN users ON (positions.FK_Users_ID=users.ID) LEFT JOIN trips ON (positions.FK_Trips_ID=trips.ID) WHERE positions.FK_Users_ID=? ORDER BY positions.DateOccurred DESC LIMIT 1");
-    $query->bind_param('i', $userid);    
+    $query->bind_param('i', $userid);
   }
   $query->execute();
   $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$angle,$dateoccured,$comments,$username,$trackname,$trackid);
@@ -53,32 +53,32 @@ if ($userid) {
   $xml->startDocument("1.0");
   $xml->setIndent(true);
   $xml->startElement('root');
-  
+
   while ($query->fetch()) {
     $xml->startElement("position");
     $xml->writeAttribute("id", $positionid);
-      $xml->writeElement("latitude", $latitude); 
-      $xml->writeElement("longitude", $longitude); 
-      $xml->writeElement("altitude", ($altitude)?round($altitude):$altitude); 
-      $xml->writeElement("speed", $speed); 
-      $xml->writeElement("angle", $angle); 
-      $xml->writeElement("dateoccured", $dateoccured);   
-      $xml->writeElement("comments", $comments);   
-      $xml->writeElement("username", $username);   
-      $xml->writeElement("trackid", $trackid); 
-      $xml->writeElement("trackname", $trackname); 
+      $xml->writeElement("latitude", $latitude);
+      $xml->writeElement("longitude", $longitude);
+      $xml->writeElement("altitude", ($altitude)?round($altitude):$altitude);
+      $xml->writeElement("speed", $speed);
+      $xml->writeElement("angle", $angle);
+      $xml->writeElement("dateoccured", $dateoccured);
+      $xml->writeElement("comments", $comments);
+      $xml->writeElement("username", $username);
+      $xml->writeElement("trackid", $trackid);
+      $xml->writeElement("trackname", $trackname);
       $distance = (isset($prev_latitude))?haversine_distance($prev_latitude,$prev_longitude,$latitude,$longitude):0;
       $prev_latitude = $latitude;
       $prev_longitude = $longitude;
-      $xml->writeElement("distance", round($distance));   
+      $xml->writeElement("distance", round($distance));
       $seconds = (isset($prev_dateoccured))?(strtotime($dateoccured)-strtotime($prev_dateoccured)):0;
       $prev_dateoccured = $dateoccured;
-      $xml->writeElement("seconds", $seconds);   
-    $xml->endElement();    
+      $xml->writeElement("seconds", $seconds);
+    $xml->endElement();
   }
-  
+
   $xml->endElement();
-  $xml->endDocument();  
+  $xml->endDocument();
   $xml->flush();
 
   $query->free_result();

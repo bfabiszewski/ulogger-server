@@ -16,7 +16,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 // google maps
 var map;
 var polies = new Array();
@@ -31,25 +31,25 @@ function init() {
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
     strokeWeight: 2
-  }      
+  }
   mapOptions = {
     center: new google.maps.LatLng(init_latitude,init_longitude),
     zoom: 8,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     scaleControl: true
-  };  
+  };
   map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 }
-      
+
 function displayTrack(xml,update) {
   altitudes.length = 0;
   var totalMeters = 0;
   var totalSeconds = 0;
   // init polyline
   var poly = new google.maps.Polyline(polyOptions);
-  poly.setMap(map);  
-  var path = poly.getPath();  
-  var latlngbounds = new google.maps.LatLngBounds( );  
+  poly.setMap(map);
+  var path = poly.getPath();
+  var latlngbounds = new google.maps.LatLngBounds( );
   var positions = xml.getElementsByTagName('position');
   var posLen = positions.length;
   for (var i=0; i<posLen; i++) {
@@ -62,27 +62,27 @@ function displayTrack(xml,update) {
     // set marker
     setMarker(p,i,posLen);
     // update polyline
-    path.push(p.coordinates);    
+    path.push(p.coordinates);
     latlngbounds.extend(p.coordinates);
     // save altitudes for chart
     altitudes[i] = p.altitude;
-  }  
+  }
   if (update) {
     map.fitBounds(latlngbounds);
     if (i==1) {
       // only one point, zoom out
-      zListener = 
+      zListener =
           google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
               if (this.getZoom()){
                   this.setZoom(15);
               }
       });
-      setTimeout(function(){google.maps.event.removeListener(zListener)}, 2000);  
+      setTimeout(function(){google.maps.event.removeListener(zListener)}, 2000);
     }
   }
   latestTime = p.dateoccured;
   polies.push(poly);
-  
+
   updateSummary(p.dateoccured,totalMeters,totalSeconds);
   if (p.tid!=trackid) {
     trackid=p.tid;
@@ -121,10 +121,10 @@ function setMarker(p,i,posLen) {
     position: p.coordinates,
     title: p.dateoccured
   });
-  if (latest==1) { marker.setIcon('http://maps.google.com/mapfiles/dd-end.png') }
-  else if (i==0) { marker.setIcon('http://maps.google.com/mapfiles/marker_greenA.png') }
-  else if (i==posLen-1) { marker.setIcon('http://maps.google.com/mapfiles/markerB.png') }
-  else { marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_gray.png') }
+  if (latest==1) { marker.setIcon('//maps.google.com/mapfiles/dd-end.png') }
+  else if (i==0) { marker.setIcon('//maps.google.com/mapfiles/marker_greenA.png') }
+  else if (i==posLen-1) { marker.setIcon('//maps.google.com/mapfiles/markerB.png') }
+  else { marker.setIcon('//maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png') }
   // popup
   var content = '<div id="popup">'+
     '<div id="pheader">'+lang_user+': '+p.username.toUpperCase()+'<br />'+lang_track+': '+p.trackname.toUpperCase()+
@@ -139,7 +139,7 @@ function setMarker(p,i,posLen) {
     '<b>'+lang_aspeed+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
     '<b>'+lang_tdistance+':</b> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>'):'')+
     '<div id="pfooter">'+lang_point+' '+(i+1)+' '+lang_of+' '+(posLen)+'</div>'+
-    '</div></div>';    
+    '</div></div>';
   popup = new google.maps.InfoWindow();
   popup.listener = google.maps.event.addListener(marker, 'click', (function(marker,content) {
     return function() {
@@ -149,37 +149,37 @@ function setMarker(p,i,posLen) {
         chart.setSelection([{row:i,column:null}]);
       }
     }
-  })(marker,content));    
-  markers.push(marker);    
-  popups.push(popup);  
+  })(marker,content));
+  markers.push(marker);
+  popups.push(popup);
 }
 
 function addChartEvent(chart) {
-	google.visualization.events.addListener(chart, 'select', function() {
-		if (popup) {popup.close(); clearTimeout(altTimeout);} 
-		var selection = chart.getSelection()[0];
-		if (selection) {
-			var id = selection.row;
-			var icon = markers[id].getIcon();
-			markers[id].setIcon('http://maps.google.com/mapfiles/marker_orange.png');
-			altTimeout = setTimeout(function() { markers[id].setIcon(icon); },2000);
-		}
-	}); 	
+  google.visualization.events.addListener(chart, 'select', function() {
+    if (popup) {popup.close(); clearTimeout(altTimeout);}
+    var selection = chart.getSelection()[0];
+    if (selection) {
+      var id = selection.row;
+      var icon = markers[id].getIcon();
+      markers[id].setIcon('//maps.google.com/mapfiles/marker_orange.png');
+      altTimeout = setTimeout(function() { markers[id].setIcon(icon); },2000);
+    }
+  });
 }
 //((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
 function getBounds() {
-	var b =  map.getBounds().toString();
-	var bounds = b.split(',',4);
-	var lat_sw = bounds[0].replace(/\(/g,'');
-	var lon_sw = bounds[1].replace(/[ )]/g,'');
-	var lat_ne = bounds[2].replace(/[ (]/g,'');
-	var lon_ne = bounds[3].replace(/[ )]/g,'');
-	return [lon_sw,lat_sw,lon_ne,lat_ne];
+  var b =  map.getBounds().toString();
+  var bounds = b.split(',',4);
+  var lat_sw = bounds[0].replace(/\(/g,'');
+  var lon_sw = bounds[1].replace(/[ )]/g,'');
+  var lat_ne = bounds[2].replace(/[ (]/g,'');
+  var lon_ne = bounds[3].replace(/[ )]/g,'');
+  return [lon_sw,lat_sw,lon_ne,lat_ne];
 }
 
 function zoomToBounds(b) {
-	var sw = new google.maps.LatLng(b[1],b[0]);
-	var ne = new google.maps.LatLng(b[3],b[2]);
-  var bounds = new google.maps.LatLngBounds(sw,ne);  	
-	map.fitBounds(bounds);
+  var sw = new google.maps.LatLng(b[1],b[0]);
+  var ne = new google.maps.LatLng(b[3],b[2]);
+  var bounds = new google.maps.LatLngBounds(sw,ne);
+  map.fitBounds(bounds);
 }

@@ -29,7 +29,7 @@ if ($units=="imperial") {
   $unit_m = "ft";
   $factor_km = 0.62; // to miles
   $unit_km = "mi";
-} 
+}
 else {
   $factor_kmh = 1;
   $unit_kmh = "km/h";
@@ -55,10 +55,10 @@ function addStyle($xml,$name,$url) {
     $xml->startElement("IconStyle");
     $xml->writeAttribute("id", $name."Icon");
       $xml->startElement("Icon");
-        $xml->writeElement("href", $url); 
-      $xml->endElement();    
-    $xml->endElement();    
-  $xml->endElement();    
+        $xml->writeElement("href", $url);
+      $xml->endElement();
+    $xml->endElement();
+  $xml->endElement();
 }
 function toHMS($s) {
   $d = floor($s/86400);
@@ -100,7 +100,7 @@ if ($trackid>0 && $userid>0) {
       // marker styles
       addStyle($xml,"red","http://maps.google.com/mapfiles/markerA.png");
       addStyle($xml,"green","http://maps.google.com/mapfiles/marker_greenB.png");
-      addStyle($xml,"gray","http://labs.google.com/ridefinder/images/mm_20_gray.png");
+      addStyle($xml,"gray","http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png");
       $style = "#redStyle"; // for first element
       $i = 0;
       $totalMeters = 0;
@@ -113,12 +113,12 @@ if ($trackid>0 && $userid>0) {
         $prev_dateoccured = $dateoccured;
         $totalMeters += $distance;
         $totalSeconds += $seconds;
-      
+
         if(++$i == $query->num_rows) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
         $xml->writeAttribute("id", $positionid);
           //$xml->writeElement("name", $i);
-          $description = 
+          $description =
           "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".$lang_user.": ".strtoupper($username)."<br />".$lang_track.": ".strtoupper($trackname).
           "</div>".
           "<div>".
@@ -138,7 +138,7 @@ if ($trackid>0 && $userid>0) {
             $coordinate[$i] = $longitude.",".$latitude.(($altitude) ? ",".$altitude : "");
             $xml->writeElement("coordinates", $coordinate[$i]);
           $xml->endElement();
-        $xml->endElement();  
+        $xml->endElement();
         $style = "#grayStyle"; // other elements
       }
       $coordinates = implode("\n",$coordinate);
@@ -147,16 +147,16 @@ if ($trackid>0 && $userid>0) {
         $xml->startElement("LineString");
           $xml->writeElement("coordinates", $coordinates);
         $xml->endElement();
-      $xml->endElement();  
-    
-      
+      $xml->endElement();
+
+
       $xml->endElement();
       $xml->endElement();
-      $xml->endDocument();  
+      $xml->endDocument();
       $xml->flush();
-      
+
       break;
-      
+
     case "gpx":
       header("Content-type: application/application/gpx+xm");
       header("Content-Disposition: attachment; filename=\"track$trackid.gpx\"");
@@ -164,10 +164,10 @@ if ($trackid>0 && $userid>0) {
       $xml->openURI("php://output");
       $xml->startDocument("1.0");
       $xml->startElement("gpx");
-      $xml->writeAttribute("xmlns", "http://www.topografix.com/GPX/1/1");      
-      $xml->writeAttribute("xmlns:gpxdata", "http://www.cluetrust.com/XML/GPXDATA/1/0");      
-      $xml->writeAttribute("creator", "phpTrackme");      
-      $xml->writeAttribute("version", "1.1");      
+      $xml->writeAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
+      $xml->writeAttribute("xmlns:gpxdata", "http://www.cluetrust.com/XML/GPXDATA/1/0");
+      $xml->writeAttribute("creator", "phpTrackme");
+      $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
         $xml->writeElement("name", $trackname);
         $xml->writeElement("time", str_replace(" ","T",$dateoccured));
@@ -185,7 +185,7 @@ if ($trackid>0 && $userid>0) {
           $seconds = (isset($prev_dateoccured))?(strtotime($dateoccured)-strtotime($prev_dateoccured)):0;
           $prev_dateoccured = $dateoccured;
           $totalMeters += $distance;
-          $totalSeconds += $seconds;          
+          $totalSeconds += $seconds;
           $xml->startElement("trkpt");
             $xml->writeAttribute("lat", $latitude);
             $xml->writeAttribute("lon", $longitude);
@@ -193,7 +193,7 @@ if ($trackid>0 && $userid>0) {
             $xml->writeElement("time", str_replace(" ","T",$dateoccured));
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
-              $description = 
+              $description =
               $lang_user.": ".strtoupper($username)." ".$lang_track.": ".strtoupper($trackname).
               " ".$lang_time.": ".$dateoccured.
               (($speed)?" ".$lang_speed.": ".round($speed*3.6,2*$factor_kmh)." ".$unit_kmh:"").
@@ -205,14 +205,14 @@ if ($trackid>0 && $userid>0) {
               $xml->writeCData($description);
             $xml->endElement();
           $xml->endElement();
-        }          
+        }
         $xml->endElement();
       $xml->endElement();
       $xml->endElement();
-      $xml->endDocument();  
-      $xml->flush();      
-      
-      break;  
+      $xml->endDocument();
+      $xml->flush();
+
+      break;
   }
   $query->free_result();
   $query->close();

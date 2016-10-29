@@ -78,7 +78,7 @@ select {
   position: fixed;
   width: 165px;
   bottom:0;
-  padding: 10px;  
+  padding: 10px;
   background-color:rgba(102, 102, 102, 0.9);
   color: lightgray;
 }
@@ -103,7 +103,7 @@ select {
   padding-bottom: 10px;
 }
 #login {
-  font-family: Verdana, sans-serif;  
+  font-family: Verdana, sans-serif;
   position: relative;
   top: 10%;
   background-color: #444;
@@ -141,7 +141,7 @@ select {
   border-bottom: 1px solid gray;
 }
 #pcomments {
-  clear: both; 
+  clear: both;
   color: #903;
 }
 #pleft,#pright {
@@ -161,8 +161,8 @@ select {
   position: absolute;
   z-index: 10000;
 }
-#chart { 
-  position: fixed; 
+#chart {
+  position: fixed;
   bottom: 0; left:0; right: 0;
   height: 200px;
   margin-right: 165px;

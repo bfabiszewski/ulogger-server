@@ -53,7 +53,7 @@ switch($lang) {
     $lang_metric = "Metric";
     $lang_imperial = "Imperial/US";
     break;
-    
+
   case "pl":
     $lang_title = "• phpTrackme •";
     $lang_private = "Aby się zalogować musisz podać login i hasło";
@@ -75,20 +75,20 @@ switch($lang) {
     $lang_suser = "wybierz login";
     $lang_point = "Punkt";
     $lang_of = "z";
-    $lang_summary = "Podsumowanie";    
+    $lang_summary = "Podsumowanie";
     $lang_logout = "wyloguj";
     $lang_login = "zaloguj";
     $lang_username = "Login";
     $lang_password = "Hasło";
     $lang_language = "Język";
     $lang_newinterval = "Podaj częstotliwość odświeżania (w sekundach)";
-    $lang_api = "Map API";    
+    $lang_api = "Map API";
     $lang_language = "Język";
     $lang_units = "Jednostki";
     $lang_metric = "Metryczne";
     $lang_imperial = "Anglosaskie";
     break;
-    
+
     case "de":
     $lang_title = "• phpTrackme •";
     $lang_private = "Sie müssen Benutzernamen und Kennwort eingeben, um auf diese Seite zuzugreifen.";
@@ -122,7 +122,7 @@ switch($lang) {
     $lang_units = "Maßsystem";
     $lang_metric = "Metrisches";
     $lang_imperial = "Angloamerikanisches";
-    break;    
+    break;
 
   case "hu":
     $lang_title = "• phpTrackme •";
@@ -145,14 +145,14 @@ switch($lang) {
     $lang_suser = "Felhasználónév";
     $lang_point = "Rögzített pontok száma";
     $lang_of = "/";
-    $lang_summary = "Utazás adatai";    
+    $lang_summary = "Utazás adatai";
     $lang_logout = "Kilépés";
     $lang_login = "Belépés";
     $lang_username = "Felhasználó";
     $lang_password = "Jelszó";
     $lang_language = "Nyelv";
     $lang_newinterval = "Automatikus frissítés ideje (másodpercben)";
-    $lang_api = "Map API";    
+    $lang_api = "Map API";
     $lang_language = "Nyelv";
     $lang_units = "Mértékegység";
     $lang_metric = "Metrikus";

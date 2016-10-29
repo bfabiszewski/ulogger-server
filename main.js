@@ -16,7 +16,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
  // general stuff
 if (units=='imperial') {
   factor_kmh = 0.62; //to mph
@@ -25,7 +25,7 @@ if (units=='imperial') {
   unit_m = 'ft';
   factor_km = 0.62; // to miles
   unit_km = 'mi';
-} 
+}
 else {
   factor_kmh = 1;
   unit_kmh = 'km/h';
@@ -58,18 +58,18 @@ function displayChart() {
 
   chart = new google.visualization.LineChart(document.getElementById('chart'));
   chart.draw(data, options);
-  
+
   addChartEvent(chart);
 }
 
 function toggleChart(i) {
   var altLen = altitudes.length;
-  if (altLen<=1) { return; }  
+  if (altLen<=1) { return; }
   var e = document.getElementById('bottom');
   if (arguments.length < 1) {
     if (e.style.display == 'block') { i = 0 }
     else { i = 1; }
-  }  
+  }
   if (i==0) {
     chart.clearChart();
     e.style.display = 'none';
@@ -80,14 +80,14 @@ function toggleChart(i) {
   }
 }
 
-function toggleMenu(i) { 
+function toggleMenu(i) {
   var emenu = document.getElementById('menu');
   var emain = document.getElementById('main');
   var ebutton = document.getElementById('menu-close');
   if (arguments.length < 1) {
     if (ebutton.innerHTML == '»') { i = 0 }
     else { i = 1; }
-  }  
+  }
   if (i==0) {
     emenu.style.width = '0';
     emain.style.marginRight = '0';
@@ -99,7 +99,7 @@ function toggleMenu(i) {
     emain.style.marginRight = '165px';
     ebutton.style.right = '165px';
     ebutton.innerHTML = '»';
-  }  
+  }
 }
 
 function getXHR() {
@@ -120,8 +120,8 @@ function loadTrack(userid,trackid,update) {
     if (xhr.readyState==4 && xhr.status==200) {
       var xml = xhr.responseXML;
       var positions = xml.getElementsByTagName('position');
-      if (positions.length>0) {  
-        clearMap();        
+      if (positions.length>0) {
+        clearMap();
         displayTrack(xml,update);
       }
       xhr = null;
@@ -161,7 +161,7 @@ function parsePosition(p) {
     'dateoccured': dateoccured,
     'distance': distance,
     'seconds': seconds
-  }; 
+  };
 }
 
 function load(type,userid,trackid) {
@@ -246,7 +246,7 @@ function getTrips(userid) {
       var trackSelect =  document.getElementsByName('track')[0];
       clearOptions(trackSelect);
       var trips = xml.getElementsByTagName('trip');
-      if (trips.length>0) {  
+      if (trips.length>0) {
         fillOptions(xml);
       } else {
         clearMap();
@@ -255,7 +255,7 @@ function getTrips(userid) {
     }
   }
   xhr.open('GET','gettrips.php?userid='+userid,true);
-  xhr.send();  
+  xhr.send();
 }
 
 function fillOptions(xml) {
@@ -269,7 +269,7 @@ function fillOptions(xml) {
     option.value = trackid;
     option.innerHTML = trackname;
     trackSelect.appendChild(option);
-  }  
+  }
   var defaultTrack = getNode(trips[0],'trackid');
   loadTrack(userid,defaultTrack,1);
 }
@@ -300,94 +300,94 @@ function setTime() {
     interval = i;
     document.getElementById('auto').innerHTML = interval;
     // if live tracking on, reload with new interval
-    if (live==1) { 
+    if (live==1) {
       live = 0;
       clearInterval(auto);
       autoReload();
     }
   // save current state as default
-	setCookie('interval',interval,30);
-  }               
+  setCookie('interval',interval,30);
+  }
 }
 
 // dynamic change of map api
 var savedBounds;
 function loadMapAPI(api) {
-	savedBounds = getBounds();
-	document.getElementById("map-canvas").innerHTML = '';
-	var url = new Array();
-	if (api=='gmaps') { 
-		url.push('api_gmaps.js');
-		url.push('//maps.googleapis.com/maps/api/js?'+((gkey!==null)?('key='+gkey+'&'):'')+'sensor=false&callback=init'); 
-	}
-	else { 
-		url.push('api_openlayers.js'); 
-		url.push('http://openlayers.org/api/OpenLayers.js'); 
-	}
-	addScript(url[0]);
-	waitAndLoad(api,url);	
+  savedBounds = getBounds();
+  document.getElementById("map-canvas").innerHTML = '';
+  var url = new Array();
+  if (api=='gmaps') {
+    url.push('api_gmaps.js');
+    url.push('//maps.googleapis.com/maps/api/js?'+((gkey!==null)?('key='+gkey+'&'):'')+'callback=init');
+  }
+  else {
+    url.push('api_openlayers.js');
+    url.push('//openlayers.org/api/OpenLayers.js');
+  }
+  addScript(url[0]);
+  waitAndLoad(api,url);
 }
 var loadTime = 0;
 function waitAndLoad(api,url) {
-	// wait till first script loaded
-	if (loadTime>5000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
-	if (loadedAPI!==api) {
-	setTimeout(function() { loadTime += 50; waitAndLoad(api,url); }, 50);
-		return;
-	}      
-	if(!isScriptLoaded(url[1])){
-		addScript(url[1]);
-	}
-	loadTime = 0;
-	waitAndInit(api);
+  // wait till first script loaded
+  if (loadTime>5000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
+  if (loadedAPI!==api) {
+  setTimeout(function() { loadTime += 50; waitAndLoad(api,url); }, 50);
+    return;
+  }
+  if(!isScriptLoaded(url[1])){
+    addScript(url[1]);
+  }
+  loadTime = 0;
+  waitAndInit(api);
 }
 
 function waitAndInit(api) {
-	// wait till main api loads
-	if (loadTime>10000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
-	try {
-		init();
-	}
-	catch(e) {
-		setTimeout(function() { loadTime += 50; waitAndInit(api); }, 50);
-		return;
-	}
-	loadTime = 0;
-	zoomToBounds(savedBounds);
-	loadTrack(userid,trackid,0);
-	// save current api as default
-	setCookie('api',api,30);
+  // wait till main api loads
+  if (loadTime>10000) { loadTime = 0; alert('Sorry, can\'t load '+api+' API'); return; }
+  try {
+    init();
+  }
+  catch(e) {
+    setTimeout(function() { loadTime += 50; waitAndInit(api); }, 50);
+    return;
+  }
+  loadTime = 0;
+  zoomToBounds(savedBounds);
+  loadTrack(userid,trackid,0);
+  // save current api as default
+  setCookie('api',api,30);
 }
 
 function addScript(url) {
-	var tag = document.createElement('script');
-	tag.setAttribute('type','text/javascript');
-	tag.setAttribute('src', url);
-	if (typeof tag!='undefined') {
-		document.getElementsByTagName('head')[0].appendChild(tag);
-	}	
+  var tag = document.createElement('script');
+  tag.setAttribute('type','text/javascript');
+  tag.setAttribute('src', url);
+  if (typeof tag!='undefined') {
+    document.getElementsByTagName('head')[0].appendChild(tag);
+  }
 }
 
 function isScriptLoaded(url) {
-	scripts = document.getElementsByTagName('script');
-	for (var i = scripts.length; i--;) {
-		// check if url matches src
-		var scriptUrl = scripts[i].src.replace(/https?:/,'');
-		if (scriptUrl != '' && url.indexOf(scriptUrl) !== -1) return true;
-	}
-	return false;
+  scripts = document.getElementsByTagName('script');
+  for (var i = scripts.length; i--;) {
+    // check if url matches src
+    var scriptUrl = scripts[i].src.replace(/https?:/,'');
+    if (scriptUrl != '' && url.indexOf(scriptUrl) !== -1) return true;
+  }
+  return false;
 }
 
 function setCookie(name,value,days) {
-	if (days) {
+  if (days) {
     var date = new Date();
     date.setTime(date.getTime()+(days*24*60*60*1000));
     var expires = '; expires='+date.toGMTString();
-	}
-	else { 
-    var expires = ''; 
-	}
-	document.cookie = 'phpTrackme_'+name+'='+value+expires+'; path=/';
+  }
+  else {
+    var expires = '';
+  }
+  document.cookie = 'phpTrackme_'+name+'='+value+expires+'; path=/';
 }
 
 function setLang(lang) {

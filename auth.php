@@ -26,8 +26,8 @@ if (isset($_COOKIE["phpTrackme_interval"])) { $interval = $_COOKIE["phpTrackme_i
 require_once("lang.php");
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 if ($mysqli->connect_errno) {
-    printf("Connect failed: %s\n", $mysqli->connect_error);
-    exit();
+  printf("Connect failed: %s\n", $mysqli->connect_error);
+  exit();
 }
 $mysqli->set_charset("utf8");
 $auth = NULL;
@@ -37,18 +37,18 @@ if ($require_authentication) {
   session_name('trackme');
   session_start();
   $sid = session_id();
-  
+
   $auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : "");
   $admin = (isset($_SESSION['admin']) ? $_SESSION['admin'] : "");
   $user = (isset($_REQUEST['user']) ? $_REQUEST['user'] : "");
   $pass = (isset($_REQUEST['pass']) ? md5($salt.$_REQUEST['pass']) : "");
   $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
   $auth_error = (isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : 0);
-  
+
   // not authenticated and username not submited
   // load form
-  if ((!$auth) && (!$user)){  
-    print 
+  if ((!$auth) && (!$user)){
+    print
   '<!DOCTYPE html>
   <html>
     <head>
@@ -92,13 +92,13 @@ if ($require_authentication) {
     $query->free_result();
     //correct pass
 
-    if (($user==$rec_user) && ($pass==$rec_pass)) { 
+    if (($user==$rec_user) && ($pass==$rec_pass)) {
       // login successful
       //delete old session
       $_SESSION = NULL;
-      session_destroy();  
+      session_destroy();
       // start new session
-      session_name('trackme');    
+      session_name('trackme');
       session_start();
       if (($user==$admin_user) && ($admin_user != "")) {
           $_SESSION['admin'] = $admin_user;
@@ -106,7 +106,7 @@ if ($require_authentication) {
       $_SESSION['auth'] = $rec_ID;
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url");
-      exit;    
+      exit;
     } else {
       // unsuccessful
       $error = "?auth_error=1";
@@ -115,8 +115,8 @@ if ($require_authentication) {
       if (isset($_COOKIE[session_name('trackme')])) {
         setcookie(session_name('trackme'),'',time()-42000,'/');
       }
-      session_destroy();  
-      $mysqli->close();    
+      session_destroy();
+      $mysqli->close();
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url$error");
       exit;

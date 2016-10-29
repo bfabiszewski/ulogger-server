@@ -33,16 +33,16 @@ if ($userid) {
   $xml->startDocument("1.0");
   $xml->setIndent(true);
   $xml->startElement('root');
-  
+
   while ($query->fetch()) {
     $xml->startElement("trip");
-      $xml->writeElement("trackid", $trackid); 
-      $xml->writeElement("trackname", $trackname); 
-    $xml->endElement();    
+      $xml->writeElement("trackid", $trackid);
+      $xml->writeElement("trackname", $trackname);
+    $xml->endElement();
   }
-  
+
   $xml->endElement();
-  $xml->endDocument();  
+  $xml->endDocument();
   $xml->flush();
 
   $query->free_result();

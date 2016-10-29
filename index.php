@@ -22,14 +22,14 @@ require_once("auth.php");
 
 if ($auth && !$admin) {
   // get username
-  $query = "SELECT username FROM users WHERE ID='$auth' LIMIT 1"; 
+  $query = "SELECT username FROM users WHERE ID='$auth' LIMIT 1";
   $result = $mysqli->query($query);
   $row = $result->fetch_assoc();
   $user = $row["username"];
-  
+
   // users
   $user_form = '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
-} 
+}
 else {
   // free access or admin user
   // prepare user select form
@@ -40,12 +40,12 @@ else {
   <u>'.$lang_user.'</u> ';
   if ($auth) {
     $user_form .= '&nbsp;'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
-  }  
+  }
   $user_form .= '
   <br />
   <form>
   <select name="user" onchange="selectUser(this)">
-  <option value="0">'.$lang_suser.'</option>';  
+  <option value="0">'.$lang_suser.'</option>';
   // get last position user
   $query = "SELECT FK_Users_ID FROM positions ORDER BY DateOccurred LIMIT 1";
   $result = $mysqli->query($query);
@@ -55,10 +55,10 @@ else {
   } else {
     $last_id = "";
   }
-  $query = "SELECT ID,username FROM users ORDER BY username"; 
+  $query = "SELECT ID,username FROM users ORDER BY username";
   $result = $mysqli->query($query);
   while ($row = $result->fetch_assoc()) {
-    $user_form .= sprintf("<option %svalue=\"%s\">%s</option>\n", ($row["ID"] == $last_id)?"selected ":"",$row["ID"], $row["username"]);    
+    $user_form .= sprintf("<option %svalue=\"%s\">%s</option>\n", ($row["ID"] == $last_id)?"selected ":"",$row["ID"], $row["username"]);
   }
   $user_form .= '
   </select>
@@ -79,7 +79,7 @@ if ($auth && !$admin) {
   // or user who did last move
   $userid = $last_id;
 }
-$query = "SELECT * FROM trips WHERE FK_Users_ID='$userid' ORDER BY ID DESC"; 
+$query = "SELECT * FROM trips WHERE FK_Users_ID='$userid' ORDER BY ID DESC";
 $result = $mysqli->query($query);
 
 $trackid = "";
@@ -111,7 +111,6 @@ $lang_form = '
 <option value="en"'.(($lang=="en")?' selected':'').'>English</option>
 <option value="pl"'.(($lang=="pl")?' selected':'').'>Polski</option>
 <option value="de"'.(($lang=="de")?' selected':'').'>Deutsch</option>
-<option value="hu"'.(($lang=="hu")?' selected':'').'>Magyar</option>
 </select>
 </form>
 ';
@@ -126,7 +125,7 @@ $units_form = '
 </form>
 ';
 
-print 
+print
 '<!DOCTYPE html>
 <html>
   <head>
@@ -164,14 +163,14 @@ print
     <script type="text/javascript" src="main.js"></script>
 ';
 if ($mapapi == "gmaps") {
-  print       
-'   <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?'.(isset($gkey)?'key='.$gkey.'&':'').'sensor=false"></script>    
-    <script type="text/javascript" src="api_gmaps.js"></script>   
+  print
+'   <script type="text/javascript" src="//maps.googleapis.com/maps/api/js'.(isset($gkey)?'?key='.$gkey:'').'"></script>
+    <script type="text/javascript" src="api_gmaps.js"></script>
 ';
 }
 else {
   print
-'   <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>    
+'   <script type="text/javascript" src="//openlayers.org/api/OpenLayers.js"></script>
     <script type="text/javascript" src="api_openlayers.js"></script>
 ';
 }
@@ -180,7 +179,7 @@ print '
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
     </script>
-    
+
   </head>
   <body onload="init();loadTrack(userid,trackid,1);">
     <div id="menu">
@@ -190,20 +189,20 @@ print '
         </div>
         <div id="trip">
           '.$track_form.'
-          <input type="checkbox" onchange="autoReload();"> '.$lang_autoreload.' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">'.$interval.'</span></a> s)<br />  
+          <input type="checkbox" onchange="autoReload();"> '.$lang_autoreload.' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">'.$interval.'</span></a> s)<br />
           <a href="javascript:void(0);" onclick="loadTrack(userid,trackid,0)">'.$lang_reload.'</a><br />
         </div>
         <div id="summary"></div>
         <div id="other">
           <a href="javascript:void(0);" onclick="toggleChart();">'.$lang_chart.'</a>
         </div>
-        <div id="api">  
+        <div id="api">
           '.$api_form.'
         </div>
-        <div id="lang">  
+        <div id="lang">
           '.$lang_form.'
         </div>
-        <div id="units">  
+        <div id="units">
           '.$units_form.'
         </div>
         <div id="export">
@@ -220,7 +219,7 @@ print '
       <div id="bottom">
         <div id="chart"></div>
         <div id="close"><a href="javascript:void(0);" onclick="toggleChart(0);">'.$lang_close.'</a></div>
-      </div>    
+      </div>
     </div>
   </body>
 </html>';

@@ -17,9 +17,9 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "2.3"; 
+$version = "2.3";
 
-// default map drawing framework 
+// default map drawing framework
 // (gmaps = google maps, openlayers = openlayers/osm)
 //$mapapi = "gmaps";
 $mapapi = "openlayers";
@@ -50,7 +50,7 @@ $dbname = ""; // database name
 $salt = ""; // fill in random string here, it will increase security of password hashes
 
 // other
-// require login/password authentication 
+// require login/password authentication
 // (0 = no, 1 = yes)
 $require_authentication = 1;
 
@@ -58,12 +58,12 @@ $require_authentication = 1;
 // none if empty
 $admin_user = "";
 
-// allow automatic registration of new users 
+// allow automatic registration of new users
 // (0 = no, 1 = yes)
 $allow_registration = 0;
 
 // Default interval in seconds for live auto reload
-$interval = 10; 
+$interval = 10;
 
 // Default language
 // (en, pl, de)
