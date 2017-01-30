@@ -139,8 +139,8 @@ function parsePosition(p) {
   if (altitude != null) { altitude = parseInt(altitude); }
   var speed = getNode(p,'speed'); // may be null
   if (speed != null) { speed = parseInt(speed); }
-  var angle = getNode(p,'angle'); // may be null
-  if (angle != null) { angle = parseInt(angle); }
+  var bearing = getNode(p,'bearing'); // may be null
+  if (bearing != null) { bearing = parseInt(bearing); }
   var accuracy = getNode(p,'accuracy'); // may be null
   if (accuracy != null) { accuracy = parseInt(accuracy); }
   var comments = getNode(p,'comments'); // may be null
@@ -155,7 +155,7 @@ function parsePosition(p) {
     'longitude': longitude,
     'altitude': altitude,
     'speed': speed,
-    'angle': angle,
+    'bearing': bearing,
     'accuracy': accuracy,
     'comments': comments,
     'username': username,

@@ -29,8 +29,8 @@ function haversine_distance($lat1, $lon1, $lat2, $lon2) {
   $lon2 = deg2rad($lon2);
   $latD = $lat2 - $lat1;
   $lonD = $lon2 - $lon1;
-  $angle = 2*asin(sqrt(pow(sin($latD/2),2)+cos($lat1)*cos($lat2)*pow(sin($lonD/2),2)));
-  return $angle * 6371000;
+  $bearing = 2*asin(sqrt(pow(sin($latD/2),2)+cos($lat1)*cos($lat2)*pow(sin($lonD/2),2)));
+  return $bearing * 6371000;
 }
 
 if ($userid) {
@@ -54,7 +54,7 @@ if ($userid) {
     $query->bind_param('i', $userid);
   }
   $query->execute();
-  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$angle,$dateoccured,$accuracy,$comments,$username,$trackname,$trackid);
+  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$bearing,$dateoccured,$accuracy,$comments,$username,$trackname,$trackid);
 
   header("Content-type: text/xml");
   $xml = new XMLWriter();
@@ -70,7 +70,7 @@ if ($userid) {
       $xml->writeElement("longitude", $longitude);
       $xml->writeElement("altitude", ($altitude)?round($altitude):$altitude);
       $xml->writeElement("speed", $speed);
-      $xml->writeElement("angle", $angle);
+      $xml->writeElement("bearing", $bearing);
       $xml->writeElement("dateoccured", $dateoccured);
       $xml->writeElement("accuracy", $accuracy);
       $xml->writeElement("comments", $comments);
