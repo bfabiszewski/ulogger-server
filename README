@@ -1,15 +1,11 @@
-This is a simple web viewer for GPS tracks uploaded with mobile client.
-It is designed to work with Android version of great app TrackMe (http://www.luisespinosa.com/trackme_eng.html), 
-but it should be easy to adjust it for other clients (other database tables).
-Interface "look and feel" is based on TrackMe Display (http://forum.xda-developers.com/showthread.php?t=477394).
-It is possible to switch between Google Maps API and OpenLayers API with OpenStreetMap (or any other compatible base layer).
-It also supports Backitude client (thanks to markcs: see README_Backitude).
+This is a web application for real-time collection of geolocation data, tracks viewing and management. 
+Together with a dedicated μlogger mobile client it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
 
 Live demo:
-- http://flaa.fabiszewski.net/phptrackme/
+- http://flaa.fabiszewski.net/ulogger/
 
 Requirements:
-- PHP 5.1.2
+- PHP 5.5
 - MYSQL 4.1
 - browser with javascript enabled, cookies for authentication and saving preferences
 
@@ -21,15 +17,14 @@ Features:
 - multiple users
 - user authentication
 - Google Maps API v3
-- OpenLayers v2
+- OpenLayers v2 (OpenStreet and other layers)
 - ajax 
-- server based configuration
 - user preferences stored in cookies
 
 Todo
 - install script
 - custom icons
-- write opensource client?
 
 License
 - GPL
+- μlogger is a fork of phpTrackme - tracks viewer I wrote for TrackMe app

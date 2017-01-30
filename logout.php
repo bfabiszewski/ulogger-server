@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -17,11 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-session_name('trackme');
+session_name('ulogger');
 session_start();
 $_SESSION = NULL;
-if (isset($_COOKIE[session_name('trackme')])) {
-  setcookie(session_name('trackme'),'',time()-42000,'/');
+if (isset($_COOKIE[session_name('ulogger')])) {
+  setcookie(session_name('ulogger'),'',time()-42000,'/');
 }
 session_destroy();
 $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");

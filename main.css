@@ -1,6 +1,6 @@
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -99,7 +99,7 @@ select {
   cursor: pointer;
 }
 
-#user, #trip, #summary, #export, #other, #units {
+#user, #track, #summary, #export, #other, #units {
   padding-bottom: 10px;
 }
 #login {
@@ -180,4 +180,10 @@ select {
 
 #close a, #close:link, #close:visited {
   color: #5070af;
+}
+
+.mi {
+  color:white; 
+  padding-right:0.1em; 
+  font-style:italic;
 }

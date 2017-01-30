@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -17,15 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-require_once("config.php");
 require_once("auth.php");
 
 if ($auth && !$admin) {
   // get username
-  $query = "SELECT username FROM users WHERE ID='$auth' LIMIT 1";
+  $query = "SELECT login FROM users WHERE id='$auth' LIMIT 1";
   $result = $mysqli->query($query);
   $row = $result->fetch_assoc();
-  $user = $row["username"];
+  $user = $row["login"];
 
   // users
   $user_form = '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
@@ -47,7 +46,7 @@ else {
   <select name="user" onchange="selectUser(this)">
   <option value="0">'.$lang_suser.'</option>';
   // get last position user
-  $query = "SELECT FK_Users_ID FROM positions ORDER BY DateOccurred LIMIT 1";
+  $query = "SELECT p.user_id FROM positions p ORDER BY p.time LIMIT 1";
   $result = $mysqli->query($query);
   if ($result->num_rows) {
     $last = $result->fetch_row();
@@ -55,10 +54,10 @@ else {
   } else {
     $last_id = "";
   }
-  $query = "SELECT ID,username FROM users ORDER BY username";
+  $query = "SELECT id, login FROM users ORDER BY login";
   $result = $mysqli->query($query);
   while ($row = $result->fetch_assoc()) {
-    $user_form .= sprintf("<option %svalue=\"%s\">%s</option>\n", ($row["ID"] == $last_id)?"selected ":"",$row["ID"], $row["username"]);
+    $user_form .= sprintf("<option %svalue=\"%s\">%s</option>\n", ($row["id"] == $last_id)?"selected ":"",$row["id"], $row["login"]);
   }
   $user_form .= '
   </select>
@@ -79,13 +78,13 @@ if ($auth && !$admin) {
   // or user who did last move
   $userid = $last_id;
 }
-$query = "SELECT * FROM trips WHERE FK_Users_ID='$userid' ORDER BY ID DESC";
+$query = "SELECT * FROM tracks WHERE user_id='$userid' ORDER BY id DESC";
 $result = $mysqli->query($query);
 
 $trackid = "";
 while ($row = $result->fetch_assoc()) {
-  if ($trackid == "") { $trackid = $row["ID"]; } // get first row
-  $track_form .= sprintf("<option value=\"%s\">%s</option>\n", $row["ID"], $row["Name"]);
+  if ($trackid == "") { $trackid = $row["id"]; } // get first row
+  $track_form .= sprintf("<option value=\"%s\">%s</option>\n", $row["id"], $row["name"]);
 }
 $track_form .= '
 </select>
@@ -111,6 +110,7 @@ $lang_form = '
 <option value="en"'.(($lang=="en")?' selected':'').'>English</option>
 <option value="pl"'.(($lang=="pl")?' selected':'').'>Polski</option>
 <option value="de"'.(($lang=="de")?' selected':'').'>Deutsch</option>
+<option value="hu"'.(($lang=="hu")?' selected':'').'>Magyar</option>
 </select>
 </form>
 ';
@@ -140,6 +140,7 @@ print
       var lang_user = "'.$lang_user.'";
       var lang_time = "'.$lang_time.'";
       var lang_speed = "'.$lang_speed.'";
+      var lang_accuracy = "'.$lang_accuracy.'";
       var lang_altitude = "'.$lang_altitude.'";
       var lang_ttime = "'.$lang_ttime.'";
       var lang_aspeed = "'.$lang_aspeed.'";
@@ -187,7 +188,7 @@ print '
         <div id="user">
           '.$user_form.'
         </div>
-        <div id="trip">
+        <div id="track">
           '.$track_form.'
           <input type="checkbox" onchange="autoReload();"> '.$lang_autoreload.' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">'.$interval.'</span></a> s)<br />
           <a href="javascript:void(0);" onclick="loadTrack(userid,trackid,0)">'.$lang_reload.'</a><br />
@@ -212,7 +213,7 @@ print '
         </div>
       </div>
       <div id="menu-close" onclick="toggleMenu();">»</div>
-      <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/phpTrackme">phpTrackme</a> '.$version.'</div>
+      <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> '.$version.'</div>
     </div>
     <div id="main">
       <div id="map-canvas"></div>

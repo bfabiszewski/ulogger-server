@@ -1,6 +1,6 @@
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -133,7 +133,9 @@ function setMarker(p,i,posLen) {
     ((p.comments != null)?'<div id="pcomments">'+p.comments+'</div>':'')+
     '<div id="pleft"><b>'+lang_time+':</b> '+p.dateoccured+'<br />'+
     ((p.speed != null)?'<b>'+lang_speed+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
-    ((p.altitude != null)?'<b>'+lang_altitude+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+'</div>'+
+    ((p.altitude != null)?'<b>'+lang_altitude+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+
+    ((p.accuracy != null)?'<b>'+lang_accuracy+':</b> '+(p.accuracy*factor_m).toFixed()+' '+unit_m+'<br />':'')+
+    '</div>'+
     ((latest==0)?
     ('<div id="pright"><b>'+lang_ttime+':</b> '+p.totalSeconds.toHMS()+'<br />'+
     '<b>'+lang_aspeed+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+

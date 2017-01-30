@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -36,16 +36,25 @@ function haversine_distance($lat1, $lon1, $lat2, $lon2) {
 if ($userid) {
   if ($trackid) {
     // get all track data
-    $query = $mysqli->prepare("SELECT positions.ID,positions.Latitude,positions.Longitude,positions.Altitude,positions.Speed,positions.Angle,positions.DateOccurred,positions.Comments,users.username,trips.Name,trips.ID FROM positions LEFT JOIN users ON (positions.FK_Users_ID=users.ID) LEFT JOIN trips ON (positions.FK_Trips_ID=trips.ID) WHERE positions.FK_Users_ID=? AND positions.FK_Trips_ID=? ORDER BY positions.DateOccurred");
+    $query = $mysqli->prepare("SELECT p.id, p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.time, p.accuracy, p.comment, u.login, t.name, t.id 
+                            FROM positions p
+                            LEFT JOIN users u ON (p.user_id=u.id) 
+                            LEFT JOIN tracks t ON (p.track_id=t.id) 
+                            WHERE p.user_id=? AND p.track_id=? 
+                            ORDER BY p.time");
     $query->bind_param('ii', $userid, $trackid);
-  }
-  else {
+  } else {
     // get data only for latest point
-    $query = $mysqli->prepare("SELECT positions.ID,positions.Latitude,positions.Longitude,positions.Altitude,positions.Speed,positions.Angle,positions.DateOccurred,positions.Comments,users.username,trips.Name,trips.ID FROM positions LEFT JOIN users ON (positions.FK_Users_ID=users.ID) LEFT JOIN trips ON (positions.FK_Trips_ID=trips.ID) WHERE positions.FK_Users_ID=? ORDER BY positions.DateOccurred DESC LIMIT 1");
+    $query = $mysqli->prepare("SELECT p.id, p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.time, p.accuracy, p.comment, u.login, t.name, t.id 
+                                FROM positions p
+                                LEFT JOIN users u ON (p.user_id=u.id) 
+                                LEFT JOIN tracks t ON (p.track_id=t.id) 
+                                WHERE p.user_id=?
+                                ORDER BY p.time DESC LIMIT 1");
     $query->bind_param('i', $userid);
   }
   $query->execute();
-  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$angle,$dateoccured,$comments,$username,$trackname,$trackid);
+  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$angle,$dateoccured,$accuracy,$comments,$username,$trackname,$trackid);
 
   header("Content-type: text/xml");
   $xml = new XMLWriter();
@@ -63,6 +72,7 @@ if ($userid) {
       $xml->writeElement("speed", $speed);
       $xml->writeElement("angle", $angle);
       $xml->writeElement("dateoccured", $dateoccured);
+      $xml->writeElement("accuracy", $accuracy);
       $xml->writeElement("comments", $comments);
       $xml->writeElement("username", $username);
       $xml->writeElement("trackid", $trackid);

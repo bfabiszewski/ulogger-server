@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -22,10 +22,10 @@ require_once("auth.php");
 $userid = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
 
 if ($userid) {
-  $query = $mysqli->prepare("SELECT ID,Name FROM trips WHERE FK_Users_ID=? ORDER BY ID DESC");
+  $query = $mysqli->prepare("SELECT id, name FROM tracks WHERE user_id=? ORDER BY id DESC");
   $query->bind_param('i', $userid);
   $query->execute();
-  $query->bind_result($trackid,$trackname);
+  $query->bind_result($trackid, $trackname);
 
   header("Content-type: text/xml");
   $xml = new XMLWriter();

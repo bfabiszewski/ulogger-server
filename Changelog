@@ -1,17 +1,3 @@
 Changelog
 
-2.3 admin user with access to all tracks (markcs)
-    Backitude support (markcs)
-    minor fixes
-    
-2.2 preferences stored in cookies
-    display comments in popups
-    option to hide menu
-
-2.1 new OpenLayers layers
-    German translation (dtrieb)
-    minor fixes
-
-2.0 OpenLayers support added
-
-1.0 initial version 
+0.1 initial version 

@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -17,7 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-$version = "2.3";
+
+// This is default configuration file. 
+// Copy it to config.php and customize
+
+$version = "0.1";
 
 // default map drawing framework
 // (gmaps = google maps, openlayers = openlayers/osm)
@@ -47,7 +51,6 @@ $dbhost = ""; // mysql host, eg. localhost
 $dbuser = ""; // database user
 $dbpass = ""; // database pass
 $dbname = ""; // database name
-$salt = ""; // fill in random string here, it will increase security of password hashes
 
 // other
 // require login/password authentication
@@ -66,10 +69,11 @@ $allow_registration = 0;
 $interval = 10;
 
 // Default language
-// (en, pl, de)
+// (en, pl, de, hu)
 $lang = "en";
 //$lang = "pl";
 //$lang = "de";
+//$lang = "hu";
 
 // units
 // (metric, imperial)

@@ -1,7 +1,7 @@
 <?php
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -20,7 +20,7 @@
 switch($lang) {
   default:
   case "en":
-    $lang_title = "• phpTrackme •";
+    $lang_title = "• μlogger •";
     $lang_private = "You need login and password to access this page.";
     $lang_authfail = "Wrong username or password";
     $lang_user = "User";
@@ -33,6 +33,7 @@ switch($lang) {
     $lang_close = "close";
     $lang_time = "Time";
     $lang_speed = "Speed";
+    $lang_accuracy = "Accuracy";
     $lang_altitude = "Altitude";
     $lang_ttime = "Total time";
     $lang_aspeed = "Average speed";
@@ -55,7 +56,7 @@ switch($lang) {
     break;
 
   case "pl":
-    $lang_title = "• phpTrackme •";
+    $lang_title = "• μlogger •";
     $lang_private = "Aby się zalogować musisz podać login i hasło";
     $lang_authfail = "błędny login lub hasło";
     $lang_user = "Użytkownik";
@@ -68,6 +69,7 @@ switch($lang) {
     $lang_close = "zamknij";
     $lang_time = "Czas";
     $lang_speed = "Prędkość";
+    $lang_accuracy = "Doładność";
     $lang_altitude = "Wysokość";
     $lang_ttime = "Czas podróży";
     $lang_aspeed = "Średnia prędkość";
@@ -90,7 +92,7 @@ switch($lang) {
     break;
 
     case "de":
-    $lang_title = "• phpTrackme •";
+    $lang_title = "• μlogger •";
     $lang_private = "Sie müssen Benutzernamen und Kennwort eingeben, um auf diese Seite zuzugreifen.";
     $lang_authfail = "Falscher Benutzername oder Passwort";
     $lang_user = "Benutzer";
@@ -103,6 +105,7 @@ switch($lang) {
     $lang_close = "Schließen";
     $lang_time = "Zeit";
     $lang_speed = "Geschwindigkeit";
+    $lang_accuracy = "Genauigkeit";
     $lang_altitude = "Höhe";
     $lang_ttime = "Gesamte Zeit";
     $lang_aspeed = "Durchschnittstempo";
@@ -125,7 +128,7 @@ switch($lang) {
     break;
 
   case "hu":
-    $lang_title = "• phpTrackme •";
+    $lang_title = "• μlogger •";
     $lang_private = "Felhasználónév és jelszó szükséges a belépéshez";
     $lang_authfail = "Hibás név vagy jelszó";
     $lang_user = "Felhasználó";
@@ -138,6 +141,7 @@ switch($lang) {
     $lang_close = "Bezár";
     $lang_time = "Rögzítés ideje";
     $lang_speed = "Sebesség";
+    $lang_accuracy = "Pontosság";
     $lang_altitude = "Magasság";
     $lang_ttime = "Menetidő";
     $lang_aspeed = "Átlagsebesség";

@@ -1,6 +1,6 @@
-/* phpTrackme
+/* μlogger
  *
- * Copyright(C) 2013 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by
@@ -141,6 +141,8 @@ function parsePosition(p) {
   if (speed != null) { speed = parseInt(speed); }
   var angle = getNode(p,'angle'); // may be null
   if (angle != null) { angle = parseInt(angle); }
+  var accuracy = getNode(p,'accuracy'); // may be null
+  if (accuracy != null) { accuracy = parseInt(accuracy); }
   var comments = getNode(p,'comments'); // may be null
   var username = getNode(p,'username');
   var trackname = getNode(p,'trackname');
@@ -154,6 +156,7 @@ function parsePosition(p) {
     'altitude': altitude,
     'speed': speed,
     'angle': angle,
+    'accuracy': accuracy,
     'comments': comments,
     'username': username,
     'trackname': trackname,
@@ -235,18 +238,18 @@ function selectUser(f) {
   }
   document.getElementById('latest').checked = false;
   if (latest==1) { toggleLatest(); }
-  getTrips(userid);
+  getTracks(userid);
 }
 
-function getTrips(userid) {
+function getTracks(userid) {
   var xhr = getXHR();
   xhr.onreadystatechange = function() {
     if (xhr.readyState==4 && xhr.status==200) {
       var xml = xhr.responseXML;
       var trackSelect =  document.getElementsByName('track')[0];
       clearOptions(trackSelect);
-      var trips = xml.getElementsByTagName('trip');
-      if (trips.length>0) {
+      var tracks = xml.getElementsByTagName('track');
+      if (tracks.length>0) {
         fillOptions(xml);
       } else {
         clearMap();
@@ -254,23 +257,23 @@ function getTrips(userid) {
       xhr = null;
     }
   }
-  xhr.open('GET','gettrips.php?userid='+userid,true);
+  xhr.open('GET','gettracks.php?userid='+userid,true);
   xhr.send();
 }
 
 function fillOptions(xml) {
   var trackSelect =  document.getElementsByName('track')[0];
-  var trips = xml.getElementsByTagName('trip');
-  var trpLen = trips.length;
-  for (var i=0; i<trpLen; i++) {
-    var trackid = getNode(trips[i],'trackid');
-    var trackname = getNode(trips[i],'trackname');
+  var tracks = xml.getElementsByTagName('track');
+  var trackLen = tracks.length;
+  for (var i=0; i<trackLen; i++) {
+    var trackid = getNode(tracks[i],'trackid');
+    var trackname = getNode(tracks[i],'trackname');
     var option = document.createElement("option");
     option.value = trackid;
     option.innerHTML = trackname;
     trackSelect.appendChild(option);
   }
-  var defaultTrack = getNode(trips[0],'trackid');
+  var defaultTrack = getNode(tracks[0],'trackid');
   loadTrack(userid,defaultTrack,1);
 }
 
@@ -387,7 +390,7 @@ function setCookie(name,value,days) {
   else {
     var expires = '';
   }
-  document.cookie = 'phpTrackme_'+name+'='+value+expires+'; path=/';
+  document.cookie = 'ulogger_'+name+'='+value+expires+'; path=/';
 }
 
 function setLang(lang) {
