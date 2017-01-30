@@ -110,7 +110,19 @@ while ($user = $users_result->fetch_assoc()) {
   $user_id = $user_insert->insert_id;
   process_user_tracks($user_id);
 }
+$users_result->close();
+$user_insert->close();
 
+$mysqli->close();
+$pt_mysqli->close();
+echo "Import finished successfully\n";
+exit(0);
+
+/* Helper functions */
+
+/** Import tracks metadata for given user
+ * @param $user_id User id
+ */
 function process_user_tracks($user_id) {
   global $pt_mysqli, $mysqli;
   $sql = "SELECT * FROM trips WHERE FK_Users_ID = ? ORDER BY ID";
@@ -138,6 +150,7 @@ function process_user_tracks($user_id) {
   }
   $result = $tracks_select->get_result();
   while ($track = $result->fetch_assoc()) {
+    $pt_id = $track['ID'];
     $pt_name = $track['Name'];
     $pt_comment = $track['Comments'];
     if (!$track_insert->execute()) {
@@ -145,18 +158,26 @@ function process_user_tracks($user_id) {
       exit(1);
     }
     $track_id = $track_insert->insert_id;
-    process_track($user_id, $track_id);
+    process_track($user_id, $pt_id, $track_id);
   }
+  $result->close();
+  $tracks_select->close();
+  $track_insert->close();
 }
 
-function process_track($user_id, $track_id) {
+/** Import positions for given track
+ * @param $user_id User id
+ * @param $old_id Old database track id
+ * @param $new_id New database track id
+ */
+function process_track($user_id, $old_id, $new_id) {
   global $pt_mysqli, $mysqli;
   $sql = "SELECT * FROM positions WHERE FK_Users_ID = ? AND FK_Trips_ID = ? ORDER BY DateOccurred";
   if (!($pos_select = $pt_mysqli->prepare($sql))) {
     echo "Prepare failed: (" . $pt_mysqli->errno . ") " . $pt_mysqli->error . "\n";
     exit(1);
   }
-  if (!$pos_select->bind_param('ii', $user_id, $track_id)) {
+  if (!$pos_select->bind_param('ii', $user_id, $old_id)) {
     echo "Binding parameters failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
     exit(1);
   }
@@ -174,7 +195,7 @@ function process_track($user_id, $track_id) {
   $altitude = $speed = $bearing = $accuracy = null;
 
   if (!$pos_insert->bind_param('siiddddddssi',
-            $time, $user_id, $track_id, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageid)) {
+            $time, $user_id, $new_id, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageid)) {
     echo "Binding parameters failed: (" . $pos_insert->errno . ") " . $pos_insert->error . "\n";
     exit(1);
   }
@@ -193,8 +214,8 @@ function process_track($user_id, $track_id) {
       exit(1);
     }
   }
+  $result->close();
+  $pos_insert->close();
+  $pos_select->close();
 }
-
-echo "Import finished successfully\n";
-exit(0);
 ?>
