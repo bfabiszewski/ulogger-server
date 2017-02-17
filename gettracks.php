@@ -35,7 +35,7 @@ if ($userid) {
   $xml->startElement('root');
 
   while ($query->fetch()) {
-    $xml->startElement("trip");
+    $xml->startElement("track");
       $xml->writeElement("trackid", $trackid);
       $xml->writeElement("trackname", $trackname);
     $xml->endElement();
