@@ -187,3 +187,47 @@ select {
   padding-right:0.1em; 
   font-style:italic;
 }
+
+#modal {
+  display: block;
+  position: fixed;
+  z-index: 10010;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: black; /* fallback */
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 10%;
+}
+
+#modal-header {
+  top: 10px;
+  position: relative;
+  text-align: right;
+  margin: 0 auto;
+  width: 40%;
+  min-width: 300px;
+}
+
+#modal-body {
+  font-size: 0.9em;
+  font-family: Verdana, sans-serif;
+  color: white;
+  background-color: #666;
+  margin: 0 auto 15% auto;
+  border: 1px solid #888;
+  width: 40%;
+  min-width: 300px;
+  padding: 1%;
+}
+
+#modal input[type=text], #modal input[type=password] {
+  width: 100%;
+  padding: 0.4em;
+  margin: 0.8em 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}

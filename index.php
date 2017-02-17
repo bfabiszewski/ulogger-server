@@ -19,7 +19,8 @@
  */
 require_once("auth.php");
 
-if ($auth && !$admin) {
+if ($auth && !$admin && !$public_tracks) {
+  // only authorized user tracks
   // get username
   $query = "SELECT login FROM users WHERE id='$auth' LIMIT 1";
   $result = $mysqli->query($query);
@@ -30,7 +31,7 @@ if ($auth && !$admin) {
   $user_form = '<u>'.$lang_user.'</u><br />'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
 }
 else {
-  // free access or admin user
+  // public access or admin user
   // prepare user select form
   if ($admin) {
      $user = $admin_user;
@@ -71,7 +72,7 @@ $track_form = '
 <form>
 <select name="track" onchange="selectTrack(this)">';
 $userid = "";
-if ($auth && !$admin) {
+if ($auth && !$admin && !$public_tracks) {
   // display track of authenticated user
   $userid = $auth;
 } elseif ($last_id) {
@@ -124,6 +125,18 @@ $units_form = '
 </select>
 </form>
 ';
+// admin menu
+$admin_menu = '';
+$admin_script = '';
+if ($admin) {
+  $admin_menu = '
+  <div id="admin_menu">
+    <u>'.$lang_adminmenu.'</u><br />
+      <a href="javascript:void(0);" onclick="addUser()">'.$lang_adduser.'</a><br />
+  </div>
+  ';
+  $admin_script = '<script type="text/javascript" src="admin.js"></script>';
+}
 
 print
 '<!DOCTYPE html>
@@ -176,6 +189,7 @@ else {
 ';
 }
 print '
+   '.$admin_script.'
    <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
@@ -211,6 +225,7 @@ print '
           <a href="javascript:void(0);" onclick="load(\'kml\',userid,trackid)">kml</a><br />
           <a href="javascript:void(0);" onclick="load(\'gpx\',userid,trackid)">gpx</a><br />
         </div>
+        '.$admin_menu.'
       </div>
       <div id="menu-close" onclick="toggleMenu();">»</div>
       <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> '.$version.'</div>

@@ -57,13 +57,13 @@ $dbname = ""; // database name
 // (0 = no, 1 = yes)
 $require_authentication = 1;
 
+// all users tracks are visible to authenticated user
+// (0 = no, 1 = yes)
+$public_tracks = 0;
+
 // admin user who has access to all users locations
 // none if empty
 $admin_user = "";
-
-// allow automatic registration of new users
-// (0 = no, 1 = yes)
-$allow_registration = 0;
 
 // Default interval in seconds for live auto reload
 $interval = 10;

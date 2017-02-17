@@ -53,6 +53,9 @@ switch($lang) {
     $lang_units = "Units";
     $lang_metric = "Metric";
     $lang_imperial = "Imperial/US";
+    $lang_adminmenu = "Administration";
+    $lang_adduser = "Add user";
+    $lang_userexists = "User exists";
     break;
 
   case "pl":
@@ -89,6 +92,9 @@ switch($lang) {
     $lang_units = "Jednostki";
     $lang_metric = "Metryczne";
     $lang_imperial = "Anglosaskie";
+    $lang_adminmenu = "Administracja";
+    $lang_adduser = "Dodaj użytkownika";
+    $lang_userexists = "Użytkownik istnieje";
     break;
 
     case "de":
@@ -125,6 +131,11 @@ switch($lang) {
     $lang_units = "Maßsystem";
     $lang_metric = "Metrisches";
     $lang_imperial = "Angloamerikanisches";
+    $lang_adminmenu = "Verwaltung";
+
+    // todo: translate
+    $lang_adduser = "Add user";
+    $lang_userexists = "User exists";
     break;
 
   case "hu":
@@ -161,6 +172,10 @@ switch($lang) {
     $lang_units = "Mértékegység";
     $lang_metric = "Metrikus";
     $lang_imperial = "Imperal/US";
+    $lang_adminmenu = "Adminisztráció";
+    // todo: translate
+    $lang_adduser = "Add user"; 
+    $lang_userexists = "User exists";
     break;
 }
 ?>

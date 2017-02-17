@@ -95,7 +95,7 @@ if ($require_authentication || defined('headless')) {
     $query = $mysqli->prepare("SELECT id, login, password FROM users WHERE login=? LIMIT 1");
     $query->bind_param('s', $user);
     $query->execute();
-    $query->bind_result($rec_ID, $rec_user, $rec_pass);
+    $query->bind_result($rec_id, $rec_user, $rec_pass);
     $query->fetch();
     $query->free_result();
     //correct pass
@@ -111,14 +111,9 @@ if ($require_authentication || defined('headless')) {
       if (($user == $admin_user) && !empty($admin_user)) {
           $_SESSION['admin'] = $admin_user;
       }
-      $_SESSION['auth'] = $rec_ID;
-      if (defined('headless')) {
-        $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/client/index.php");
-        header("Location: $ssl://$url");
-      } else {
-        $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
-        header("Location: $ssl://$url");
-      }
+      $_SESSION['auth'] = $rec_id;
+      $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
+      header("Location: $ssl://$url");
       exit();
     } else {
       // unsuccessful
