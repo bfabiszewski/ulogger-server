@@ -40,6 +40,8 @@ else {
   <u>'.$lang_user.'</u> ';
   if ($auth) {
     $user_form .= '&nbsp;'.$user.' (<a href="logout.php">'.$lang_logout.'</a>)';
+  } else {
+    $user_form .= '&nbsp;<a href="index.php?force_login=1">'.$lang_login.'</a>';
   }
   $user_form .= '
   <br />

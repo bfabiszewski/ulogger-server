@@ -34,16 +34,21 @@ if ($mysqli->connect_errno) {
   exit();
 }
 $mysqli->set_charset("utf8");
-$auth = NULL;
-$admin = NULL;
-if ($require_authentication || defined('headless')) {
-  /* authentication */
-  session_name('ulogger');
-  session_start();
-  $sid = session_id();
 
-  $auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : "");
-  $admin = (isset($_SESSION['admin']) ? $_SESSION['admin'] : "");
+session_name('ulogger');
+session_start();
+$sid = session_id();
+
+// check for forced login to authorize admin in case of public access
+$force_login = (isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : 0);
+if ($force_login) {
+  $require_authentication = 1;
+}
+
+$auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : NULL);
+$admin = (isset($_SESSION['admin']) ? $_SESSION['admin'] : NULL);
+if ($auth || $require_authentication || defined('headless')) {
+  /* authentication */
   $user = (isset($_REQUEST['user']) ? $_REQUEST['user'] : "");
   $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : "");
   $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
@@ -80,6 +85,7 @@ if ($require_authentication || defined('headless')) {
           <input type="password" name="pass"><br />
           <br />
           <input type="submit" value="'.$lang_login.'">
+          '.(($force_login==1) ? "<input type=\"hidden\" name=\"force_login\" value=\"1\">" : "").'
           </form>
           <div id="error">'.(($auth_error==1) ? $lang_authfail : "").'</div>
         </div>
