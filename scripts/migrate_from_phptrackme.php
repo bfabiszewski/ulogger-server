@@ -125,7 +125,7 @@ exit(0);
  */
 function process_user_tracks($user_id) {
   global $pt_mysqli, $mysqli;
-  $sql = "SELECT * FROM trips WHERE FK_Users_ID = ? ORDER BY ID";
+  $sql = "SELECT ID, Name, Comments FROM trips WHERE FK_Users_ID = ? ORDER BY ID";
   if (!($tracks_select = $pt_mysqli->prepare($sql))) {
     echo "Prepare failed: (" . $pt_mysqli->errno . ") " . $pt_mysqli->error . "\n";
     exit(1);
@@ -134,10 +134,15 @@ function process_user_tracks($user_id) {
     echo "Binding parameters failed: (" . $tracks_select->errno . ") " . $tracks_select->error . "\n";
     exit(1);
   }
+  if (!$tracks_select->bind_result($pt_id, $pt_name, $pt_comment)) {
+    echo "Binding parameters failed: (" . $tracks_select->errno . ") " . $tracks_select->error . "\n";
+    exit(1);
+  }
   if (!$tracks_select->execute()) {
     echo "Execute failed: (" . $tracks_select->errno . ") " . $tracks_select->error . "\n";
     exit(1);
   }
+  $tracks_select->store_result();
   if (!($track_insert = $mysqli->prepare("INSERT INTO tracks (user_id, name, comment) VALUES (?, ?, ?)"))) {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
     exit(1);
@@ -148,11 +153,7 @@ function process_user_tracks($user_id) {
     echo "Binding parameters failed: (" . $track_insert->errno . ") " . $track_insert->error . "\n";
     exit(1);
   }
-  $result = $tracks_select->get_result();
-  while ($track = $result->fetch_assoc()) {
-    $pt_id = $track['ID'];
-    $pt_name = $track['Name'];
-    $pt_comment = $track['Comments'];
+  while ($tracks_select->fetch()) {
     if (!$track_insert->execute()) {
       echo "Execute failed: (" . $track_insert->errno . ") " . $track_insert->error . "\n";
       exit(1);
@@ -160,7 +161,7 @@ function process_user_tracks($user_id) {
     $track_id = $track_insert->insert_id;
     process_track($user_id, $pt_id, $track_id);
   }
-  $result->close();
+  $tracks_select->free_result();
   $tracks_select->close();
   $track_insert->close();
 }
@@ -172,7 +173,7 @@ function process_user_tracks($user_id) {
  */
 function process_track($user_id, $old_id, $new_id) {
   global $pt_mysqli, $mysqli;
-  $sql = "SELECT * FROM positions WHERE FK_Users_ID = ? AND FK_Trips_ID = ? ORDER BY DateOccurred";
+  $sql = "SELECT Latitude, Longitude, Altitude, Speed, Angle, DateOccurred, Comments FROM pt_positions WHERE FK_Users_ID = ? AND FK_Trips_ID = ? ORDER BY DateOccurred";
   if (!($pos_select = $pt_mysqli->prepare($sql))) {
     echo "Prepare failed: (" . $pt_mysqli->errno . ") " . $pt_mysqli->error . "\n";
     exit(1);
@@ -181,10 +182,15 @@ function process_track($user_id, $old_id, $new_id) {
     echo "Binding parameters failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
     exit(1);
   }
+  if (!$pos_select->bind_result($lat, $lon, $altitude, $speed, $bearing, $time, $comment)) {
+    echo "Binding parameters failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
+    exit(1);
+  }
   if (!$pos_select->execute()) {
     echo "Execute failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
     exit(1);
   }
+  $pos_select->store_result();
   if (!($pos_insert = $mysqli->prepare("INSERT INTO positions (time, user_id, track_id, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
@@ -199,23 +205,15 @@ function process_track($user_id, $old_id, $new_id) {
     echo "Binding parameters failed: (" . $pos_insert->errno . ") " . $pos_insert->error . "\n";
     exit(1);
   }
-  $result = $pos_select->get_result();
-  while ($track = $result->fetch_assoc()) {
+  while ($pos_select->fetch()) {
     $provider = null;
-    $comment = $track['Comments'];
-    $time = $track['DateOccurred'];
-    $lat = $track['Latitude'];
-    $lon = $track['Longitude'];
-    $altitude = $track['Altitude'];
-    $speed = $track['Speed'];
-    $bearing = $track['Angle'];
     if (!$pos_insert->execute()) {
       echo "Execute failed: (" . $pos_insert->errno . ") " . $pos_insert->error . "\n";
       exit(1);
     }
   }
-  $result->close();
   $pos_insert->close();
+  $pos_select->free_result();
   $pos_select->close();
 }
 ?>
