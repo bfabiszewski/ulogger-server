@@ -164,6 +164,13 @@ print
       var lang_latest = "'.$lang_latest.'";
       var lang_track = "'.$lang_track.'";
       var lang_newinterval = "'.$lang_newinterval.'";
+      var lang_username = "'.$lang_username.'";
+      var lang_password = "'.$lang_password.'";
+      var lang_passwordrepeat = "'.$lang_passwordrepeat.'";
+      var lang_passwordenter = "'.$lang_passwordenter.'";
+      var lang_usernameenter = "'.$lang_usernameenter.'";
+      var lang_cancel = "'.$lang_cancel.'";
+      var lang_submit = "'.$lang_submit.'";
       var units = "'.$units.'";
       var mapapi = "'.$mapapi.'";
       var gkey = '.(isset($gkey)?'"'.$gkey.'"':'null').';

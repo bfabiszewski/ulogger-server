@@ -57,7 +57,7 @@
     }
     $query->store_result();
     if ($query->num_rows) {
-      exitWithStatus(true, "User exists");
+      exitWithStatus(true, $lang_userexists);
     }
     $query->free_result();
     $query->close();

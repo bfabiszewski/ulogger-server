@@ -32,10 +32,10 @@ function removeModal() {
 
 function addUser() {
   var form = '<form id="userForm" method="post" onsubmit="submitUser(); return false">';
-  form += '<label><b>User name</b></label><input type="text" placeholder="Enter user login" name="login" required>';
-  form += '<label><b>Password</b></label><input type="password" placeholder="Enter Password" name="pass" required>';
-  form += '<label><b>Repeat password</b></label><input type="password" placeholder="Enter Password" name="pass2" required>';
-  form += '<button type="button" onclick="removeModal()">Cancel</button><button type="submit">Submit</button>';
+  form += '<label><b>' + lang_username + '</b></label><input type="text" placeholder="' + lang_usernameenter + '" name="login" required>';
+  form += '<label><b>' + lang_password + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass" required>';
+  form += '<label><b>' + lang_passwordrepeat + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass2" required>';
+  form += '<button type="button" onclick="removeModal()">' + lang_cancel + '</button><button type="submit">' + lang_submit + '</button>';
   form += '</form>';
   showModal(form);
 }
