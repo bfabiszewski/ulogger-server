@@ -74,6 +74,7 @@ $lang = "en";
 //$lang = "pl";
 //$lang = "de";
 //$lang = "hu";
+//$lang = "fr";
 
 // units
 // (metric, imperial)

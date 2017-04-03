@@ -194,5 +194,49 @@ switch($lang) {
     $lang_cancel ="Cancel"; // todo: translate
     $lang_submit = "Submit"; // todo: translate
     break;
+
+    case "fr":
+    $lang_title = "• μlogger •";
+    $lang_private = "Il faut un nom d'utilisateur et un mot de passe pour accéder à cette page.";
+    $lang_authfail = "Nom d'utilisateur ou mot de passe erroné.";
+    $lang_user = "Utilisateur";
+    $lang_track = "Piste";
+    $lang_latest = "dernière position";
+    $lang_autoreload = "rechargement automatique";
+    $lang_reload = "Recharger maintenant";
+    $lang_download = "Télécharger les données";
+    $lang_chart = "Courbes d'altitudes";
+    $lang_close = "fermer";
+    $lang_time = "Temps";
+    $lang_speed = "Vitesse";
+    $lang_accuracy = "Accélération";
+    $lang_altitude = "Altitude";
+    $lang_ttime = "Temps total";
+    $lang_aspeed = "Vitesse moyenne";
+    $lang_tdistance = "Dist. totale";
+    $lang_point = "Point"; //Point x of y
+    $lang_of = "de";
+    $lang_summary = "Résumé du trajet";
+    $lang_suser = "Sélectionner un utilisateur";
+    $lang_logout = "Déconnexion";
+    $lang_login = "Connexion";
+    $lang_username = "Nom d'utilisateur";
+    $lang_password = "Mot de passe";
+    $lang_language = "Langage";
+    $lang_newinterval = "Entrez un intervalle (en seconde)";
+    $lang_api = "API des cartes";
+    $lang_language = "Langage";
+    $lang_units = "Unités";
+    $lang_metric = "Système métrique";
+    $lang_imperial = "Système anglophone";
+    $lang_adminmenu = "Administration";
+    $lang_passwordrepeat = "Répetez le mot de passe";
+    $lang_passwordenter = "Entrez votre mot de passe";
+    $lang_usernameenter = "Entrez votre nom d'utilisateur";
+    $lang_adduser = "Ajouter un utilisateur";
+    $lang_userexists = "Cet utilisateur existe déjà";
+    $lang_cancel ="Annuler";
+    $lang_submit = "Envoyer";
+    break;
 }
 ?>
