@@ -24,10 +24,18 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - user preferences stored in cookies
 - simple admin menu
 
+## Install
+1. Download the zip or clone the repository on your computer
+2. Move it to your web server directory
+3. Go to http://your_local_server/ulogger-server/
+4. Connect with username admin and password admin
+5. Change admin password (not available for now)
+6. Create other user if needed
+
 ## Todo
 - install script
 - custom icons
-- improve admin menu
+- improve admin menu (password or username change)
 - track editing
 - track display filters (accurracy, provider)
 
