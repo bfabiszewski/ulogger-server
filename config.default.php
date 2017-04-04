@@ -63,7 +63,7 @@ $public_tracks = 0;
 
 // admin user who has access to all users locations
 // none if empty
-$admin_user = "";
+$admin_user = "admin";
 
 // Default interval in seconds for live auto reload
 $interval = 10;
