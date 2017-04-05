@@ -63,6 +63,49 @@ switch($lang) {
     $lang_submit = "Submit";
     break;
 
+  case "it":
+    $lang_title = "• μlogger •";
+    $lang_private = "Devi accedere per visualizzare questa pagina.";
+    $lang_authfail = "Nome utente o password errati.";
+    $lang_user = "Utente";
+    $lang_track = "Traccia";
+    $lang_latest = "ultima posizione";
+    $lang_autoreload = "auto-ricarica";
+    $lang_reload = "Ricaria ora";
+    $lang_download = "Scarica dati";
+    $lang_chart = "Grafico altitudine";
+    $lang_close = "chiudi";
+    $lang_time = "Ora";
+    $lang_speed = "Velocità";
+    $lang_accuracy = "Precisione";
+    $lang_altitude = "Altitudine";
+    $lang_ttime = "Tempo totale";
+    $lang_aspeed = "Velocità media";
+    $lang_tdistance = "Distanza totale";
+    $lang_point = "Punto"; //Point x of y
+    $lang_of = "di";
+    $lang_summary = "Giro sommario";
+    $lang_suser = "scegli utente";
+    $lang_logout = "esci";
+    $lang_login = "Entra";
+    $lang_username = "Nome Utente";
+    $lang_password = "Password";
+    $lang_language = "Lingua";
+    $lang_newinterval = "Immetti nuovo intervallo (secondi)";
+    $lang_api = "API Mappe";
+    $lang_units = "Unità";
+    $lang_metric = "Metriche";
+    $lang_imperial = "Imperiali";
+    $lang_adminmenu = "Amministazione";
+    $lang_passwordrepeat = "Ripeti password";
+    $lang_passwordenter = "Immetti password";
+    $lang_usernameenter = "Immetti nome utente";
+    $lang_adduser = "Aggiungi utente";
+    $lang_userexists = "L'utente esiste già";
+    $lang_cancel ="Annulla";
+    $lang_submit = "Invia";
+    break;
+    
   case "pl":
     $lang_title = "• μlogger •";
     $lang_private = "Aby się zalogować musisz podać login i hasło";
