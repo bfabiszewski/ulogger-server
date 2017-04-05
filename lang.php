@@ -84,7 +84,7 @@ switch($lang) {
     $lang_tdistance = "Distanza totale";
     $lang_point = "Punto"; //Point x of y
     $lang_of = "di";
-    $lang_summary = "Giro sommario";
+    $lang_summary = "Sommario";
     $lang_suser = "scegli utente";
     $lang_logout = "esci";
     $lang_login = "Entra";
