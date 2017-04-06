@@ -405,8 +405,8 @@ function setUnits(unit) {
 }
 
 function showModal(contentHTML) {
-  var div = document.createElement("div");
-  div.setAttribute("id", "modal");
+  var div = document.createElement('div');
+  div.setAttribute('id', 'modal');
   div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()">&times;</button></div><div id="modal-body"></div>';
   document.body.appendChild(div);
   var modalBody = document.getElementById('modal-body');
@@ -415,4 +415,24 @@ function showModal(contentHTML) {
 
 function removeModal() {
   document.body.removeChild(document.getElementById('modal'));
+}
+
+function userMenu() {
+  var dropdown = document.getElementById('user_dropdown');
+  if (dropdown.classList.contains('show')) {
+    dropdown.classList.remove('show');
+  } else {
+    dropdown.classList.add('show');
+    window.addEventListener('click', removeOnClick, true);
+  } 
+}
+
+function removeOnClick(event) {
+  var parent = event.target.parentElement;
+  var dropdown = document.getElementById('user_dropdown');
+  dropdown.classList.remove('show');
+  window.removeEventListener('click', removeOnClick, true);
+  if (!parent.classList.contains('dropdown')) {
+    event.stopPropagation();
+  }
 }

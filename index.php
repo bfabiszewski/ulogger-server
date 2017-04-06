@@ -19,7 +19,16 @@
 */
 require_once ("auth.php");
 if ($user->isValid) {
-  $userHeader = $user->login . ' (<a href="logout.php">' . $lang_logout . '</a>)';
+  $itemPass = '<a href="javascript:void(0)" onclick="changePass()">' . $lang_changepass . '</a>';
+  $itemLogout = '<a href="logout.php">' . $lang_logout . '</a>';
+  $userHeader = '
+  <div id="user_menu">
+  <a href="javascript:void(0);" onclick="userMenu()">' . $user->login . '</a>
+  <div id="user_dropdown" class="dropdown">
+  ' . $itemPass . '
+  ' . $itemLogout . '
+  </div>
+  </div>';
 } else {
   $userHeader = '<a href="index.php?force_login=1">' . $lang_login . '</a>';
 }
@@ -153,6 +162,9 @@ print '<!DOCTYPE html>
       var lang_passwordrepeat = "' . $lang_passwordrepeat . '";
       var lang_passwordenter = "' . $lang_passwordenter . '";
       var lang_usernameenter = "' . $lang_usernameenter . '";
+      var lang_oldpassword = "' . $lang_oldpassword . '";
+      var lang_newpassword = "' . $lang_newpassword . '";
+      var lang_newpasswordrepeat = "' . $lang_newpasswordrepeat . '";
       var lang_cancel = "' . $lang_cancel . '";
       var lang_submit = "' . $lang_submit . '";
       var units = "' . $config::$units . '";

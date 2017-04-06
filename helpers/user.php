@@ -63,6 +63,19 @@ class uUser {
       return $userid;
     }
 
+    public function setPass($hash) {
+      $ret = false;
+      $sql = "UPDATE users SET password = ? WHERE login = ?";
+      $stmt = self::$db->prepare($sql);
+      $stmt->bind_param('ss', $hash, $this->login);
+      $stmt->execute();
+      if (!self::$db->error && !$stmt->errno) {
+        $ret = true;
+      }
+      $stmt->close();
+      return $ret;
+    }
+
     public function validPassword($password) {
       return password_verify($password, $this->hash);
     }

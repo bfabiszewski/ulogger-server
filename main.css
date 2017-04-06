@@ -242,4 +242,23 @@ select {
   -webkit-border-radius: 5px;
 }
 
-button { cursor:pointer; }
+button { 
+  cursor: pointer;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: gray;
+  padding: 1em;
+  width: 130px;
+  border: 1px solid #888;
+}
+
+.dropdown a {
+  display: block;
+  padding-bottom: .5em;
+  padding-top: .5em;
+}
+
+.show { display: block; }

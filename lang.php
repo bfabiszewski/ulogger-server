@@ -57,6 +57,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Repeat password";
     $lang_passwordenter = "Enter password";
     $lang_usernameenter = "Enter username";
+    $lang_oldpassword = "Old password";
+    $lang_newpassword = "New password";
+    $lang_newpasswordrepeat = "Repeat new password";
+    $lang_changepass = "Change password";
     $lang_adduser = "Add user";
     $lang_userexists = "User exists";
     $lang_cancel ="Cancel";
@@ -100,6 +104,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Ripeti password";
     $lang_passwordenter = "Immetti password";
     $lang_usernameenter = "Immetti nome utente";
+    $lang_oldpassword = "Old password"; // todo: translate
+    $lang_newpassword = "New password"; // todo: translate
+    $lang_newpasswordrepeat = "Repeat new password"; // todo: translate
+    $lang_changepass = "Change password"; // todo: translate
     $lang_adduser = "Aggiungi utente";
     $lang_userexists = "L'utente esiste già";
     $lang_cancel ="Annulla";
@@ -144,6 +152,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Powtórz hasło";
     $lang_passwordenter = "Podaj hasło";
     $lang_usernameenter = "Podaj użytkownika";
+    $lang_oldpassword = "Obecne hasło";
+    $lang_newpassword = "Nowe hasło";
+    $lang_newpasswordrepeat = "Powtórz nowe hasło";
+    $lang_changepass = "Zmień hasło";
     $lang_adduser = "Dodaj użytkownika";
     $lang_userexists = "Użytkownik istnieje";
     $lang_cancel ="Anuluj";
@@ -188,6 +200,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Repeat password"; // todo: translate
     $lang_passwordenter = "Enter password"; // todo: translate
     $lang_usernameenter = "Enter username"; // todo: translate
+    $lang_oldpassword = "Old password"; // todo: translate
+    $lang_newpassword = "New password"; // todo: translate
+    $lang_newpasswordrepeat = "Repeat new password"; // todo: translate
+    $lang_changepass = "Change password"; // todo: translate
     $lang_adduser = "Add user"; // todo: translate
     $lang_userexists = "User exists"; // todo: translate
     $lang_cancel ="Cancel"; // todo: translate
@@ -232,6 +248,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Repeat password"; // todo: translate
     $lang_passwordenter = "Enter password"; // todo: translate
     $lang_usernameenter = "Enter username"; // todo: translate
+    $lang_oldpassword = "Old password"; // todo: translate
+    $lang_newpassword = "New password"; // todo: translate
+    $lang_newpasswordrepeat = "Repeat new password"; // todo: translate
+    $lang_changepass = "Change password"; // todo: translate
     $lang_adduser = "Add user"; // todo: translate
     $lang_userexists = "User exists"; // todo: translate
     $lang_cancel ="Cancel"; // todo: translate
@@ -276,6 +296,10 @@ switch($config::$lang) {
     $lang_passwordrepeat = "Répetez le mot de passe";
     $lang_passwordenter = "Entrez votre mot de passe";
     $lang_usernameenter = "Entrez votre nom d'utilisateur";
+    $lang_oldpassword = "Old password"; // todo: translate
+    $lang_newpassword = "New password"; // todo: translate
+    $lang_newpasswordrepeat = "Repeat new password"; // todo: translate
+    $lang_changepass = "Change password"; // todo: translate
     $lang_adduser = "Ajouter un utilisateur";
     $lang_userexists = "Cet utilisateur existe déjà";
     $lang_cancel ="Annuler";
