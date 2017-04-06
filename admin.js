@@ -17,19 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-function showModal(contentHTML) {
-  var div = document.createElement("div");
-  div.setAttribute("id", "modal");
-  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()">&times;</button></div><div id="modal-body"></div>';
-  document.body.appendChild(div);
-  var modalBody = document.getElementById('modal-body');
-  modalBody.innerHTML = contentHTML;
-}
-
-function removeModal() {
-  document.body.removeChild(document.getElementById('modal'));
-}
-
 function addUser() {
   var form = '<form id="userForm" method="post" onsubmit="submitUser(); return false">';
   form += '<label><b>' + lang_username + '</b></label><input type="text" placeholder="' + lang_usernameenter + '" name="login" required>';

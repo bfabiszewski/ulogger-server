@@ -24,43 +24,32 @@ function setError(&$response, $message) {
 }
 
 define("headless", true); 
-require_once("../auth.php");
+require_once("../auth.php"); // sets $mysqli, $user
+$userid = $user->id;
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
-$userid = $_SESSION['auth'];
-
 $response = [ 'error' => false ];
-
-$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
-if ($mysqli->connect_errno) {
-  setError($response, $mysqli->error);
-  $action = null;
-}
 
 switch ($action) {
   // action: authorize
   case "auth":
     break;
 
-  // action: adduser
+  // action: adduser (currently unused)
   case "adduser":
     $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
     $hash = isset($_REQUEST['password']) ? password_hash($_REQUEST['password'], PASSWORD_DEFAULT) : NULL;
     if (!empty($login) && !empty($hash)) {
-      $sql = "INSERT INTO users (login, password) VALUES (?, ?)";
-      $query = $mysqli->prepare($sql);
-      $query->bind_param('ss', $login, $hash);
-      $query->execute();
-      $userid = $mysqli->insert_id;
-      $query->close();
-      if ($mysqli->errno) {
-        setError($response, $mysqli->error);
-        break;
+      $newUser = new uUser();
+      $newId = $newUser->add($login, $hash);
+      if ($newId !== false) {
+        // return user id
+        $response['userid'] = $newId;
+      } else {
+        setError($response, "Server error");
       }
-      // return user id
-      $response['userid'] = $userid;
     } else {
-      setError($response, "Empty login");
+      setError($response, "Empty login or password");
     }
     break;
 

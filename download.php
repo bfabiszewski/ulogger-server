@@ -22,7 +22,7 @@ $type = (isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml");
 $userid = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
 $trackid = ((isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : 0);
 
-if ($units=="imperial") {
+if ($config::$units=="imperial") {
   $factor_kmh = 0.62; //to mph
   $unit_kmh = "mph";
   $factor_m = 3.28; // to feet

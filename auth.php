@@ -17,46 +17,36 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-require_once("config.php");
-// if is set cookie overwrite config value
-if (isset($_COOKIE["ulogger_api"])) { $mapapi = $_COOKIE["ulogger_api"]; }
-if (isset($_COOKIE["ulogger_lang"])) { $lang = $_COOKIE["ulogger_lang"]; }
-if (isset($_COOKIE["ulogger_units"])) { $units = $_COOKIE["ulogger_units"]; }
-if (isset($_COOKIE["ulogger_interval"])) { $interval = $_COOKIE["ulogger_interval"]; }
+require_once("helpers/config.php");
+$config = new uConfig();
+
 require_once("lang.php");
-$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
-if ($mysqli->connect_errno) {
-  if (defined('headless')) {
-    header('HTTP/1.1 503 Service Unavailable', true, 503);
-  } else {
-    printf("Connect failed: %s\n", $mysqli->connect_error);
-  }
-  exit();
-}
-$mysqli->set_charset("utf8");
+require_once("helpers/db.php");
+$mysqli = uDb::getInstance();
+require_once($config::$rootDir . "/helpers/user.php");
 
 session_name('ulogger');
 session_start();
 $sid = session_id();
 
 // check for forced login to authorize admin in case of public access
-$force_login = (isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : 0);
+$force_login = (isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : false);
 if ($force_login) {
-  $require_authentication = 1;
+  $config::$require_authentication = true;
 }
 
-$auth = (isset($_SESSION['auth']) ? $_SESSION['auth'] : NULL);
-$admin = (isset($_SESSION['admin']) ? $_SESSION['admin'] : NULL);
-if ($auth || $require_authentication || defined('headless')) {
+$user = new uUser();
+$user->getFromSession();
+if (!$user->isValid && ($config::$require_authentication || defined('headless'))) {
   /* authentication */
-  $user = (isset($_REQUEST['user']) ? $_REQUEST['user'] : "");
-  $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : "");
+  $login = (isset($_REQUEST['user']) ? $_REQUEST['user'] : NULL);
+  $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL);
   $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
   $auth_error = (isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : 0);
 
-  // not authenticated and username not submited
-  // load form
-  if ((!$auth) && (!$user)){
+  if (!$login){
+    // not authenticated and username not submited
+    // load form    
     if (defined('headless')) {
       header('HTTP/1.1 401 Unauthorized', true, 401);
     } else {
@@ -94,19 +84,12 @@ if ($auth || $require_authentication || defined('headless')) {
     }
     $mysqli->close();
     exit();
-  }
+  } else {
+    // username submited
+    $user = new uUser($login);
 
-  // username submited
-  if ((!$auth) && ($user)){
-    $query = $mysqli->prepare("SELECT id, login, password FROM users WHERE login=? LIMIT 1");
-    $query->bind_param('s', $user);
-    $query->execute();
-    $query->bind_result($rec_id, $rec_user, $rec_pass);
-    $query->fetch();
-    $query->free_result();
     //correct pass
-
-    if (($user == $rec_user) && password_verify($pass, $rec_pass)) {
+    if ($user->isValid && $user->validPassword($pass)) {
       // login successful
       //delete old session
       $_SESSION = NULL;
@@ -114,10 +97,7 @@ if ($auth || $require_authentication || defined('headless')) {
       // start new session
       session_name('ulogger');
       session_start();
-      if (($user == $admin_user) && !empty($admin_user)) {
-          $_SESSION['admin'] = $admin_user;
-      }
-      $_SESSION['auth'] = $rec_id;
+      $user->storeInSession();
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url");
       exit();
@@ -130,15 +110,15 @@ if ($auth || $require_authentication || defined('headless')) {
         setcookie(session_name('ulogger'),'',time()-42000,'/');
       }
       session_destroy();
-      $mysqli->close();
       if (defined('headless')) {
         header('HTTP/1.1 401 Unauthorized', true, 401);
       } else {
         $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
         header("Location: $ssl://$url$error");
       }
-      exit();
     }
+    $mysqli->close();
+    exit();
   }
   /* end of authentication */
 }

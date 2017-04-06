@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
  
-  require_once("auth.php");
+  require_once("auth.php"); // sets $mysqli, $user
   
   /** 
    * Exit with xml response
@@ -42,51 +42,17 @@
     exit;
   }
 
-  /** 
-   * Check if login is allowed
-   * @param string $login Login
-   */
-  function checkUser($login) {
-    global $mysqli;
-    $sql = "SELECT id FROM users WHERE login = ?";
-    $query = $mysqli->prepare($sql);
-    $query->bind_param('s', $login);
-    $query->execute();
-    if ($query->errno) {
-      exitWithStatus(true, $query->error);
-    }
-    $query->store_result();
-    if ($query->num_rows) {
-      exitWithStatus(true, $lang_userexists);
-    }
-    $query->free_result();
-    $query->close();
-  }
-
-  /** 
-   * Add new user to database
-   * @param string $login Login
-   * @param string $hash Password hash
-   */
-  function insertUser($login, $hash) {
-    global $mysqli;
-    $sql = "INSERT INTO users (login, password) VALUES (?, ?)";
-    $query = $mysqli->prepare($sql);
-    $query->bind_param('ss', $login, $hash);
-    $query->execute();
-    if ($query->errno) {
-      exitWithStatus(true, $query->error);
-      $isError = false;
-    }
-    $query->close();
-  }
-
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
-  if ($admin && !empty($login) && !empty($hash)) {
-    checkUser($login);
-    insertUser($login, $hash);
+  if ($user->isAdmin && !empty($login) && !empty($hash)) {
+    $newUser = new uUser($login);
+    if ($newUser->isValid) {
+      exitWithStatus(true, $lang_userexists);
+    }
+    if ($newUser->add($login, $hash) === false) {
+      exitWithStatus(true, $mysqli->error);
+    }
   }
   exitWithStatus(false);
-  
+
 ?>

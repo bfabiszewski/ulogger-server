@@ -403,3 +403,16 @@ function setUnits(unit) {
   setCookie('units',unit,30);
   location.reload();
 }
+
+function showModal(contentHTML) {
+  var div = document.createElement("div");
+  div.setAttribute("id", "modal");
+  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()">&times;</button></div><div id="modal-body"></div>';
+  document.body.appendChild(div);
+  var modalBody = document.getElementById('modal-body');
+  modalBody.innerHTML = contentHTML;
+}
+
+function removeModal() {
+  document.body.removeChild(document.getElementById('modal'));
+}

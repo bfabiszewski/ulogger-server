@@ -21,8 +21,6 @@
 // This is default configuration file. 
 // Copy it to config.php and customize
 
-$version = "0.1";
-
 // default map drawing framework
 // (gmaps = google maps, openlayers = openlayers/osm)
 //$mapapi = "gmaps";
