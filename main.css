@@ -203,7 +203,7 @@ select {
 }
 
 #modal-header {
-  top: 10px;
+  top: 15px;
   position: relative;
   text-align: right;
   margin: 0 auto;
@@ -215,12 +215,19 @@ select {
   font-size: 0.9em;
   font-family: Verdana, sans-serif;
   color: white;
-  background-color: #666;
+  background-color: rgba(102, 102, 102, 0.9);
   margin: 0 auto 15% auto;
   border: 1px solid #888;
   width: 40%;
   min-width: 300px;
-  padding: 1%;
+  padding: 1em;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+
+#modal-body .buttons {
+  padding-top: 1em;
 }
 
 #modal input[type=text], #modal input[type=password] {
@@ -230,4 +237,9 @@ select {
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
 }
+
+button { cursor:pointer; }

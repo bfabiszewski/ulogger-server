@@ -22,7 +22,7 @@ function addUser() {
   form += '<label><b>' + lang_username + '</b></label><input type="text" placeholder="' + lang_usernameenter + '" name="login" required>';
   form += '<label><b>' + lang_password + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass" required>';
   form += '<label><b>' + lang_passwordrepeat + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass2" required>';
-  form += '<button type="button" onclick="removeModal()">' + lang_cancel + '</button><button type="submit">' + lang_submit + '</button>';
+  form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang_cancel + '</button><button type="submit">' + lang_submit + '</button></div>';
   form += '</form>';
   showModal(form);
 }
