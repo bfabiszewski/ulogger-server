@@ -79,7 +79,9 @@ if ($trackId && $userId) {
       $xml->setIndent(true);
       $xml->startDocument("1.0", "utf-8");
       $xml->startElement("kml");
-      $xml->writeAttribute("xmlns", "http://earth.google.com/kml/2.1");
+      $xml->writeAttributeNs('xsi', 'schemaLocation', NULL, "http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd");
+      $xml->writeAttributeNs('xmlns', 'xsi', NULL, 'http://www.w3.org/2001/XMLSchema-instance');
+      $xml->writeAttribute("xmlns", "http://www.opengis.net/kml/2.2");
       $xml->startElement("Document");
       $xml->writeElement("name", $positionsArr[0]->trackName);
       // line style
@@ -107,7 +109,7 @@ if ($trackId && $userId) {
 
         if(++$i == count($positionsArr)) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
-        $xml->writeAttribute("id", $position->id);
+        $xml->writeAttribute("id", "point_" . $position->id);
           $description =
           "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".
           $lang["user"].": ".strtoupper($position->userLogin)."<br />".$lang["track"].": ".strtoupper($position->trackName).
@@ -134,6 +136,7 @@ if ($trackId && $userId) {
       }
       $coordinates = implode("\n", $coordinate);
       $xml->startElement("Placemark");
+      $xml->writeAttribute("id", "lineString");
         $xml->writeElement("styleUrl", "#lineStyle");
         $xml->startElement("LineString");
           $xml->writeElement("coordinates", $coordinates);
