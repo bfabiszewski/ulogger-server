@@ -91,10 +91,10 @@ class uPosition {
     public function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];
       if (!empty($userId)) {
-        $rule[] = "p.user_id='" . self::$db->real_escape_string($userId) ."'";
+        $rules[] = "p.user_id='" . self::$db->real_escape_string($userId) ."'";
       }
       if (!empty($trackId)) {
-        $rule[] = "p.track_id='" . self::$db->real_escape_string($trackId) ."'";
+        $rules[] = "p.track_id='" . self::$db->real_escape_string($trackId) ."'";
       }  
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);
