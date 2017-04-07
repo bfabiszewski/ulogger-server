@@ -203,12 +203,17 @@ select {
 }
 
 #modal-header {
-  top: 15px;
+  top: 20px;
   position: relative;
   text-align: right;
   margin: 0 auto;
   width: 40%;
   min-width: 300px;
+}
+
+#modal-header button {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
 }
 
 #modal-body {
@@ -262,3 +267,5 @@ button {
 }
 
 .show { display: block; }
+
+.icon { height: 1.4em; }

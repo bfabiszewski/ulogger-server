@@ -22,18 +22,18 @@ require_once("helpers/position.php");
 require_once("helpers/track.php");
 
 if ($user->isValid) {
-  $itemPass = '<a href="javascript:void(0)" onclick="changePass()">' . $lang["changepass"] . '</a>';
-  $itemLogout = '<a href="logout.php">' . $lang["logout"] . '</a>';
+  $itemPass = '<a href="javascript:void(0)" onclick="changePass()"><img class="icon" src="images/lock.svg" \> ' . $lang["changepass"] . '</a>';
+  $itemLogout = '<a href="logout.php"><img class="icon" src="images/poweroff.svg" \> ' . $lang["logout"] . '</a>';
   $userHeader = '
   <div id="user_menu">
-  <a href="javascript:void(0);" onclick="userMenu()">' . $user->login . '</a>
+  <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" src="images/user.svg" \> ' . $user->login . '</a>
   <div id="user_dropdown" class="dropdown">
   ' . $itemPass . '
   ' . $itemLogout . '
   </div>
   </div>';
 } else {
-  $userHeader = '<a href="index.php?force_login=1">' . $lang["login"] . '</a>';
+  $userHeader = '<a href="index.php?force_login=1"><img class="icon" src="images/key.svg" \> ' . $lang["login"] . '</a>';
 }
 $lastUserId = NULL;
 $userForm = '';

@@ -406,7 +406,7 @@ function setUnits(unit) {
 function showModal(contentHTML) {
   var div = document.createElement('div');
   div.setAttribute('id', 'modal');
-  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()">&times;</button></div><div id="modal-body"></div>';
+  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()"><img src="images/close.svg" \></button></div><div id="modal-body"></div>';
   document.body.appendChild(div);
   var modalBody = document.getElementById('modal-body');
   modalBody.innerHTML = contentHTML;
