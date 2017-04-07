@@ -18,10 +18,10 @@
 
 function changePass() {
   var form = '<form id="passForm" method="post" onsubmit="submitPass(); return false">';
-  form += '<label><b>' + lang_oldpassword + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="oldpass" required>';
-  form += '<label><b>' + lang_newpassword + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass" required>';
-  form += '<label><b>' + lang_newpasswordrepeat + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass2" required>';
-  form += '<button type="button" onclick="removeModal()">' + lang_cancel + '</button><button type="submit">' + lang_submit + '</button>';
+  form += '<label><b>' + lang['oldpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="oldpass" required>';
+  form += '<label><b>' + lang['newpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
+  form += '<label><b>' + lang['newpasswordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
+  form += '<button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button>';
   form += '</form>';
   showModal(form);
 }

@@ -18,10 +18,10 @@
 
 function addUser() {
   var form = '<form id="userForm" method="post" onsubmit="submitUser(); return false">';
-  form += '<label><b>' + lang_username + '</b></label><input type="text" placeholder="' + lang_usernameenter + '" name="login" required>';
-  form += '<label><b>' + lang_password + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass" required>';
-  form += '<label><b>' + lang_passwordrepeat + '</b></label><input type="password" placeholder="' + lang_passwordenter + '" name="pass2" required>';
-  form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang_cancel + '</button><button type="submit">' + lang_submit + '</button></div>';
+  form += '<label><b>' + lang['username'] + '</b></label><input type="text" placeholder="' + lang['usernameenter'] + '" name="login" required>';
+  form += '<label><b>' + lang['password'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
+  form += '<label><b>' + lang['passwordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
+  form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button></div>';
   form += '</form>';
   showModal(form);
 }

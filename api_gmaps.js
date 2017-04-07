@@ -126,20 +126,20 @@ function setMarker(p,i,posLen) {
   else { marker.setIcon('//maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png') }
   // popup
   var content = '<div id="popup">'+
-    '<div id="pheader">'+lang_user+': '+p.username.toUpperCase()+'<br />'+lang_track+': '+p.trackname.toUpperCase()+
+    '<div id="pheader">'+lang['user']+': '+p.username.toUpperCase()+'<br />'+lang['track']+': '+p.trackname.toUpperCase()+
     '</div>'+
     '<div id="pbody">'+
     ((p.comments != null)?'<div id="pcomments">'+p.comments+'</div>':'')+
-    '<div id="pleft"><b>'+lang_time+':</b> '+p.dateoccured+'<br />'+
-    ((p.speed != null)?'<b>'+lang_speed+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
-    ((p.altitude != null)?'<b>'+lang_altitude+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+
-    ((p.accuracy != null)?'<b>'+lang_accuracy+':</b> '+(p.accuracy*factor_m).toFixed()+' '+unit_m+'<br />':'')+
+    '<div id="pleft"><b>'+lang['time']+':</b> '+p.dateoccured+'<br />'+
+    ((p.speed != null)?'<b>'+lang['speed']+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
+    ((p.altitude != null)?'<b>'+lang['altitude']+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+
+    ((p.accuracy != null)?'<b>'+lang['accuracy']+':</b> '+(p.accuracy*factor_m).toFixed()+' '+unit_m+'<br />':'')+
     '</div>'+
     ((latest==0)?
-    ('<div id="pright"><b>'+lang_ttime+':</b> '+p.totalSeconds.toHMS()+'<br />'+
-    '<b>'+lang_aspeed+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
-    '<b>'+lang_tdistance+':</b> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>'):'')+
-    '<div id="pfooter">'+lang_point+' '+(i+1)+' '+lang_of+' '+(posLen)+'</div>'+
+    ('<div id="pright"><b>'+lang['ttime']+':</b> '+p.totalSeconds.toHMS()+'<br />'+
+    '<b>'+lang['aspeed']+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
+    '<b>'+lang['tdistance']+':</b> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>'):'')+
+    '<div id="pfooter">'+lang['point']+' '+(i+1)+' '+lang['of']+' '+(posLen)+'</div>'+
     '</div></div>';
   popup = new google.maps.InfoWindow();
   popup.listener = google.maps.event.addListener(marker, 'click', (function(marker,content) {

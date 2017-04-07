@@ -54,7 +54,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
     '<!DOCTYPE html>
     <html>
       <head>
-        <title>'.$lang_title.'</title>
+        <title>'.$lang["title"].'</title>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <link rel="stylesheet" type="text/css" href="main.css">
@@ -66,18 +66,18 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       </head>
       <body onload="focus()">
         <div id="login">
-          <div id="title">'.$lang_title.'</div>
-          <div id="subtitle">'.$lang_private.'</div>
+          <div id="title">'.$lang["title"].'</div>
+          <div id="subtitle">'.$lang["private"].'</div>
           <form action="index.php" method="post">
-          '.$lang_username.':<br />
+          '.$lang["username"].':<br />
           <input type="text" name="user"><br />
-          '.$lang_password.':<br />
+          '.$lang["password"].':<br />
           <input type="password" name="pass"><br />
           <br />
-          <input type="submit" value="'.$lang_login.'">
+          <input type="submit" value="'.$lang["login"].'">
           '.(($force_login==1) ? "<input type=\"hidden\" name=\"force_login\" value=\"1\">" : "").'
           </form>
-          <div id="error">'.(($auth_error==1) ? $lang_authfail : "").'</div>
+          <div id="error">'.(($auth_error==1) ? $lang["authfail"] : "").'</div>
         </div>
       </body>
     </html>';

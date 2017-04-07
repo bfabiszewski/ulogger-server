@@ -22,8 +22,8 @@ require_once("helpers/position.php");
 require_once("helpers/track.php");
 
 if ($user->isValid) {
-  $itemPass = '<a href="javascript:void(0)" onclick="changePass()">' . $lang_changepass . '</a>';
-  $itemLogout = '<a href="logout.php">' . $lang_logout . '</a>';
+  $itemPass = '<a href="javascript:void(0)" onclick="changePass()">' . $lang["changepass"] . '</a>';
+  $itemLogout = '<a href="logout.php">' . $lang["logout"] . '</a>';
   $userHeader = '
   <div id="user_menu">
   <a href="javascript:void(0);" onclick="userMenu()">' . $user->login . '</a>
@@ -33,7 +33,7 @@ if ($user->isValid) {
   </div>
   </div>';
 } else {
-  $userHeader = '<a href="index.php?force_login=1">' . $lang_login . '</a>';
+  $userHeader = '<a href="index.php?force_login=1">' . $lang["login"] . '</a>';
 }
 $lastUserId = NULL;
 $userForm = '';
@@ -41,11 +41,11 @@ if ($user->isAdmin || $config::$public_tracks) {
   // public access or admin user
   // prepare user select form
   $userForm = '
-  <br /><u>' . $lang_user . '</u>
+  <br /><u>' . $lang["user"] . '</u>
   <br />
   <form>
   <select name="user" onchange="selectUser(this)">
-  <option value="0">' . $lang_suser . '</option>';
+  <option value="0">' . $lang["suser"] . '</option>';
   // get last position user
   $lastPosition = new uPosition();
   $lastPosition->getLast();
@@ -66,7 +66,7 @@ if ($user->isAdmin || $config::$public_tracks) {
 }
 // prepare track select form
 $trackForm = '
-<u>' . $lang_track . '</u><br />
+<u>' . $lang["track"] . '</u><br />
 <form>
 <select name="track" onchange="selectTrack(this)">';
 $displayId = NULL;
@@ -89,12 +89,12 @@ if (!empty($tracksArr)) {
 }
 $trackForm.= '
 </select>
-<input id="latest" type="checkbox" onchange="toggleLatest();"> ' . $lang_latest . '<br />
+<input id="latest" type="checkbox" onchange="toggleLatest();"> ' . $lang["latest"] . '<br />
 </form>
 ';
 // map api select form
 $apiForm = '
-<u>' . $lang_api . '</u><br />
+<u>' . $lang["api"] . '</u><br />
 <form>
 <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
 <option value="gmaps"' . (($config::$mapapi == "gmaps") ? ' selected' : '') . '>Google Maps</option>
@@ -104,25 +104,23 @@ $apiForm = '
 ';
 // language select form
 $langForm = '
-<u>' . $lang_language . '</u><br />
+<u>' . $lang["language"] . '</u><br />
 <form>
-<select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
-<option value="en"' . (($config::$lang == "en") ? ' selected' : '') . '>English</option>
-<option value="pl"' . (($config::$lang == "pl") ? ' selected' : '') . '>Polski</option>
-<option value="de"' . (($config::$lang == "de") ? ' selected' : '') . '>Deutsch</option>
-<option value="hu"' . (($config::$lang == "hu") ? ' selected' : '') . '>Magyar</option>
-<option value="fr"' . (($config::$lang == "fr") ? ' selected' : '') . '>Français</option>
-<option value="it"' . (($config::$lang == "it") ? ' selected' : '') . '>Italiano</option>
+<select name="units" onchange="setLang(this.options[this.selectedIndex].value);">';
+foreach ($langsArr as $langCode => $langName) {
+  $langForm .= '<option value="' . $langCode . '"' . (($config::$lang == $langCode) ? ' selected' : '') . '>' . $langName . '</option>';
+}
+$langForm .= '
 </select>
 </form>
 ';
 // units select form
 $unitsForm = '
-<u>' . $lang_units . '</u><br />
+<u>' . $lang["units"] . '</u><br />
 <form>
 <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
-<option value="metric"' . (($config::$units == "metric") ? ' selected' : '') . '>' . $lang_metric . '</option>
-<option value="imperial"' . (($config::$units == "imperial") ? ' selected' : '') . '>' . $lang_imperial . '</option>
+<option value="metric"' . (($config::$units == "metric") ? ' selected' : '') . '>' . $lang["metric"] . '</option>
+<option value="imperial"' . (($config::$units == "imperial") ? ' selected' : '') . '>' . $lang["imperial"] . '</option>
 </select>
 </form>
 ';
@@ -132,8 +130,8 @@ $adminScript = '';
 if ($user->isAdmin) {
   $adminMenu = '
   <div id="admin_menu">
-    <u>' . $lang_adminmenu . '</u><br />
-      <a href="javascript:void(0);" onclick="addUser()">' . $lang_adduser . '</a><br />
+    <u>' . $lang["adminmenu"] . '</u><br />
+      <a href="javascript:void(0);" onclick="addUser()">' . $lang["adduser"] . '</a><br />
   </div>
   ';
   $adminScript = '<script type="text/javascript" src="admin.js"></script>';
@@ -141,7 +139,7 @@ if ($user->isAdmin) {
 print '<!DOCTYPE html>
 <html>
   <head>
-    <title>' . $lang_title . '</title>
+    <title>' . $lang["title"] . '</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="main.css" />
@@ -149,30 +147,6 @@ print '<!DOCTYPE html>
       var interval = ' . $config::$interval . ';
       var userid = ' . (($displayId) ? $displayId : -1) . ';
       var trackid = ' . (($trackId) ? $trackId : -1) . ';
-      var lang_user = "' . $lang_user . '";
-      var lang_time = "' . $lang_time . '";
-      var lang_speed = "' . $lang_speed . '";
-      var lang_accuracy = "' . $lang_accuracy . '";
-      var lang_altitude = "' . $lang_altitude . '";
-      var lang_ttime = "' . $lang_ttime . '";
-      var lang_aspeed = "' . $lang_aspeed . '";
-      var lang_tdistance = "' . $lang_tdistance . '";
-      var lang_point = "' . $lang_point . '";
-      var lang_of = "' . $lang_of . '";
-      var lang_summary = "' . $lang_summary . '";
-      var lang_latest = "' . $lang_latest . '";
-      var lang_track = "' . $lang_track . '";
-      var lang_newinterval = "' . $lang_newinterval . '";
-      var lang_username = "' . $lang_username . '";
-      var lang_password = "' . $lang_password . '";
-      var lang_passwordrepeat = "' . $lang_passwordrepeat . '";
-      var lang_passwordenter = "' . $lang_passwordenter . '";
-      var lang_usernameenter = "' . $lang_usernameenter . '";
-      var lang_oldpassword = "' . $lang_oldpassword . '";
-      var lang_newpassword = "' . $lang_newpassword . '";
-      var lang_newpasswordrepeat = "' . $lang_newpasswordrepeat . '";
-      var lang_cancel = "' . $lang_cancel . '";
-      var lang_submit = "' . $lang_submit . '";
       var units = "' . $config::$units . '";
       var mapapi = "' . $config::$mapapi . '";
       var gkey = ' . (!empty($config::$gkey) ? '"' . $config::$gkey . '"' : 'null') . ';
@@ -182,6 +156,7 @@ print '<!DOCTYPE html>
       var layer_ump = "' . $config::$layer_ump . '";
       var init_latitude = "' . $config::$init_latitude . '";
       var init_longitude = "' . $config::$init_longitude . '";
+      var lang = ' . json_encode($lang) . ';
     </script>
     <script type="text/javascript" src="main.js"></script>
 ';
@@ -212,12 +187,12 @@ print '
         </div>
         <div id="track">
           ' . $trackForm . '
-          <input type="checkbox" onchange="autoReload();"> ' . $lang_autoreload . ' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">' . $config::$interval . '</span></a> s)<br />
-          <a href="javascript:void(0);" onclick="loadTrack(userid,trackid,0)">' . $lang_reload . '</a><br />
+          <input type="checkbox" onchange="autoReload();"> ' . $lang["autoreload"] . ' (<a href="javascript:void(0);" onclick="setTime()"><span id="auto">' . $config::$interval . '</span></a> s)<br />
+          <a href="javascript:void(0);" onclick="loadTrack(userid,trackid,0)">' . $lang["reload"] . '</a><br />
         </div>
         <div id="summary"></div>
         <div id="other">
-          <a href="javascript:void(0);" onclick="toggleChart();">' . $lang_chart . '</a>
+          <a href="javascript:void(0);" onclick="toggleChart();">' . $lang["chart"] . '</a>
         </div>
         <div id="api">
           ' . $apiForm . '
@@ -229,7 +204,7 @@ print '
           ' . $unitsForm . '
         </div>
         <div id="export">
-          <u>' . $lang_download . '</u><br />
+          <u>' . $lang["download"] . '</u><br />
           <a href="javascript:void(0);" onclick="load(\'kml\',userid,trackid)">kml</a><br />
           <a href="javascript:void(0);" onclick="load(\'gpx\',userid,trackid)">gpx</a><br />
         </div>
@@ -242,7 +217,7 @@ print '
       <div id="map-canvas"></div>
       <div id="bottom">
         <div id="chart"></div>
-        <div id="close"><a href="javascript:void(0);" onclick="toggleChart(0);">' . $lang_close . '</a></div>
+        <div id="close"><a href="javascript:void(0);" onclick="toggleChart(0);">' . $lang["close"] . '</a></div>
       </div>
     </div>
   </body>

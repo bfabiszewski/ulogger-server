@@ -46,7 +46,7 @@
   if ($user->isAdmin && !empty($login) && !empty($hash)) {
     $newUser = new uUser($login);
     if ($newUser->isValid) {
-      exitWithStatus(true, $lang_userexists);
+      exitWithStatus(true, $lang["userexists"]);
     }
     if ($newUser->add($login, $hash) === false) {
       exitWithStatus(true, $mysqli->error);

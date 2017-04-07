@@ -50,7 +50,7 @@ function displayChart() {
   }
 
   var options = {
-    title: lang_altitude+' ('+unit_m+')',
+    title: lang['altitude']+' ('+unit_m+')',
     hAxis: { textPosition: 'none' },
     legend: { position: 'none' }
   };
@@ -174,12 +174,12 @@ function load(type,userid,trackid) {
 function updateSummary(l,d,s) {
   var t = document.getElementById('summary');
   if (latest==0){
-    t.innerHTML = '<u>'+lang_summary+'</u><br />'+
-    lang_tdistance+': '+(d.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+
-    lang_ttime+': '+s.toHMS();
+    t.innerHTML = '<u>'+lang['summary']+'</u><br />'+
+    lang['tdistance']+': '+(d.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+
+    lang['ttime']+': '+s.toHMS();
   }
   else {
-    t.innerHTML = '<u>'+lang_latest+':</u><br />'+l;
+    t.innerHTML = '<u>'+lang['latest']+':</u><br />'+l;
   }
 }
 
@@ -297,7 +297,7 @@ function autoReload() {
 }
 
 function setTime() {
-  var i = parseInt(prompt(lang_newinterval));
+  var i = parseInt(prompt(lang['newinterval']));
   if (!isNaN(i) && i!=interval) {
     interval = i;
     document.getElementById('auto').innerHTML = interval;

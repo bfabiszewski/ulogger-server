@@ -110,16 +110,16 @@ if ($trackId && $userId) {
         $xml->writeAttribute("id", $position->id);
           $description =
           "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".
-          $lang_user.": ".strtoupper($position->userLogin)."<br />".$lang_track.": ".strtoupper($position->trackName).
+          $lang["user"].": ".strtoupper($position->userLogin)."<br />".$lang["track"].": ".strtoupper($position->trackName).
           "</div>".
           "<div>".
-          "<div style=\"padding-top: 10px;\"><b>".$lang_time.":</b> ".$position->time."<br />".
-          (!is_null($position->speed) ? "<b>".$lang_speed.":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br />" : "").
-          (!is_null($position->altitude) ? "<b>".$lang_altitude.":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br />" : "").
-          "<b>".$lang_ttime.":</b> ".toHMS($totalSeconds)."<br />".
-          "<b>".$lang_aspeed.":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br />".
-          "<b>".$lang_tdistance.":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br />"."</div>".
-          "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang_point." ".$i." ".$lang_of." ".count($positionsArr)."</div>".
+          "<div style=\"padding-top: 10px;\"><b>".$lang["time"].":</b> ".$position->time."<br />".
+          (!is_null($position->speed) ? "<b>".$lang["speed"].":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br />" : "").
+          (!is_null($position->altitude) ? "<b>".$lang["altitude"].":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br />" : "").
+          "<b>".$lang["ttime"].":</b> ".toHMS($totalSeconds)."<br />".
+          "<b>".$lang["aspeed"].":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br />".
+          "<b>".$lang["tdistance"].":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br />"."</div>".
+          "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang["point"]." ".$i." ".$lang["of"]." ".count($positionsArr)."</div>".
           "</div>";
           $xml->startElement("description");
             $xml->writeCData($description);
@@ -184,14 +184,14 @@ if ($trackId && $userId) {
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
               $description =
-              $lang_user.": ".strtoupper($position->userLogin)." ".$lang_track.": ".strtoupper($position->trackName).
-              " ".$lang_time.": ".$position->time.
-              (!is_null($position->speed) ? " ".$lang_speed.": ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh : "").
-              (!is_null($position->altitude) ? " ".$lang_altitude.": ".round($position->altitude * $factor_m)." ".$unit_m : "").
-              " ".$lang_ttime.": ".toHMS($totalSeconds)."".
-              " ".$lang_aspeed.": ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh.
-              " ".$lang_tdistance.": ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km.
-              " ".$lang_point." ".$i." ".$lang_of." ".count($positionsArr);
+              $lang["user"].": ".strtoupper($position->userLogin)." ".$lang["track"].": ".strtoupper($position->trackName).
+              " ".$lang["time"].": ".$position->time.
+              (!is_null($position->speed) ? " ".$lang["speed"].": ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh : "").
+              (!is_null($position->altitude) ? " ".$lang["altitude"].": ".round($position->altitude * $factor_m)." ".$unit_m : "").
+              " ".$lang["ttime"].": ".toHMS($totalSeconds)."".
+              " ".$lang["aspeed"].": ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh.
+              " ".$lang["tdistance"].": ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km.
+              " ".$lang["point"]." ".$i." ".$lang["of"]." ".count($positionsArr);
               $xml->writeCData($description);
             $xml->endElement();
           $xml->endElement();
