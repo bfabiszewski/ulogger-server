@@ -17,39 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once("auth.php");
-$type = (isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml");
-$userid = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
-$trackid = ((isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : 0);
+require_once("auth.php"); // sets $mysqli, $user
+require_once("helpers/position.php");
 
-if ($config::$units=="imperial") {
-  $factor_kmh = 0.62; //to mph
-  $unit_kmh = "mph";
-  $factor_m = 3.28; // to feet
-  $unit_m = "ft";
-  $factor_km = 0.62; // to miles
-  $unit_km = "mi";
-}
-else {
-  $factor_kmh = 1;
-  $unit_kmh = "km/h";
-  $factor_m = 1;
-  $unit_m = "m";
-  $factor_km = 1;
-  $unit_km = "km";
-}
-
-function haversine_distance($lat1, $lon1, $lat2, $lon2) {
-  $lat1 = deg2rad($lat1);
-  $lon1 = deg2rad($lon1);
-  $lat2 = deg2rad($lat2);
-  $lon2 = deg2rad($lon2);
-  $latD = $lat2 - $lat1;
-  $lonD = $lon2 - $lon1;
-  $bearing = 2*asin(sqrt(pow(sin($latD/2),2)+cos($lat1)*cos($lat2)*pow(sin($lonD/2),2)));
-  return $bearing * 6371000;
-}
-function addStyle($xml,$name,$url) {
+function addStyle($xml, $name, $url) {
   $xml->startElement("Style");
   $xml->writeAttribute("id", $name."Style");
     $xml->startElement("IconStyle");
@@ -60,100 +31,114 @@ function addStyle($xml,$name,$url) {
     $xml->endElement();
   $xml->endElement();
 }
+
 function toHMS($s) {
-  $d = floor($s/86400);
-  $h = floor(($s%86400)/3600);
-  $m = floor((($s%86400)%3600)/60);
-  $s = (($s%86400)%3600)%60;
-  return (($d>0)?($d." d "):"").(substr("00".$h,-2)).":".(substr("00".$m,-2)).":".(substr("00".$s,-2));
+  $d = floor($s / 86400);
+  $h = floor(($s % 86400) / 3600);
+  $m = floor((($s % 86400) % 3600) / 60);
+  $s = (($s % 86400) % 3600) % 60;
+  return (($d > 0) ? ($d." d ") : "").(substr("00".$h, -2)).":".(substr("00".$m, -2)).":".(substr("00".$s, -2));
 }
 
-if ($trackid>0 && $userid>0) {
-  $query = $mysqli->prepare("SELECT p.id, p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.time, u.login, t.name 
-                             FROM positions p
-                             LEFT JOIN users u ON (p.user_id=u.id) 
-                             LEFT JOIN tracks t ON (p.track_id=t.id) 
-                             WHERE p.user_id=? AND p.track_id=? 
-                             ORDER BY p.time");
-  $query->bind_param("ii", $userid, $trackid);
-  $query->execute();
-  $query->store_result();
-  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$bearing,$dateoccured,$username,$trackname);
-  $query->fetch(); // take just one row to get trackname etc
-  $query->data_seek(0); // and reset result set
+$type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
+$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : NULL;
+$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : NULL;
+
+if ($config::$units == "imperial") {
+  $factor_kmh = 0.62; //to mph
+  $unit_kmh = "mph";
+  $factor_m = 3.28; // to feet
+  $unit_m = "ft";
+  $factor_km = 0.62; // to miles
+  $unit_km = "mi";
+} else {
+  $factor_kmh = 1;
+  $unit_kmh = "km/h";
+  $factor_m = 1;
+  $unit_m = "m";
+  $factor_km = 1;
+  $unit_km = "km";
+}
+
+if ($trackId && $userId) {
+  $position = new uPosition();
+  $positionsArr = [];
+  $positionsArr = $position->getAll($userId, $trackId);
+  if (empty($positionsArr)) {
+    $mysqli->close();
+    exit();
+  }
+
   switch ($type) {
     case "kml":
     default:
       header("Content-type: application/vnd.google-earth.kml+xml");
-      header("Content-Disposition: attachment; filename=\"track$trackid.kml\"");
+      header("Content-Disposition: attachment; filename=\"track" . $positionsArr[0]->trackId . ".kml\"");
       $xml = new XMLWriter();
       $xml->openURI("php://output");
-      $xml->startDocument("1.0");
+      $xml->setIndent(true);
+      $xml->startDocument("1.0", "utf-8");
       $xml->startElement("kml");
       $xml->writeAttribute("xmlns", "http://earth.google.com/kml/2.1");
-      $xml->setIndent(true);
       $xml->startElement("Document");
-      $xml->writeElement("name", $trackname);
+      $xml->writeElement("name", $positionsArr[0]->trackName);
       // line style
       $xml->startElement("Style");
         $xml->writeAttribute("id", "lineStyle");
         $xml->startElement("LineStyle");
-          $xml->writeElement("color","7f0000ff");
-          $xml->writeElement("width","4");
+          $xml->writeElement("color", "7f0000ff");
+          $xml->writeElement("width", "4");
         $xml->endElement();
       $xml->endElement();
       // marker styles
-      addStyle($xml,"red","http://maps.google.com/mapfiles/markerA.png");
-      addStyle($xml,"green","http://maps.google.com/mapfiles/marker_greenB.png");
-      addStyle($xml,"gray","http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png");
+      addStyle($xml, "red", "http://maps.google.com/mapfiles/markerA.png");
+      addStyle($xml, "green", "http://maps.google.com/mapfiles/marker_greenB.png");
+      addStyle($xml, "gray", "http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png");
       $style = "#redStyle"; // for first element
       $i = 0;
       $totalMeters = 0;
       $totalSeconds = 0;
-      while ($query->fetch()) {
-        $distance = (isset($prev_latitude))?haversine_distance($prev_latitude,$prev_longitude,$latitude,$longitude):0;
-        $prev_latitude = $latitude;
-        $prev_longitude = $longitude;
-        $seconds = (isset($prev_dateoccured))?(strtotime($dateoccured)-strtotime($prev_dateoccured)):0;
-        $prev_dateoccured = $dateoccured;
+      foreach ($positionsArr as $position) {
+        $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+        $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+        $prevPosition = $position;
         $totalMeters += $distance;
         $totalSeconds += $seconds;
 
-        if(++$i == $query->num_rows) { $style = "#greenStyle"; } // last element
+        if(++$i == count($positionsArr)) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
-        $xml->writeAttribute("id", $positionid);
-          //$xml->writeElement("name", $i);
+        $xml->writeAttribute("id", $position->id);
           $description =
-          "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".$lang_user.": ".strtoupper($username)."<br />".$lang_track.": ".strtoupper($trackname).
+          "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".
+          $lang_user.": ".strtoupper($position->userLogin)."<br />".$lang_track.": ".strtoupper($position->trackName).
           "</div>".
           "<div>".
-          "<div style=\"padding-top: 10px;\"><b>".$lang_time.":</b> ".$dateoccured."<br />".
-          (($speed)?"<b>".$lang_speed.":</b> ".round($speed*3.6,2*$factor_kmh)." ".$unit_kmh."<br />":"").
-          (($altitude != null)?"<b>".$lang_altitude.":</b> ".round($altitude*$factor_m)." ".$unit_m."<br />":"").
+          "<div style=\"padding-top: 10px;\"><b>".$lang_time.":</b> ".$position->time."<br />".
+          (!is_null($position->speed) ? "<b>".$lang_speed.":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br />" : "").
+          (!is_null($position->altitude) ? "<b>".$lang_altitude.":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br />" : "").
           "<b>".$lang_ttime.":</b> ".toHMS($totalSeconds)."<br />".
-          "<b>".$lang_aspeed.":</b> ".(($totalSeconds!=0)?round($totalMeters/$totalSeconds*3.6*$factor_kmh,2):0)." ".$unit_kmh."<br />".
-          "<b>".$lang_tdistance.":</b> ".round($totalMeters/1000*$factor_km,2)." ".$unit_km."<br />"."</div>".
-          "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang_point." ".$i." ".$lang_of." ".($query->num_rows-1)."</div>".
+          "<b>".$lang_aspeed.":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br />".
+          "<b>".$lang_tdistance.":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br />"."</div>".
+          "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang_point." ".$i." ".$lang_of." ".count($positionsArr)."</div>".
           "</div>";
           $xml->startElement("description");
             $xml->writeCData($description);
           $xml->endElement();
           $xml->writeElement("styleUrl", $style);
           $xml->startElement("Point");
-            $coordinate[$i] = $longitude.",".$latitude.(($altitude) ? ",".$altitude : "");
+            $coordinate[$i] = $position->longitude.",".$position->latitude.(!is_null($position->altitude) ? ",".$position->altitude : "");
             $xml->writeElement("coordinates", $coordinate[$i]);
           $xml->endElement();
         $xml->endElement();
         $style = "#grayStyle"; // other elements
       }
-      $coordinates = implode("\n",$coordinate);
+      $coordinates = implode("\n", $coordinate);
       $xml->startElement("Placemark");
         $xml->writeElement("styleUrl", "#lineStyle");
         $xml->startElement("LineString");
           $xml->writeElement("coordinates", $coordinates);
         $xml->endElement();
       $xml->endElement();
-
 
       $xml->endElement();
       $xml->endElement();
@@ -164,49 +149,49 @@ if ($trackid>0 && $userid>0) {
 
     case "gpx":
       header("Content-type: application/application/gpx+xm");
-      header("Content-Disposition: attachment; filename=\"track$trackid.gpx\"");
+      header("Content-Disposition: attachment; filename=\"track" . $positionsArr[0]->trackId . ".gpx\"");
       $xml = new XMLWriter();
       $xml->openURI("php://output");
-      $xml->startDocument("1.0");
+      $xml->setIndent(true);
+      $xml->startDocument("1.0", "utf-8");
       $xml->startElement("gpx");
+      $xml->writeAttributeNs('xsi', 'schemaLocation', NULL, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+      $xml->writeAttributeNs('xmlns', 'xsi', NULL, 'http://www.w3.org/2001/XMLSchema-instance');
       $xml->writeAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
-      $xml->writeAttribute("xmlns:gpxdata", "http://www.cluetrust.com/XML/GPXDATA/1/0");
       $xml->writeAttribute("creator", "μlogger");
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
-        $xml->writeElement("name", $trackname);
-        $xml->writeElement("time", str_replace(" ","T",$dateoccured));
+        $xml->writeElement("name", $positionsArr[0]->trackName);
+        $xml->writeElement("time", str_replace(" ", "T", $positionsArr[0]->time));
       $xml->endElement();
       $xml->startElement("trk");
-        $xml->writeElement("name", $trackname);
+        $xml->writeElement("name", $positionsArr[0]->trackName);
         $xml->startElement("trkseg");
         $i = 0;
         $totalMeters = 0;
         $totalSeconds = 0;
-        while ($query->fetch()) {
-          $distance = (isset($prev_latitude))?haversine_distance($prev_latitude,$prev_longitude,$latitude,$longitude):0;
-          $prev_latitude = $latitude;
-          $prev_longitude = $longitude;
-          $seconds = (isset($prev_dateoccured))?(strtotime($dateoccured)-strtotime($prev_dateoccured)):0;
-          $prev_dateoccured = $dateoccured;
+        foreach ($positionsArr as $position) {
+          $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+          $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+          $prevPosition = $position;
           $totalMeters += $distance;
           $totalSeconds += $seconds;
           $xml->startElement("trkpt");
-            $xml->writeAttribute("lat", $latitude);
-            $xml->writeAttribute("lon", $longitude);
-            if($altitude) { $xml->writeElement("ele", $altitude); }
-            $xml->writeElement("time", str_replace(" ","T",$dateoccured));
+            $xml->writeAttribute("lat", $position->latitude);
+            $xml->writeAttribute("lon", $position->longitude);
+            if (!is_null($position->altitude)) { $xml->writeElement("ele", $position->altitude); }
+            $xml->writeElement("time", str_replace(" ", "T", $position->time));
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
               $description =
-              $lang_user.": ".strtoupper($username)." ".$lang_track.": ".strtoupper($trackname).
-              " ".$lang_time.": ".$dateoccured.
-              (($speed)?" ".$lang_speed.": ".round($speed*3.6,2*$factor_kmh)." ".$unit_kmh:"").
-              (($altitude != null)?" ".$lang_altitude.": ".round($altitude*$factor_m)." ".$unit_m:"").
+              $lang_user.": ".strtoupper($position->userLogin)." ".$lang_track.": ".strtoupper($position->trackName).
+              " ".$lang_time.": ".$position->time.
+              (!is_null($position->speed) ? " ".$lang_speed.": ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh : "").
+              (!is_null($position->altitude) ? " ".$lang_altitude.": ".round($position->altitude * $factor_m)." ".$unit_m : "").
               " ".$lang_ttime.": ".toHMS($totalSeconds)."".
-              " ".$lang_aspeed.": ".(($totalSeconds!=0)?round($totalMeters/$totalSeconds*3.6*$factor_kmh,2):0)." ".$unit_kmh.
-              " ".$lang_tdistance.": ".round($totalMeters/1000*$factor_km,2)." ".$unit_km.
-              " ".$lang_point." ".$i." ".$lang_of." ".($query->num_rows-1);
+              " ".$lang_aspeed.": ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh.
+              " ".$lang_tdistance.": ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km.
+              " ".$lang_point." ".$i." ".$lang_of." ".count($positionsArr);
               $xml->writeCData($description);
             $xml->endElement();
           $xml->endElement();
@@ -219,8 +204,7 @@ if ($trackid>0 && $userid>0) {
 
       break;
   }
-  $query->free_result();
-  $query->close();
+
 }
 $mysqli->close();
 ?>

@@ -40,10 +40,7 @@ class uUser {
           $this->isValid = true;
         }
         $stmt->close();
-        $config = new uConfig();
-        if (!empty($config::$admin_user) && $config::$admin_user == $this->login) {
-          $this->isAdmin = true;
-        }
+        $this->isAdmin = $this->isAdmin($this->login);
       }
     }
 
@@ -94,18 +91,33 @@ class uUser {
       }
     }
 
-    public function listAll() {
-      $query = "SELECT id, login FROM users ORDER BY login";
+    public function getAll() {
+      $query = "SELECT id, login, password FROM users ORDER BY login";
       $result = self::$db->query($query);
       if ($result === false) {
         return false;
       }
       $userArr = [];
       while ($row = $result->fetch_assoc()) {
-        $userArr[$row['id']] = $row['login'];
+        $userArr[] = $this->rowToObject($row);
       }
       $result->close();
       return $userArr;
+    }
+
+    private function rowToObject($row) {
+      $user = new uUser();
+      $user->id = $row['id'];
+      $user->login = $row['login'];
+      $user->hash = $row['password'];
+      $user->isAdmin = $this->isAdmin($row['login']);
+      $user->isValid = true;
+      return $user;
+    }
+
+    private function isAdmin($login) {
+      $config = new uConfig();
+      return (!empty($config::$admin_user) && $config::$admin_user == $login);
     }
 }
 

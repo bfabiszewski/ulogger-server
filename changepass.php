@@ -41,6 +41,7 @@
     $xml->endElement();
     $xml->endDocument();
     $xml->flush();
+    $mysqli->close();
     exit;
   }
 

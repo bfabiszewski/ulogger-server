@@ -17,7 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once ("auth.php");
+require_once("auth.php");
+require_once("helpers/position.php");
+require_once("helpers/track.php");
+
 if ($user->isValid) {
   $itemPass = '<a href="javascript:void(0)" onclick="changePass()">' . $lang_changepass . '</a>';
   $itemLogout = '<a href="logout.php">' . $lang_logout . '</a>';
@@ -44,16 +47,16 @@ if ($user->isAdmin || $config::$public_tracks) {
   <select name="user" onchange="selectUser(this)">
   <option value="0">' . $lang_suser . '</option>';
   // get last position user
-  $query = "SELECT p.user_id FROM positions p ORDER BY p.time LIMIT 1";
-  $result = $mysqli->query($query);
-  if ($result->num_rows) {
-    $last = $result->fetch_row();
-    $lastUserId = $last[0];
+  $lastPosition = new uPosition();
+  $lastPosition->getLast();
+  if ($lastPosition->isValid) {
+    $lastUserId = $lastPosition->userId;
   }
-  $usersArr = $user->listAll();
+  
+  $usersArr = $user->getAll();
   if (!empty($usersArr)) {
-    foreach ($usersArr as $userId => $userLogin) {
-      $userForm.= sprintf("<option %svalue=\"%s\">%s</option>\n", (($userId == $lastUserId) ? "selected " : ""), $userId, $userLogin);
+    foreach ($usersArr as $aUser) {
+      $userForm.= sprintf("<option %svalue=\"%s\">%s</option>\n", (($aUser->id == $lastUserId) ? "selected " : ""), $aUser->id, $aUser->login);
     }
   }
   $userForm.= '
@@ -73,13 +76,16 @@ if ($lastUserId) {
 } else if ($user->isValid) {
   // display track of authenticated user
   $displayId = $user->id;
-} 
-$query = "SELECT * FROM tracks WHERE user_id='$displayId' ORDER BY id DESC";
-$result = $mysqli->query($query);
+}
+
+$track = new uTrack();
+$tracksArr = $track->getAll($displayId);
 $trackId = NULL;
-while ($row = $result->fetch_assoc()) {
-  if (is_null($trackId)) { $trackId = $row["id"]; } // get first row
-  $trackForm.= sprintf("<option value=\"%s\">%s</option>\n", $row["id"], $row["name"]);
+if (!empty($tracksArr)) {
+  $trackId = $tracksArr[0]->id; // get id of the latest track
+  foreach ($tracksArr as $aTrack) {
+    $trackForm.= sprintf("<option value=\"%s\">%s</option>\n", $aTrack->id, $aTrack->name);
+  }
 }
 $trackForm.= '
 </select>
@@ -241,5 +247,6 @@ print '
     </div>
   </body>
 </html>';
+
 $mysqli->close();
 ?>

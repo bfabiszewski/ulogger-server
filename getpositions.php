@@ -17,45 +17,24 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once("auth.php");
+require_once("auth.php"); // sets $mysqli, $user
+require_once("helpers/position.php");
 
-$userid = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
-$trackid = ((isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : 0);
+$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : NULL;
+$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : NULL;
 
-function haversine_distance($lat1, $lon1, $lat2, $lon2) {
-  $lat1 = deg2rad($lat1);
-  $lon1 = deg2rad($lon1);
-  $lat2 = deg2rad($lat2);
-  $lon2 = deg2rad($lon2);
-  $latD = $lat2 - $lat1;
-  $lonD = $lon2 - $lon1;
-  $bearing = 2*asin(sqrt(pow(sin($latD/2),2)+cos($lat1)*cos($lat2)*pow(sin($lonD/2),2)));
-  return $bearing * 6371000;
-}
-
-if ($userid) {
-  if ($trackid) {
+if ($userId) {
+  $position = new uPosition();
+  $positionsArr = [];
+  if ($trackId) {
     // get all track data
-    $query = $mysqli->prepare("SELECT p.id, p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.time, p.accuracy, p.comment, u.login, t.name, t.id 
-                            FROM positions p
-                            LEFT JOIN users u ON (p.user_id=u.id) 
-                            LEFT JOIN tracks t ON (p.track_id=t.id) 
-                            WHERE p.user_id=? AND p.track_id=? 
-                            ORDER BY p.time");
-    $query->bind_param('ii', $userid, $trackid);
+    $positionsArr = $position->getAll($userId, $trackId);
   } else {
     // get data only for latest point
-    $query = $mysqli->prepare("SELECT p.id, p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.time, p.accuracy, p.comment, u.login, t.name, t.id 
-                                FROM positions p
-                                LEFT JOIN users u ON (p.user_id=u.id) 
-                                LEFT JOIN tracks t ON (p.track_id=t.id) 
-                                WHERE p.user_id=?
-                                ORDER BY p.time DESC LIMIT 1");
-    $query->bind_param('i', $userid);
+    $position->getLast($userId);
+    $positionsArr[] = $position;
   }
-  $query->execute();
-  $query->bind_result($positionid,$latitude,$longitude,$altitude,$speed,$bearing,$dateoccured,$accuracy,$comments,$username,$trackname,$trackid);
-
+  
   header("Content-type: text/xml");
   $xml = new XMLWriter();
   $xml->openURI("php://output");
@@ -63,35 +42,31 @@ if ($userid) {
   $xml->setIndent(true);
   $xml->startElement('root');
 
-  while ($query->fetch()) {
+  foreach ($positionsArr as $position) {
     $xml->startElement("position");
-    $xml->writeAttribute("id", $positionid);
-      $xml->writeElement("latitude", $latitude);
-      $xml->writeElement("longitude", $longitude);
-      $xml->writeElement("altitude", ($altitude)?round($altitude):$altitude);
-      $xml->writeElement("speed", $speed);
-      $xml->writeElement("bearing", $bearing);
-      $xml->writeElement("dateoccured", $dateoccured);
-      $xml->writeElement("accuracy", $accuracy);
-      $xml->writeElement("comments", $comments);
-      $xml->writeElement("username", $username);
-      $xml->writeElement("trackid", $trackid);
-      $xml->writeElement("trackname", $trackname);
-      $distance = (isset($prev_latitude))?haversine_distance($prev_latitude,$prev_longitude,$latitude,$longitude):0;
-      $prev_latitude = $latitude;
-      $prev_longitude = $longitude;
+    $xml->writeAttribute("id", $position->id);
+      $xml->writeElement("latitude", $position->latitude);
+      $xml->writeElement("longitude", $position->longitude);
+      $xml->writeElement("altitude", ($position->altitude) ? round($position->altitude) : $position->altitude);
+      $xml->writeElement("speed", $position->speed);
+      $xml->writeElement("bearing", $position->bearing);
+      $xml->writeElement("dateoccured", $position->time);
+      $xml->writeElement("accuracy", $position->accuracy);
+      $xml->writeElement("comments", $position->comment);
+      $xml->writeElement("username", $position->userLogin);
+      $xml->writeElement("trackid", $position->trackId);
+      $xml->writeElement("trackname", $position->trackName);
+      $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
       $xml->writeElement("distance", round($distance));
-      $seconds = (isset($prev_dateoccured))?(strtotime($dateoccured)-strtotime($prev_dateoccured)):0;
-      $prev_dateoccured = $dateoccured;
+      $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
       $xml->writeElement("seconds", $seconds);
     $xml->endElement();
+    $prevPosition = $position;
   }
 
   $xml->endElement();
   $xml->endDocument();
   $xml->flush();
-
-  $query->free_result();
 }
 
 $mysqli->close();

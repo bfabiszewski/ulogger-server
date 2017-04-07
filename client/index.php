@@ -24,7 +24,6 @@ function setError(&$response, $message) {
 
 define("headless", true); 
 require_once("../auth.php"); // sets $mysqli, $user
-$userid = $user->id;
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 $response = [ 'error' => false ];
@@ -54,23 +53,20 @@ switch ($action) {
 
   // action: addtrack
   case "addtrack":
-    $trackname = isset($_REQUEST['track']) ? $_REQUEST['track'] : NULL;
-    if (empty($trackname)) {
+    $trackName = isset($_REQUEST['track']) ? $_REQUEST['track'] : NULL;
+    if (empty($trackName)) {
       setError($response, "missing required parameter");
       break;
     }
-    $sql = "INSERT INTO tracks (user_id, name) VALUES (?, ?)";
-    $query = $mysqli->prepare($sql);
-    $query->bind_param('is', $userid, $trackname);
-    $query->execute();
-    $trackid = $mysqli->insert_id;
-    $query->close();
-    if ($mysqli->errno) {
-      setError($response, $mysqli->error);
+    require_once("../helpers/track.php");
+    $track = new uTrack();
+    $trackId = $track->add($user->id, $trackName);
+    if ($trackId === false) {
+      setError($response, "Server error");
       break;
     }
     // return track id
-    $response['trackid'] = $trackid;
+    $response['trackid'] = $trackId;
     break;
 
   // action: addposition
@@ -84,30 +80,23 @@ switch ($action) {
     $accuracy = isset($_REQUEST["accuracy"]) ? $_REQUEST["accuracy"] : NULL;
     $provider = isset($_REQUEST["provider"]) ? $_REQUEST["provider"] : NULL;
     $comment = isset($_REQUEST["comment"]) ? $_REQUEST["comment"] : NULL;
-    $imageid = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
-    $trackid = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
+    $imageId = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
+    $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
 
-    if (is_null($lat) || is_null($lon) || is_null($time) || is_null($trackid)) {
+    if (is_null($lat) || is_null($lon) || is_null($time) || is_null($trackId)) {
       setError($response, "missing required parameter");
       break;
     }
 
-    $sql = "INSERT INTO positions "
-        ."(user_id, track_id,"
-        ."time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)"
-        ."VALUES (?,?,FROM_UNIXTIME(?),?,?,?,?,?,?,?,?,?)";
-
-    $query = $mysqli->prepare($sql);
-    $query->bind_param('iisddddddssi',
-            $userid, $trackid,
-            $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageid);
-    $query->execute();
-    $query->close();
-    if ($mysqli->errno) {
-      setError($response, $mysqli->error);
+    require_once("../helpers/position.php");
+    $position = new uPosition();
+    $positionId = $position->add($user->id, $trackId,
+            $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+    
+    if ($positionId === false) {
+      setError($response, "Server error");
     }
     break;
-
 }
 
 $mysqli->close();

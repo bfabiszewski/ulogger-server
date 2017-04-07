@@ -100,7 +100,6 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       $user->storeInSession();
       $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
       header("Location: $ssl://$url");
-      exit();
     } else {
       // unsuccessful
       $error = "?auth_error=1";

@@ -17,15 +17,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once("auth.php");
+require_once("auth.php"); // sets $mysqli, $user
+require_once("helpers/track.php");
 
-$userid = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
+$userId = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
 
-if ($userid) {
-  $query = $mysqli->prepare("SELECT id, name FROM tracks WHERE user_id=? ORDER BY id DESC");
-  $query->bind_param('i', $userid);
-  $query->execute();
-  $query->bind_result($trackid, $trackname);
+if ($userId) {
+  $track = new uTrack();
+  $tracksArr = $track->getAll($userId);
 
   header("Content-type: text/xml");
   $xml = new XMLWriter();
@@ -34,18 +33,18 @@ if ($userid) {
   $xml->setIndent(true);
   $xml->startElement('root');
 
-  while ($query->fetch()) {
-    $xml->startElement("track");
-      $xml->writeElement("trackid", $trackid);
-      $xml->writeElement("trackname", $trackname);
-    $xml->endElement();
+  if (!empty($tracksArr)) {
+    foreach ($tracksArr as $aTrack) {
+      $xml->startElement("track");
+        $xml->writeElement("trackid", $aTrack->id);
+        $xml->writeElement("trackname", $aTrack->name);
+      $xml->endElement();
+    }
   }
 
   $xml->endElement();
   $xml->endDocument();
   $xml->flush();
-
-  $query->free_result();
 }
 
 $mysqli->close();
