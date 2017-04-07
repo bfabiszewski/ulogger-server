@@ -175,7 +175,7 @@ print '<!DOCTYPE html>
       var lang_submit = "' . $lang_submit . '";
       var units = "' . $config::$units . '";
       var mapapi = "' . $config::$mapapi . '";
-      var gkey = ' . (isset($gkey) ? '"' . $gkey . '"' : 'null') . ';
+      var gkey = ' . (!empty($config::$gkey) ? '"' . $config::$gkey . '"' : 'null') . ';
       var layer_ocm = "' . $config::$layer_ocm . '";
       var layer_mq = "' . $config::$layer_mq . '";
       var layer_osmapa = "' . $config::$layer_osmapa . '";
@@ -186,7 +186,7 @@ print '<!DOCTYPE html>
     <script type="text/javascript" src="main.js"></script>
 ';
 if ($config::$mapapi == "gmaps") {
-  print '   <script type="text/javascript" src="//maps.googleapis.com/maps/api/js' . (isset($gkey) ? '?key=' . $gkey : '') . '"></script>
+  print '   <script type="text/javascript" src="//maps.googleapis.com/maps/api/js' . (!empty($config::$gkey) ? '?key=' . $config::$gkey : '') . '"></script>
     <script type="text/javascript" src="api_gmaps.js"></script>
 ';
 } else {

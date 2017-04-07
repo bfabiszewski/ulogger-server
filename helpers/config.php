@@ -25,6 +25,9 @@ class uConfig {
     // (gmaps = google maps, openlayers = openlayers/osm)
     static $mapapi = "openlayers";
 
+    // gmaps key
+    static $gkey = null;
+
     // openlayers additional map layers
     // OpenCycleMap (0 = no, 1 = yes)
     static $layer_ocm = 1;
@@ -91,6 +94,7 @@ class uConfig {
         include_once($configFile);
 
         if (isset($mapapi)) { self::$mapapi = $mapapi; }
+        if (isset($gkey)) { self::$gkey = $gkey; }
         if (isset($layer_ocm)) { self::$layer_ocm = $layer_ocm; }
         if (isset($layer_mq)) { self::$layer_mq = $layer_mq; }
         if (isset($layer_osmapa)) { self::$layer_osmapa = $layer_osmapa; }
