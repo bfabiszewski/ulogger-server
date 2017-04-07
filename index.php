@@ -107,6 +107,7 @@ $langForm = '
 <u>' . $lang["language"] . '</u><br />
 <form>
 <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">';
+asort($langsArr);
 foreach ($langsArr as $langCode => $langName) {
   $langForm .= '<option value="' . $langCode . '"' . (($config::$lang == $langCode) ? ' selected' : '') . '>' . $langName . '</option>';
 }
