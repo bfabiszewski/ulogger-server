@@ -54,12 +54,10 @@ class uConfig {
 
     // other
     // require login/password authentication
-    // (0 = no, 1 = yes)
-    static $require_authentication = 1;
+    static $require_authentication = true;
 
     // all users tracks are visible to authenticated user
-    // (0 = no, 1 = yes)
-    static $public_tracks = 0;
+    static $public_tracks = false;
 
     // admin user who has access to all users locations
     // none if empty
@@ -106,11 +104,16 @@ class uConfig {
         if (isset($dbpass)) { self::$dbpass = $dbpass; }
         if (isset($dbname)) { self::$dbname = $dbname; }
         if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
-        if (isset($public_tracks)) { self::$public_tracks = $public_tracks; }
+        if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
         if (isset($admin_user)) { self::$admin_user = $admin_user; }
         if (isset($interval)) { self::$interval = $interval; }
         if (isset($lang)) { self::$lang = $lang; }
         if (isset($units)) { self::$units = $units; }
+
+        if (!self::$require_authentication) {
+          // tracks must be public if we don't require authentication
+          self::$public_tracks = true;
+        }
    }
    private function setFromCookies() {
         if (isset($_COOKIE["ulogger_api"])) { self::$mapapi = $_COOKIE["ulogger_api"]; }
