@@ -17,7 +17,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
  
-// default language for translations
 $lang["title"] = "• μlogger •";
 $lang["private"] = "Necesitas un nombre de usuario y contraseña para acceder a esta página.";
 $lang["authfail"] = "Nombre de usuasrio o contraseña erroneos";
@@ -63,5 +62,5 @@ $lang["newpassword"] = "Nueva contraseña";
 $lang["newpasswordrepeat"] = "Repita nueva contraseña";
 $lang["changepass"] = "Cambiar contraseña";
 $lang["gps"] = "GPS";
-$lang["network"] = "Red ";
+$lang["network"] = "Red";
 ?>
