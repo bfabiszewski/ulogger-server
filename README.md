@@ -32,13 +32,12 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 5. Make sure your web server is running (Apache, Php and Mysql)
 6. Go to http://your_local_server/ulogger-server/)
 7. Connect with admin/admin
-8. Change admin password (not available for now)
+8. Change admin password
 9. Create other user if needed
 
 ## Todo
 - install script
 - custom icons
-- improve admin menu (password or username change)
 - track editing
 - track display filters (accurracy, provider)
 
