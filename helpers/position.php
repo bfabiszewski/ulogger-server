@@ -77,24 +77,32 @@ class uPosition {
       return $positionId;
     }
 
-    public function getLast() {
-        $query = "SELECT p.id, p.time, p.user_id, p.track_id, 
-                  p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider, 
-                  p.comment, p.image_id, u.login, t.name 
-                  FROM positions p 
-                  LEFT JOIN users u ON (p.user_id = u.id) 
-                  LEFT JOIN tracks t ON (p.track_id = t.id) 
-                  ORDER BY p.time DESC LIMIT 1";
-        $this->loadWithQuery($query);
+    public function getLast($userId = NULL) {
+      if (!empty($userId)) {
+        $where = "WHERE p.user_id = ?";
+        $params = [ 'i', $userId ];
+      } else {
+        $where = "";
+        $params = NULL;
+      }
+      $query = "SELECT p.id, p.time, p.user_id, p.track_id, 
+                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider, 
+                p.comment, p.image_id, u.login, t.name 
+                FROM positions p 
+                LEFT JOIN users u ON (p.user_id = u.id) 
+                LEFT JOIN tracks t ON (p.track_id = t.id) 
+                $where
+                ORDER BY p.time DESC LIMIT 1";
+      $this->loadWithQuery($query, $params);
     }
 
     public function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];
       if (!empty($userId)) {
-        $rules[] = "p.user_id='" . self::$db->real_escape_string($userId) ."'";
+        $rules[] = "p.user_id = '" . self::$db->real_escape_string($userId) ."'";
       }
       if (!empty($trackId)) {
-        $rules[] = "p.track_id='" . self::$db->real_escape_string($trackId) ."'";
+        $rules[] = "p.track_id = '" . self::$db->real_escape_string($trackId) ."'";
       }  
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);
