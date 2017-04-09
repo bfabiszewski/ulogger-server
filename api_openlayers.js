@@ -158,24 +158,8 @@ function setMarker(p,i,posLen) {
   var marker = new OpenLayers.Marker(lonLat,icon);
   layerMarkers.addMarker(marker);
 
-
   // popup
-  var content = '<div id="popup">'+
-    '<div id="pheader">'+lang['user']+': '+p.username.toUpperCase()+'<br />'+lang['track']+': '+p.trackname.toUpperCase()+
-    '</div>'+
-    '<div id="pbody">'+
-    ((p.comments != null)?'<div id="pcomments">'+p.comments+'</div>':'')+
-    '<div id="pleft"><b>'+lang['time']+':</b> '+p.dateoccured+'<br />'+
-    ((p.speed != null)?'<b>'+lang['speed']+':</b> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
-    ((p.altitude != null)?'<b>'+lang['altitude']+':</b> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+
-    ((p.accuracy != null)?'<b>'+lang['accuracy']+':</b> '+(p.accuracy*factor_m).toFixed()+' '+unit_m+'<br />':'')+
-    '</div>'+
-    ((latest==0)?
-    ('<div id="pright"><b>'+lang['ttime']+':</b> '+p.totalSeconds.toHMS()+'<br />'+
-    '<b>'+lang['aspeed']+':</b> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
-    '<b>'+lang['tdistance']+':</b> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>'):'')+
-    '<div id="pfooter">'+lang['point']+' '+(i+1)+' '+lang['of']+' '+(posLen)+'</div>'+
-    '</div></div>';
+  var content = getPopupHtml(p,i,posLen);
   marker.events.register("mousedown", marker, (function() {
   return function() {
     // remove popups
@@ -185,7 +169,7 @@ function setMarker(p,i,posLen) {
       };
     }
     // show popup
-    var popup = new OpenLayers.Popup.FramedCloud("id "+(i+1),lonLat,null,content,icon,true);
+    var popup = new OpenLayers.Popup.FramedCloud("popup_"+(i+1),lonLat,null,content,icon,true);
     map.addPopup(popup);
     if (document.getElementById('bottom').style.display=='block') {
       chart.setSelection([{row:i,column:null}]);

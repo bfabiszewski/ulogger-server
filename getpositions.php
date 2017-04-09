@@ -52,6 +52,7 @@ if ($userId) {
       $xml->writeElement("bearing", $position->bearing);
       $xml->writeElement("dateoccured", $position->time);
       $xml->writeElement("accuracy", $position->accuracy);
+      $xml->writeElement("provider", $position->provider);
       $xml->writeElement("comments", $position->comment);
       $xml->writeElement("username", $position->userLogin);
       $xml->writeElement("trackid", $position->trackId);

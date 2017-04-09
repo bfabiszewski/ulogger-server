@@ -36,7 +36,7 @@ $lang["accuracy"] = "Accuracy";
 $lang["altitude"] = "Altitude";
 $lang["ttime"] = "Total time";
 $lang["aspeed"] = "Average speed";
-$lang["tdistance"] = "Total dist.";
+$lang["tdistance"] = "Total distance";
 $lang["point"] = "Point"; //Point x of y
 $lang["of"] = "of";
 $lang["summary"] = "Trip summary";
@@ -64,5 +64,7 @@ $lang["oldpassword"] = "Old password";
 $lang["newpassword"] = "New password";
 $lang["newpasswordrepeat"] = "Repeat new password";
 $lang["changepass"] = "Change password";
+$lang["gps"] = "GPS";
+$lang["network"] = "Network";
 
 ?>

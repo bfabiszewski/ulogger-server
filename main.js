@@ -142,6 +142,7 @@ function parsePosition(p) {
   if (bearing != null) { bearing = parseInt(bearing); }
   var accuracy = getNode(p,'accuracy'); // may be null
   if (accuracy != null) { accuracy = parseInt(accuracy); }
+  var provider = getNode(p,'provider'); // may be null
   var comments = getNode(p,'comments'); // may be null
   var username = getNode(p,'username');
   var trackname = getNode(p,'trackname');
@@ -156,6 +157,7 @@ function parsePosition(p) {
     'speed': speed,
     'bearing': bearing,
     'accuracy': accuracy,
+    'provider': provider,
     'comments': comments,
     'username': username,
     'trackname': trackname,
@@ -164,6 +166,44 @@ function parsePosition(p) {
     'distance': distance,
     'seconds': seconds
   };
+}
+
+function getPopupHtml(p, i, count) {
+  var dateTime = p.dateoccured.split(" ");
+  var date = dateTime[0];
+  var time = dateTime[1];
+  var provider = '';
+  if (p.provider == 'gps') {
+    provider = ' (<img class="icon" alt="'+lang['gps']+'" title="'+lang['gps']+'"  src="images/gps_dark.svg" />)';
+  } else if (p.provider == 'network') {
+    provider = ' (<img class="icon" alt="'+lang['network']+'" title="'+lang['network']+'"  src="images/network_dark.svg" />)';    
+  }
+  popup = 
+  '<div id="popup">'+
+  '<div id="pheader">'+
+  '<div><img alt="'+lang['user']+'" title="'+lang['user']+'" src="images/user_dark.svg" /> '+p.username+'</div>'+
+  '<div><img alt="'+lang['track']+'" title="'+lang['track']+'" src="images/route_dark.svg" /> '+p.trackname+'</div>'+
+  '</div>'+
+  '<div id="pbody">'+
+  ((p.comments != null)?'<div id="pcomments">'+p.comments+'</div>':'')+
+  '<div id="pleft">'+
+  '<img class="icon" alt="'+lang['time']+'" title="'+lang['time']+'" src="images/calendar_dark.svg" /> '+date+'<br />'+
+  '<img class="icon" alt="'+lang['time']+'" title="'+lang['time']+'" src="images/clock_dark.svg" /> '+time+'<br />'+
+  ((p.speed != null)?'<img class="icon" alt="'+lang['speed']+'" title="'+lang['speed']+'" src="images/speed_dark.svg" /> '+(p.speed.toKmH()*factor_kmh)+' '+unit_kmh+'<br />':'')+
+  ((p.altitude != null)?'<img class="icon" alt="'+lang['altitude']+'" title="'+lang['altitude']+'" src="images/altitude_dark.svg" /> '+(p.altitude*factor_m).toFixed()+' '+unit_m+'<br />':'')+
+  ((p.accuracy != null)?'<img class="icon" alt="'+lang['accuracy']+'" title="'+lang['accuracy']+'" src="images/accuracy_dark.svg" /> '+(p.accuracy*factor_m).toFixed()+' '+unit_m+provider+'<br />':'')+
+  '</div>'+
+  ((latest==0)?
+  ('<div id="pright">'+
+  '<img class="icon" src="images/stats_blue.svg" style="padding-left: 3em;" /><br />'+
+  '<img class="icon" alt="'+lang['ttime']+'" title="'+lang['ttime']+'" src="images/time_blue.svg" /> '+p.totalSeconds.toHMS()+'<br />'+
+  '<img class="icon" alt="'+lang['aspeed']+'" title="'+lang['aspeed']+'" src="images/speed_blue.svg" /> '+((p.totalSeconds>0)?((p.totalMeters/p.totalSeconds).toKmH()*factor_kmh).toFixed():0)+' '+unit_kmh+'<br />'+
+  '<img class="icon" alt="'+lang['tdistance']+'" title="'+lang['tdistance']+'" src="images/distance_blue.svg" /> '+(p.totalMeters.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+'</div>')
+  :
+  '')+
+  '<div id="pfooter">'+lang['point']+' '+(i + 1)+' '+lang['of']+' '+count+'</div>'+
+  '</div></div>';
+  return popup;
 }
 
 function load(type,userid,trackid) {
@@ -175,8 +215,8 @@ function updateSummary(l,d,s) {
   var t = document.getElementById('summary');
   if (latest==0){
     t.innerHTML = '<u>'+lang['summary']+'</u><br />'+
-    lang['tdistance']+': '+(d.toKm()*factor_km).toFixed(2)+' '+unit_km+'<br />'+
-    lang['ttime']+': '+s.toHMS();
+    '<span><img class="icon" alt="'+lang['tdistance']+'" title="'+lang['tdistance']+'" src="images/distance.svg" /> '+(d.toKm()*factor_km).toFixed(2)+' '+unit_km+'</span>'+
+    '<span><img class="icon" alt="'+lang['ttime']+'" title="'+lang['ttime']+'" src="images/time.svg" /> '+s.toHMS()+'</span>';
   }
   else {
     t.innerHTML = '<u>'+lang['latest']+':</u><br />'+l;

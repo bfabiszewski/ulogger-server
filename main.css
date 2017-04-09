@@ -102,6 +102,13 @@ select {
 #user, #track, #summary, #export, #other, #units {
   padding-bottom: 10px;
 }
+#summary span {
+  display: block;
+  padding-top: .3em;
+}
+#summary span img {
+  margin-bottom: -2px;
+}
 #login {
   font-family: Verdana, sans-serif;
   position: relative;
@@ -127,28 +134,33 @@ select {
   padding-top: 1.2em;
   color: yellow;
 }
-#popup {
-  width:370px;
-  min-height:130px;
-}
 #popup * {
   font-family: Roboto, Verdana, sans-serif;
-  font-size: 12px;
 }
 #pheader {
-  font-weight: bolder;
-  padding-bottom: 5px;
-  border-bottom: 1px solid gray;
+  float: left;
+  font-size: .9rem;
+  color: #297b9a;
+  padding-bottom: .5rem;
+}
+#pheader div {
+  float: left;
+  padding-right: 2em;
+}
+#pbody {
+  clear: both;
+  padding-top: .2rem;
+  border-top: 1px solid #6cdae7;;
+  font-size: .8rem;
+  white-space: nowrap;
 }
 #pcomments {
   clear: both;
   color: #903;
 }
-#pleft,#pright {
-  float:left;
+#pleft, #pright {
+  display: inline-block;
   padding-top: 5px;
-}
-#pleft {
   padding-right: 20px;
 }
 #pfooter {
