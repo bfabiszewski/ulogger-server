@@ -16,10 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 require_once("auth.php"); // sets $mysqli, $user
 require_once("helpers/position.php");
 
+/**
+ * Add kml marker style element
+ *
+ * @param XMLWriter $xml Writer object
+ * @param string $name Color name
+ * @param string $url Url
+ */
 function addStyle($xml, $name, $url) {
   $xml->startElement("Style");
   $xml->writeAttribute("id", $name."Style");
@@ -32,6 +39,12 @@ function addStyle($xml, $name, $url) {
   $xml->endElement();
 }
 
+/**
+ * Convert seconds to [day], hour, minute, second string
+ *
+ * @param [type] $s Number of seconds
+ * @return string [d ]hhmmss
+ */
 function toHMS($s) {
   $d = floor($s / 86400);
   $h = floor(($s % 86400) / 3600);

@@ -17,9 +17,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(__DIR__ . "/db.php");
+  require_once(__DIR__ . "/db.php");
 
-class uTrack {
+ /**
+  * Track handling
+  */
+  class uTrack {
     public $id;
     public $userId;
     public $name;
@@ -29,6 +32,11 @@ class uTrack {
 
     private static $db;
 
+   /**
+    * Constructor
+    *
+    * @param int $trackId Track id
+    */
     public function __construct($trackId = NULL) {
 
       self::$db = uDB::getInstance();
@@ -46,6 +54,14 @@ class uTrack {
       }
     }
 
+   /**
+    * Add new track
+    *
+    * @param string $userId User id
+    * @param string $name Name
+    * @param string $comment Optional comment
+    * @return int|bool New track id, false on error
+    */
     public function add($userId, $name, $comment = NULL) {
       $trackId = false;
       if (!empty($userId) && !empty($name)) {
@@ -61,6 +77,12 @@ class uTrack {
       return $trackId;
     }
 
+   /**
+    * Get all tracks
+    *
+    * @param int $userId Optional limit to user id
+    * @return array|bool Array of uTrack tracks, false on error
+    */
     public function getAll($userId = NULL) {
       if (!empty($userId)) {
         $where = "WHERE user_id='" . self::$db->real_escape_string($userId) ."'";
@@ -80,6 +102,12 @@ class uTrack {
       return $trackArr;
     }
 
+   /**
+    * Convert database row to uTrack
+    *
+    * @param array $row Row
+    * @return uTrack Track
+    */
     private function rowToObject($row) {
       $track = new uTrack();
       $track->id = $row['id'];
@@ -89,6 +117,6 @@ class uTrack {
       $track->isValid = true;
       return $track;
     }
-}
+  }
 
 ?>

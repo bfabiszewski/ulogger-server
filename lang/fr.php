@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 $lang["title"] = "• μlogger •";
 $lang["private"] = "Il faut un nom d'utilisateur et un mot de passe pour accéder à cette page.";
 $lang["authfail"] = "Nom d'utilisateur ou mot de passe erroné.";

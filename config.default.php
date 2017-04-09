@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-// This is default configuration file. 
+// This is default configuration file.
 // Copy it to config.php and customize
 
 // default map drawing framework

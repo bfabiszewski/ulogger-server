@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 require_once("helpers/config.php");
 $config = new uConfig();
 
@@ -46,7 +46,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
 
   if (!$login){
     // not authenticated and username not submited
-    // load form    
+    // load form
     if (defined('headless')) {
       header('HTTP/1.1 401 Unauthorized', true, 401);
     } else {

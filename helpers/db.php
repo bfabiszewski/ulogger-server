@@ -17,31 +17,48 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once (__DIR__ . "/config.php");
-class uDb extends mysqli {
-  // singleton instance
-  protected static $instance;
+  require_once (__DIR__ . "/config.php");
 
-  // private constuctor
-  private function __construct($host, $user, $pass, $name) {
-    parent::__construct($host, $user, $pass, $name);
-    if ($this->connect_error) {
-      if (defined('headless')) {
-        header("HTTP/1.1 503 Service Unavailable");
-        exit;
+ /**
+  * mysqli wrapper
+  */
+  class uDb extends mysqli {
+    /**
+     * Singleton instance
+     *
+     * @var mysqli Object instance
+     */
+    protected static $instance;
+
+   /**
+    * Private constuctor
+    *
+    * @param string $host
+    * @param string $user
+    * @param string $pass
+    * @param string $name
+    */
+    private function __construct($host, $user, $pass, $name) {
+      parent::__construct($host, $user, $pass, $name);
+      if ($this->connect_error) {
+        if (defined('headless')) {
+          header("HTTP/1.1 503 Service Unavailable");
+          exit;
+        }
+        die("Database connection error (" . $this->connect_errno . ")");
       }
-      die("Database connection error (" . $this->connect_errno . ")");
+      $this->set_charset('utf8');
     }
-    $this->set_charset('utf8');
-  }
 
-  // returns singleton instance
-  public static function getInstance() {
-    if (!self::$instance) {
-      $config = new uConfig();
-      self::$instance = new self($config::$dbhost, $config::$dbuser, $config::$dbpass, $config::$dbname);
+   /**
+    * Returns singleton instance
+    */
+    public static function getInstance() {
+      if (!self::$instance) {
+        $config = new uConfig();
+        self::$instance = new self($config::$dbhost, $config::$dbuser, $config::$dbpass, $config::$dbname);
+      }
+      return self::$instance;
     }
-    return self::$instance;
   }
-}
 ?>

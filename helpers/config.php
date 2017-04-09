@@ -17,7 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-class uConfig {
+ /**
+  * Handles config values
+  */
+  class uConfig {
     // version number
     static $version = "0.2-beta";
 
@@ -77,50 +80,60 @@ class uConfig {
     private static $fileLoaded = false;
     public static $rootDir;
 
+   /**
+    * Constructor
+    */
     public function __construct() {
-        self::$rootDir = dirname(__DIR__);
-        $this->setFromFile();
-        $this->setFromCookies();
-   }
+      self::$rootDir = dirname(__DIR__);
+      $this->setFromFile();
+      $this->setFromCookies();
+    }
 
-   private function setFromFile() {
-        $configFile = self::$rootDir . "/config.php";
-        if (self::$fileLoaded || !file_exists($configFile)) {
-            return;
-        }
-        self::$fileLoaded = true;
-        include_once($configFile);
+   /**
+    * Read config values from "/config.php" file
+    */
+    private function setFromFile() {
+      $configFile = self::$rootDir . "/config.php";
+      if (self::$fileLoaded || !file_exists($configFile)) {
+        return;
+      }
+      self::$fileLoaded = true;
+      include_once($configFile);
 
-        if (isset($mapapi)) { self::$mapapi = $mapapi; }
-        if (isset($gkey)) { self::$gkey = $gkey; }
-        if (isset($layer_ocm)) { self::$layer_ocm = $layer_ocm; }
-        if (isset($layer_mq)) { self::$layer_mq = $layer_mq; }
-        if (isset($layer_osmapa)) { self::$layer_osmapa = $layer_osmapa; }
-        if (isset($layer_ump)) { self::$layer_ump = $layer_ump; }
-        if (isset($init_latitude)) { self::$init_latitude = $init_latitude; }
-        if (isset($init_longitude)) { self::$init_longitude = $init_longitude; }
-        if (isset($dbhost)) { self::$dbhost = $dbhost; }
-        if (isset($dbuser)) { self::$dbuser = $dbuser; }
-        if (isset($dbpass)) { self::$dbpass = $dbpass; }
-        if (isset($dbname)) { self::$dbname = $dbname; }
-        if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
-        if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
-        if (isset($admin_user)) { self::$admin_user = $admin_user; }
-        if (isset($interval)) { self::$interval = $interval; }
-        if (isset($lang)) { self::$lang = $lang; }
-        if (isset($units)) { self::$units = $units; }
+      if (isset($mapapi)) { self::$mapapi = $mapapi; }
+      if (isset($gkey)) { self::$gkey = $gkey; }
+      if (isset($layer_ocm)) { self::$layer_ocm = $layer_ocm; }
+      if (isset($layer_mq)) { self::$layer_mq = $layer_mq; }
+      if (isset($layer_osmapa)) { self::$layer_osmapa = $layer_osmapa; }
+      if (isset($layer_ump)) { self::$layer_ump = $layer_ump; }
+      if (isset($init_latitude)) { self::$init_latitude = $init_latitude; }
+      if (isset($init_longitude)) { self::$init_longitude = $init_longitude; }
+      if (isset($dbhost)) { self::$dbhost = $dbhost; }
+      if (isset($dbuser)) { self::$dbuser = $dbuser; }
+      if (isset($dbpass)) { self::$dbpass = $dbpass; }
+      if (isset($dbname)) { self::$dbname = $dbname; }
+      if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
+      if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
+      if (isset($admin_user)) { self::$admin_user = $admin_user; }
+      if (isset($interval)) { self::$interval = $interval; }
+      if (isset($lang)) { self::$lang = $lang; }
+      if (isset($units)) { self::$units = $units; }
 
-        if (!self::$require_authentication) {
-          // tracks must be public if we don't require authentication
-          self::$public_tracks = true;
-        }
-   }
-   private function setFromCookies() {
-        if (isset($_COOKIE["ulogger_api"])) { self::$mapapi = $_COOKIE["ulogger_api"]; }
-        if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
-        if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
-        if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
-   }
-}
+      if (!self::$require_authentication) {
+        // tracks must be public if we don't require authentication
+        self::$public_tracks = true;
+      }
+    }
+
+   /**
+    * Read config values stored in cookies
+    */
+    private function setFromCookies() {
+      if (isset($_COOKIE["ulogger_api"])) { self::$mapapi = $_COOKIE["ulogger_api"]; }
+      if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
+      if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
+      if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
+    }
+  }
 
 ?>

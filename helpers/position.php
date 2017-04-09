@@ -17,9 +17,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(__DIR__ . "/db.php");
+  require_once(__DIR__ . "/db.php");
 
-class uPosition {
+ /**
+  * Positions handling
+  */
+  class uPosition {
     public $id;
     public $time;
     public $userId;
@@ -40,23 +43,44 @@ class uPosition {
 
     private static $db;
 
+   /**
+    * Constructor
+    * @param integer $positionId Position id
+    */
     public function __construct($positionId = NULL) {
 
       self::$db = uDB::getInstance();
 
       if (!empty($positionId)) {
-        $query = "SELECT p.id, p.time, p.user_id, p.track_id, 
-                  p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider, 
-                  p.comment, p.image_id, u.login, t.name 
-                  FROM positions p 
-                  LEFT JOIN users u ON (p.user_id = u.id) 
-                  LEFT JOIN tracks t ON (p.track_id = t.id) 
+        $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+                  p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+                  p.comment, p.image_id, u.login, t.name
+                  FROM positions p
+                  LEFT JOIN users u ON (p.user_id = u.id)
+                  LEFT JOIN tracks t ON (p.track_id = t.id)
                   WHERE id = ? LIMIT 1";
         $params = [ 'i', $positionId ];
         $this->loadWithQuery($query, $params);
       }
     }
 
+   /**
+    * Add position
+    *
+    * @param int $userId
+    * @param int $trackId
+    * @param int $time Unix time stamp
+    * @param double $lat
+    * @param double $lon
+    * @param double $altitude
+    * @param double $speed
+    * @param double $bearing
+    * @param int $accuracy
+    * @param string $provider
+    * @param string $comment
+    * @param int $imageId
+    * @return int|bool New position id in database, false on error
+    */
     public function add($userId, $trackId, $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
       $positionId = false;
       if (!is_null($lat) && !is_null($lon) && !is_null($time) && !empty($userId) && !empty($trackId)) {
@@ -77,6 +101,12 @@ class uPosition {
       return $positionId;
     }
 
+   /**
+    * Fill class properties with last position data from database
+    * (for given user if specified)
+    *
+    * @param int $userId Optional user id
+    */
     public function getLast($userId = NULL) {
       if (!empty($userId)) {
         $where = "WHERE p.user_id = ?";
@@ -85,17 +115,24 @@ class uPosition {
         $where = "";
         $params = NULL;
       }
-      $query = "SELECT p.id, p.time, p.user_id, p.track_id, 
-                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider, 
-                p.comment, p.image_id, u.login, t.name 
-                FROM positions p 
-                LEFT JOIN users u ON (p.user_id = u.id) 
-                LEFT JOIN tracks t ON (p.track_id = t.id) 
+      $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+                p.comment, p.image_id, u.login, t.name
+                FROM positions p
+                LEFT JOIN users u ON (p.user_id = u.id)
+                LEFT JOIN tracks t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time DESC LIMIT 1";
       $this->loadWithQuery($query, $params);
     }
 
+   /**
+    * Get array of all positions
+    *
+    * @param int $userId Optional limit to given user id
+    * @param int $trackId Optional limit to given track id
+    * @return array|bool Array of uPosition positions, false on error
+    */
     public function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];
       if (!empty($userId)) {
@@ -103,19 +140,19 @@ class uPosition {
       }
       if (!empty($trackId)) {
         $rules[] = "p.track_id = '" . self::$db->real_escape_string($trackId) ."'";
-      }  
+      }
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);
-      } else {    
+      } else {
         $where = "";
       }
-      $query = "SELECT p.id, p.time, p.user_id, p.track_id, 
-                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider, 
-                p.comment, p.image_id, u.login, t.name 
-                FROM positions p 
-                LEFT JOIN users u ON (p.user_id = u.id) 
-                LEFT JOIN tracks t ON (p.track_id = t.id) 
-                $where 
+      $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+                p.comment, p.image_id, u.login, t.name
+                FROM positions p
+                LEFT JOIN users u ON (p.user_id = u.id)
+                LEFT JOIN tracks t ON (p.track_id = t.id)
+                $where
                 ORDER BY p.time";
       $result = self::$db->query($query);
       if ($result === false) {
@@ -129,7 +166,12 @@ class uPosition {
       return $positionsArr;
     }
 
-    // haversine distance to target point
+   /**
+    * Calculate distance to target point using haversine formula
+    *
+    * @param uPosition $target Target position
+    * @return int Distance in meters
+    */
     public function distanceTo($target) {
       $lat1 = deg2rad($this->latitude);
       $lon1 = deg2rad($this->longitude);
@@ -141,10 +183,22 @@ class uPosition {
       return $bearing * 6371000;
     }
 
+   /**
+    * Calculate time elapsed since target point
+    *
+    * @param uPosition $target Target position
+    * @return int Number of seconds
+    */
     public function secondsTo($target) {
       return strtotime($this->time) - strtotime($target->time);
     }
 
+   /**
+    * Convert database row to uPosition
+    *
+    * @param array $row Row
+    * @return uPosition Position
+    */
     private function rowToObject($row) {
       $position = new uPosition();
       $position->id = $row['id'];
@@ -166,25 +220,31 @@ class uPosition {
       return $position;
     }
 
+   /**
+    * Fill class properties with database query result
+    *
+    * @param string $query Query
+    * @param array|null $bindParams Optional array of bind parameters (types, params)
+    */
     private function loadWithQuery($query, $bindParams = NULL) {
-        $stmt = self::$db->prepare($query);
-        if (is_array($bindParams) && ($types = array_shift($bindParams))) {
-          call_user_func_array( 
-              [ $stmt, 'bind_param' ], 
-              array_merge([ $types ], array_map(function(&$param) { return $param; }, $bindParams)) 
-          );
+      $stmt = self::$db->prepare($query);
+      if (is_array($bindParams) && ($types = array_shift($bindParams))) {
+        call_user_func_array(
+            [ $stmt, 'bind_param' ],
+            array_merge([ $types ], array_map(function(&$param) { return $param; }, $bindParams))
+        );
+      }
+      if ($stmt->execute()) {
+        $stmt->bind_result($this->id, $this->time, $this->userId, $this->trackId,
+                            $this->latitude, $this->longitude, $this->altitude, $this->speed,
+                            $this->bearing, $this->accuracy, $this->provider,
+                            $this->comment, $this->imageId, $this->userLogin, $this->trackName);
+        if ($stmt->fetch()) {
+          $this->isValid = true;
         }
-        if ($stmt->execute()) {
-          $stmt->bind_result($this->id, $this->time, $this->userId, $this->trackId, 
-                              $this->latitude, $this->longitude, $this->altitude, $this->speed, 
-                              $this->bearing, $this->accuracy, $this->provider, 
-                              $this->comment, $this->imageId, $this->userLogin, $this->trackName);
-          if ($stmt->fetch()) {
-            $this->isValid = true;
-          }
-        }
-        $stmt->close();
+      }
+      $stmt->close();
     }
-}
+  }
 
 ?>

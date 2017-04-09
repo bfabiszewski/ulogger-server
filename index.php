@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 require_once("auth.php");
 require_once("helpers/position.php");
 require_once("helpers/track.php");
@@ -52,7 +52,7 @@ if ($user->isAdmin || $config::$public_tracks) {
   if ($lastPosition->isValid) {
     $lastUserId = $lastPosition->userId;
   }
-  
+
   $usersArr = $user->getAll();
   if (!empty($usersArr)) {
     foreach ($usersArr as $aUser) {

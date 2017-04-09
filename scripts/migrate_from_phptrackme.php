@@ -21,10 +21,10 @@
  *
  * However, as μlogger users more secure password storage methods,
  * it is impossible to convert old password hashes to the new format.
- * Administrator will have to fill in user passwords manually. 
- * Alternatively authentication code could be modify in order to 
- * temporarily accept old hashes and convert it as users log in. 
- * It should be pretty simple, but this is not a top priority 
+ * Administrator will have to fill in user passwords manually.
+ * Alternatively authentication code could be modify in order to
+ * temporarily accept old hashes and convert it as users log in.
+ * It should be pretty simple, but this is not a top priority
  * for this small project.
  */
 

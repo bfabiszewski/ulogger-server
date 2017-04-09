@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 html {
   height: 100%;
 }
@@ -195,8 +195,8 @@ select {
 }
 
 .mi {
-  color:white; 
-  padding-right:0.1em; 
+  color:white;
+  padding-right:0.1em;
   font-style:italic;
 }
 
@@ -259,7 +259,7 @@ select {
   -webkit-border-radius: 5px;
 }
 
-button { 
+button {
   cursor: pointer;
 }
 

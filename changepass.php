@@ -16,13 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
   require_once("auth.php"); // sets $mysqli, $user
-  
+
+  /**
+   * Exit with error message
+   *
+   * @param string $errorMessage Message
+   */
   function exitWithError($errorMessage) {
     return exitWithStatus(true, $errorMessage);
   }
-  /** 
+
+  /**
    * Exit with xml response
    * @param boolean $isError Error if true
    * @param string $errorMessage Optional error message
@@ -67,7 +73,7 @@
   if ($passUser->setPass($hash) === false) {
     exitWithError("Server error");
   }
-  
+
   exitWithStatus();
-  
+
 ?>

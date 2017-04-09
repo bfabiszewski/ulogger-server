@@ -17,12 +17,18 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Set response error status and message
+ *
+ * @param array $response Respons
+ * @param string $message Message
+ */
 function setError(&$response, $message) {
-  $response['error'] = true; 
+  $response['error'] = true;
   $response['message'] = $message;
 }
 
-define("headless", true); 
+define("headless", true);
 require_once("../auth.php"); // sets $mysqli, $user
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
@@ -92,7 +98,7 @@ switch ($action) {
     $position = new uPosition();
     $positionId = $position->add($user->id, $trackId,
             $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
-    
+
     if ($positionId === false) {
       setError($response, "Server error");
     }

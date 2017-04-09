@@ -40,12 +40,12 @@ function submitUser() {
     return;
   }
   var xhr = getXHR();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState==4 && xhr.status==200) {
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
       var xml = xhr.responseXML;
       var message = "";
       if (xml) {
-        var root =  xml.getElementsByTagName('root');
+        var root = xml.getElementsByTagName('root');
         if (root.length && getNode(root[0], 'error') == 0) {
           removeModal();
           alert("User successfully added");

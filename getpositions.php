@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 require_once("auth.php"); // sets $mysqli, $user
 require_once("helpers/position.php");
 
@@ -34,7 +34,7 @@ if ($userId) {
     $position->getLast($userId);
     $positionsArr[] = $position;
   }
-  
+
   header("Content-type: text/xml");
   $xml = new XMLWriter();
   $xml->openURI("php://output");
