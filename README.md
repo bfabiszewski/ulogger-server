@@ -27,10 +27,13 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Install
 1. Download the zip or clone the repository on your computer
 2. Move it to your web server directory
-3. Go to http://your_local_server/ulogger-server/
-4. Connect with username admin and password admin
-5. Change admin password (not available for now)
-6. Create other user if needed
+3. Import the script/ulogger.sql file into a mysql database (you can use a msql interface such as [PhpMyAdmin](https://www.phpmyadmin.net).)
+4. Create a copy of config.default.php and rename it config.php. Add database credentials in it.
+5. Make sure your web server is running (Apache, Php and Mysql)
+6. Go to http://your_local_server/ulogger-server/)
+7. Connect with admin/admin
+8. Change admin password (not available for now)
+9. Create other user if needed
 
 ## Todo
 - install script
