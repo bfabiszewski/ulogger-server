@@ -44,7 +44,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
   $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
   $auth_error = (isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : 0);
 
-  if (!$login){
+  if (!$login) {
     // not authenticated and username not submited
     // load form
     if (defined('headless')) {
@@ -54,9 +54,9 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
     '<!DOCTYPE html>
     <html>
       <head>
-        <title>'.$lang["title"].'</title>
-        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title>' . $lang["title"] . '</title>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
         <link rel="stylesheet" type="text/css" href="main.css">
         <script type="text/javascript">
         function focus() {
@@ -66,18 +66,18 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       </head>
       <body onload="focus()">
         <div id="login">
-          <div id="title">'.$lang["title"].'</div>
-          <div id="subtitle">'.$lang["private"].'</div>
+          <div id="title">' . $lang["title"] . '</div>
+          <div id="subtitle">' . $lang["private"] . '</div>
           <form action="index.php" method="post">
-          '.$lang["username"].':<br />
-          <input type="text" name="user"><br />
-          '.$lang["password"].':<br />
-          <input type="password" name="pass"><br />
-          <br />
-          <input type="submit" value="'.$lang["login"].'">
-          '.(($force_login==1) ? "<input type=\"hidden\" name=\"force_login\" value=\"1\">" : "").'
+          ' . $lang["username"] . ':<br>
+          <input type="text" name="user"><br>
+          ' . $lang["password"] . ':<br>
+          <input type="password" name="pass"><br>
+          <br>
+          <input type="submit" value="' . $lang["login"] . '">
+          ' . (($force_login == 1) ? "<input type=\"hidden\" name=\"force_login\" value=\"1\">" : "") . '
           </form>
-          <div id="error">'.(($auth_error==1) ? $lang["authfail"] : "").'</div>
+          <div id="error">' . (($auth_error == 1) ? $lang["authfail"] : "") . '</div>
         </div>
       </body>
     </html>';
@@ -98,7 +98,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       session_name('ulogger');
       session_start();
       $user->storeInSession();
-      $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
+      $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
       header("Location: $ssl://$url");
     } else {
       // unsuccessful
@@ -106,13 +106,13 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       // destroy session
       $_SESSION = NULL;
       if (isset($_COOKIE[session_name('ulogger')])) {
-        setcookie(session_name('ulogger'),'',time()-42000,'/');
+        setcookie(session_name('ulogger'), '', time() - 42000, '/');
       }
       session_destroy();
       if (defined('headless')) {
         header('HTTP/1.1 401 Unauthorized', true, 401);
       } else {
-        $url = str_replace("//", "/", $_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php");
+        $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
         header("Location: $ssl://$url$error");
       }
     }

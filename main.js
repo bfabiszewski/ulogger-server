@@ -174,39 +174,39 @@ function getPopupHtml(p, i, count) {
   var time = dateTime[1];
   var provider = '';
   if (p.provider == 'gps') {
-    provider = ' (<img class="icon" alt="' + lang['gps'] + '" title="' + lang['gps'] + '"  src="images/gps_dark.svg" />)';
+    provider = ' (<img class="icon" alt="' + lang['gps'] + '" title="' + lang['gps'] + '"  src="images/gps_dark.svg">)';
   } else if (p.provider == 'network') {
-    provider = ' (<img class="icon" alt="' + lang['network'] + '" title="' + lang['network'] + '"  src="images/network_dark.svg" />)';
+    provider = ' (<img class="icon" alt="' + lang['network'] + '" title="' + lang['network'] + '"  src="images/network_dark.svg">)';
   }
   var stats = '';
   if (latest == 0) {
     stats =
       '<div id="pright">' +
-      '<img class="icon" src="images/stats_blue.svg" style="padding-left: 3em;" /><br />' +
-      '<img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time_blue.svg" /> ' +
-      p.totalSeconds.toHMS() + '<br />' +
-      '<img class="icon" alt="' + lang['aspeed'] + '" title="' + lang['aspeed'] + '" src="images/speed_blue.svg" /> ' +
-      ((p.totalSeconds > 0) ? ((p.totalMeters / p.totalSeconds).toKmH() * factor_kmh).toFixed() : 0) + ' ' + unit_kmh + '<br />' +
-      '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg" /> ' +
-      (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br />' + '</div>';
+      '<img class="icon" alt="' + lang['track'] + '" src="images/stats_blue.svg" style="padding-left: 3em;"><br>' +
+      '<img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time_blue.svg"> ' +
+      p.totalSeconds.toHMS() + '<br>' +
+      '<img class="icon" alt="' + lang['aspeed'] + '" title="' + lang['aspeed'] + '" src="images/speed_blue.svg"> ' +
+      ((p.totalSeconds > 0) ? ((p.totalMeters / p.totalSeconds).toKmH() * factor_kmh).toFixed() : 0) + ' ' + unit_kmh + '<br>' +
+      '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg"> ' +
+      (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
   }
   popup =
     '<div id="popup">' +
     '<div id="pheader">' +
-    '<div><img alt="' + lang['user'] + '" title="' + lang['user'] + '" src="images/user_dark.svg" /> ' + p.username + '</div>' +
-    '<div><img alt="' + lang['track'] + '" title="' + lang['track'] + '" src="images/route_dark.svg" /> ' + p.trackname + '</div>' +
+    '<div><img alt="' + lang['user'] + '" title="' + lang['user'] + '" src="images/user_dark.svg"> ' + p.username + '</div>' +
+    '<div><img alt="' + lang['track'] + '" title="' + lang['track'] + '" src="images/route_dark.svg"> ' + p.trackname + '</div>' +
     '</div>' +
     '<div id="pbody">' +
     ((p.comments != null) ? '<div id="pcomments">' + p.comments + '</div>' : '') +
     '<div id="pleft">' +
-    '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/calendar_dark.svg" /> ' + date + '<br />' +
-    '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/clock_dark.svg" /> ' + time + '<br />' +
-    ((p.speed != null) ? '<img class="icon" alt="' + lang['speed'] + '" title="' + lang['speed'] + '" src="images/speed_dark.svg" /> ' +
-    (p.speed.toKmH() * factor_kmh) + ' ' + unit_kmh + '<br />' : '') +
-    ((p.altitude != null) ? '<img class="icon" alt="' + lang['altitude'] + '" title="' + lang['altitude'] + '" src="images/altitude_dark.svg" /> ' +
-    (p.altitude * factor_m).toFixed() + ' ' + unit_m + '<br />' : '') +
-    ((p.accuracy != null) ? '<img class="icon" alt="' + lang['accuracy'] + '" title="' + lang['accuracy'] + '" src="images/accuracy_dark.svg" /> ' +
-    (p.accuracy * factor_m).toFixed() + ' ' + unit_m + provider + '<br />' : '') +
+    '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/calendar_dark.svg"> ' + date + '<br>' +
+    '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/clock_dark.svg"> ' + time + '<br>' +
+    ((p.speed != null) ? '<img class="icon" alt="' + lang['speed'] + '" title="' + lang['speed'] + '" src="images/speed_dark.svg"> ' +
+    (p.speed.toKmH() * factor_kmh) + ' ' + unit_kmh + '<br>' : '') +
+    ((p.altitude != null) ? '<img class="icon" alt="' + lang['altitude'] + '" title="' + lang['altitude'] + '" src="images/altitude_dark.svg"> ' +
+    (p.altitude * factor_m).toFixed() + ' ' + unit_m + '<br>' : '') +
+    ((p.accuracy != null) ? '<img class="icon" alt="' + lang['accuracy'] + '" title="' + lang['accuracy'] + '" src="images/accuracy_dark.svg"> ' +
+    (p.accuracy * factor_m).toFixed() + ' ' + unit_m + provider + '<br>' : '') +
     '</div>' +
     stats +
     '<div id="pfooter">' + lang['point'] + ' ' + (i + 1) + ' ' + lang['of'] + ' ' + count + '</div>' +
@@ -222,12 +222,12 @@ function load(type, userid, trackid) {
 function updateSummary(l, d, s) {
   var t = document.getElementById('summary');
   if (latest == 0) {
-    t.innerHTML = '<u>' + lang['summary'] + '</u><br />' +
-      '<span><img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance.svg" /> ' + (d.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '</span>' +
-      '<span><img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time.svg" /> ' + s.toHMS() + '</span>';
+    t.innerHTML = '<u>' + lang['summary'] + '</u><br>' +
+      '<span><img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance.svg"> ' + (d.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '</span>' +
+      '<span><img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time.svg"> ' + s.toHMS() + '</span>';
   }
   else {
-    t.innerHTML = '<u>' + lang['latest'] + ':</u><br />' + l;
+    t.innerHTML = '<u>' + lang['latest'] + ':</u><br>' + l;
   }
 }
 
@@ -456,7 +456,7 @@ function setUnits(unit) {
 function showModal(contentHTML) {
   var div = document.createElement('div');
   div.setAttribute('id', 'modal');
-  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()"><img src="images/close.svg" \></button></div><div id="modal-body"></div>';
+  div.innerHTML = '<div id="modal-header"><button type="button" onclick="removeModal()"><img alt="' + lang['close'] + '" src="images/close.svg"></button></div><div id="modal-body"></div>';
   document.body.appendChild(div);
   var modalBody = document.getElementById('modal-body');
   modalBody.innerHTML = contentHTML;

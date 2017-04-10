@@ -125,15 +125,15 @@ if ($trackId && $userId) {
         $xml->writeAttribute("id", "point_" . $position->id);
           $description =
           "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".
-          $lang["user"].": ".strtoupper($position->userLogin)."<br />".$lang["track"].": ".strtoupper($position->trackName).
+          $lang["user"].": ".strtoupper($position->userLogin)."<br>".$lang["track"].": ".strtoupper($position->trackName).
           "</div>".
           "<div>".
-          "<div style=\"padding-top: 10px;\"><b>".$lang["time"].":</b> ".$position->time."<br />".
-          (!is_null($position->speed) ? "<b>".$lang["speed"].":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br />" : "").
-          (!is_null($position->altitude) ? "<b>".$lang["altitude"].":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br />" : "").
-          "<b>".$lang["ttime"].":</b> ".toHMS($totalSeconds)."<br />".
-          "<b>".$lang["aspeed"].":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br />".
-          "<b>".$lang["tdistance"].":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br />"."</div>".
+          "<div style=\"padding-top: 10px;\"><b>".$lang["time"].":</b> ".$position->time."<br>".
+          (!is_null($position->speed) ? "<b>".$lang["speed"].":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br>" : "").
+          (!is_null($position->altitude) ? "<b>".$lang["altitude"].":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br>" : "").
+          "<b>".$lang["ttime"].":</b> ".toHMS($totalSeconds)."<br>".
+          "<b>".$lang["aspeed"].":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br>".
+          "<b>".$lang["tdistance"].":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br>"."</div>".
           "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang["point"]." ".$i." ".$lang["of"]." ".count($positionsArr)."</div>".
           "</div>";
           $xml->startElement("description");

@@ -1,6 +1,6 @@
 # μlogger
 
-This is a web application for real-time collection of geolocation data, tracks viewing and management. 
+This is a web application for real-time collection of geolocation data, tracks viewing and management.
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
 
 ## Live demo:
@@ -8,7 +8,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 
 ## Requirements:
 - PHP 5.5
-- MYSQL 4.1
+- MySQL 4.1
 - browser with javascript enabled, cookies for authentication and saving preferences
 
 ## Features:
@@ -20,20 +20,20 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - user authentication
 - Google Maps API v3
 - OpenLayers v2 (OpenStreet and other layers)
-- ajax 
+- ajax
 - user preferences stored in cookies
 - simple admin menu
 
 ## Install
-1. Download the zip or clone the repository on your computer
-2. Move it to your web server directory
-3. Import the script/ulogger.sql file into a mysql database (you can use a msql interface such as [PhpMyAdmin](https://www.phpmyadmin.net).)
-4. Create a copy of config.default.php and rename it config.php. Add database credentials in it.
-5. Make sure your server is running (web server, eg. Apache, PHP and MySQL)
-6. Go to http://your_local_server/ulogger-server/)
-7. Connect with admin/admin
-8. Change admin password
-9. Create other user if needed
+- Download the zip or clone the repository on your computer
+- Move it to your web server directory
+- Use script/ulogger.sql file to create database and tables (you can use a MySQL interface such as [PhpMyAdmin](https://www.phpmyadmin.net))
+- Create a copy of config.default.php and rename it config.php. Add database credentials in it
+- Make sure you have a web server running, e.g. Apache, also PHP and MySQL
+- Open a browser and go to http://your_local_server/ulogger-server/
+- Connect with admin/admin
+- **Change admin password**
+- Create other user if needed
 
 ## Todo
 - install script
@@ -44,4 +44,4 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## License
 - GPL
 - μlogger is a fork of phpTrackme - tracks viewer I wrote for TrackMe app
-- most icons come from iconmonstr
+- most icons come from [iconmonstr](https://iconmonstr.com)
