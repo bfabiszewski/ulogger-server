@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("auth.php"); // sets $mysqli, $user
-require_once("helpers/position.php");
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(ROOT_DIR . "/helpers/position.php");
 
 /**
  * Add kml marker style element

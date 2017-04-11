@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+
   // available languages
   $langsArr = [
     "en" => "English",
@@ -29,12 +30,12 @@
   ];
 
   // always load en base
-  require_once("lang/en.php");
+  require_once(ROOT_DIR . "/lang/en.php");
 
   // override with translated strings if needed
   // missing strings will be displayed in English
   if ($config::$lang != "en" && array_key_exists($config::$lang, $langsArr)) {
-    require_once("lang/{$config::$lang}.php");
+    require_once(ROOT_DIR . "/lang/{$config::$lang}.php");
   }
 
 ?>

@@ -25,7 +25,7 @@ if (isset($_COOKIE[session_name('ulogger') ])) {
 }
 session_destroy();
 $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
-$url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
+$url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname(dirname($_SERVER['SCRIPT_NAME'])) . "/index.php");
 header("Location: $ssl://$url");
 
 ?>

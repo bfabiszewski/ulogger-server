@@ -78,13 +78,11 @@
     static $units = "metric";
 
     private static $fileLoaded = false;
-    public static $rootDir;
 
    /**
     * Constructor
     */
     public function __construct() {
-      self::$rootDir = dirname(__DIR__);
       $this->setFromFile();
       $this->setFromCookies();
     }
@@ -93,7 +91,7 @@
     * Read config values from "/config.php" file
     */
     private function setFromFile() {
-      $configFile = self::$rootDir . "/config.php";
+      $configFile = ROOT_DIR . "/config.php";
       if (self::$fileLoaded || !file_exists($configFile)) {
         return;
       }

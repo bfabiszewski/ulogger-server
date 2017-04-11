@@ -17,13 +17,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("helpers/config.php");
+define("ROOT_DIR", __DIR__);
+require_once(ROOT_DIR . "/helpers/config.php");
 $config = new uConfig();
 
-require_once("lang.php");
-require_once("helpers/db.php");
+require_once(ROOT_DIR . "/lang.php");
+require_once(ROOT_DIR . "/helpers/db.php");
 $mysqli = uDb::getInstance();
-require_once($config::$rootDir . "/helpers/user.php");
+require_once(ROOT_DIR . "/helpers/user.php");
 
 session_name('ulogger');
 session_start();
@@ -57,7 +58,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
         <title>' . $lang["title"] . '</title>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-        <link rel="stylesheet" type="text/css" href="main.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
         <script type="text/javascript">
         function focus() {
           document.forms[0].elements[0].focus();

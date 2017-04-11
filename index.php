@@ -17,9 +17,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once("auth.php"); // sets $mysqli, $user
-  require_once("helpers/position.php");
-  require_once("helpers/track.php");
+  require_once(__DIR__ . "/auth.php"); // sets $mysqli, $user
+  require_once(ROOT_DIR . "/helpers/position.php");
+  require_once(ROOT_DIR . "/helpers/track.php");
 
   $displayUserId = NULL;
   $usersArr = [];
@@ -57,7 +57,7 @@
     <title><?= $lang["title"] ?></title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
     <script>
       var interval = '<?= $config::$interval ?>';
       var userid = '<?= ($displayUserId) ? $displayUserId : -1 ?>';
@@ -73,19 +73,19 @@
       var init_longitude = '<?= $config::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
     </script>
-    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
 
     <?php if ($config::$mapapi == "gmaps"): ?>
       <script type="text/javascript" src="//maps.googleapis.com/maps/api/js<?= !empty($config::$gkey) ? "?key={$config::$gkey}" : "" ?>"></script>
-      <script type="text/javascript" src="api_gmaps.js"></script>
+      <script type="text/javascript" src="js/api_gmaps.js"></script>
     <?php else: ?>
       <script type="text/javascript" src="//openlayers.org/api/OpenLayers.js"></script>
-      <script type="text/javascript" src="api_openlayers.js"></script>
+      <script type="text/javascript" src="js/api_openlayers.js"></script>
     <?php endif; ?>
     <?php if ($user->isAdmin): ?>
-      <script type="text/javascript" src="admin.js"></script>
+      <script type="text/javascript" src="js/admin.js"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="pass.js"></script>
+    <script type="text/javascript" src="js/pass.js"></script>
     <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load('visualization', '1', { packages:['corechart'] });
@@ -101,7 +101,7 @@
             <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= $user->login ?></a>
             <div id="user_dropdown" class="dropdown">
               <a href="javascript:void(0)" onclick="changePass()"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
-              <a href="logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
+              <a href="utils/logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
             </div>
           </div>
         <?php else: ?>

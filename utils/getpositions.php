@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("auth.php"); // sets $mysqli, $user
-require_once("helpers/position.php");
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(ROOT_DIR . "/helpers/position.php");
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : NULL;

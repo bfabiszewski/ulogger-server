@@ -16,22 +16,22 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-function changePass() {
-  var form = '<form id="passForm" method="post" onsubmit="submitPass(); return false">';
-  form += '<label><b>' + lang['oldpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="oldpass" required>';
-  form += '<label><b>' + lang['newpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
-  form += '<label><b>' + lang['newpasswordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
-  form += '<button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button>';
+function addUser() {
+  var form = '<form id="userForm" method="post" onsubmit="submitUser(); return false">';
+  form += '<label><b>' + lang['username'] + '</b></label><input type="text" placeholder="' + lang['usernameenter'] + '" name="login" required>';
+  form += '<label><b>' + lang['password'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
+  form += '<label><b>' + lang['passwordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
+  form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button></div>';
   form += '</form>';
   showModal(form);
 }
 
-function submitPass() {
-  var form = document.getElementById('passForm');
-  var oldpass = form.elements['oldpass'].value;
+function submitUser() {
+  var form = document.getElementById('userForm');
+  var login = form.elements['login'].value;
   var pass = form.elements['pass'].value;
   var pass2 = form.elements['pass2'].value;
-  if (!oldpass || !pass || !pass2) {
+  if (!login || !pass || !pass2) {
     alert("All fields are required");
     return;
   }
@@ -48,7 +48,7 @@ function submitPass() {
         var root = xml.getElementsByTagName('root');
         if (root.length && getNode(root[0], 'error') == 0) {
           removeModal();
-          alert("Password successfully changed");
+          alert("User successfully added");
           return;
         }
         errorMsg = getNode(root[0], 'message');
@@ -58,8 +58,8 @@ function submitPass() {
       xhr = null;
     }
   }
-  xhr.open('POST', 'changepass.php', true);
+  xhr.open('POST', 'utils/adduser.php', true);
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.send('oldpass=' + oldpass + '&pass=' + pass);
+  xhr.send('login=' + login + '&pass=' + pass);
   return;
 }

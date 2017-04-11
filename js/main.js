@@ -126,7 +126,7 @@ function loadTrack(userid, trackid, update) {
       xhr = null;
     }
   }
-  xhr.open('GET', 'getpositions.php?trackid=' + trackid + '&userid=' + userid, true);
+  xhr.open('GET', 'utils/getpositions.php?trackid=' + trackid + '&userid=' + userid, true);
   xhr.send();
 }
 
@@ -215,7 +215,7 @@ function getPopupHtml(p, i, count) {
 }
 
 function load(type, userid, trackid) {
-  var url = 'download.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
+  var url = 'utils/download.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
   window.location.assign(url);
 }
 
@@ -305,7 +305,7 @@ function getTracks(userid) {
       xhr = null;
     }
   }
-  xhr.open('GET', 'gettracks.php?userid=' + userid, true);
+  xhr.open('GET', 'utils/gettracks.php?userid=' + userid, true);
   xhr.send();
 }
 
@@ -368,11 +368,11 @@ function loadMapAPI(api) {
   document.getElementById("map-canvas").innerHTML = '';
   var url = new Array();
   if (api == 'gmaps') {
-    url.push('api_gmaps.js');
+    url.push('js/api_gmaps.js');
     url.push('//maps.googleapis.com/maps/api/js?' + ((gkey !== null) ? ('key=' + gkey + '&') : '') + 'callback=init');
   }
   else {
-    url.push('api_openlayers.js');
+    url.push('js/api_openlayers.js');
     url.push('//openlayers.org/api/OpenLayers.js');
   }
   addScript(url[0]);

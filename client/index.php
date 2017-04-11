@@ -29,7 +29,7 @@ function setError(&$response, $message) {
 }
 
 define("headless", true);
-require_once("../auth.php"); // sets $mysqli, $user
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 $response = [ 'error' => false ];
@@ -64,7 +64,7 @@ switch ($action) {
       setError($response, "missing required parameter");
       break;
     }
-    require_once("../helpers/track.php");
+    require_once(ROOT_DIR . "/helpers/track.php");
     $track = new uTrack();
     $trackId = $track->add($user->id, $trackName);
     if ($trackId === false) {
@@ -94,7 +94,7 @@ switch ($action) {
       break;
     }
 
-    require_once("../helpers/position.php");
+    require_once(ROOT_DIR . "/helpers/position.php");
     $position = new uPosition();
     $positionId = $position->add($user->id, $trackId,
             $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);

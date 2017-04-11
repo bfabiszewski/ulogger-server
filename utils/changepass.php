@@ -17,14 +17,23 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once("auth.php"); // sets $mysqli, $user
+  require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+
+  /**
+   * Exit with error message
+   *
+   * @param string $errorMessage Message
+   */
+  function exitWithError($errorMessage) {
+    return exitWithStatus(true, $errorMessage);
+  }
 
   /**
    * Exit with xml response
    * @param boolean $isError Error if true
    * @param string $errorMessage Optional error message
    */
-  function exitWithStatus($isError, $errorMessage = NULL) {
+  function exitWithStatus($isError = false, $errorMessage = NULL) {
     header("Content-type: text/xml");
     $xml = new XMLWriter();
     $xml->openURI("php://output");
@@ -38,20 +47,33 @@
     $xml->endElement();
     $xml->endDocument();
     $xml->flush();
+    $mysqli->close();
     exit;
   }
 
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
+  $oldpass = isset($_REQUEST['oldpass']) ? $_REQUEST['oldpass'] : NULL;
   $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
-  if ($user->isAdmin && !empty($login) && !empty($hash)) {
-    $newUser = new uUser($login);
-    if ($newUser->isValid) {
-      exitWithStatus(true, $lang["userexists"]);
+  if (empty($hash)) {
+    exitWithError("Empty password");
+  }
+  if ($user->isAdmin && !empty($login)) {
+    // different user, only admin
+    $passUser = new uUser($login);
+    if (!$passUser->valid) {
+      exitWithError("User unknown");
     }
-    if ($newUser->add($login, $hash) === false) {
-      exitWithStatus(true, $mysqli->error);
+  } else {
+    // current user
+    $passUser = $user;
+    if (!$passUser->validPassword($oldpass)) {
+      exitWithError("Wrong old password");
     }
   }
-  exitWithStatus(false);
+  if ($passUser->setPass($hash) === false) {
+    exitWithError("Server error");
+  }
+
+  exitWithStatus();
 
 ?>

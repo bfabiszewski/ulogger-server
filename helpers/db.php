@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once (__DIR__ . "/config.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
 
  /**
   * mysqli wrapper
