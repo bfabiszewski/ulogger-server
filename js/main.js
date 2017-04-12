@@ -384,7 +384,7 @@ function loadMapAPI(api) {
 var loadTime = 0;
 function waitAndLoad(api, url) {
   // wait till first script loaded
-  if (loadTime > 5000) { loadTime = 0; alert('Sorry, can\'t load ' + api + ' API'); return; }
+  if (loadTime > 5000) { loadTime = 0; alert(sprintf(lang['apifailure'], api)); return; }
   if (loadedAPI !== api) {
     setTimeout(function () { loadTime += 50; waitAndLoad(api, url); }, 50);
     return;
@@ -398,7 +398,7 @@ function waitAndLoad(api, url) {
 
 function waitAndInit(api) {
   // wait till main api loads
-  if (loadTime > 10000) { loadTime = 0; alert('Sorry, can\'t load ' + api + ' API'); return; }
+  if (loadTime > 10000) { loadTime = 0; alert(sprintf(lang['apifailure'], api)); return; }
   try {
     init();
   }

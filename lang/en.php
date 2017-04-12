@@ -67,5 +67,14 @@ $lang["gps"] = "GPS";
 $lang["network"] = "Network";
 $lang["deluser"] = "Remove user";
 $lang["edituser"] = "Edit user";
+$lang["servererror"] = "Server error";
+$lang["allrequired"] = "All fields are required";
+$lang["passnotmatch"] = "Passwords don't match";
+$lang["actionsuccess"] = "Action completed successfully";
+$lang["actionfailure"] = "Something went wrong";
+$lang["deletewarn"] = "Warning!\n\nYou are going to permanently delete user %s, together with all their routes and positions.\n\nAre you sure?"; // substitutes user login
+$lang["editinguser"] = "You are editing user %s"; // substitutes user login
+$lang["selfeditwarn"] = "Your can't edit your own user with this tool";
+$lang["apifailure"] = "Sorry, can't load %s API"; // substitures api name (gmaps or openlayers)
 
 ?>

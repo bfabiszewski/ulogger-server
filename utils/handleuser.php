@@ -45,7 +45,7 @@
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
   if (!$user->isAdmin || empty($action) || empty($login) || $user->login == $login) {
-    exitWithStatus(true, "Server error");
+    exitWithStatus(true, $lang["servererror"]);
   }
 
   $aUser = new uUser($login);
@@ -53,7 +53,7 @@
   switch ($action) {
     case 'add':
       if (empty($hash)) {
-        exitWithStatus(true, "Server error");
+        exitWithStatus(true, $lang["servererror"]);
       }
       if ($aUser->isValid) {
         exitWithStatus(true, $lang["userexists"]);
@@ -66,7 +66,7 @@
     case 'update':
       // update password
       if (empty($hash)) {
-        exitWithStatus(true, "Server error");
+        exitWithStatus(true, $lang["servererror"]);
       }
       if ($aUser->setPass($hash) === false) {
         exitWithStatus(true, $mysqli->error);
@@ -80,7 +80,7 @@
       break;
 
     default:
-      exitWithStatus(true, "Server error");
+      exitWithStatus(true, $lang["servererror"]);
       break;
   }
 

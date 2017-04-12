@@ -32,11 +32,11 @@ function submitPass() {
   var pass = form.elements['pass'].value;
   var pass2 = form.elements['pass2'].value;
   if (!oldpass || !pass || !pass2) {
-    alert("All fields are required");
+    alert(lang['allrequired']);
     return;
   }
   if (pass != pass2) {
-    alert("Passwords don't match");
+    alert(lang['passnotmatch']);
     return;
   }
   var xhr = getXHR();
@@ -48,13 +48,13 @@ function submitPass() {
         var root = xml.getElementsByTagName('root');
         if (root.length && getNode(root[0], 'error') == 0) {
           removeModal();
-          alert("Password successfully changed");
+          alert(lang["actionsuccess"]);
           return;
         }
         errorMsg = getNode(root[0], 'message');
         if (errorMsg) { message = errorMsg; }
       }
-      alert("Something went wrong\n" + message);
+      alert(lang['actionfailure'] + '\n' + message);
       xhr = null;
     }
   }

@@ -65,5 +65,14 @@ $lang["gps"] = "GPS";
 $lang["network"] = "Sieć";
 $lang["deluser"] = "Usuń użytkownika";
 $lang["edituser"] = "Edytuj użytkownika";
+$lang["servererror"] = "Błąd serwera";
+$lang["allrequired"] = "Wszystkie pola są wymagane";
+$lang["passnotmatch"] = "Hasła nie pasują do siebie";
+$lang["actionsuccess"] = "Operacja zakończona pomyślnie";
+$lang["actionfailure"] = "Wystąpił błąd";
+$lang["deletewarn"] = "Uwaga!\n\nZamierzasz całkowicie usunąć użytkownika %s, razem ze wszystkimi jego trasami i pozycjami.\n\nCzy na pewno?";
+$lang["editinguser"] = "Edytujesz użytkownika %s";
+$lang["selfeditwarn"] = "Nie można edytować własnego użytkownika za pomocą tego narzędzia";
+$lang["apifailure"] = "Niestety ładowanie API %s nie powiodło się";
 
 ?>

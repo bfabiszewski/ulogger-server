@@ -30,11 +30,11 @@ function editUser() {
   var userForm = document.getElementsByName('user')[0];
   var userLogin = userForm.options[userForm.selectedIndex].text;
   if (userLogin == auth) {
-    alert('Your can\'t edit your own user with this tool');
+    alert(lang['selfeditwarn']);
     return;
   }
-  var message = '<div style="float:left">You are editing user <b>' + userLogin + '</b></div>';
-  message += '<div class="red-button"><b><a href="javascript:void(0);" onclick="submitUser(\'delete\'); return false">Delete user</a></b></div>';
+  var message = '<div style="float:left">' + sprintf(lang['editinguser'], '<b>' + userLogin + '</b>') + '</div>';
+  message += '<div class="red-button"><b><a href="javascript:void(0);" onclick="submitUser(\'delete\'); return false">' + lang['deluser'] + '</a></b></div>';
   message += '<div style="clear: both; padding-bottom: 1em;"></div>';
 
   var form = '<form id="userForm" method="post" onsubmit="submitUser(\'update\'); return false">';
@@ -47,14 +47,14 @@ function editUser() {
 }
 
 function confirmedDelete(login) {
-  return confirm('Warning!\n\nYou are going to permanently delete user "' + login + '", together with all their routes and positions.\n\nAre you sure?');
+  return confirm(sprintf(lang['deletewarn'], '"' + login + '"'));
 }
 
 function submitUser(action) {
   var form = document.getElementById('userForm');
   var login = form.elements['login'].value;
   if (!login) {
-      alert("All fields are required");
+      alert(lang['allrequired']);
       return;
   }
   var pass = null;
@@ -63,11 +63,11 @@ function submitUser(action) {
     pass = form.elements['pass'].value;
     pass2 = form.elements['pass2'].value;
     if (!pass || !pass2) {
-      alert("All fields are required");
+      alert(lang['allrequired']);
       return;
     }
     if (pass != pass2) {
-      alert("Passwords don't match");
+      alert(lang['passnotmatch']);
       return;
     }
   } else {
@@ -84,7 +84,7 @@ function submitUser(action) {
         var root = xml.getElementsByTagName('root');
         if (root.length && getNode(root[0], 'error') == 0) {
           removeModal();
-          alert("Action completed successfully");
+          alert(lang['actionsuccess']);
           if (action == 'delete') {
             // select current user in users form
             var f = document.getElementsByName('user')[0];
@@ -96,7 +96,7 @@ function submitUser(action) {
         errorMsg = getNode(root[0], 'message');
         if (errorMsg) { message = errorMsg; }
       }
-      alert("Something went wrong\n" + message);
+      alert(lang['actionfailure'] + '\n' + message);
       xhr = null;
     }
   }
