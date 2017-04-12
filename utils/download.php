@@ -29,9 +29,9 @@ require_once(ROOT_DIR . "/helpers/position.php");
  */
 function addStyle($xml, $name, $url) {
   $xml->startElement("Style");
-  $xml->writeAttribute("id", $name."Style");
+  $xml->writeAttribute("id", "{$name}Style");
     $xml->startElement("IconStyle");
-    $xml->writeAttribute("id", $name."Icon");
+    $xml->writeAttribute("id", "{$name}Icon");
       $xml->startElement("Icon");
         $xml->writeElement("href", $url);
       $xml->endElement();
@@ -50,7 +50,7 @@ function toHMS($s) {
   $h = floor(($s % 86400) / 3600);
   $m = floor((($s % 86400) % 3600) / 60);
   $s = (($s % 86400) % 3600) % 60;
-  return (($d > 0) ? ($d." d ") : "").(substr("00".$h, -2)).":".(substr("00".$m, -2)).":".(substr("00".$s, -2));
+  return (($d > 0) ? "$d d " : "") . sprintf("%02d:%02d:%02d", $h, $m, $s);
 }
 
 $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
@@ -92,7 +92,7 @@ if ($trackId && $userId) {
     case "kml":
     default:
       header("Content-type: application/vnd.google-earth.kml+xml");
-      header("Content-Disposition: attachment; filename=\"track" . $positionsArr[0]->trackId . ".kml\"");
+      header("Content-Disposition: attachment; filename=\"track{$positionsArr[0]->trackId}.kml\"");
       $xml = new XMLWriter();
       $xml->openURI("php://output");
       $xml->setIndent(true);
@@ -128,26 +128,26 @@ if ($trackId && $userId) {
 
         if(++$i == count($positionsArr)) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
-        $xml->writeAttribute("id", "point_" . $position->id);
+        $xml->writeAttribute("id", "point_{$position->id}");
           $description =
-          "<div style=\"font-weight: bolder;padding-bottom: 10px;border-bottom: 1px solid gray;\">".
-          $lang["user"].": ".strtoupper($position->userLogin)."<br>".$lang["track"].": ".strtoupper($position->trackName).
-          "</div>".
-          "<div>".
-          "<div style=\"padding-top: 10px;\"><b>".$lang["time"].":</b> ".$position->time."<br>".
-          (!is_null($position->speed) ? "<b>".$lang["speed"].":</b> ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh."<br>" : "").
-          (!is_null($position->altitude) ? "<b>".$lang["altitude"].":</b> ".round($position->altitude * $factor_m)." ".$unit_m."<br>" : "").
-          "<b>".$lang["ttime"].":</b> ".toHMS($totalSeconds)."<br>".
-          "<b>".$lang["aspeed"].":</b> ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh."<br>".
-          "<b>".$lang["tdistance"].":</b> ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km."<br>"."</div>".
-          "<div style=\"font-size: smaller;padding-top: 10px;\">".$lang["point"]." ".$i." ".$lang["of"]." ".count($positionsArr)."</div>".
+          "<div style=\"font-weight: bolder; padding-bottom: 10px; border-bottom: 1px solid gray;\">" .
+          "{$lang["user"]}: {$position->userLogin}<br>{$lang["track"]}: {$position->trackName}" .
+          "</div>" .
+          "<div>" .
+          "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> {$position->time}<br>" .
+          (!is_null($position->speed) ? "<b>{$lang["speed"]}:</b> " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}<br>" : "") .
+          (!is_null($position->altitude) ? "<b>{$lang["altitude"]}:</b> " . round($position->altitude * $factor_m) . " {$unit_m}<br>" : "") .
+          "<b>{$lang["ttime"]}:</b> " . toHMS($totalSeconds) . "<br>" .
+          "<b>{$lang["aspeed"]}:</b> " . (($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0) . " {$unit_kmh}<br>" .
+          "<b>{$lang["tdistance"]}:</b> " . round($totalMeters / 1000 * $factor_km, 2) . " " . $unit_km . "<br></div>" .
+          "<div style=\"font-size: smaller; padding-top: 10px;\">" . sprintf($lang["pointof"], $i, count($positionsArr)) . "</div>" .
           "</div>";
           $xml->startElement("description");
             $xml->writeCData($description);
           $xml->endElement();
           $xml->writeElement("styleUrl", $style);
           $xml->startElement("Point");
-            $coordinate[$i] = $position->longitude.",".$position->latitude.(!is_null($position->altitude) ? ",".$position->altitude : "");
+            $coordinate[$i] = "{$position->longitude},{$position->latitude}" . (!is_null($position->altitude) ? ",{$position->altitude}" : "");
             $xml->writeElement("coordinates", $coordinate[$i]);
           $xml->endElement();
         $xml->endElement();
@@ -206,14 +206,13 @@ if ($trackId && $userId) {
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
               $description =
-              $lang["user"].": ".strtoupper($position->userLogin)." ".$lang["track"].": ".strtoupper($position->trackName).
-              " ".$lang["time"].": ".$position->time.
-              (!is_null($position->speed) ? " ".$lang["speed"].": ".round($position->speed * 3.6 * $factor_kmh, 2)." ".$unit_kmh : "").
-              (!is_null($position->altitude) ? " ".$lang["altitude"].": ".round($position->altitude * $factor_m)." ".$unit_m : "").
-              " ".$lang["ttime"].": ".toHMS($totalSeconds)."".
-              " ".$lang["aspeed"].": ".(($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0)." ".$unit_kmh.
-              " ".$lang["tdistance"].": ".round($totalMeters / 1000 * $factor_km, 2)." ".$unit_km.
-              " ".$lang["point"]." ".$i." ".$lang["of"]." ".count($positionsArr);
+              "{$lang["user"]}: {$position->userLogin} {$lang["track"]}: {$position->trackName} {$lang["time"]}: {$position->time}" .
+              (!is_null($position->speed) ? " {$lang["speed"]}: " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}" : "") .
+              (!is_null($position->altitude) ? " {$lang["altitude"]}: " . round($position->altitude * $factor_m) . " {$unit_m}" : "") .
+              " {$lang["ttime"]}: " . toHMS($totalSeconds) .
+              " {$lang["aspeed"]}: " . (($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0) . " {$unit_kmh}" .
+              " {$lang["tdistance"]}: " . round($totalMeters / 1000 * $factor_km, 2) . " {$unit_km}" .
+              " " . sprintf($lang["pointof"], $i, count($positionsArr));
               $xml->writeCData($description);
             $xml->endElement();
           $xml->endElement();

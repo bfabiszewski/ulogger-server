@@ -190,6 +190,7 @@ function getPopupHtml(p, i, count) {
       '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg"> ' +
       (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
   }
+  olHack = (mapapi == 'openlayers') ? ' style="padding-bottom: 2rem"' : '';
   popup =
     '<div id="popup">' +
     '<div id="pheader">' +
@@ -209,8 +210,8 @@ function getPopupHtml(p, i, count) {
     (p.accuracy * factor_m).toFixed() + ' ' + unit_m + provider + '<br>' : '') +
     '</div>' +
     stats +
-    '<div id="pfooter">' + lang['point'] + ' ' + (i + 1) + ' ' + lang['of'] + ' ' + count + '</div>' +
-    '</div></div>';
+    '</div><div id="pfooter"' + olHack + '>' + sprintf(lang['pointof'], i + 1, count) + '</div>' +
+    '</div>';
   return popup;
 }
 
@@ -364,6 +365,7 @@ function setTime() {
 // dynamic change of map api
 var savedBounds;
 function loadMapAPI(api) {
+  mapapi = api;
   savedBounds = getBounds();
   document.getElementById("map-canvas").innerHTML = '';
   var url = new Array();
@@ -485,3 +487,14 @@ function removeOnClick(event) {
     event.stopPropagation();
   }
 }
+
+// naive approach, only %s, %d supported
+function sprintf() {
+  var args = Array.prototype.slice.call(arguments);
+  var format = args.shift();
+  var i = 0;
+  return format.replace(/%%|%s|%d/g, function(match) {
+    if (match == '%%') { return '%'; }
+    return (typeof args[i] != 'undefined') ? args[i++] : match;
+  });
+};

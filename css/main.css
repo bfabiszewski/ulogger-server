@@ -164,8 +164,7 @@ select {
   padding-right: 20px;
 }
 #pfooter {
-  clear: both;
-  font-size: smaller;
+  font-size: .6rem;
   padding-top: 20px;
 }
 #bottom {
