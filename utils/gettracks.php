@@ -17,14 +17,18 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user, $config
 require_once(ROOT_DIR . "/helpers/track.php");
 
-$userId = ((isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : 0);
+$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 
 if ($userId) {
-  $track = new uTrack();
-  $tracksArr = $track->getAll($userId);
+  $tracksArr = [];
+
+  if (!$config::$require_authentication || $user->isAdmin || $user->id === $userId) {
+    $track = new uTrack();
+    $tracksArr = $track->getAll($userId);
+  }
 
   header("Content-type: text/xml");
   $xml = new XMLWriter();

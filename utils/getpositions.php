@@ -17,22 +17,25 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user, $config
 require_once(ROOT_DIR . "/helpers/position.php");
 
-$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : NULL;
-$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : NULL;
+$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
+$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
 
 if ($userId) {
-  $position = new uPosition();
   $positionsArr = [];
-  if ($trackId) {
-    // get all track data
-    $positionsArr = $position->getAll($userId, $trackId);
-  } else {
-    // get data only for latest point
-    $position->getLast($userId);
-    $positionsArr[] = $position;
+
+  if (!$config::$require_authentication || $user->isAdmin || $user->id === $userId) {
+    $position = new uPosition();
+    if ($trackId) {
+      // get all track data
+      $positionsArr = $position->getAll($userId, $trackId);
+    } else {
+      // get data only for latest point
+      $position->getLast($userId);
+      $positionsArr[] = $position;
+    }
   }
 
   header("Content-type: text/xml");

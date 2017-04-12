@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user, $config
 require_once(ROOT_DIR . "/helpers/position.php");
 
 /**
@@ -54,8 +54,14 @@ function toHMS($s) {
 }
 
 $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
-$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? $_REQUEST["userid"] : NULL;
-$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? $_REQUEST["trackid"] : NULL;
+$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
+$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
+
+if ($config::$require_authentication && !$user->isAdmin && $user->id !== $userId) {
+  // unauthorized
+  $mysqli->close();
+  exit();
+}
 
 if ($config::$units == "imperial") {
   $factor_kmh = 0.62; //to mph
