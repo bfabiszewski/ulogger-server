@@ -102,6 +102,27 @@
     }
 
    /**
+    * Delete all user's positions
+    *
+    * @param string $userId User id
+    * @return bool True if success, false otherwise
+    */
+    public function deleteAll($userId) {
+      $ret = false;
+      if (!empty($userId)) {
+        $query = "DELETE FROM positions WHERE user_id = ?";
+        $stmt = self::$db->prepare($query);
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+        }
+        $stmt->close();
+      }
+      return $ret;
+    }
+
+   /**
     * Fill class properties with last position data from database
     * (for given user if specified)
     *

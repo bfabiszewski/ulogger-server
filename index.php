@@ -72,6 +72,7 @@
       var init_latitude = '<?= $config::$init_latitude ?>';
       var init_longitude = '<?= $config::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
+      var auth = '<?= ($user->isValid) ? $user->login : "null" ?>';
     </script>
     <script type="text/javascript" src="js/main.js"></script>
 
@@ -133,7 +134,7 @@
             <input id="latest" type="checkbox" onchange="toggleLatest();"> <?= $lang["latest"] ?><br>
             </form>
           <input type="checkbox" onchange="autoReload();"><?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= $config::$interval ?></span></a> s)<br>
-          <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"><?= $lang["reload"] ?></a><br>
+          <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"> <?= $lang["reload"] ?></a><br>
         </div>
 
         <div id="summary"></div>
@@ -184,6 +185,7 @@
           <div id="admin_menu">
             <u><?= $lang["adminmenu"] ?></u><br>
             <a href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a><br>
+            <a href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a><br>
           </div>
         <?php endif; ?>
 

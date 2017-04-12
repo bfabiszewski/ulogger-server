@@ -64,5 +64,7 @@ $lang["newpasswordrepeat"] = "Powtórz nowe hasło";
 $lang["changepass"] = "Zmień hasło";
 $lang["gps"] = "GPS";
 $lang["network"] = "Sieć";
+$lang["deluser"] = "Usuń użytkownika";
+$lang["edituser"] = "Edytuj użytkownika";
 
 ?>

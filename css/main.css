@@ -263,6 +263,16 @@ button {
   cursor: pointer;
 }
 
+.red-button {
+  color: white;
+  float: right;
+  background-color: red;
+  padding: .1em .4em;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+
 .dropdown {
   display: none;
   position: absolute;

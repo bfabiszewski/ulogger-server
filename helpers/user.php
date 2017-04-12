@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-  require_once (ROOT_DIR . "/helpers/config.php");
-  require_once (ROOT_DIR . "/helpers/db.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
+  require_once(ROOT_DIR . "/helpers/db.php");
+  require_once(ROOT_DIR . "/helpers/track.php");
+  require_once(ROOT_DIR . "/helpers/position.php");
 
  /**
   * User handling routines
@@ -71,6 +73,38 @@
         $stmt->close();
       }
       return $userid;
+    }
+
+   /**
+    * Delete user
+    * This will also delete all user's positions and tracks
+    *
+    * @return bool True if success, false otherwise
+    */
+    public function delete() {
+      $ret = false;
+      if ($this->isValid) {
+        // remove positions
+        $position = new uPosition();
+        if ($position->deleteAll($this->id) === false) {
+          return false;
+        }
+        // remove tracks
+        $track = new uTrack();
+        if ($track->deleteAll($this->id) === false) {
+          return false;
+        }
+        // remove user
+        $sql = "DELETE FROM users WHERE id = ?";
+        $stmt = self::$db->prepare($sql);
+        $stmt->bind_param('i', $this->id);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+        }
+        $stmt->close();
+      }
+      return $ret;
     }
 
    /**

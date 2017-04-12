@@ -60,6 +60,8 @@ function submitPass() {
   }
   xhr.open('POST', 'utils/changepass.php', true);
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.send('oldpass=' + oldpass + '&pass=' + pass);
+  var params = 'oldpass=' + encodeURIComponent(oldpass) + '&pass=' + encodeURIComponent(pass);
+  params = params.replace(/%20/g, '+');
+  xhr.send(params);
   return;
 }

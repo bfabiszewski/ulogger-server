@@ -78,6 +78,27 @@
     }
 
    /**
+    * Delete all user's tracks
+    *
+    * @param string $userId User id
+    * @return bool True if success, false otherwise
+    */
+    public function deleteAll($userId) {
+      $ret = false;
+      if (!empty($userId)) {
+        $query = "DELETE FROM tracks WHERE user_id = ?";
+        $stmt = self::$db->prepare($query);
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+        }
+        $stmt->close();
+      }
+      return $ret;
+    }
+
+   /**
     * Get all tracks
     *
     * @param int $userId Optional limit to user id

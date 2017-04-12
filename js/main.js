@@ -236,7 +236,7 @@ function getNode(p, name) {
 }
 
 // seconds to (d) H:M:S
-Number.prototype.toHMS = function () {
+Number.prototype.toHMS = function() {
   var s = this;
   var d = Math.floor(s / 86400);
   var h = Math.floor((s % 86400) / 3600);
@@ -244,17 +244,17 @@ Number.prototype.toHMS = function () {
   s = ((s % 86400) % 3600) % 60;
 
   return ((d > 0) ? (d + ' d ') : '') + (('00' + h).slice(-2)) + ':' + (('00' + m).slice(-2)) + ':' + (('00' + s).slice(-2)) + '';
-}
+};
 
 // meters to km
-Number.prototype.toKm = function () {
+Number.prototype.toKm = function() {
   return Math.round(this / 10) / 100;
-}
+};
 
 // m/s to km/h
-Number.prototype.toKmH = function () {
+Number.prototype.toKmH = function() {
   return Math.round(this * 3600 / 10) / 100;
-}
+};
 
 // negate value
 function toggleLatest() {

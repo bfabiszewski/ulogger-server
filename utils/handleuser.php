@@ -41,17 +41,49 @@
     exit;
   }
 
+  $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
-  if ($user->isAdmin && !empty($login) && !empty($hash)) {
-    $newUser = new uUser($login);
-    if ($newUser->isValid) {
-      exitWithStatus(true, $lang["userexists"]);
-    }
-    if ($newUser->add($login, $hash) === false) {
-      exitWithStatus(true, $mysqli->error);
-    }
+  if (!$user->isAdmin || empty($action) || empty($login) || $user->login == $login) {
+    exitWithStatus(true, "Server error");
   }
+
+  $aUser = new uUser($login);
+
+  switch ($action) {
+    case 'add':
+      if (empty($hash)) {
+        exitWithStatus(true, "Server error");
+      }
+      if ($aUser->isValid) {
+        exitWithStatus(true, $lang["userexists"]);
+      }
+      if ($aUser->add($login, $hash) === false) {
+        exitWithStatus(true, $mysqli->error);
+      }
+      break;
+
+    case 'update':
+      // update password
+      if (empty($hash)) {
+        exitWithStatus(true, "Server error");
+      }
+      if ($aUser->setPass($hash) === false) {
+        exitWithStatus(true, $mysqli->error);
+      }
+      break;
+
+    case 'delete':
+      if ($aUser->delete() === false) {
+        exitWithStatus(true, $mysqli->error);
+      }
+      break;
+
+    default:
+      exitWithStatus(true, "Server error");
+      break;
+  }
+
   exitWithStatus(false);
 
 ?>
