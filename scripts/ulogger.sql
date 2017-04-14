@@ -95,8 +95,8 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Content of table `users`
+-- This will add default user admin with password admin
+-- The password should be changed immediatelly after installation
 --
-
 INSERT INTO `users` (`id`, `login`, `password`) VALUES
-(1, 'admin', '$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq'),
+(1, 'admin', '$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq');
