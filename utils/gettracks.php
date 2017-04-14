@@ -25,7 +25,7 @@ $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int
 if ($userId) {
   $tracksArr = [];
 
-  if (!$config::$require_authentication || $user->isAdmin || $user->id === $userId) {
+  if ($config::$public_tracks || $user->isAdmin || $user->id === $userId) {
     $track = new uTrack();
     $tracksArr = $track->getAll($userId);
   }

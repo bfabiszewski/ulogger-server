@@ -26,15 +26,16 @@ $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (
 if ($userId) {
   $positionsArr = [];
 
-  if (!$config::$require_authentication || $user->isAdmin || $user->id === $userId) {
+  if ($config::$public_tracks || $user->isAdmin || $user->id === $userId) {
     $position = new uPosition();
     if ($trackId) {
       // get all track data
       $positionsArr = $position->getAll($userId, $trackId);
     } else {
       // get data only for latest point
-      $position->getLast($userId);
-      $positionsArr[] = $position;
+      if ($position->getLast($userId)->isValid) {
+        $positionsArr[] = $position;
+      }
     }
   }
 

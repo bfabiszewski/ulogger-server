@@ -57,7 +57,7 @@ $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
 
-if ($config::$require_authentication && !$user->isAdmin && $user->id !== $userId) {
+if (!$config::$public_tracks && !$user->isAdmin && $user->id !== $userId) {
   // unauthorized
   $mysqli->close();
   exit();
