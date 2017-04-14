@@ -33,12 +33,12 @@ function editUser() {
     alert(lang['selfeditwarn']);
     return;
   }
-  var message = '<div style="float:left">' + sprintf(lang['editinguser'], '<b>' + userLogin + '</b>') + '</div>';
+  var message = '<div style="float:left">' + sprintf(lang['editinguser'], '<b>' + htmlEncode(userLogin) + '</b>') + '</div>';
   message += '<div class="red-button"><b><a href="javascript:void(0);" onclick="submitUser(\'delete\'); return false">' + lang['deluser'] + '</a></b></div>';
   message += '<div style="clear: both; padding-bottom: 1em;"></div>';
 
   var form = '<form id="userForm" method="post" onsubmit="submitUser(\'update\'); return false">';
-  form += '<input type="hidden" name="login" value="' + userLogin + '">';
+  form += '<input type="hidden" name="login" value="' + htmlEncode(userLogin) + '">';
   form += '<label><b>' + lang['password'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
   form += '<label><b>' + lang['passwordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
   form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button></div>';
@@ -52,7 +52,7 @@ function confirmedDelete(login) {
 
 function submitUser(action) {
   var form = document.getElementById('userForm');
-  var login = form.elements['login'].value;
+  var login = form.elements['login'].value.trim();
   if (!login) {
       alert(lang['allrequired']);
       return;

@@ -108,7 +108,7 @@
 
         <?php if ($user->isValid): ?>
           <div id="user_menu">
-            <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= $user->login ?></a>
+            <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($user->login) ?></a>
             <div id="user_dropdown" class="dropdown">
               <a href="javascript:void(0)" onclick="changePass()"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
               <a href="utils/logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
@@ -125,7 +125,7 @@
               <select name="user" onchange="selectUser(this);">
                 <option value="0"><?= $lang["suser"] ?></option>
                 <?php foreach ($usersArr as $aUser): ?>
-                  <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= $aUser->login ?></option>
+                  <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= htmlspecialchars($aUser->login) ?></option>
                 <?php endforeach; ?>
               </select>
             </form>
@@ -137,12 +137,12 @@
           <form>
             <select name="track" onchange="selectTrack(this)">
               <?php foreach ($tracksArr as $aTrack): ?>
-                <option value="<?= $aTrack->id ?>"><?= $aTrack->name ?></option>
+                <option value="<?= $aTrack->id ?>"><?= htmlspecialchars($aTrack->name) ?></option>
               <?php endforeach; ?>
             </select>
             <input id="latest" type="checkbox" onchange="toggleLatest();"> <?= $lang["latest"] ?><br>
-            </form>
-          <input type="checkbox" onchange="autoReload();"><?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= $config::$interval ?></span></a> s)<br>
+            <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= $config::$interval ?></span></a> s)<br>
+          </form>
           <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"> <?= $lang["reload"] ?></a><br>
         </div>
 

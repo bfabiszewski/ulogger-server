@@ -194,11 +194,11 @@ function getPopupHtml(p, i, count) {
   popup =
     '<div id="popup">' +
     '<div id="pheader">' +
-    '<div><img alt="' + lang['user'] + '" title="' + lang['user'] + '" src="images/user_dark.svg"> ' + p.username + '</div>' +
-    '<div><img alt="' + lang['track'] + '" title="' + lang['track'] + '" src="images/route_dark.svg"> ' + p.trackname + '</div>' +
+    '<div><img alt="' + lang['user'] + '" title="' + lang['user'] + '" src="images/user_dark.svg"> ' + htmlEncode(p.username) + '</div>' +
+    '<div><img alt="' + lang['track'] + '" title="' + lang['track'] + '" src="images/route_dark.svg"> ' + htmlEncode(p.trackname) + '</div>' +
     '</div>' +
     '<div id="pbody">' +
-    ((p.comments != null) ? '<div id="pcomments">' + p.comments + '</div>' : '') +
+    ((p.comments != null) ? '<div id="pcomments">' + htmlEncode(p.comments) + '</div>' : '') +
     '<div id="pleft">' +
     '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/calendar_dark.svg"> ' + date + '<br>' +
     '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/clock_dark.svg"> ' + time + '<br>' +
@@ -319,7 +319,7 @@ function fillOptions(xml) {
     var trackname = getNode(tracks[i], 'trackname');
     var option = document.createElement("option");
     option.value = trackid;
-    option.innerHTML = trackname;
+    option.innerHTML = htmlEncode(trackname);
     trackSelect.appendChild(option);
   }
   var defaultTrack = getNode(tracks[0], 'trackid');
@@ -498,3 +498,17 @@ function sprintf() {
     return (typeof args[i] != 'undefined') ? args[i++] : match;
   });
 };
+
+function htmlEncode(s) {
+  return s.replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+}
+
+if (!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+  };
+}

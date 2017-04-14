@@ -131,7 +131,7 @@ if ($trackId && $userId) {
         $xml->writeAttribute("id", "point_{$position->id}");
           $description =
           "<div style=\"font-weight: bolder; padding-bottom: 10px; border-bottom: 1px solid gray;\">" .
-          "{$lang["user"]}: {$position->userLogin}<br>{$lang["track"]}: {$position->trackName}" .
+          "{$lang["user"]}: " . htmlspecialchars($position->userLogin) . "<br>{$lang["track"]}: " . htmlspecialchars($position->trackName) .
           "</div>" .
           "<div>" .
           "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> {$position->time}<br>" .
