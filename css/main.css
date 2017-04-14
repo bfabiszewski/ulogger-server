@@ -73,16 +73,18 @@ select {
   width: 165px;
   height: 100%;
   background-color: #666;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 #menu-content {
-  padding: 10px;
+  padding: 10px 0 3em 10px;
 }
 #footer {
   position: fixed;
-  width: 165px;
   bottom:0;
-  padding: 10px;
+  width: 165px;
+  line-height: 3em;
+  padding-left: 10px;
   background-color:rgba(102, 102, 102, 0.9);
   color: lightgray;
 }
