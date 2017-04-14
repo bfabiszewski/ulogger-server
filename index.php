@@ -80,6 +80,7 @@
       var init_latitude = '<?= $config::$init_latitude ?>';
       var init_longitude = '<?= $config::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
+      var admin = <?= json_encode($user->isAdmin) ?>;
       var auth = '<?= ($user->isValid) ? $user->login : "null" ?>';
       var pass_regex = <?= $config->passRegex() ?>;
     </script>
@@ -94,6 +95,9 @@
     <?php endif; ?>
     <?php if ($user->isAdmin): ?>
       <script type="text/javascript" src="js/admin.js"></script>
+    <?php endif; ?>
+    <?php if ($user->isValid): ?>
+      <script type="text/javascript" src="js/track.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="js/pass.js"></script>
     <script type="text/javascript" src="//www.google.com/jsapi"></script>
@@ -186,15 +190,18 @@
 
         <div id="export">
           <u><?= $lang["download"] ?></u><br>
-          <a href="javascript:void(0);" onclick="load('kml', userid, trackid);">kml</a><br>
-          <a href="javascript:void(0);" onclick="load('gpx', userid, trackid);">gpx</a><br>
+          <a class="menulink" href="javascript:void(0);" onclick="load('kml', userid, trackid);">kml</a>
+          <a class="menulink" href="javascript:void(0);" onclick="load('gpx', userid, trackid);">gpx</a>
         </div>
 
-        <?php if ($user->isAdmin): ?>
+        <?php if ($user->isValid): ?>
           <div id="admin_menu">
             <u><?= $lang["adminmenu"] ?></u><br>
-            <a href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a><br>
-            <a href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a><br>
+            <?php if ($user->isAdmin): ?>
+              <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
+              <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>
+            <?php endif; ?>
+            <a class="menulink" href="javascript:void(0);" onclick="editTrack()"><?= $lang["edittrack"] ?></a>
           </div>
         <?php endif; ?>
 

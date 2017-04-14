@@ -102,17 +102,27 @@
     }
 
    /**
-    * Delete all user's positions
+    * Delete all user's positions, optionally limit to given track
     *
-    * @param string $userId User id
+    * @param int $userId User id
+    * @param int $trackId Optional track id
     * @return bool True if success, false otherwise
     */
-    public function deleteAll($userId) {
+    public function deleteAll($userId, $trackId = NULL) {
       $ret = false;
       if (!empty($userId)) {
-        $query = "DELETE FROM positions WHERE user_id = ?";
+        $args = [];
+        $where = "WHERE user_id = ?";
+        $args[0] = "i";
+        $args[1] = &$userId;
+        if (!empty($trackId)) {
+          $where .= " AND track_id = ?";
+          $args[0] .= "i";
+          $args[2] = &$trackId;
+        }
+        $query = "DELETE FROM positions $where";
         $stmt = self::$db->prepare($query);
-        $stmt->bind_param('i', $userId);
+        call_user_func_array([ $stmt, 'bind_param' ], $args);
         $stmt->execute();
         if (!self::$db->error && !$stmt->errno) {
           $ret = true;
@@ -127,6 +137,7 @@
     * (for given user if specified)
     *
     * @param int $userId Optional user id
+    * @return uPosition Self
     */
     public function getLast($userId = NULL) {
       if (!empty($userId)) {
@@ -145,6 +156,7 @@
                 $where
                 ORDER BY p.time DESC LIMIT 1";
       $this->loadWithQuery($query, $params);
+      return $this;
     }
 
    /**

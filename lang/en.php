@@ -72,13 +72,19 @@ $lang["allrequired"] = "All fields are required";
 $lang["passnotmatch"] = "Passwords don't match";
 $lang["actionsuccess"] = "Action completed successfully";
 $lang["actionfailure"] = "Something went wrong";
-$lang["deletewarn"] = "Warning!\n\nYou are going to permanently delete user %s, together with all their routes and positions.\n\nAre you sure?"; // substitutes user login
+$lang["userdelwarn"] = "Warning!\n\nYou are going to permanently delete user %s, together with all their routes and positions.\n\nAre you sure?"; // substitutes user login
 $lang["editinguser"] = "You are editing user %s"; // substitutes user login
 $lang["selfeditwarn"] = "Your can't edit your own user with this tool";
 $lang["apifailure"] = "Sorry, can't load %s API"; // substitures api name (gmaps or openlayers)
+$lang["trackdelwarn"] = "Warning!\n\nYou are going to permanently delete track %s and all its positions.\n\nAre you sure?"; // substitutes track name
+$lang["editingtrack"] = "You are editing track %s"; // substitutes track name
+$lang["deltrack"] = "Remove track";
+$lang["trackname"] = "Track name";
+$lang["edittrack"] = "Edit track";
 $lang["passlenmin"] = "Password must be at least %d characters"; // substitutes password minimum length
-$lang["passrules"][1] = "It should contain at least one upper case letter, one lower case letter";
-$lang["passrules"][2] = "It should contain at least one upper case letter, one lower case letter and one digit";
-$lang["passrules"][3] = "It should contain at least one upper case letter, one lower case letter, one digit and one non-alphanumeric character";
+$lang["passrules"][1] = "It should contain at least one lower case letter, one upper case letter";
+$lang["passrules"][2] = "It should contain at least one lower case letter, one upper case letter and one digit";
+$lang["passrules"][3] = "It should contain at least one lower case letter, one upper case letter, one digit and one non-alphanumeric character";
+$lang["owntrackswarn"] = "Your can only edit your own tracks";
 
 ?>

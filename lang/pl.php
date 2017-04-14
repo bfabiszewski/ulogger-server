@@ -70,9 +70,19 @@ $lang["allrequired"] = "Wszystkie pola są wymagane";
 $lang["passnotmatch"] = "Hasła nie pasują do siebie";
 $lang["actionsuccess"] = "Operacja zakończona pomyślnie";
 $lang["actionfailure"] = "Wystąpił błąd";
-$lang["deletewarn"] = "Uwaga!\n\nZamierzasz całkowicie usunąć użytkownika %s, razem ze wszystkimi jego trasami i pozycjami.\n\nCzy na pewno?";
+$lang["userdeletewarn"] = "Uwaga!\n\nZamierzasz całkowicie usunąć użytkownika %s, razem ze wszystkimi jego trasami i pozycjami.\n\nCzy na pewno?";
 $lang["editinguser"] = "Edytujesz użytkownika %s";
 $lang["selfeditwarn"] = "Nie można edytować własnego użytkownika za pomocą tego narzędzia";
 $lang["apifailure"] = "Niestety ładowanie API %s nie powiodło się";
+$lang["trackdelwarn"] = "Uwaga!\n\nZamierzasz całkowicie usunąć trasę %s wraz ze wszystkimi pozycjami.\n\nCzy na pewno?";
+$lang["editingtrack"] = "Edytujesz trasę %s";
+$lang["deltrack"] = "Usuń trasę";
+$lang["trackname"] = "Nazwa trasy";
+$lang["edittrack"] = "Edytuj trasę";
+$lang["passlenmin"] = "Hasło musi się składać z minimum %d znaków";
+$lang["passrules"][1] = "Powinno ono zawierać przynajmniej jedną małą i jedną wielką literę";
+$lang["passrules"][2] = "Powinno ono zawierać przynajmniej jedną małą, jedną wielką literę i jedną cyfrę";
+$lang["passrules"][3] = "Powinno ono zawierać przynajmniej jedną małą, jedną wielką literę, jedną cyfrę i jeden znak specjalny (nie alfanumeryczny)";
+$lang["owntrackswarn"] = "Możesz edytować tylko swoje własne trasy";
 
 ?>

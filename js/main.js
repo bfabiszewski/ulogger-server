@@ -113,6 +113,7 @@ function getXHR() {
 }
 
 function loadTrack(userid, trackid, update) {
+  if (trackid < 0) { return; }
   if (latest == 1) { trackid = 0; }
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
@@ -274,7 +275,11 @@ function setTrack(t) {
 }
 
 function selectTrack(f) {
-  trackid = f.options[f.selectedIndex].value;
+  if (f.selectedIndex >= 0) {
+    trackid = f.options[f.selectedIndex].value;
+  } else {
+    trackid = 0;
+  }
   document.getElementById('latest').checked = false;
   if (latest == 1) { toggleLatest(); }
   loadTrack(userid, trackid, 1);

@@ -53,6 +53,10 @@ select {
 #menu input[type = "checkbox"] {
   width: auto;
 }
+.menulink {
+  display: block;
+  margin-top: .2em;
+}
 #main {
   height: 100%;
   margin-right: 165px;

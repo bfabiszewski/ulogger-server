@@ -18,6 +18,7 @@
  */
 
   require_once(ROOT_DIR . "/helpers/db.php");
+  require_once(ROOT_DIR . "/helpers/position.php");
 
  /**
   * Track handling
@@ -75,6 +76,64 @@
         $stmt->close();
       }
       return $trackId;
+    }
+
+   /**
+    * Delete track with all positions
+    *
+    * @return bool True if success, false otherwise
+    */
+    public function delete() {
+      $ret = false;
+      if ($this->isValid) {
+        // delete positions
+        $position = new uPosition();
+        if ($position->deleteAll($this->userId, $this->id) === false) {
+          return false;
+        }
+        // delete track metadata
+        $query = "DELETE FROM tracks WHERE id = ?";
+        $stmt = self::$db->prepare($query);
+        $stmt->bind_param('i', $this->id);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+          $this->id = NULL;
+          $this->userId = NULL;
+          $this->name = NULL;
+          $this->comment = NULL;
+          $this->isValid = false;
+        }
+        $stmt->close();
+      }
+      return $ret;
+    }
+
+   /**
+    * Update track
+    *
+    * @param string|null $name New name (not empty string) or NULL if not changed
+    * @param string|null $comment New comment or NULL if not changed (to remove content use empty string: "")
+    * @return bool True if success, false otherwise
+    */
+    public function update($name = NULL, $comment = NULL) {
+      $ret = false;
+      if (empty($name)) { $name = $this->name; }
+      if (is_null($comment)) { $comment = $this->comment; }
+      if ($comment == "") { $comment = NULL; }
+      if ($this->isValid) {
+        $query = "UPDATE tracks SET name = ?, comment = ? WHERE id = ?";
+        $stmt = self::$db->prepare($query);
+        $stmt->bind_param('ssi', $name, $comment, $this->id);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+          $this->name = $name;
+          $this->comment = $comment;
+        }
+        $stmt->close();
+      }
+      return $ret;
     }
 
    /**

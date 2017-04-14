@@ -47,7 +47,7 @@ function editUser() {
 }
 
 function confirmedDelete(login) {
-  return confirm(sprintf(lang['deletewarn'], '"' + login + '"'));
+  return confirm(sprintf(lang['userdelwarn'], '"' + login + '"'));
 }
 
 function submitUser(action) {
