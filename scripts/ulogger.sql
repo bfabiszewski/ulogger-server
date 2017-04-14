@@ -11,7 +11,8 @@ USE `ulogger`;
 -- Table structure for table `positions`
 --
 
-CREATE TABLE IF NOT EXISTS `positions` (
+DROP TABLE IF EXISTS `positions`;
+CREATE TABLE `positions` (
   `id` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(11) NOT NULL,
@@ -33,7 +34,8 @@ CREATE TABLE IF NOT EXISTS `positions` (
 -- Table structure for table `tracks`
 --
 
-CREATE TABLE IF NOT EXISTS `tracks` (
+DROP TABLE IF EXISTS `tracks`;
+CREATE TABLE `tracks` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -46,7 +48,8 @@ CREATE TABLE IF NOT EXISTS `tracks` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `login` varchar(15) CHARACTER SET latin1 NOT NULL,
   `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
