@@ -53,8 +53,8 @@
 
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $oldpass = isset($_REQUEST['oldpass']) ? $_REQUEST['oldpass'] : NULL;
-  $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
-  if (empty($hash)) {
+  $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
+  if (empty($pass)) {
     exitWithError("Empty password");
   }
   if ($user->isAdmin && !empty($login)) {
@@ -70,7 +70,7 @@
       exitWithError("Wrong old password");
     }
   }
-  if ($passUser->setPass($hash) === false) {
+  if ($passUser->setPass($pass) === false) {
     exitWithError("Server error");
   }
 

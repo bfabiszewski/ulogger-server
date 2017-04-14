@@ -43,7 +43,7 @@
 
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
-  $hash = isset($_REQUEST['pass']) ? password_hash($_REQUEST['pass'], PASSWORD_DEFAULT) : NULL;
+  $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
   if (!$user->isAdmin || empty($action) || empty($login) || $user->login == $login) {
     exitWithStatus(true, $lang["servererror"]);
   }
@@ -52,23 +52,23 @@
 
   switch ($action) {
     case 'add':
-      if (empty($hash)) {
+      if (empty($pass)) {
         exitWithStatus(true, $lang["servererror"]);
       }
       if ($aUser->isValid) {
         exitWithStatus(true, $lang["userexists"]);
       }
-      if ($aUser->add($login, $hash) === false) {
+      if ($aUser->add($login, $pass) === false) {
         exitWithStatus(true, $mysqli->error);
       }
       break;
 
     case 'update':
       // update password
-      if (empty($hash)) {
+      if (empty($pass)) {
         exitWithStatus(true, $lang["servererror"]);
       }
-      if ($aUser->setPass($hash) === false) {
+      if ($aUser->setPass($pass) === false) {
         exitWithStatus(true, $mysqli->error);
       }
       break;

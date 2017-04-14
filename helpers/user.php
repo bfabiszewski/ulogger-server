@@ -21,6 +21,9 @@
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/position.php");
 
+  // for PHP 5.4 uncomment following line to include password_compat library
+  //require_once(ROOT_DIR . "/helpers/password.php");
+
  /**
   * User handling routines
   */
@@ -57,12 +60,13 @@
     * Add new user
     *
     * @param string $login Login
-    * @param string $hash Password hash
+    * @param string $pass Password
     * @return int|bool New user id, false on error
     */
-    public function add($login, $hash) {
+    public function add($login, $pass) {
       $userid = false;
-      if (!empty($login) && !empty($hash)) {
+      if (!empty($login) && !empty($pass)) {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
         $sql = "INSERT INTO users (login, password) VALUES (?, ?)";
         $stmt = self::$db->prepare($sql);
         $stmt->bind_param('ss', $login, $hash);
@@ -110,10 +114,11 @@
    /**
     * Set user password
     *
-    * @param string $hash Hash
+    * @param string $pass Password
     * @return bool True on success, false otherwise
     */
-    public function setPass($hash) {
+    public function setPass($pass) {
+      $hash = password_hash($pass, PASSWORD_DEFAULT);
       $ret = false;
       $sql = "UPDATE users SET password = ? WHERE login = ?";
       $stmt = self::$db->prepare($sql);

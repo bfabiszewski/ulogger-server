@@ -7,7 +7,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - http://flaa.fabiszewski.net/ulogger/
 
 ## Requirements:
-- PHP 5.5
+- PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/master/helpers/user.php#L24))
 - MySQL 4.1
 - browser with javascript enabled, cookies for authentication and saving preferences
 

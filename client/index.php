@@ -42,10 +42,10 @@ switch ($action) {
   // action: adduser (currently unused)
   case "adduser":
     $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
-    $hash = isset($_REQUEST['password']) ? password_hash($_REQUEST['password'], PASSWORD_DEFAULT) : NULL;
-    if (!empty($login) && !empty($hash)) {
+    $pass = isset($_REQUEST['password']) ? $_REQUEST['password'] : NULL;
+    if (!empty($login) && !empty($pass)) {
       $newUser = new uUser();
-      $newId = $newUser->add($login, $hash);
+      $newId = $newUser->add($login, $pass);
       if ($newId !== false) {
         // return user id
         $response['userid'] = $newId;
