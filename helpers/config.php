@@ -25,7 +25,6 @@
     static $version = "0.2-beta";
 
     // default map drawing framework
-    // (gmaps = google maps, openlayers = openlayers/osm)
     static $mapapi = "openlayers";
 
     // gmaps key
@@ -45,17 +44,12 @@
     static $init_latitude = 52.23;
     static $init_longitude = 21.01;
 
-    // you may set your google maps api key
-    // this is not obligatory by now
-    //$gkey = "";
-
     // MySQL config
     static $dbhost = ""; // mysql host, eg. localhost
     static $dbuser = ""; // database user
     static $dbpass = ""; // database pass
     static $dbname = ""; // database name
 
-    // other
     // require login/password authentication
     static $require_authentication = true;
 
@@ -66,15 +60,23 @@
     // none if empty
     static $admin_user = "";
 
+    // miniumum required length of user password
+    static $pass_lenmin = 12;
+
+    // required strength of user password
+    //   0 = no requirements,
+    //   1 = require mixed case letters (lower and upper),
+    //   2 = require mixed case and numbers
+    //   3 = require mixed case, numbers and non-alphanumeric characters
+    static $pass_strength = 2;
+
     // Default interval in seconds for live auto reload
     static $interval = 10;
 
     // Default language
-    // (en, pl, de, hu, fr, it)
     static $lang = "en";
 
     // units
-    // (metric, imperial)
     static $units = "metric";
 
     private static $fileLoaded = false;
@@ -113,7 +115,9 @@
       if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
       if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
       if (isset($admin_user)) { self::$admin_user = $admin_user; }
-      if (isset($interval)) { self::$interval = $interval; }
+      if (isset($pass_lenmin)) { self::$pass_lenmin = (int) $pass_lenmin; }
+      if (isset($pass_strength)) { self::$pass_strength = (int) $pass_strength; }
+      if (isset($interval)) { self::$interval = (int) $interval; }
       if (isset($lang)) { self::$lang = $lang; }
       if (isset($units)) { self::$units = $units; }
 
@@ -131,6 +135,33 @@
       if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
       if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
       if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
+    }
+
+   /**
+    * Regex to test if password matches strength and length requirements.
+    * Valid for both php and javascript
+    */
+    public function passRegex() {
+      static $regex = "";
+      if (self::$pass_strength > 0) {
+        // lower and upper case
+        $regex .= "(?=.*[a-z])(?=.*[A-Z])";
+      }
+      if (self::$pass_strength > 1) {
+        // digits
+        $regex .= "(?=.*[0-9])";
+      }
+      if (self::$pass_strength > 2) {
+        // not latin, not digits
+        $regex .= "(?=.*[^a-zA-Z0-9])";
+      }
+      if (self::$pass_lenmin > 0) {
+        $regex .= "(?=.{" . self::$pass_lenmin . ",})";
+      }
+      if (!empty($regex)) {
+        $regex = "/" . $regex . "/";
+      }
+      return $regex;
     }
   }
 

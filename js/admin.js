@@ -70,6 +70,10 @@ function submitUser(action) {
       alert(lang['passnotmatch']);
       return;
     }
+    if (!pass_regex.test(pass)) {
+      alert(lang['passlenmin'] + '\n' + lang['passrules']);
+      return;
+    }
   } else {
     if (!confirmedDelete(login)) {
       return;

@@ -76,5 +76,9 @@ $lang["deletewarn"] = "Warning!\n\nYou are going to permanently delete user %s, 
 $lang["editinguser"] = "You are editing user %s"; // substitutes user login
 $lang["selfeditwarn"] = "Your can't edit your own user with this tool";
 $lang["apifailure"] = "Sorry, can't load %s API"; // substitures api name (gmaps or openlayers)
+$lang["passlenmin"] = "Password must be at least %d characters"; // substitutes password minimum length
+$lang["passrules"][1] = "It should contain at least one upper case letter, one lower case letter";
+$lang["passrules"][2] = "It should contain at least one upper case letter, one lower case letter and one digit";
+$lang["passrules"][3] = "It should contain at least one upper case letter, one lower case letter, one digit and one non-alphanumeric character";
 
 ?>

@@ -81,6 +81,7 @@
       var init_longitude = '<?= $config::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
       var auth = '<?= ($user->isValid) ? $user->login : "null" ?>';
+      var pass_regex = <?= $config->passRegex() ?>;
     </script>
     <script type="text/javascript" src="js/main.js"></script>
 

@@ -39,6 +39,11 @@ function submitPass() {
     alert(lang['passnotmatch']);
     return;
   }
+  if (!pass_regex.test(pass)) {
+    alert(lang['passlenmin'] + '\n' + lang['passrules']);
+    return;
+  }
+
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status == 200) {

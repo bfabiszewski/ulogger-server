@@ -62,6 +62,16 @@ $public_tracks = 0;
 // none if empty
 $admin_user = "admin";
 
+// miniumum required length of user password
+$pass_lenmin = 12;
+
+// required strength of user password
+//   0 = no requirements,
+//   1 = require mixed case letters (lower and upper),
+//   2 = require mixed case and numbers
+//   3 = require mixed case, numbers and non-alphanumeric characters
+$pass_strength = 2;
+
 // Default interval in seconds for live auto reload
 $interval = 10;
 

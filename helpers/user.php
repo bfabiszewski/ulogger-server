@@ -65,7 +65,7 @@
     */
     public function add($login, $pass) {
       $userid = false;
-      if (!empty($login) && !empty($pass)) {
+      if (!empty($login) && !empty($pass) && $this->validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $sql = "INSERT INTO users (login, password) VALUES (?, ?)";
         $stmt = self::$db->prepare($sql);
@@ -105,6 +105,11 @@
         $stmt->execute();
         if (!self::$db->error && !$stmt->errno) {
           $ret = true;
+          $this->id = NULL;
+          $this->login = NULL;
+          $this->hash = NULL;
+          $this->isValid = false;
+          $this->isAdmin = false;
         }
         $stmt->close();
       }
@@ -118,16 +123,18 @@
     * @return bool True on success, false otherwise
     */
     public function setPass($pass) {
-      $hash = password_hash($pass, PASSWORD_DEFAULT);
       $ret = false;
-      $sql = "UPDATE users SET password = ? WHERE login = ?";
-      $stmt = self::$db->prepare($sql);
-      $stmt->bind_param('ss', $hash, $this->login);
-      $stmt->execute();
-      if (!self::$db->error && !$stmt->errno) {
-        $ret = true;
+      if ($this->validPassStrength($pass)) {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+        $sql = "UPDATE users SET password = ? WHERE login = ?";
+        $stmt = self::$db->prepare($sql);
+        $stmt->bind_param('ss', $hash, $this->login);
+        $stmt->execute();
+        if (!self::$db->error && !$stmt->errno) {
+          $ret = true;
+        }
+        $stmt->close();
       }
-      $stmt->close();
       return $ret;
     }
 
@@ -142,6 +149,17 @@
     }
 
    /**
+    * Check if given password matches user's one
+    *
+    * @param String $password Password
+    * @return bool True if matches, false otherwise
+    */
+    private function validPassStrength($password) {
+      $config = new uConfig();
+      return preg_match($config->passRegex(), $password);
+    }
+
+   /**
     * Store uUser object in session
     */
     public function storeInSession() {
@@ -150,6 +168,7 @@
 
    /**
     * Fill uUser object properties from session data
+    * @return uPosition Self
     */
     public function getFromSession() {
       if (isset($_SESSION['user'])) {
@@ -160,6 +179,7 @@
         $this->isAdmin = $sessionUser->isAdmin;
         $this->isValid = $sessionUser->isValid;
       }
+      return $this;
     }
 
    /**

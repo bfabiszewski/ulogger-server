@@ -17,7 +17,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-
   // available languages
   $langsArr = [
     "en" => "English",
@@ -37,5 +36,9 @@
   if ($config::$lang != "en" && array_key_exists($config::$lang, $langsArr)) {
     require_once(ROOT_DIR . "/lang/{$config::$lang}.php");
   }
+
+  // choose password messages based on config
+  $lang['passrules'] = $lang["passrules"][$config::$pass_strength];
+  $lang['passlenmin'] = sprintf($lang["passlenmin"], $config::$pass_lenmin);
 
 ?>
