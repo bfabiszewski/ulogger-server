@@ -191,7 +191,6 @@ function getPopupHtml(p, i, count) {
       '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg"> ' +
       (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
   }
-  olHack = (mapapi == 'openlayers') ? ' style="padding-bottom: 2rem"' : '';
   popup =
     '<div id="popup">' +
     '<div id="pheader">' +
@@ -211,7 +210,7 @@ function getPopupHtml(p, i, count) {
     (p.accuracy * factor_m).toFixed() + ' ' + unit_m + provider + '<br>' : '') +
     '</div>' +
     stats +
-    '</div><div id="pfooter"' + olHack + '>' + sprintf(lang['pointof'], i + 1, count) + '</div>' +
+    '</div><div id="pfooter">' + sprintf(lang['pointof'], i + 1, count) + '</div>' +
     '</div>';
   return popup;
 }

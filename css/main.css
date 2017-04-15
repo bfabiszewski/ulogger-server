@@ -34,7 +34,6 @@ a {
 }
 select {
   width: 150px;
-  /*font-size: 0.6em;*/
   font-weight: normal;
   padding-top: 0.2em;
 }
@@ -65,8 +64,10 @@ select {
   height: 100%;
 }
 #menu {
-  font-family: Verdana, sans-serif;
-  font-size: 0.6em;
+  font-family: 'Open Sans', Verdana, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.7em;
   font-weight: bold;
   color: white;
   float: right;
@@ -116,7 +117,7 @@ select {
   margin-bottom: -2px;
 }
 #login {
-  font-family: Verdana, sans-serif;
+  font-family: 'Open Sans', Verdana, sans-serif;
   position: relative;
   top: 10%;
   background-color: #444;
@@ -140,8 +141,8 @@ select {
   padding-top: 1.2em;
   color: yellow;
 }
-#popup * {
-  font-family: Roboto, Verdana, sans-serif;
+#popup {
+  font-family: 'Open Sans', Verdana, sans-serif;
 }
 #pheader {
   float: left;
@@ -191,7 +192,6 @@ select {
   bottom: 175px;
   right: 175px;
   z-index: 10001;
-  font-family: Verdana, sans-serif;
   font-size: 0.8em;
 }
 
@@ -206,6 +206,7 @@ select {
 }
 
 #modal {
+  font-family: 'Open Sans', Verdana, sans-serif;
   display: block;
   position: fixed;
   z-index: 10010;
@@ -235,7 +236,8 @@ select {
 
 #modal-body {
   font-size: 0.9em;
-  font-family: Verdana, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   color: white;
   background-color: rgba(102, 102, 102, 0.9);
   margin: 0 auto 15% auto;
@@ -265,7 +267,15 @@ select {
 }
 
 button {
+  color: white;
+  background-color: #434343;
   cursor: pointer;
+  border: 1px solid white;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  font-weight: bold;
+  margin-right: 5px;
 }
 
 .red-button {

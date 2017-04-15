@@ -64,6 +64,7 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
         <link rel="manifest" href="manifest.json">
         <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#5bbad5">
         <link rel="shortcut icon" href="icons/favicon.ico">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
         <meta name="msapplication-config" content="browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
         <link rel="stylesheet" type="text/css" href="css/main.css">

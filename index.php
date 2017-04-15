@@ -65,6 +65,7 @@
     <link rel="shortcut icon" href="icons/favicon.ico">
     <meta name="msapplication-config" content="browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script>
       var interval = '<?= $config::$interval ?>';
@@ -124,7 +125,7 @@
 
         <div id="user">
           <?php if (!empty($usersArr)): ?>
-            <br><u><?= $lang["user"] ?></u><br>
+            <br><?= $lang["user"] ?><br>
             <form>
               <select name="user" onchange="selectUser(this);">
                 <option value="0"><?= $lang["suser"] ?></option>
@@ -137,7 +138,7 @@
         </div>
 
         <div id="track">
-          <u><?= $lang["track"] ?></u><br>
+          <?= $lang["track"] ?><br>
           <form>
             <select name="track" onchange="selectTrack(this)">
               <?php foreach ($tracksArr as $aTrack): ?>
@@ -157,7 +158,7 @@
         </div>
 
         <div id="api">
-          <u><?= $lang["api"] ?></u><br>
+          <?= $lang["api"] ?><br>
           <form>
             <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
               <option value="gmaps"<?= ($config::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
@@ -167,7 +168,7 @@
         </div>
 
         <div id="lang">
-          <u><?= $lang["language"] ?></u><br>
+          <?= $lang["language"] ?><br>
           <form>
             <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
               <?php asort($langsArr); ?>
@@ -179,7 +180,7 @@
         </div>
 
         <div id="units">
-          <u><?= $lang["units"] ?></u><br>
+          <?= $lang["units"] ?><br>
           <form>
             <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
               <option value="metric"<?= ($config::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
