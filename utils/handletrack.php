@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
   require_once(ROOT_DIR . "/helpers/track.php");
 
   /**
@@ -56,17 +56,14 @@
   switch ($action) {
 
     case 'update':
-      if (empty($trackName)) {
+      if (empty($trackName) || $track->update($trackName) === false) {
         exitWithStatus(true, $lang["servererror"]);
-      }
-      if ($track->update($trackName) === false) {
-        exitWithStatus(true, $mysqli->error);
       }
       break;
 
     case 'delete':
       if ($track->delete() === false) {
-        exitWithStatus(true, $mysqli->error);
+        exitWithStatus(true, $lang["servererror"]);
       }
       break;
 

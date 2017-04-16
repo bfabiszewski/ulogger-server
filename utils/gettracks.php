@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user, $config
+require_once(dirname(__DIR__) . "/auth.php"); // sets $user, $config
 require_once(ROOT_DIR . "/helpers/track.php");
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
@@ -51,5 +51,4 @@ if ($userId) {
   $xml->flush();
 }
 
-$mysqli->close();
 ?>

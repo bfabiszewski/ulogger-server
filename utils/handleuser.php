@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 
   /**
    * Exit with xml response
@@ -52,30 +52,24 @@
 
   switch ($action) {
     case 'add':
-      if (empty($pass)) {
-        exitWithStatus(true, $lang["servererror"]);
-      }
       if ($aUser->isValid) {
         exitWithStatus(true, $lang["userexists"]);
       }
-      if ($aUser->add($login, $pass) === false) {
-        exitWithStatus(true, $mysqli->error);
+      if (empty($pass) || $aUser->add($login, $pass) === false) {
+        exitWithStatus(true, $lang["servererror"]);
       }
       break;
 
     case 'update':
       // update password
-      if (empty($pass)) {
+      if (empty($pass) || $aUser->setPass($pass) === false) {
         exitWithStatus(true, $lang["servererror"]);
-      }
-      if ($aUser->setPass($pass) === false) {
-        exitWithStatus(true, $mysqli->error);
       }
       break;
 
     case 'delete':
       if ($aUser->delete() === false) {
-        exitWithStatus(true, $mysqli->error);
+        exitWithStatus(true, $lang["servererror"]);
       }
       break;
 

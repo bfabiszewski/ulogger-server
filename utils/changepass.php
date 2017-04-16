@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 
   /**
    * Exit with error message
@@ -47,7 +47,6 @@
     $xml->endElement();
     $xml->endDocument();
     $xml->flush();
-    $mysqli->close();
     exit;
   }
 

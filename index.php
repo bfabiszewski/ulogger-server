@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(__DIR__ . "/auth.php"); // sets $mysqli, $user
+  require_once(__DIR__ . "/auth.php"); // sets $user
   require_once(ROOT_DIR . "/helpers/position.php");
   require_once(ROOT_DIR . "/helpers/track.php");
 
@@ -49,7 +49,6 @@
     $displayTrackId = NULL;
   }
 
-  $mysqli->close();
 ?>
 <!DOCTYPE html>
 <html>

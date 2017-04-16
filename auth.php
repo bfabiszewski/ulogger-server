@@ -22,8 +22,6 @@ require_once(ROOT_DIR . "/helpers/config.php");
 $config = new uConfig();
 
 require_once(ROOT_DIR . "/lang.php");
-require_once(ROOT_DIR . "/helpers/db.php");
-$mysqli = uDb::getInstance();
 require_once(ROOT_DIR . "/helpers/user.php");
 
 session_name('ulogger');
@@ -92,7 +90,6 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
       </body>
     </html>';
     }
-    $mysqli->close();
     exit();
   } else {
     // username submited
@@ -126,7 +123,6 @@ if (!$user->isValid && ($config::$require_authentication || defined('headless'))
         header("Location: $ssl://$url$error");
       }
     }
-    $mysqli->close();
     exit();
   }
   /* end of authentication */

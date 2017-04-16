@@ -29,7 +29,7 @@ function setError(&$response, $message) {
 }
 
 define("headless", true);
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user
+require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 $response = [ 'error' => false ];
@@ -104,8 +104,6 @@ switch ($action) {
     }
     break;
 }
-
-$mysqli->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);

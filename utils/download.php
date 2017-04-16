@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $mysqli, $user, $config
+require_once(dirname(__DIR__) . "/auth.php"); // sets $user, $config
 require_once(ROOT_DIR . "/helpers/position.php");
 
 /**
@@ -59,7 +59,6 @@ $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (
 
 if (!$config::$public_tracks && !$user->isAdmin && $user->id !== $userId) {
   // unauthorized
-  $mysqli->close();
   exit();
 }
 
@@ -84,7 +83,6 @@ if ($trackId && $userId) {
   $positionsArr = [];
   $positionsArr = $position->getAll($userId, $trackId);
   if (empty($positionsArr)) {
-    $mysqli->close();
     exit();
   }
 
@@ -227,5 +225,4 @@ if ($trackId && $userId) {
   }
 
 }
-$mysqli->close();
 ?>
