@@ -49,7 +49,7 @@
     */
     public function __construct($positionId = NULL) {
 
-      self::$db = uDB::getInstance();
+      self::$db = uDb::getInstance();
 
       if (!empty($positionId)) {
         $query = "SELECT p.id, p.time, p.user_id, p.track_id,

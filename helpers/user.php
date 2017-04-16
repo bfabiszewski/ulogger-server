@@ -42,7 +42,7 @@
     * @param string $login Login
     */
     public function __construct($login = NULL) {
-      self::$db = uDB::getInstance();
+      self::$db = uDb::getInstance();
       if (!empty($login)) {
         $stmt = self::$db->prepare("SELECT id, login, password FROM users WHERE login = ? LIMIT 1");
         $stmt->bind_param('s', $login);

@@ -40,7 +40,7 @@
     */
     public function __construct($trackId = NULL) {
 
-      self::$db = uDB::getInstance();
+      self::$db = uDb::getInstance();
 
       if (!empty($trackId)) {
         $stmt = self::$db->prepare("SELECT id, user_id, name, comment FROM tracks WHERE id = ? LIMIT 1");
