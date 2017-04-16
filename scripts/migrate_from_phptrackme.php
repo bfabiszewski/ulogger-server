@@ -19,7 +19,7 @@
 
 /* This script imports data from old phpTrackme database scheme.
  *
- * However, as μlogger users more secure password storage methods,
+ * However, as μlogger uses more secure password storage methods,
  * it is impossible to convert old password hashes to the new format.
  * Administrator will have to fill in user passwords manually.
  * Alternatively authentication code could be modify in order to
