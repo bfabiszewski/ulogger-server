@@ -136,6 +136,8 @@ switch ($command) {
     if (!isset($enabled) || $enabled === false) {
       $messages[] = sprintf($langSetup["disabledwarn"], "<b>\$enabled</b>", "<b>true</b>");
       $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
     if (!function_exists('password_hash')) {
