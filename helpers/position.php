@@ -55,7 +55,7 @@
         $query = "SELECT p.id, p.time, p.user_id, p.track_id,
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
-                  FROM positions p
+                  FROM `" . self::$db->table('positions') . "` p
                   LEFT JOIN users u ON (p.user_id = u.id)
                   LEFT JOIN tracks t ON (p.track_id = t.id)
                   WHERE id = ? LIMIT 1";
@@ -84,7 +84,7 @@
     public function add($userId, $trackId, $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
       $positionId = false;
       if (!is_null($lat) && !is_null($lon) && !is_null($time) && !empty($userId) && !empty($trackId)) {
-        $query = "INSERT INTO positions
+        $query = "INSERT INTO `" . self::$db->table('positions') . "`
                 (user_id, track_id,
                 time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
                 VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -120,7 +120,7 @@
           $args[0] .= "i";
           $args[2] = &$trackId;
         }
-        $query = "DELETE FROM positions $where";
+        $query = "DELETE FROM `" . self::$db->table('positions') . "` $where";
         $stmt = self::$db->prepare($query);
         call_user_func_array([ $stmt, 'bind_param' ], $args);
         $stmt->execute();
@@ -150,7 +150,7 @@
       $query = "SELECT p.id, p.time, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM positions p
+                FROM `" . self::$db->table('positions') . "` p
                 LEFT JOIN users u ON (p.user_id = u.id)
                 LEFT JOIN tracks t ON (p.track_id = t.id)
                 $where
@@ -182,7 +182,7 @@
       $query = "SELECT p.id, p.time, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM positions p
+                FROM `" . self::$db->table('positions') . "` p
                 LEFT JOIN users u ON (p.user_id = u.id)
                 LEFT JOIN tracks t ON (p.track_id = t.id)
                 $where

@@ -43,7 +43,8 @@
       self::$db = uDb::getInstance();
 
       if (!empty($trackId)) {
-        $stmt = self::$db->prepare("SELECT id, user_id, name, comment FROM tracks WHERE id = ? LIMIT 1");
+        $query = "SELECT id, user_id, name, comment FROM `" . self::$db->table('tracks') . "` WHERE id = ? LIMIT 1";
+        $stmt = self::$db->prepare($query);
         $stmt->bind_param('i', $trackId);
         $stmt->execute();
         $stmt->bind_result($this->id, $this->userId, $this->name, $this->comment);
@@ -66,7 +67,7 @@
     public function add($userId, $name, $comment = NULL) {
       $trackId = false;
       if (!empty($userId) && !empty($name)) {
-        $query = "INSERT INTO tracks (user_id, name, comment) VALUES (?, ?, ?)";
+        $query = "INSERT INTO `" . self::$db->table('tracks') . "` (user_id, name, comment) VALUES (?, ?, ?)";
         $stmt = self::$db->prepare($query);
         $stmt->bind_param('iss', $userId, $name, $comment);
         $stmt->execute();
@@ -92,7 +93,7 @@
           return false;
         }
         // delete track metadata
-        $query = "DELETE FROM tracks WHERE id = ?";
+        $query = "DELETE FROM `" . self::$db->table('tracks') . "` WHERE id = ?";
         $stmt = self::$db->prepare($query);
         $stmt->bind_param('i', $this->id);
         $stmt->execute();
@@ -122,7 +123,7 @@
       if (is_null($comment)) { $comment = $this->comment; }
       if ($comment == "") { $comment = NULL; }
       if ($this->isValid) {
-        $query = "UPDATE tracks SET name = ?, comment = ? WHERE id = ?";
+        $query = "UPDATE `" . self::$db->table('tracks') . "` SET name = ?, comment = ? WHERE id = ?";
         $stmt = self::$db->prepare($query);
         $stmt->bind_param('ssi', $name, $comment, $this->id);
         $stmt->execute();
@@ -145,7 +146,7 @@
     public function deleteAll($userId) {
       $ret = false;
       if (!empty($userId)) {
-        $query = "DELETE FROM tracks WHERE user_id = ?";
+        $query = "DELETE FROM `" . self::$db->table('tracks') . "` WHERE user_id = ?";
         $stmt = self::$db->prepare($query);
         $stmt->bind_param('i', $userId);
         $stmt->execute();
@@ -169,7 +170,7 @@
       } else {
         $where = "";
       }
-      $query = "SELECT id, user_id, name, comment FROM tracks $where ORDER BY id DESC";
+      $query = "SELECT id, user_id, name, comment FROM `" . self::$db->table('tracks') . "` $where ORDER BY id DESC";
       $result = self::$db->query($query);
       if ($result === false) {
         return false;

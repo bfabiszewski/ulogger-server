@@ -33,13 +33,18 @@ require_once(ROOT_DIR . "/lang.php");
 
 $command = isset($_REQUEST['command']) ? $_REQUEST['command'] : NULL;
 
+$prefix = preg_replace('/[^a-z0-9_]/i', '', $config::$dbprefix);
+$tPositions = $prefix . "positions";
+$tTracks = $prefix . "tracks";
+$tUsers = $prefix . "users";
+
 $messages = [];
 switch ($command) {
   case "setup":
     $queries = [];
     // positions
-    $queries[] = "DROP TABLE IF EXISTS `positions`";
-    $queries[] = "CREATE TABLE `positions` (
+    $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+    $queries[] = "CREATE TABLE `$tPositions` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `user_id` int(11) NOT NULL,
@@ -59,8 +64,8 @@ switch ($command) {
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
     // tracks
-    $queries[] = "DROP TABLE IF EXISTS `tracks`";
-    $queries[] = "CREATE TABLE `tracks` (
+    $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+    $queries[] = "CREATE TABLE `$tTracks` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `user_id` int(11) NOT NULL,
                     `name` varchar(255) DEFAULT NULL,
@@ -70,8 +75,8 @@ switch ($command) {
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
     // users
-    $queries[] = "DROP TABLE IF EXISTS `users`";
-    $queries[] = "CREATE TABLE `users` (
+    $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+    $queries[] = "CREATE TABLE `$tUsers` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `login` varchar(15) CHARACTER SET latin1 NOT NULL,
                     `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
@@ -160,7 +165,7 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    $messages[] = sprintf($langSetup["scriptdesc"], "<b>{$config::$dbname}</b>");
+    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>{$config::$dbname}</b>");
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;

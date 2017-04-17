@@ -80,6 +80,10 @@ if ($mysqli->connect_errno) {
   echo "Can't connect to $dbname database : (" . $mysqli->errno . ") " . $mysqli->error . "\n";
   exit(1);
 }
+$prefix = preg_replace('/[^a-z0-9_]/i', '', $dbprefix);
+$tPositions = $prefix . "positions";
+$tTracks = $prefix . "tracks";
+$tUsers = $prefix . "users";
 
 // import data
 if (!$users_result = $pt_mysqli->query("SELECT * FROM users ORDER BY ID")) {
@@ -87,7 +91,7 @@ if (!$users_result = $pt_mysqli->query("SELECT * FROM users ORDER BY ID")) {
   exit(1);
 }
 
-if (!($user_insert = $mysqli->prepare("INSERT INTO users (login, password) VALUES (?, ?)"))) {
+if (!($user_insert = $mysqli->prepare("INSERT INTO `$tUsers` (login, password) VALUES (?, ?)"))) {
   echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
   exit(1);
 }
@@ -142,7 +146,7 @@ function process_user_tracks($user_id) {
     exit(1);
   }
   $tracks_select->store_result();
-  if (!($track_insert = $mysqli->prepare("INSERT INTO tracks (user_id, name, comment) VALUES (?, ?, ?)"))) {
+  if (!($track_insert = $mysqli->prepare("INSERT INTO `$tTracks` (user_id, name, comment) VALUES (?, ?, ?)"))) {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
     exit(1);
   }
@@ -190,7 +194,7 @@ function process_track($user_id, $old_id, $new_id) {
     exit(1);
   }
   $pos_select->store_result();
-  if (!($pos_insert = $mysqli->prepare("INSERT INTO positions (time, user_id, track_id, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
+  if (!($pos_insert = $mysqli->prepare("INSERT INTO `$tPositions` (time, user_id, track_id, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
     exit(1);

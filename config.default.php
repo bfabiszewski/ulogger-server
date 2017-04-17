@@ -48,6 +48,7 @@ $dbhost = ""; // mysql host, eg. localhost
 $dbuser = ""; // database user
 $dbpass = ""; // database pass
 $dbname = ""; // database name
+$dbprefix = ""; // optional table names prefix, eg. "ulogger_"
 
 // other
 // require login/password authentication

@@ -44,7 +44,8 @@
     public function __construct($login = NULL) {
       self::$db = uDb::getInstance();
       if (!empty($login)) {
-        $stmt = self::$db->prepare("SELECT id, login, password FROM users WHERE login = ? LIMIT 1");
+        $sql = "SELECT id, login, password FROM `" . self::$db->table('users') . "` WHERE login = ? LIMIT 1";
+        $stmt = self::$db->prepare($sql);
         $stmt->bind_param('s', $login);
         $stmt->execute();
         $stmt->bind_result($this->id, $this->login, $this->hash);
@@ -67,7 +68,7 @@
       $userid = false;
       if (!empty($login) && !empty($pass) && $this->validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (login, password) VALUES (?, ?)";
+        $sql = "INSERT INTO `" . self::$db->table('users') . "` (login, password) VALUES (?, ?)";
         $stmt = self::$db->prepare($sql);
         $stmt->bind_param('ss', $login, $hash);
         $stmt->execute();
@@ -99,7 +100,7 @@
           return false;
         }
         // remove user
-        $sql = "DELETE FROM users WHERE id = ?";
+        $sql = "DELETE FROM `" . self::$db->table('users') . "` WHERE id = ?";
         $stmt = self::$db->prepare($sql);
         $stmt->bind_param('i', $this->id);
         $stmt->execute();
@@ -126,7 +127,7 @@
       $ret = false;
       if ($this->validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "UPDATE users SET password = ? WHERE login = ?";
+        $sql = "UPDATE `" . self::$db->table('users') . "` SET password = ? WHERE login = ?";
         $stmt = self::$db->prepare($sql);
         $stmt->bind_param('ss', $hash, $this->login);
         $stmt->execute();
@@ -188,7 +189,7 @@
     * @return array|bool Array of uUser users, false on error
     */
     public function getAll() {
-      $query = "SELECT id, login, password FROM users ORDER BY login";
+      $query = "SELECT id, login, password FROM `" . self::$db->table('users') . "` ORDER BY login";
       $result = self::$db->query($query);
       if ($result === false) {
         return false;

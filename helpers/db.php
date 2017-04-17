@@ -30,6 +30,13 @@
      */
     protected static $instance;
 
+    /**
+     * Table names
+     *
+     * @var array Array of names
+     */
+    protected static $tables;
+
    /**
     * Private constuctor
     *
@@ -57,8 +64,23 @@
       if (!self::$instance) {
         $config = new uConfig();
         self::$instance = new self($config::$dbhost, $config::$dbuser, $config::$dbpass, $config::$dbname);
+        self::$tables = [];
+        $prefix = preg_replace('/[^a-z0-9_]/i', '', $config::$dbprefix);
+        self::$tables['positions'] = $prefix . "positions";
+        self::$tables['tracks'] = $prefix . "tracks";
+        self::$tables['users'] = $prefix . "users";
       }
       return self::$instance;
+    }
+
+   /**
+    * Get full table name including prefix
+    *
+    * @param string $name Name
+    * @return string Full table name
+    */
+    public function table($name) {
+      return self::$tables[$name];
     }
   }
 ?>

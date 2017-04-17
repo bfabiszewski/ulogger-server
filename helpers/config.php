@@ -49,6 +49,7 @@
     static $dbuser = ""; // database user
     static $dbpass = ""; // database pass
     static $dbname = ""; // database name
+    static $dbprefix = ""; // optional table names prefix, eg. "ulogger_"
 
     // require login/password authentication
     static $require_authentication = true;
@@ -112,6 +113,7 @@
       if (isset($dbuser)) { self::$dbuser = $dbuser; }
       if (isset($dbpass)) { self::$dbpass = $dbpass; }
       if (isset($dbname)) { self::$dbname = $dbname; }
+      if (isset($dbprefix)) { self::$dbprefix = $dbprefix; }
       if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
       if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
       if (isset($admin_user)) { self::$admin_user = $admin_user; }
