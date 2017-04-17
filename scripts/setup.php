@@ -134,7 +134,7 @@ switch ($command) {
     break;
 
   default:
-    $messages[] = $langSetup["welcome"];
+    $messages[] = "<img src=\"../icons/favicon-32x32.png\">" . $langSetup["welcome"];
     if (version_compare(PHP_VERSION, '5.4.0', '<')) {
       $messages[] = "<span class=\"warn\">" . sprintf($langSetup["phpversionwarn"], PHP_VERSION) . "</span>";
     }
@@ -187,6 +187,9 @@ switch ($command) {
         font-size: 1.2em;
         color: #f8f5f7;
         padding: 10%;
+      }
+      #message img {
+        vertical-align: bottom;
       }
       #message input[type=text], #message input[type=password] {
         width: 40em;
