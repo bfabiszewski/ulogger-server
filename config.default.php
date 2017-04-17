@@ -62,7 +62,7 @@ $public_tracks = 0;
 // admin user, who
 // - can add new users
 // - can edit all tracks, users
-// - has access to all users locations,
+// - has access to all users locations
 // none if empty
 $admin_user = "";
 
@@ -72,7 +72,7 @@ $pass_lenmin = 12;
 // required strength of user password
 //   0 = no requirements,
 //   1 = require mixed case letters (lower and upper),
-//   2 = require mixed case and numbers
+//   2 = require mixed case and numbers,
 //   3 = require mixed case, numbers and non-alphanumeric characters
 $pass_strength = 2;
 
