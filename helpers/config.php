@@ -137,6 +137,10 @@
       if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
     }
 
+    public function isFileLoaded() {
+      return self::$fileLoaded;
+    }
+
    /**
     * Regex to test if password matches strength and length requirements.
     * Valid for both php and javascript

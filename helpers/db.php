@@ -45,7 +45,7 @@
           header("HTTP/1.1 503 Service Unavailable");
           exit;
         }
-        die("Database connection error (" . $this->connect_errno . ")");
+        die("Database connection error (" . $this->connect_error . ")");
       }
       $this->set_charset('utf8');
     }

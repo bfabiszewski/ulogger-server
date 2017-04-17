@@ -17,6 +17,31 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+$langSetup["dbconnectfailed"] = "Błąd połączenia z bazą danych.";
+$langSetup["serversaid"] = "Komunikat serwera: %s";
+$langSetup["checkdbsettings"] = "Proszę sprawdzić konfigurację bazy danych w pliku 'config.php'.";
+$langSetup["dbqueryfailed"] = "Błąd zapytania do bazy danych.";
+$langSetup["dbtablessuccess"] = "Pomyślnie utworzono tablice w bazie danych!";
+$langSetup["setupuser"] = "Skonfiguruj teraz swojego użytkownika w µloggerze.";
+$langSetup["congratulations"] = "Gratulacje!";
+$langSetup["setupcomplete"] = "Konfiguracja zakończona. Możesz teraz przejść do <a href=\"../index.php\">strony głównej</a> i zalogować się na konto utworzonego użytkownika.";
+$langSetup["disablewarn"] = "WAŻNE! NAZLEŻY DEZAKTYWOWAĆ SKRYPT 'setup.php' ALBO USUNĄĆ GO Z SERWERA.";
+$langSetup["disabledesc"] = "Pozostawienie dostępu do skryptu z przeglądarki stanowi duże zagrożenie. Każdy będzie mógł go uruchomić, usunąć całą bazę danych i dodać nowego użytkownika. Usuń plik lub dezaktywuj go przywracając zmiennej %s wartość %s.";
+$langSetup["setupfailed"] = "Niestety coś poszło nie tak. Może znajdziesz więcej wskazówek w logach serwera www.";
+$langSetup["welcome"] = "Witaj w µloggerze!";
+$langSetup["phpversionwarn"] = "Uwaga! Twoja wersja PHP (%s) jest prawdopodobnie zbyt stara. Ta aplikacja może nie działać poprawnie z wersjami PHP niższymi od 5.4.";
+$langSetup["disabledwarn"] = "Ze względów bezpieczeństwa ten skrypt jest domyślnie wyłączony. Aby go aktywować należy otworzyć plik 'scripts/setup.php' w edytorze tekstu i zmienić wartość zmiennej %s na początku pliku na %s.";
+$langSetup["lineshouldread"] = "Linia: %s powinna zostać zmieniona na: %s";
+$langSetup["passfuncwarn"] = "Zainstalowana wersja PHP nie zawiera funkcji obsługujących hasła, dostępnych od wersji PHP 5.5. Musisz włączyć bibliotekę 'password_compat'.";
+$langSetup["passfunchack"] = "Otwórz proszę plik 'helpers/user.php' w edytorze tekstu i odkomentuj linię włączającą 'helpers/password.php'.";
+$langSetup["dorestart"] = "Uruchom ten skrypt ponownie, kiedy zakończysz.";
+$langSetup["createconfig"] = "Utwórz proszę plik 'config.php' w głównym folderze. Możesz skopiować jego początkową zawartość z pliku 'config.default.php'. Pamiętaj, żeby dostosować konfiguracje do swoich potrzeb i ustawień bazy danych.";
+$langSetup["nodbsettings"] = "Musisz skonfigurować parametry dostępu do bazy danych w pliku 'config.php' (%s).";
+$langSetup["scriptdesc"] = "Ten skrypt utworzy tablice niezbędne do działania aplikacji µlogger. Zostaną one utworzone w bazie danych o nazwie %s. Uwaga, jeśli tablice już istnieją, zostaną usunięte i utworzone ponownie, ich zawartość zostanie skasowana.";
+$langSetup["scriptdesc2"] = "Następnie skrypt poprosi o utworzenie konta do logowania w aplikacji µlogger.";
+$langSetup["startbutton"] = "Naciśnij, aby rozpocząć";
+$langSetup["restartbutton"] = "Uruchom ponownie";
+
 $lang["title"] = "• μlogger •";
 $lang["private"] = "Aby się zalogować musisz podać login i hasło";
 $lang["authfail"] = "błędny login lub hasło";

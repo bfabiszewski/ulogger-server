@@ -19,6 +19,34 @@
 
 // default language for translations
 
+// strings only used in setup
+$langSetup["dbconnectfailed"] = "Database connection failed.";
+$langSetup["serversaid"] = "Server said: %s"; // substitutes server error message
+$langSetup["checkdbsettings"] = "Please check database settings in 'config.php' file.";
+$langSetup["dbqueryfailed"] = "Database query failed.";
+$langSetup["dbtablessuccess"] = "Database tables successfully created!";
+$langSetup["setupuser"] = "Now please set up your µlogger user.";
+$langSetup["congratulations"] = "Congratulations!";
+$langSetup["setupcomplete"] = "Setup is now complete. You may go to the <a href=\"../index.php\">main page</a> now and log in with your new user account.";
+$langSetup["disablewarn"] = "IMPORTANT! YOU MUST DISABLE 'setup.php' SCRIPT OR REMOVE IT FROM YOUR SERVER.";
+$langSetup["disabledesc"] = "Leaving the script accessible from browser is a major security risk. Anybody will be able to run it, delete your database and set up new user account. Delete the file or disable it by setting %s value back to %s."; // substitutes variable name and value
+$langSetup["setupfailed"] = "Unfortunately something has gone wrong. You may try to find more info in your webserver logs.";
+$langSetup["welcome"] = "Welcome to µlogger!";
+$langSetup["phpversionwarn"] = "Warning! Your PHP version (%s) is probably too low. This application may not function properly with PHP versions lower than 5.4."; // substitutes php version number
+$langSetup["disabledwarn"] = "For security reasons this script is disabled by default. To enable it you must edit 'scripts/setup.php' file in text editor and set %s variable at the beginning of the file to %s."; // substitutes variable name and value
+$langSetup["lineshouldread"] = "Line: %s should read: %s";
+$langSetup["passfuncwarn"] = "Your PHP version does not support password functions that ship with PHP 5.5. You have to include password_compat library.";
+$langSetup["passfunchack"] = "Please edit 'helpers/user.php' file and uncomment line including 'helpers/password.php'.";
+$langSetup["dorestart"] = "Please restart this script when you are done.";
+$langSetup["createconfig"] = "Please create 'config.php' file in root folder. You may start by copying it from 'config.default.php'. Make sure that you adjust config values to match your needs and your database setup.";
+$langSetup["nodbsettings"] = "You must provide your database credentials in 'config.php' file (%s)."; // substitutes variable names
+$langSetup["scriptdesc"] = "This script will set up tables needed for µlogger. They will be created in your database named %s. Warning, if the tables already exist they will be dropped and recreated, their content will be destroyed."; // substitutes db name
+$langSetup["scriptdesc2"] = "When done the script will ask you to provide user name and password for your µlogger user.";
+$langSetup["startbutton"] = "Press to start";
+$langSetup["restartbutton"] = "Restart";
+
+
+// application strings
 $lang["title"] = "• μlogger •";
 $lang["private"] = "You need login and password to access this page.";
 $lang["authfail"] = "Wrong username or password";

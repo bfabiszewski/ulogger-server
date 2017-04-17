@@ -7,7 +7,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - http://flaa.fabiszewski.net/ulogger/
 
 ## Requirements:
-- PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/master/helpers/user.php#L24))
+- PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/04b2b771398d8511bfa6fe8a85d58162bd32fc46/helpers/user.php#L24))
 - MySQL 4.1
 - browser with javascript enabled, cookies for authentication and saving preferences
 
@@ -25,20 +25,19 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - simple admin menu
 
 ## Install
-- Download the zip or clone the repository on your computer
-- Move it to your web server directory
-- Use script/ulogger.sql file to create database and tables (you can use a MySQL interface such as [PhpMyAdmin](https://www.phpmyadmin.net))
-- Create a copy of config.default.php and rename it config.php. Add database credentials in it
-- Make sure you have a web server running, e.g. Apache, also PHP and MySQL
-- Open a browser and go to http://your_local_server/ulogger-server/
-- Connect with admin/admin
-- **Change admin password**
-- Create other user if needed
+- Download zipped archive or clone the repository on your computer
+- Move it to your web server directory (unzip if needed)
+- Create database and MySQL user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script)
+- Create a copy of `config.default.php` and rename it to `config.php`. Customize it and add database credentials
+- Edit `scripts/setup.php` script, enable it by setting [$enabled](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/setup.php#L21) value to `true`
+- Make sure you have a web server running with PHP and MySQL
+- Open http://YOUR_HOST/ulogger-server/scripts/setup.php page in your browser
+- Follow instructions in setup script. It will add database tables and set up your μlogger user
+- **Remember to remove or disable `scripts/setup.php` script**
+- Log in with your new user on http://YOUR_HOST/ulogger-server/
 
 ## Todo
-- install script
-- custom icons
-- track editing
+- improve track editing
 - track display filters (accurracy, provider)
 
 ## License
