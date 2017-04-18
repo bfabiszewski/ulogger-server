@@ -56,8 +56,8 @@
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
                   FROM `" . self::$db->table('positions') . "` p
-                  LEFT JOIN users u ON (p.user_id = u.id)
-                  LEFT JOIN tracks t ON (p.track_id = t.id)
+                  LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
+                  LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
                   WHERE id = ? LIMIT 1";
         $params = [ 'i', $positionId ];
         $this->loadWithQuery($query, $params);
@@ -151,8 +151,8 @@
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM `" . self::$db->table('positions') . "` p
-                LEFT JOIN users u ON (p.user_id = u.id)
-                LEFT JOIN tracks t ON (p.track_id = t.id)
+                LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
+                LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time DESC LIMIT 1";
       $this->loadWithQuery($query, $params);
@@ -183,8 +183,8 @@
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM `" . self::$db->table('positions') . "` p
-                LEFT JOIN users u ON (p.user_id = u.id)
-                LEFT JOIN tracks t ON (p.track_id = t.id)
+                LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
+                LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time";
       $result = self::$db->query($query);
