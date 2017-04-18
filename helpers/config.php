@@ -17,6 +17,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+
+ /**
+  * Initialize on file include
+  */
+  uConfig::init();
+
  /**
   * Handles config values
   */
@@ -82,18 +88,23 @@
 
     private static $fileLoaded = false;
 
+    private static $initialized = false;
+
    /**
-    * Constructor
+    * Static initializer
     */
-    public function __construct() {
-      $this->setFromFile();
-      $this->setFromCookies();
+    static public function init() {
+      if (!self::$initialized) {
+        self::setFromFile();
+        self::setFromCookies();
+        self::$initialized = true;
+      }
     }
 
    /**
     * Read config values from "/config.php" file
     */
-    private function setFromFile() {
+    private static function setFromFile() {
       $configFile = ROOT_DIR . "/config.php";
       if (self::$fileLoaded || !file_exists($configFile)) {
         return;
@@ -132,14 +143,19 @@
    /**
     * Read config values stored in cookies
     */
-    private function setFromCookies() {
+    private static function setFromCookies() {
       if (isset($_COOKIE["ulogger_api"])) { self::$mapapi = $_COOKIE["ulogger_api"]; }
       if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
       if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
       if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
     }
 
-    public function isFileLoaded() {
+   /**
+    * Is config loaded from file?
+    *
+    * @return True if loaded, false otherwise
+    */
+    public static function isFileLoaded() {
       return self::$fileLoaded;
     }
 
@@ -147,7 +163,7 @@
     * Regex to test if password matches strength and length requirements.
     * Valid for both php and javascript
     */
-    public function passRegex() {
+    public static function passRegex() {
       static $regex = "";
       if (self::$pass_strength > 0) {
         // lower and upper case

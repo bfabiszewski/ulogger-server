@@ -19,8 +19,6 @@
 
 define("ROOT_DIR", __DIR__);
 require_once(ROOT_DIR . "/helpers/config.php");
-$config = new uConfig();
-
 require_once(ROOT_DIR . "/lang.php");
 require_once(ROOT_DIR . "/helpers/user.php");
 
@@ -31,12 +29,12 @@ $sid = session_id();
 // check for forced login to authorize admin in case of public access
 $force_login = (isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : false);
 if ($force_login) {
-  $config::$require_authentication = true;
+  uConfig::$require_authentication = true;
 }
 
 $user = new uUser();
 $user->getFromSession();
-if (!$user->isValid && ($config::$require_authentication || defined('headless'))) {
+if (!$user->isValid && (uConfig::$require_authentication || defined('headless'))) {
   /* authentication */
   $login = (isset($_REQUEST['user']) ? $_REQUEST['user'] : NULL);
   $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL);

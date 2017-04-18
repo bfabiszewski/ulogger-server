@@ -156,8 +156,7 @@
     * @return bool True if matches, false otherwise
     */
     private function validPassStrength($password) {
-      $config = new uConfig();
-      return preg_match($config->passRegex(), $password);
+      return preg_match(uConfig::passRegex(), $password);
     }
 
    /**
@@ -225,8 +224,7 @@
     * @return bool True if admin, false otherwise
     */
     private function isAdmin($login) {
-      $config = new uConfig();
-      return (!empty($config::$admin_user) && $config::$admin_user == $login);
+      return (!empty(uConfig::$admin_user) && uConfig::$admin_user == $login);
     }
   }
 ?>

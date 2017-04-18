@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user, $config
+require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 require_once(ROOT_DIR . "/helpers/position.php");
 
 /**
@@ -57,12 +57,12 @@ $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
 
-if (!$config::$public_tracks && !$user->isAdmin && $user->id !== $userId) {
+if (!uConfig::$public_tracks && !$user->isAdmin && $user->id !== $userId) {
   // unauthorized
   exit();
 }
 
-if ($config::$units == "imperial") {
+if (uConfig::$units == "imperial") {
   $factor_kmh = 0.62; //to mph
   $unit_kmh = "mph";
   $factor_m = 3.28; // to feet

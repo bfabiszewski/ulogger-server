@@ -33,12 +33,12 @@
 
   // override with translated strings if needed
   // missing strings will be displayed in English
-  if ($config::$lang != "en" && array_key_exists($config::$lang, $langsArr)) {
-    require_once(ROOT_DIR . "/lang/{$config::$lang}.php");
+  if (uConfig::$lang != "en" && array_key_exists(uConfig::$lang, $langsArr)) {
+    require_once(ROOT_DIR . "/lang/" . uConfig::$lang . ".php");
   }
 
   // choose password messages based on config
-  $lang['passrules'] = isset($lang["passrules"][$config::$pass_strength]) ? $lang["passrules"][$config::$pass_strength] : "";
-  $lang['passlenmin'] = sprintf($lang["passlenmin"], $config::$pass_lenmin);
+  $lang['passrules'] = isset($lang["passrules"][uConfig::$pass_strength]) ? $lang["passrules"][uConfig::$pass_strength] : "";
+  $lang['passlenmin'] = sprintf($lang["passlenmin"], uConfig::$pass_lenmin);
 
 ?>

@@ -62,10 +62,9 @@
     */
     public static function getInstance() {
       if (!self::$instance) {
-        $config = new uConfig();
-        self::$instance = new self($config::$dbhost, $config::$dbuser, $config::$dbpass, $config::$dbname);
+        self::$instance = new self(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
         self::$tables = [];
-        $prefix = preg_replace('/[^a-z0-9_]/i', '', $config::$dbprefix);
+        $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
         self::$tables['positions'] = $prefix . "positions";
         self::$tables['tracks'] = $prefix . "tracks";
         self::$tables['users'] = $prefix . "users";

@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user, $config
+require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 require_once(ROOT_DIR . "/helpers/position.php");
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
@@ -26,7 +26,7 @@ $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (
 if ($userId) {
   $positionsArr = [];
 
-  if ($config::$public_tracks || $user->isAdmin || $user->id === $userId) {
+  if (uConfig::$public_tracks || $user->isAdmin || $user->id === $userId) {
     $position = new uPosition();
     if ($trackId) {
       // get all track data

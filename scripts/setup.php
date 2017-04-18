@@ -27,13 +27,11 @@ $enabled = false;
 define("ROOT_DIR", dirname(__DIR__));
 require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/config.php");
-$config = new uConfig();
-
 require_once(ROOT_DIR . "/lang.php");
 
 $command = isset($_REQUEST['command']) ? $_REQUEST['command'] : NULL;
 
-$prefix = preg_replace('/[^a-z0-9_]/i', '', $config::$dbprefix);
+$prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
 $tPositions = $prefix . "positions";
 $tTracks = $prefix . "tracks";
 $tUsers = $prefix . "users";
@@ -87,7 +85,7 @@ switch ($command) {
     $error = false;
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     try {
-      $mysqli = new mysqli($config::$dbhost, $config::$dbuser, $config::$dbpass, $config::$dbname);
+      $mysqli = new mysqli(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
     } catch (mysqli_sql_exception $e ) {
       $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
       $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
@@ -153,19 +151,19 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (!$config->isFileLoaded()) {
+    if (!uConfig::isFileLoaded()) {
       $messages[] = $langSetup["createconfig"];
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (empty($config::$dbname) || empty($config::$dbhost) || empty($config::$dbuser)) {
+    if (empty(uConfig::$dbname) || empty(uConfig::$dbhost) || empty(uConfig::$dbuser)) {
       $messages[] = sprintf($langSetup["nodbsettings"], "\$dbname, \$dbhost, \$dbuser, \$dbpass");
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>{$config::$dbname}</b>");
+    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>" . uConfig::$dbname . "</b>");
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
@@ -211,7 +209,7 @@ switch ($command) {
     </style>
     <script type="text/javascript">
       var lang = <?= json_encode($lang) ?>;
-      var pass_regex = <?= $config->passRegex() ?>;
+      var pass_regex = <?= uConfig::passRegex() ?>;
 
       function validateForm() {
         var form = document.getElementById('userForm');

@@ -23,7 +23,7 @@
 
   $displayUserId = NULL;
   $usersArr = [];
-  if ($user->isAdmin || $config::$public_tracks) {
+  if ($user->isAdmin || uConfig::$public_tracks) {
     // public access or admin user
     // get last position user
     $lastPosition = new uPosition();
@@ -67,27 +67,27 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script>
-      var interval = '<?= $config::$interval ?>';
+      var interval = '<?= uConfig::$interval ?>';
       var userid = '<?= ($displayUserId) ? $displayUserId : -1 ?>';
       var trackid = '<?= ($displayTrackId) ? $displayTrackId : -1 ?>';
-      var units = '<?= $config::$units ?>';
-      var mapapi = '<?= $config::$mapapi ?>';
-      var gkey = '<?= !empty($config::$gkey) ? $config::$gkey : "null" ?>';
-      var layer_ocm = '<?= $config::$layer_ocm ?>';
-      var layer_mq = '<?= $config::$layer_mq ?>';
-      var layer_osmapa = '<?= $config::$layer_osmapa ?>';
-      var layer_ump = '<?= $config::$layer_ump ?>';
-      var init_latitude = '<?= $config::$init_latitude ?>';
-      var init_longitude = '<?= $config::$init_longitude ?>';
+      var units = '<?= uConfig::$units ?>';
+      var mapapi = '<?= uConfig::$mapapi ?>';
+      var gkey = '<?= !empty(uConfig::$gkey) ? uConfig::$gkey : "null" ?>';
+      var layer_ocm = '<?= uConfig::$layer_ocm ?>';
+      var layer_mq = '<?= uConfig::$layer_mq ?>';
+      var layer_osmapa = '<?= uConfig::$layer_osmapa ?>';
+      var layer_ump = '<?= uConfig::$layer_ump ?>';
+      var init_latitude = '<?= uConfig::$init_latitude ?>';
+      var init_longitude = '<?= uConfig::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
       var admin = <?= json_encode($user->isAdmin) ?>;
       var auth = '<?= ($user->isValid) ? $user->login : "null" ?>';
-      var pass_regex = <?= $config->passRegex() ?>;
+      var pass_regex = <?= uConfig::passRegex() ?>;
     </script>
     <script type="text/javascript" src="js/main.js"></script>
 
-    <?php if ($config::$mapapi == "gmaps"): ?>
-      <script type="text/javascript" src="//maps.googleapis.com/maps/api/js<?= !empty($config::$gkey) ? "?key={$config::$gkey}" : "" ?>"></script>
+    <?php if (uConfig::$mapapi == "gmaps"): ?>
+      <script type="text/javascript" src="//maps.googleapis.com/maps/api/js<?= !empty(uConfig::$gkey) ? "?key=" . uConfig::$gkey : "" ?>"></script>
       <script type="text/javascript" src="js/api_gmaps.js"></script>
     <?php else: ?>
       <script type="text/javascript" src="//openlayers.org/api/OpenLayers.js"></script>
@@ -145,7 +145,7 @@
               <?php endforeach; ?>
             </select>
             <input id="latest" type="checkbox" onchange="toggleLatest();"> <?= $lang["latest"] ?><br>
-            <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= $config::$interval ?></span></a> s)<br>
+            <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
           </form>
           <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"> <?= $lang["reload"] ?></a><br>
         </div>
@@ -160,8 +160,8 @@
           <?= $lang["api"] ?><br>
           <form>
             <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
-              <option value="gmaps"<?= ($config::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
-              <option value="openlayers"<?= ($config::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
+              <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
+              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
             </select>
           </form>
         </div>
@@ -172,7 +172,7 @@
             <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
               <?php asort($langsArr); ?>
               <?php foreach ($langsArr as $langCode => $langName): ?>
-                <option value="<?= $langCode ?>"<?= ($config::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
+                <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
               <?php endforeach; ?>
             </select>
           </form>
@@ -182,8 +182,8 @@
           <?= $lang["units"] ?><br>
           <form>
             <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
-              <option value="metric"<?= ($config::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
-              <option value="imperial"<?= ($config::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
+              <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
+              <option value="imperial"<?= (uConfig::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
             </select>
           </form>
         </div>
@@ -207,7 +207,7 @@
 
       </div>
       <div id="menu-close" onclick="toggleMenu();">»</div>
-      <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> <?= $config::$version ?></div>
+      <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> <?= uConfig::$version ?></div>
     </div>
 
     <div id="main">
