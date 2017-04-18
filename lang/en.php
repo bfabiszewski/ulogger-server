@@ -32,7 +32,6 @@ $langSetup["disablewarn"] = "IMPORTANT! YOU MUST DISABLE 'setup.php' SCRIPT OR R
 $langSetup["disabledesc"] = "Leaving the script accessible from browser is a major security risk. Anybody will be able to run it, delete your database and set up new user account. Delete the file or disable it by setting %s value back to %s."; // substitutes variable name and value
 $langSetup["setupfailed"] = "Unfortunately something has gone wrong. You may try to find more info in your webserver logs.";
 $langSetup["welcome"] = "Welcome to µlogger!";
-$langSetup["phpversionwarn"] = "Warning! Your PHP version (%s) is probably too low. This application may not function properly with PHP versions lower than 5.4."; // substitutes php version number
 $langSetup["disabledwarn"] = "For security reasons this script is disabled by default. To enable it you must edit 'scripts/setup.php' file in text editor and set %s variable at the beginning of the file to %s."; // substitutes variable name and value
 $langSetup["lineshouldread"] = "Line: %s should read: %s";
 $langSetup["passfuncwarn"] = "Your PHP version does not support password functions that ship with PHP 5.5. You have to include password_compat library.";

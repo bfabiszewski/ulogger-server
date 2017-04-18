@@ -24,6 +24,10 @@ $enabled = false;
 /* -------------------------------------------- */
 /* no user modifications should be needed below */
 
+if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+  die("Sorry, ulogger will not work with PHP version lower than 5.4 (you have " . PHP_VERSION . ")");
+}
+
 define("ROOT_DIR", dirname(__DIR__));
 require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/config.php");
@@ -133,9 +137,6 @@ switch ($command) {
 
   default:
     $messages[] = "<img src=\"../icons/favicon-32x32.png\">" . $langSetup["welcome"];
-    if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-      $messages[] = "<span class=\"warn\">" . sprintf($langSetup["phpversionwarn"], PHP_VERSION) . "</span>";
-    }
     if (!isset($enabled) || $enabled === false) {
       $messages[] = sprintf($langSetup["disabledwarn"], "<b>\$enabled</b>", "<b>true</b>");
       $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");

@@ -29,7 +29,6 @@ $langSetup["disablewarn"] = "WAŻNE! NAZLEŻY DEZAKTYWOWAĆ SKRYPT 'setup.php' A
 $langSetup["disabledesc"] = "Pozostawienie dostępu do skryptu z przeglądarki stanowi duże zagrożenie. Każdy będzie mógł go uruchomić, usunąć całą bazę danych i dodać nowego użytkownika. Usuń plik lub dezaktywuj go przywracając zmiennej %s wartość %s.";
 $langSetup["setupfailed"] = "Niestety coś poszło nie tak. Może znajdziesz więcej wskazówek w logach serwera www.";
 $langSetup["welcome"] = "Witaj w µloggerze!";
-$langSetup["phpversionwarn"] = "Uwaga! Twoja wersja PHP (%s) jest prawdopodobnie zbyt stara. Ta aplikacja może nie działać poprawnie z wersjami PHP niższymi od 5.4.";
 $langSetup["disabledwarn"] = "Ze względów bezpieczeństwa ten skrypt jest domyślnie wyłączony. Aby go aktywować należy otworzyć plik 'scripts/setup.php' w edytorze tekstu i zmienić wartość zmiennej %s na początku pliku na %s.";
 $langSetup["lineshouldread"] = "Linia: %s powinna zostać zmieniona na: %s";
 $langSetup["passfuncwarn"] = "Zainstalowana wersja PHP nie zawiera funkcji obsługujących hasła, dostępnych od wersji PHP 5.5. Musisz włączyć bibliotekę 'password_compat'.";
