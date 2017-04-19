@@ -45,7 +45,7 @@
     * @param string $pass
     * @param string $name
     */
-    private function __construct($host, $user, $pass, $name) {
+    public function __construct($host, $user, $pass, $name) {
       parent::__construct($host, $user, $pass, $name);
       if ($this->connect_error) {
         if (defined('headless')) {
