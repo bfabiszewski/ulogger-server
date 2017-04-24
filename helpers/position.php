@@ -18,6 +18,7 @@
  */
 
   require_once(ROOT_DIR . "/helpers/db.php");
+  require_once(ROOT_DIR . "/helpers/track.php");
 
  /**
   * Positions handling
