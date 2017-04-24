@@ -45,6 +45,7 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('headless'))
     // not authenticated and username not submited
     // load form
     if (defined('headless')) {
+      header('WWW-Authenticate: OAuth realm="users@ulogger"');
       header('HTTP/1.1 401 Unauthorized', true, 401);
     } else {
       print
@@ -115,6 +116,7 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('headless'))
       }
       session_destroy();
       if (defined('headless')) {
+        header('WWW-Authenticate: OAuth realm="users@ulogger"');
         header('HTTP/1.1 401 Unauthorized', true, 401);
       } else {
         $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
