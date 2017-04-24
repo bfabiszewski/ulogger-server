@@ -85,19 +85,22 @@
     public function add($userId, $trackId, $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
       $positionId = false;
       if (!is_null($lat) && !is_null($lon) && !is_null($time) && !empty($userId) && !empty($trackId)) {
-        $query = "INSERT INTO `" . self::$db->table('positions') . "`
-                (user_id, track_id,
-                time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
-                VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = self::$db->prepare($query);
-        $stmt->bind_param('iisddddddssi',
-                $userId, $trackId,
-                $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
-        $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
-          $positionId = self::$db->insert_id;
+        $track = new uTrack($trackId);
+        if ($track->isValid && $track->userId == $userId) {
+          $query = "INSERT INTO `" . self::$db->table('positions') . "`
+                    (user_id, track_id,
+                    time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
+                    VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+          $stmt = self::$db->prepare($query);
+          $stmt->bind_param('iisddddddssi',
+                  $userId, $trackId,
+                  $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+          $stmt->execute();
+          if (!self::$db->error && !$stmt->errno) {
+            $positionId = self::$db->insert_id;
+          }
+          $stmt->close();
         }
-        $stmt->close();
       }
       return $positionId;
     }
