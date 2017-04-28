@@ -74,7 +74,6 @@ $lang["password"] = "Password";
 $lang["language"] = "Language";
 $lang["newinterval"] = "Enter new interval value (seconds)";
 $lang["api"] = "Map API";
-$lang["language"] = "Language";
 $lang["units"] = "Units";
 $lang["metric"] = "Metric";
 $lang["imperial"] = "Imperial/US";

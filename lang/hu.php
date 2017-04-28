@@ -45,7 +45,6 @@ $lang["password"] = "Jelszó";
 $lang["language"] = "Nyelv";
 $lang["newinterval"] = "Automatikus frissítés ideje (másodpercben)";
 $lang["api"] = "Map API";
-$lang["language"] = "Nyelv";
 $lang["units"] = "Mértékegység";
 $lang["metric"] = "Metrikus";
 $lang["imperial"] = "Imperal/US";

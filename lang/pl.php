@@ -69,7 +69,6 @@ $lang["password"] = "Hasło";
 $lang["language"] = "Język";
 $lang["newinterval"] = "Podaj częstotliwość odświeżania (w sekundach)";
 $lang["api"] = "Map API";
-$lang["language"] = "Język";
 $lang["units"] = "Jednostki";
 $lang["metric"] = "Metryczne";
 $lang["imperial"] = "Anglosaskie";

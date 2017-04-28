@@ -45,7 +45,6 @@ $lang["password"] = "Passwort";
 $lang["language"] = "Sprache";
 $lang["newinterval"] = "Neuen Intervall-Wert eingeben (in Sekunden)";
 $lang["api"] = "Karten API";
-$lang["language"] = "Sprache";
 $lang["units"] = "Maßsystem";
 $lang["metric"] = "Metrisches";
 $lang["imperial"] = "Angloamerikanisches";

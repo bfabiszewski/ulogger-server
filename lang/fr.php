@@ -45,7 +45,6 @@ $lang["password"] = "Mot de passe";
 $lang["language"] = "Langage";
 $lang["newinterval"] = "Entrez un intervalle (en seconde)";
 $lang["api"] = "API des cartes";
-$lang["language"] = "Langage";
 $lang["units"] = "Unités";
 $lang["metric"] = "Système métrique";
 $lang["imperial"] = "Système anglophone";

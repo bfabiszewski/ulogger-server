@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 // italian translation
 
 // strings only used in setup
@@ -74,7 +74,6 @@ $lang["password"] = "Password";
 $lang["language"] = "Lingua";
 $lang["newinterval"] = "Immetti nuovo intervallo (secondi)";
 $lang["api"] = "API Mappe";
-//["language"] = "Language"; // duplicated: row 74
 $lang["units"] = "Unità";
 $lang["metric"] = "Metriche";
 $lang["imperial"] = "Imperiali";
