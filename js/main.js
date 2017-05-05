@@ -39,6 +39,8 @@ var live = 0;
 var chart;
 var altitudes = new Array();
 var altTimeout;
+var gm_error = false;
+
 function displayChart() {
   if (chart) { google.visualization.events.removeAllListeners(chart); }
   var data = new google.visualization.DataTable();
@@ -370,7 +372,11 @@ function setTime() {
 var savedBounds;
 function loadMapAPI(api) {
   mapapi = api;
-  savedBounds = getBounds();
+  try {
+    savedBounds = getBounds();
+  } catch (e) {
+    savedBounds = null;
+  }
   document.getElementById("map-canvas").innerHTML = '';
   var url = new Array();
   if (api == 'gmaps') {
@@ -411,8 +417,12 @@ function waitAndInit(api) {
     return;
   }
   loadTime = 0;
-  zoomToBounds(savedBounds);
-  loadTrack(userid, trackid, 0);
+  var update = 1;
+  if (savedBounds) {
+    zoomToBounds(savedBounds);
+    update = 0;
+  }
+  loadTrack(userid, trackid, update);
   // save current api as default
   setCookie('api', api, 30);
 }

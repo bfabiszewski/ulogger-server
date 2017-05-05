@@ -107,5 +107,7 @@ $lang["passrules"][1] = "Powinno ono zawierać przynajmniej jedną małą i jedn
 $lang["passrules"][2] = "Powinno ono zawierać przynajmniej jedną małą, jedną wielką literę i jedną cyfrę";
 $lang["passrules"][3] = "Powinno ono zawierać przynajmniej jedną małą, jedną wielką literę, jedną cyfrę i jeden znak specjalny (nie alfanumeryczny)";
 $lang["owntrackswarn"] = "Możesz edytować tylko swoje własne trasy";
+$lang["gmauthfailure"] = "Prawdopodobnie na tej stronie występuje problem z kluczem API Google Maps";
+$lang["gmapilink"] = "Więcej informacji o kluczach API znajdziesz <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">pod tym linkiem</a>";
 
 ?>

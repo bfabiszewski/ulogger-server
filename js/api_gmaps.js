@@ -26,6 +26,7 @@ var mapOptions;
 var loadedAPI = 'gmaps';
 
 function init() {
+  if (gm_error) { return gm_authFailure(); }
   google.maps.visualRefresh = true;
   polyOptions = {
     strokeColor: '#FF0000',
@@ -171,3 +172,11 @@ function zoomToBounds(b) {
   var bounds = new google.maps.LatLngBounds(sw, ne);
   map.fitBounds(bounds);
 }
+
+function gm_authFailure() {
+  gm_error = true;
+  message = sprintf(lang['apifailure'], "Google Maps");
+  message += '<br><br>' + lang['gmauthfailure'];
+  message += '<br><br>' + lang['gmapilink'];
+  showModal(message);
+};
