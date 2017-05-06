@@ -19,6 +19,11 @@
  
 // italian translation
 
+<<<<<<< HEAD
+=======
+// italian translation
+
+>>>>>>> upstream/master
 // strings only used in setup
 $langSetup["dbconnectfailed"] = "Connessione al database fallita.";
 $langSetup["serversaid"] = "Il server ha risposto: %s"; // substitutes server error message

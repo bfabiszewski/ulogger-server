@@ -74,7 +74,6 @@ $lang["password"] = "Password";
 $lang["language"] = "Language";
 $lang["newinterval"] = "Enter new interval value (seconds)";
 $lang["api"] = "Map API";
-$lang["language"] = "Language";
 $lang["units"] = "Units";
 $lang["metric"] = "Metric";
 $lang["imperial"] = "Imperial/US";
@@ -113,5 +112,7 @@ $lang["passrules"][1] = "It should contain at least one lower case letter, one u
 $lang["passrules"][2] = "It should contain at least one lower case letter, one upper case letter and one digit";
 $lang["passrules"][3] = "It should contain at least one lower case letter, one upper case letter, one digit and one non-alphanumeric character";
 $lang["owntrackswarn"] = "Your can only edit your own tracks";
+$lang["gmauthfailure"] = "There may be problem with Google Maps API key on this page";
+$lang["gmapilink"] = "You may find more information about API keys on <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">this Google webpage</a>";
 
 ?>
