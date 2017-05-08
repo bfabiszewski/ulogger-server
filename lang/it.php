@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 // italian translation
 
 // strings only used in setup
@@ -112,5 +112,7 @@ $lang["passrules"][1] = "Dovrebbe contenere almeno una lettera minuscola e una l
 $lang["passrules"][2] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola e un numero";
 $lang["passrules"][3] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola, un numero ed un carattere non alfanumerico";
 $lang["owntrackswarn"] = "Puoi modificare solo le tue tracce";
+$lang["gmauthfailure"] = "In questa pagina potrebbe esserci un problema con le API di Google Maps.";
+$lang["gmapilink"] = "Puoi trovare maggiori informazioni sulle chiavi API a <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">questo indirizzo</a>.";
 
 ?>
