@@ -110,6 +110,7 @@ $lang["owntrackswarn"] = "Możesz edytować tylko swoje własne trasy";
 $lang["gmauthfailure"] = "Prawdopodobnie na tej stronie występuje problem z kluczem API Google Maps";
 $lang["gmapilink"] = "Więcej informacji o kluczach API znajdziesz <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">pod tym linkiem</a>";
 $lang["import"] = "Importuj trasę";
+$lang["iuploadfailure"] = "Błąd przesyłania pliku";
 $lang["iparsefailure"] = "Błąd parsowania pliku";
 $lang["idatafailure"] = "Brak trasy w importowanym pliku";
 

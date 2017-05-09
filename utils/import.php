@@ -17,9 +17,19 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+define("headless", true);
 require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 require_once(ROOT_DIR . "/helpers/track.php");
 require_once(ROOT_DIR . "/helpers/position.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
+
+$uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
+$uploadErrors[UPLOAD_ERR_FORM_SIZE] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
+$uploadErrors[UPLOAD_ERR_PARTIAL] = "The uploaded file was only partially uploaded";
+$uploadErrors[UPLOAD_ERR_NO_FILE] = "No file was uploaded";
+$uploadErrors[UPLOAD_ERR_NO_TMP_DIR] = "Missing a temporary folder";
+$uploadErrors[UPLOAD_ERR_CANT_WRITE] = "Failed to write file to disk";
+$uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped the file upload";
 
 /**
  * Exit with xml response
@@ -49,12 +59,31 @@ if (!$user->isValid) {
   exitWithStatus(true, $lang["servererror"]);
 }
 
-$sizeMax = 10 * 1024 * 1024; //FIXME: set to php limits
+if (!isset($_FILES["gpx"])) {
+  $message = $lang["servererror"];
+  $lastErr = error_get_last();
+  if (!empty($lastErr)) {
+    $message .= ": " . $lastErr["message"];
+  }
+  exitWithStatus(true, $message);
+}
+
 $gpxFile = NULL;
 $gpxUpload = $_FILES["gpx"];
-if ($gpxUpload["error"] == UPLOAD_ERR_OK && $gpxUpload["size"] < $sizeMax) {
+$uploadErr = $gpxUpload["error"];
+if ($gpxUpload["size"] > uUtils::getUploadMaxSize() && $uploadErr == UPLOAD_ERR_OK) {
+  $uploadErr = UPLOAD_ERR_FORM_SIZE;
+}
+if ($uploadErr == UPLOAD_ERR_OK) {
   $gpxFile = $gpxUpload["tmp_name"];
   $gpxName = basename($gpxUpload["name"]);
+} else {
+  $message = $lang("iuploadfailure");
+  if (isset($errorMessage[$uploadErr])) {
+    $message .= ": " . $errorMessage[$uploadErr];
+  }
+  $message .= " ($uploadErr)";
+  exitWithStatus(true, $message);
 }
 
 $gpx = false;
@@ -72,9 +101,6 @@ if ($gpx === false) {
   $parserMessage = implode(", ", $parserMessages);
   if (!empty($parserMessage)) {
     $message .= ": $parserMessage";
-  }
-  if ($gpxUpload["error"] != UPLOAD_ERR_OK) {
-    $message .= " (" . $gpxUpload["error"] . ")";
   }
   exitWithStatus(true, $message);
 }

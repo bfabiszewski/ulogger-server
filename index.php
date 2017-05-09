@@ -20,6 +20,7 @@
   require_once(__DIR__ . "/auth.php"); // sets $user
   require_once(ROOT_DIR . "/helpers/position.php");
   require_once(ROOT_DIR . "/helpers/track.php");
+  require_once(ROOT_DIR . "/helpers/utils.php");
 
   $displayUserId = NULL;
   $usersArr = [];
@@ -197,8 +198,8 @@
         <?php if ($user->isValid): ?>
           <div id="import">
             <u><?= $lang["import"] ?></u><br>
-            <form id="importForm" enctype="multipart/form-data" method="POST">
-              <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+            <form id="importForm" enctype="multipart/form-data" method="post">
+              <input type="hidden" name="MAX_FILE_SIZE" value="<?= uUtils::getUploadMaxSize() ?>" />
               <input type="file" id="inputFile" name="gpx" style="display:none" onchange="importFile(this)" />
             </form>
             <a class="menulink" href="javascript:void(0);" onclick="document.getElementById('inputFile').click();">gpx</a>

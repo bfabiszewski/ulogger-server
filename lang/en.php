@@ -115,6 +115,7 @@ $lang["owntrackswarn"] = "Your can only edit your own tracks";
 $lang["gmauthfailure"] = "There may be problem with Google Maps API key on this page";
 $lang["gmapilink"] = "You may find more information about API keys on <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">this Google webpage</a>";
 $lang["import"] = "Import track";
+$lang["iuploadfailure"] = "Uploading failed";
 $lang["iparsefailure"] = "Parsing failed";
 $lang["idatafailure"] = "No track data in imported file";
 ?>

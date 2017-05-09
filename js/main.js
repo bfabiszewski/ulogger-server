@@ -243,12 +243,7 @@ function importFile(input){
       xhr = null;
     }
   }
-  xhr.upload.onprogress = function(e) {
-    console.log(e.loaded, e.total)
-  }
-  xhr.upload.onload = function(e) {
-    console.log('file upload')
-  }
+  // FIXME: show progress
   xhr.open("POST", "utils/import.php", true);
   xhr.send(new FormData(input.parentElement));
 }

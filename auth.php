@@ -17,7 +17,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-define("ROOT_DIR", __DIR__);
+if (defined('headless')) {
+  ob_get_contents();
+  ob_end_clean();
+  error_reporting(0);
+}
+define('ROOT_DIR', __DIR__);
 require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/lang.php");
 require_once(ROOT_DIR . "/helpers/user.php");
