@@ -189,12 +189,21 @@
         </div>
 
         <div id="export">
-          <u><?= $lang["download"] ?></u><br>
-          <a class="menulink" href="javascript:void(0);" onclick="load('kml', userid, trackid);">kml</a>
-          <a class="menulink" href="javascript:void(0);" onclick="load('gpx', userid, trackid);">gpx</a>
+          <u><?= $lang["export"] ?></u><br>
+          <a class="menulink" href="javascript:void(0);" onclick="exportFile('kml', userid, trackid);">kml</a>
+          <a class="menulink" href="javascript:void(0);" onclick="exportFile('gpx', userid, trackid);">gpx</a>
         </div>
 
         <?php if ($user->isValid): ?>
+          <div id="import">
+            <u><?= $lang["import"] ?></u><br>
+            <form id="importForm" enctype="multipart/form-data" method="POST">
+              <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+              <input type="file" id="inputFile" name="gpx" style="display:none" onchange="importFile(this)" />
+            </form>
+            <a class="menulink" href="javascript:void(0);" onclick="document.getElementById('inputFile').click();">gpx</a>
+          </div>
+
           <div id="admin_menu">
             <u><?= $lang["adminmenu"] ?></u><br>
             <?php if ($user->isAdmin): ?>

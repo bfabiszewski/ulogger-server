@@ -182,7 +182,7 @@ if ($trackId && $userId) {
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
         $xml->writeElement("name", $positionsArr[0]->trackName);
-        $xml->writeElement("time", str_replace(" ", "T", $positionsArr[0]->time));
+        $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", strtotime($positionsArr[0]->time)));
       $xml->endElement();
       $xml->startElement("trk");
         $xml->writeElement("name", $positionsArr[0]->trackName);
@@ -200,7 +200,7 @@ if ($trackId && $userId) {
             $xml->writeAttribute("lat", $position->latitude);
             $xml->writeAttribute("lon", $position->longitude);
             if (!is_null($position->altitude)) { $xml->writeElement("ele", $position->altitude); }
-            $xml->writeElement("time", str_replace(" ", "T", $position->time));
+            $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", strtotime($position->time)));
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
               $description =

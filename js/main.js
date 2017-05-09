@@ -217,9 +217,40 @@ function getPopupHtml(p, i, count) {
   return popup;
 }
 
-function load(type, userid, trackid) {
-  var url = 'utils/download.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
+function exportFile(type, userid, trackid) {
+  var url = 'utils/export.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
   window.location.assign(url);
+}
+
+function importFile(input){
+  var xhr = getXHR();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      var xml = xhr.responseXML;
+      var message = "";
+      if (xml) {
+        var root = xml.getElementsByTagName('root');
+        if (root.length && getNode(root[0], 'error') == 0) {
+          trackId = getNode(root[0], 'trackid');
+          getTracks(userid);
+          loadTrack(userid, trackId, 1);
+          return;
+        }
+        errorMsg = getNode(root[0], 'message');
+        if (errorMsg) { message = errorMsg; }
+      }
+      alert(lang['actionfailure'] + '\n' + message);
+      xhr = null;
+    }
+  }
+  xhr.upload.onprogress = function(e) {
+    console.log(e.loaded, e.total)
+  }
+  xhr.upload.onload = function(e) {
+    console.log('file upload')
+  }
+  xhr.open("POST", "utils/import.php", true);
+  xhr.send(new FormData(input.parentElement));
 }
 
 function updateSummary(l, d, s) {

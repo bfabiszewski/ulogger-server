@@ -54,7 +54,7 @@ $lang["track"] = "Track";
 $lang["latest"] = "latest position";
 $lang["autoreload"] = "autoreload";
 $lang["reload"] = "Reload now";
-$lang["download"] = "Download data";
+$lang["export"] = "Export track";
 $lang["chart"] = "Altitudes chart";
 $lang["close"] = "close";
 $lang["time"] = "Time";
@@ -114,5 +114,7 @@ $lang["passrules"][3] = "It should contain at least one lower case letter, one u
 $lang["owntrackswarn"] = "Your can only edit your own tracks";
 $lang["gmauthfailure"] = "There may be problem with Google Maps API key on this page";
 $lang["gmapilink"] = "You may find more information about API keys on <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">this Google webpage</a>";
-
+$lang["import"] = "Import track";
+$lang["iparsefailure"] = "Parsing failed";
+$lang["idatafailure"] = "No track data in imported file";
 ?>

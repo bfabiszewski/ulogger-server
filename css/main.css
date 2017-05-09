@@ -106,7 +106,7 @@ select {
   cursor: pointer;
 }
 
-#user, #track, #summary, #export, #other, #units {
+#user, #track, #summary, #export, #import, #other, #units {
   padding-bottom: 10px;
 }
 #summary span {
