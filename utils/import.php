@@ -31,38 +31,8 @@ $uploadErrors[UPLOAD_ERR_NO_TMP_DIR] = "Missing a temporary folder";
 $uploadErrors[UPLOAD_ERR_CANT_WRITE] = "Failed to write file to disk";
 $uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped the file upload";
 
-/**
- * Exit with xml response
- * @param boolean $isError Error if true
- * @param string $errorMessage Optional error message
- * @param array|null $extra Optional array of extra parameters
- */
-function exitWithStatus($isError, $errorMessage = NULL, $extra = NULL) {
-  header("Content-type: text/xml");
-  $xml = new XMLWriter();
-  $xml->openURI("php://output");
-  $xml->startDocument("1.0");
-  $xml->setIndent(true);
-  $xml->startElement('root');
-    $xml->writeElement("error", (int) $isError);
-  if ($isError) {
-    $xml->writeElement("message", $errorMessage);
-  }
-
-  if (!empty($extra)) {
-    foreach ($extra as $key => $value) {
-      $xml->writeElement($key, $value);
-    }
-  }
-
-  $xml->endElement();
-  $xml->endDocument();
-  $xml->flush();
-  exit;
-}
-
 if (!$user->isValid) {
-  exitWithStatus(true, $lang["servererror"]);
+  uUtils::exitWithError($lang["servererror"]);
 }
 
 if (!isset($_FILES["gpx"])) {
@@ -71,7 +41,7 @@ if (!isset($_FILES["gpx"])) {
   if (!empty($lastErr)) {
     $message .= ": " . $lastErr["message"];
   }
-  exitWithStatus(true, $message);
+  uUtils::exitWithError($message);
 }
 
 $gpxFile = NULL;
@@ -89,7 +59,7 @@ if ($uploadErr == UPLOAD_ERR_OK) {
     $message .= ": " . $errorMessage[$uploadErr];
   }
   $message .= " ($uploadErr)";
-  exitWithStatus(true, $message);
+  uUtils::exitWithError($message);
 }
 
 $gpx = false;
@@ -108,10 +78,10 @@ if ($gpx === false) {
   if (!empty($parserMessage)) {
     $message .= ": $parserMessage";
   }
-  exitWithStatus(true, $message);
+  uUtils::exitWithError($message);
 }
 else if (empty($gpx->trk)) {
-  exitWithStatus(true, $lang["idatafailure"]);
+  uUtils::exitWithError($lang["idatafailure"]);
 }
 
 $trackCnt = 0;
@@ -121,7 +91,7 @@ foreach ($gpx->trk as $trk) {
   $track = new uTrack();
   $trackId = $track->add($user->id, $trackName, $metaName);
   if ($trackId === false) {
-    exitWithStatus(true, $lang["servererror"]);
+    uUtils::exitWithError($lang["servererror"]);
     break;
   }
 
@@ -132,7 +102,7 @@ foreach ($gpx->trk as $trk) {
                     strtotime($point->time), $point["lat"], $point["lon"], $point->ele,
                     NULL, NULL, NULL, "gps", NULL, NULL);
       if ($ret === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
     }
   }
@@ -140,6 +110,6 @@ foreach ($gpx->trk as $trk) {
 }
 
 // return track id and tracks count
-exitWithStatus(false, NULL, [ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
+uUtils::exitWithSuccess([ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
 
 ?>

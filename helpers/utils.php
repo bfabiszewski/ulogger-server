@@ -62,6 +62,52 @@
       }
       return (int) $val;
     }
+
+    /**
+     * Exit with error message
+     *
+     * @param string $errorMessage Message
+     * @param array|null $extra Optional array of extra parameters
+     */
+    public static function exitWithError($errorMessage, $extra = NULL) {
+      $extra['message'] = $errorMessage;
+      self::exitWithStatus(true, $extra);
+    }
+
+    /**
+     * Exit with successful status code
+     *
+     * @param array|null $extra Optional array of extra parameters
+     */
+    public static function exitWithSuccess($extra = NULL) {
+      self::exitWithStatus(false, $extra);
+    }
+
+    /**
+     * Exit with xml response
+     * @param boolean $isError Error if true
+     * @param array|null $extra Optional array of extra parameters
+     */
+    private static function exitWithStatus($isError, $extra = NULL) {
+      header("Content-type: text/xml");
+      $xml = new XMLWriter();
+      $xml->openURI("php://output");
+      $xml->startDocument("1.0");
+      $xml->setIndent(true);
+      $xml->startElement("root");
+      $xml->writeElement("error", (int) $isError);
+      if (!empty($extra)) {
+        foreach ($extra as $key => $value) {
+          $xml->writeElement($key, $value);
+        }
+      }
+
+      $xml->endElement();
+      $xml->endDocument();
+      $xml->flush();
+      exit;
+    }
+
   }
 
 ?>

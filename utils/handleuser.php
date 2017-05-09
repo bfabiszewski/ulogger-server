@@ -19,34 +19,13 @@
 
   define("headless", true);
   require_once(dirname(__DIR__) . "/auth.php"); // sets $user
-
-  /**
-   * Exit with xml response
-   * @param boolean $isError Error if true
-   * @param string $errorMessage Optional error message
-   */
-  function exitWithStatus($isError, $errorMessage = NULL) {
-    header("Content-type: text/xml");
-    $xml = new XMLWriter();
-    $xml->openURI("php://output");
-    $xml->startDocument("1.0");
-    $xml->setIndent(true);
-    $xml->startElement('root');
-      $xml->writeElement("error", (int) $isError);
-    if ($isError) {
-      $xml->writeElement("message", $errorMessage);
-    }
-    $xml->endElement();
-    $xml->endDocument();
-    $xml->flush();
-    exit;
-  }
+  require_once(ROOT_DIR . "/helpers/utils.php");
 
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
   if (!$user->isAdmin || empty($action) || empty($login) || $user->login == $login) {
-    exitWithStatus(true, $lang["servererror"]);
+    uUtils::exitWithError($lang["servererror"]);
   }
 
   $aUser = new uUser($login);
@@ -54,31 +33,31 @@
   switch ($action) {
     case 'add':
       if ($aUser->isValid) {
-        exitWithStatus(true, $lang["userexists"]);
+        uUtils::exitWithError($lang["userexists"]);
       }
       if (empty($pass) || $aUser->add($login, $pass) === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
       break;
 
     case 'update':
       // update password
       if (empty($pass) || $aUser->setPass($pass) === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
       break;
 
     case 'delete':
       if ($aUser->delete() === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
       break;
 
     default:
-      exitWithStatus(true, $lang["servererror"]);
+      uUtils::exitWithError($lang["servererror"]);
       break;
   }
 
-  exitWithStatus(false);
+  uUtils::exitWithSuccess();
 
 ?>
