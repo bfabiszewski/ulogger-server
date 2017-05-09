@@ -35,8 +35,9 @@ $uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped the file upload";
  * Exit with xml response
  * @param boolean $isError Error if true
  * @param string $errorMessage Optional error message
+ * @param array|null $extra Optional array of extra parameters
  */
-function exitWithStatus($isError, $errorMessage = NULL, $trackId = NULL) {
+function exitWithStatus($isError, $errorMessage = NULL, $extra = NULL) {
   header("Content-type: text/xml");
   $xml = new XMLWriter();
   $xml->openURI("php://output");
@@ -46,9 +47,14 @@ function exitWithStatus($isError, $errorMessage = NULL, $trackId = NULL) {
     $xml->writeElement("error", (int) $isError);
   if ($isError) {
     $xml->writeElement("message", $errorMessage);
-  } else {
-    $xml->writeElement("trackid", $trackId);
   }
+
+  if (!empty($extra)) {
+    foreach ($extra as $key => $value) {
+      $xml->writeElement($key, $value);
+    }
+  }
+
   $xml->endElement();
   $xml->endDocument();
   $xml->flush();
@@ -108,28 +114,32 @@ else if (empty($gpx->trk)) {
   exitWithStatus(true, $lang["idatafailure"]);
 }
 
-$trackName = empty($gpx->trk->name) ? $gpxName : $gpx->trk->name->__toString();
-$metaName = empty($gpx->metadata->name) ? NULL : $gpx->metadata->name->__toString();
-$track = new uTrack();
-$trackId = $track->add($user->id, $trackName, $metaName);
-if ($trackId === false) {
-  exitWithStatus(true, $lang["servererror"]);
-  break;
-}
+$trackCnt = 0;
+foreach ($gpx->trk as $trk) {
+  $trackName = empty($trk->name) ? $gpxName : $trk->name->__toString();
+  $metaName = empty($gpx->metadata->name) ? NULL : $gpx->metadata->name->__toString();
+  $track = new uTrack();
+  $trackId = $track->add($user->id, $trackName, $metaName);
+  if ($trackId === false) {
+    exitWithStatus(true, $lang["servererror"]);
+    break;
+  }
 
-$position = new uPosition();
-foreach($gpx->trk->trkseg as $segment) {
-  foreach($segment->trkpt as $point) {
-    $ret = $position->add($user->id, $trackId,
-                  strtotime($point->time), $point["lat"], $point["lon"], $point->ele,
-                  NULL, NULL, NULL, "gps", NULL, NULL);
-    if ($ret === false) {
-      exitWithStatus(true, $lang["servererror"]);
+  $position = new uPosition();
+  foreach($trk->trkseg as $segment) {
+    foreach($segment->trkpt as $point) {
+      $ret = $position->add($user->id, $trackId,
+                    strtotime($point->time), $point["lat"], $point["lon"], $point->ele,
+                    NULL, NULL, NULL, "gps", NULL, NULL);
+      if ($ret === false) {
+        exitWithStatus(true, $lang["servererror"]);
+      }
     }
   }
+  $trackCnt++;
 }
 
-// return track id
-exitWithStatus(false, NULL, $trackId);
+// return track id and tracks count
+exitWithStatus(false, NULL, [ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
 
 ?>

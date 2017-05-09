@@ -118,4 +118,5 @@ $lang["import"] = "Import track";
 $lang["iuploadfailure"] = "Uploading failed";
 $lang["iparsefailure"] = "Parsing failed";
 $lang["idatafailure"] = "No track data in imported file";
+$lang["imultiple"] = "Notice, multiple tracks imported (%d)"; // substitutes number of imported tracks
 ?>

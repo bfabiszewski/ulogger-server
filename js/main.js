@@ -232,8 +232,12 @@ function importFile(input){
         var root = xml.getElementsByTagName('root');
         if (root.length && getNode(root[0], 'error') == 0) {
           trackId = getNode(root[0], 'trackid');
+          trackCnt = getNode(root[0], 'trackcnt');
           getTracks(userid);
           loadTrack(userid, trackId, 1);
+          if (trackCnt > 1) {
+            alert(sprintf(lang['imultiple'], trackCnt));
+          }
           return;
         }
         errorMsg = getNode(root[0], 'message');
