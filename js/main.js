@@ -222,7 +222,13 @@ function exportFile(type, userid, trackid) {
   window.location.assign(url);
 }
 
-function importFile(input){
+function importFile(input) {
+  var form = input.parentElement;
+  var sizeMax = form.elements['MAX_FILE_SIZE'].value;
+  if (input.files && input.files.length == 1 && input.files[0].size > sizeMax) {
+    alert(sprintf(lang['isizefailure'], sizeMax));
+    return;
+  }
   var xhr = getXHR();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -249,7 +255,7 @@ function importFile(input){
   }
   // FIXME: show progress
   xhr.open("POST", "utils/import.php", true);
-  xhr.send(new FormData(input.parentElement));
+  xhr.send(new FormData(form));
   input.value = "";
 }
 

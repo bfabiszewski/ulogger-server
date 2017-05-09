@@ -113,5 +113,6 @@ $lang["import"] = "Importuj trasę";
 $lang["iuploadfailure"] = "Błąd przesyłania pliku";
 $lang["iparsefailure"] = "Błąd parsowania pliku";
 $lang["idatafailure"] = "Brak trasy w importowanym pliku";
+$lang["isizefailure"] = "Wielkość importowanego pliku nie może przekraczać %d bajtów";
 $lang["imultiple"] = "Uwaga, zaimportowano kilka tras (%d)";
 ?>
