@@ -250,6 +250,7 @@ function importFile(input){
   // FIXME: show progress
   xhr.open("POST", "utils/import.php", true);
   xhr.send(new FormData(input.parentElement));
+  input.value = "";
 }
 
 function updateSummary(l, d, s) {
