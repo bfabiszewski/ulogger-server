@@ -39,7 +39,7 @@ if ($force_login) {
 
 $user = new uUser();
 $user->getFromSession();
-if (!$user->isValid && (uConfig::$require_authentication || defined('headless'))) {
+if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) {
   /* authentication */
   $login = (isset($_REQUEST['user']) ? $_REQUEST['user'] : NULL);
   $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL);

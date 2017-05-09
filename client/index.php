@@ -29,6 +29,7 @@ function setError(&$response, $message) {
 }
 
 define("headless", true);
+define("client", true);
 require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
