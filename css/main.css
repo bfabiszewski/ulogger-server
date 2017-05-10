@@ -306,3 +306,13 @@ button {
 .show { display: block; }
 
 .icon { height: 1.4em; }
+
+.u { text-decoration: underline; }
+
+.loader {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
