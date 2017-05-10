@@ -23,6 +23,8 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - ajax
 - user preferences stored in cookies
 - simple admin menu
+- export tracks to gpx and kml
+- import tracks from gpx
 
 ## Install
 - Download zipped archive or clone the repository on your computer
@@ -39,6 +41,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Todo
 - improve track editing
 - track display filters (accurracy, provider)
+- improve interface on mobile devices
 
 ## License
 - GPL
