@@ -17,8 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+define("headless", true);
 require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 require_once(ROOT_DIR . "/helpers/position.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;

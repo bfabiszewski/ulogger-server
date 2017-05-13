@@ -17,62 +17,33 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+  define("headless", true);
   require_once(dirname(__DIR__) . "/auth.php"); // sets $user
-
-  /**
-   * Exit with error message
-   *
-   * @param string $errorMessage Message
-   */
-  function exitWithError($errorMessage) {
-    return exitWithStatus(true, $errorMessage);
-  }
-
-  /**
-   * Exit with xml response
-   * @param boolean $isError Error if true
-   * @param string $errorMessage Optional error message
-   */
-  function exitWithStatus($isError = false, $errorMessage = NULL) {
-    header("Content-type: text/xml");
-    $xml = new XMLWriter();
-    $xml->openURI("php://output");
-    $xml->startDocument("1.0");
-    $xml->setIndent(true);
-    $xml->startElement('root');
-      $xml->writeElement("error", (int) $isError);
-    if ($isError) {
-      $xml->writeElement("message", $errorMessage);
-    }
-    $xml->endElement();
-    $xml->endDocument();
-    $xml->flush();
-    exit;
-  }
+  require_once(ROOT_DIR . "/helpers/utils.php");
 
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $oldpass = isset($_REQUEST['oldpass']) ? $_REQUEST['oldpass'] : NULL;
   $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
   if (empty($pass)) {
-    exitWithError("Empty password");
+    uUtils::exitWithError("Empty password");
   }
   if ($user->isAdmin && !empty($login)) {
     // different user, only admin
     $passUser = new uUser($login);
     if (!$passUser->valid) {
-      exitWithError("User unknown");
+      uUtils::exitWithError("User unknown");
     }
   } else {
     // current user
     $passUser = $user;
     if (!$passUser->validPassword($oldpass)) {
-      exitWithError("Wrong old password");
+      uUtils::exitWithError("Wrong old password");
     }
   }
   if ($passUser->setPass($pass) === false) {
-    exitWithError("Server error");
+    uUtils::exitWithError("Server error");
   }
 
-  exitWithStatus();
+  uUtils::exitWithSuccess();
 
 ?>

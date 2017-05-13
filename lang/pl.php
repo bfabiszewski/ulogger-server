@@ -49,7 +49,7 @@ $lang["track"] = "Trasa";
 $lang["latest"] = "ostatnia pozycja";
 $lang["autoreload"] = "odświeżaj";
 $lang["reload"] = "Odśwież teraz";
-$lang["download"] = "Pobierz dane";
+$lang["export"] = "Eksportuj trasę";
 $lang["chart"] = "Wykres przewyższeń";
 $lang["close"] = "zamknij";
 $lang["time"] = "Czas";
@@ -109,5 +109,10 @@ $lang["passrules"][3] = "Powinno ono zawierać przynajmniej jedną małą, jedn�
 $lang["owntrackswarn"] = "Możesz edytować tylko swoje własne trasy";
 $lang["gmauthfailure"] = "Prawdopodobnie na tej stronie występuje problem z kluczem API Google Maps";
 $lang["gmapilink"] = "Więcej informacji o kluczach API znajdziesz <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">pod tym linkiem</a>";
-
+$lang["import"] = "Importuj trasę";
+$lang["iuploadfailure"] = "Błąd przesyłania pliku";
+$lang["iparsefailure"] = "Błąd parsowania pliku";
+$lang["idatafailure"] = "Brak trasy w importowanym pliku";
+$lang["isizefailure"] = "Wielkość importowanego pliku nie może przekraczać %d bajtów";
+$lang["imultiple"] = "Uwaga, zaimportowano kilka tras (%d)";
 ?>

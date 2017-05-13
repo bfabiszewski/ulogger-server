@@ -20,6 +20,7 @@
   require_once(__DIR__ . "/auth.php"); // sets $user
   require_once(ROOT_DIR . "/helpers/position.php");
   require_once(ROOT_DIR . "/helpers/track.php");
+  require_once(ROOT_DIR . "/helpers/utils.php");
 
   $displayUserId = NULL;
   $usersArr = [];
@@ -124,7 +125,7 @@
 
         <div id="user">
           <?php if (!empty($usersArr)): ?>
-            <br><?= $lang["user"] ?><br>
+            <div class="menutitle" style="padding-top: 1em"><?= $lang["user"] ?></div>
             <form>
               <select name="user" onchange="selectUser(this);">
                 <option value="0"><?= $lang["suser"] ?></option>
@@ -137,7 +138,7 @@
         </div>
 
         <div id="track">
-          <?= $lang["track"] ?><br>
+          <div class="menutitle"><?= $lang["track"] ?></div>
           <form>
             <select name="track" onchange="selectTrack(this)">
               <?php foreach ($tracksArr as $aTrack): ?>
@@ -157,7 +158,7 @@
         </div>
 
         <div id="api">
-          <?= $lang["api"] ?><br>
+          <div class="menutitle"><?= $lang["api"] ?></div>
           <form>
             <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
               <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
@@ -167,7 +168,7 @@
         </div>
 
         <div id="lang">
-          <?= $lang["language"] ?><br>
+          <div class="menutitle"><?= $lang["language"] ?></div>
           <form>
             <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
               <?php asort($langsArr); ?>
@@ -179,7 +180,7 @@
         </div>
 
         <div id="units">
-          <?= $lang["units"] ?><br>
+          <div class="menutitle"><?= $lang["units"] ?></div>
           <form>
             <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
               <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
@@ -189,14 +190,23 @@
         </div>
 
         <div id="export">
-          <u><?= $lang["download"] ?></u><br>
-          <a class="menulink" href="javascript:void(0);" onclick="load('kml', userid, trackid);">kml</a>
-          <a class="menulink" href="javascript:void(0);" onclick="load('gpx', userid, trackid);">gpx</a>
+          <div class="menutitle u"><?= $lang["export"] ?></div>
+          <a class="menulink" href="javascript:void(0);" onclick="exportFile('kml', userid, trackid);">kml</a>
+          <a class="menulink" href="javascript:void(0);" onclick="exportFile('gpx', userid, trackid);">gpx</a>
         </div>
 
         <?php if ($user->isValid): ?>
+          <div id="import">
+            <div class="menutitle u"><?= $lang["import"] ?></div>
+            <form id="importForm" enctype="multipart/form-data" method="post">
+              <input type="hidden" name="MAX_FILE_SIZE" value="<?= uUtils::getUploadMaxSize() ?>" />
+              <input type="file" id="inputFile" name="gpx" style="display:none" onchange="importFile(this)" />
+            </form>
+            <a class="menulink" href="javascript:void(0);" onclick="document.getElementById('inputFile').click();">gpx</a>
+          </div>
+
           <div id="admin_menu">
-            <u><?= $lang["adminmenu"] ?></u><br>
+            <div class="menutitle u"><?= $lang["adminmenu"] ?></div>
             <?php if ($user->isAdmin): ?>
               <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
               <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>

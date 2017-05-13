@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+define("headless", true);
 require_once(dirname(__DIR__) . "/auth.php"); // sets $user
 require_once(ROOT_DIR . "/helpers/track.php");
 

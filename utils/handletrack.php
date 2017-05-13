@@ -17,61 +17,41 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+  define("headless", true);
   require_once(dirname(__DIR__) . "/auth.php"); // sets $user
   require_once(ROOT_DIR . "/helpers/track.php");
-
-  /**
-   * Exit with xml response
-   * @param boolean $isError Error if true
-   * @param string $errorMessage Optional error message
-   */
-  function exitWithStatus($isError, $errorMessage = NULL) {
-    header("Content-type: text/xml");
-    $xml = new XMLWriter();
-    $xml->openURI("php://output");
-    $xml->startDocument("1.0");
-    $xml->setIndent(true);
-    $xml->startElement('root');
-      $xml->writeElement("error", (int) $isError);
-    if ($isError) {
-      $xml->writeElement("message", $errorMessage);
-    }
-    $xml->endElement();
-    $xml->endDocument();
-    $xml->flush();
-    exit;
-  }
+  require_once(ROOT_DIR . "/helpers/utils.php");
 
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $trackId = isset($_REQUEST['trackid']) ? trim($_REQUEST['trackid']) : NULL;
   $trackName = isset($_REQUEST['trackname']) ? trim($_REQUEST['trackname']) : NULL;
   if (empty($action) || empty($trackId)) {
-    exitWithStatus(true, $lang["servererror"]);
+    uUtils::exitWithError($lang["servererror"]);
   }
   $track = new uTrack($trackId);
   if (!$track->isValid || (!$user->isAdmin && $user->id != $track->userId)) {
-    exitWithStatus(true, $lang["servererror"]);
+    uUtils::exitWithError($lang["servererror"]);
   }
 
   switch ($action) {
 
     case 'update':
       if (empty($trackName) || $track->update($trackName) === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
       break;
 
     case 'delete':
       if ($track->delete() === false) {
-        exitWithStatus(true, $lang["servererror"]);
+        uUtils::exitWithError($lang["servererror"]);
       }
       break;
 
     default:
-      exitWithStatus(true, $lang["servererror"]);
+      uUtils::exitWithError($lang["servererror"]);
       break;
   }
 
-  exitWithStatus(false);
+  uUtils::exitWithSuccess();
 
 ?>

@@ -24,8 +24,7 @@ if (units == 'imperial') {
   unit_m = 'ft';
   factor_km = 0.62; // to miles
   unit_km = 'mi';
-}
-else {
+} else {
   factor_kmh = 1;
   unit_kmh = 'km/h';
   factor_m = 1;
@@ -115,22 +114,27 @@ function getXHR() {
 }
 
 function loadTrack(userid, trackid, update) {
+  var title = document.getElementById("track").getElementsByClassName("menutitle")[0];
   if (trackid < 0) { return; }
   if (latest == 1) { trackid = 0; }
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      var xml = xhr.responseXML;
-      var positions = xml.getElementsByTagName('position');
-      if (positions.length > 0) {
-        clearMap();
-        displayTrack(xml, update);
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        var positions = xml.getElementsByTagName('position');
+        if (positions.length > 0) {
+          clearMap();
+          displayTrack(xml, update);
+        }
       }
       xhr = null;
+      removeLoader(title);
     }
   }
   xhr.open('GET', 'utils/getpositions.php?trackid=' + trackid + '&userid=' + userid, true);
   xhr.send();
+  setLoader(title);
 }
 
 function parsePosition(p) {
@@ -217,20 +221,77 @@ function getPopupHtml(p, i, count) {
   return popup;
 }
 
-function load(type, userid, trackid) {
-  var url = 'utils/download.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
+function exportFile(type, userid, trackid) {
+  var url = 'utils/export.php?type=' + type + '&userid=' + userid + '&trackid=' + trackid;
   window.location.assign(url);
+}
+
+function importFile(input) {
+  var form = input.parentElement;
+  var title = form.parentElement.getElementsByClassName("menutitle")[0];
+  var sizeMax = form.elements['MAX_FILE_SIZE'].value;
+  if (input.files && input.files.length == 1 && input.files[0].size > sizeMax) {
+    alert(sprintf(lang['isizefailure'], sizeMax));
+    return;
+  }
+  var xhr = getXHR();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      var error = true;
+      var message = "";
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        if (xml) {
+          var root = xml.getElementsByTagName('root');
+          if (root.length && getNode(root[0], 'error') == 0) {
+            trackId = getNode(root[0], 'trackid');
+            trackCnt = getNode(root[0], 'trackcnt');
+            getTracks(userid, trackId);
+            if (trackCnt > 1) {
+              alert(sprintf(lang['imultiple'], trackCnt));
+            }
+            error = false;
+          } else if (root.length) {
+            errorMsg = getNode(root[0], 'message');
+            if (errorMsg) { message = errorMsg; }
+          }
+        }
+      }
+      if (error) {
+        alert(lang['actionfailure'] + '\n' + message);
+      }
+      removeLoader(title);
+      xhr = null;
+    }
+  }
+  xhr.open("POST", "utils/import.php", true);
+  xhr.send(new FormData(form));
+  input.value = "";
+  setLoader(title);
+}
+
+function setLoader(el) {
+  var s = el.textContent || el.innerText;
+  var newHTML = '';
+  for (var i = 0, len = s.length; i < len; i++) {
+    newHTML += '<span class="loader">' + s.charAt(i) + '</span>';
+  }
+  el.innerHTML = newHTML;
+}
+
+function removeLoader(el) {
+  el.innerHTML = el.textContent || el.innerText;
 }
 
 function updateSummary(l, d, s) {
   var t = document.getElementById('summary');
   if (latest == 0) {
-    t.innerHTML = '<u>' + lang['summary'] + '</u><br>' +
+    t.innerHTML = '<div class="menutitle u">' + lang['summary'] + '</div>' +
       '<span><img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance.svg"> ' + (d.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '</span>' +
       '<span><img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time.svg"> ' + s.toHMS() + '</span>';
   }
   else {
-    t.innerHTML = '<u>' + lang['latest'] + ':</u><br>' + l;
+    t.innerHTML = '<div class="menutitle u">' + lang['latest'] + ':</div>' + l;
   }
 }
 
@@ -296,27 +357,32 @@ function selectUser(f) {
   getTracks(userid);
 }
 
-function getTracks(userid) {
+function getTracks(userid, trackid) {
+  var title = document.getElementById("track").getElementsByClassName("menutitle")[0];
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      var xml = xhr.responseXML;
-      var trackSelect = document.getElementsByName('track')[0];
-      clearOptions(trackSelect);
-      var tracks = xml.getElementsByTagName('track');
-      if (tracks.length > 0) {
-        fillOptions(xml);
-      } else {
-        clearMap();
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        var trackSelect = document.getElementsByName('track')[0];
+        clearOptions(trackSelect);
+        var tracks = xml.getElementsByTagName('track');
+        if (tracks.length > 0) {
+          fillOptions(xml, userid, trackid);
+        } else {
+          clearMap();
+        }
       }
+      removeLoader(title);
       xhr = null;
     }
   }
   xhr.open('GET', 'utils/gettracks.php?userid=' + userid, true);
   xhr.send();
+  setLoader(title);
 }
 
-function fillOptions(xml) {
+function fillOptions(xml, uid, tid) {
   var trackSelect = document.getElementsByName('track')[0];
   var tracks = xml.getElementsByTagName('track');
   var trackLen = tracks.length;
@@ -328,8 +394,9 @@ function fillOptions(xml) {
     option.innerHTML = htmlEncode(trackname);
     trackSelect.appendChild(option);
   }
-  var defaultTrack = getNode(tracks[0], 'trackid');
-  loadTrack(userid, defaultTrack, 1);
+  var defaultTrack = tid || getNode(tracks[0], 'trackid');
+  var defaultUser = uid || userid;
+  loadTrack(defaultUser, defaultTrack, 1);
 }
 
 function clearOptions(el) {
