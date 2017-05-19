@@ -46,20 +46,26 @@ function submitPass() {
 
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      var xml = xhr.responseXML;
+    if (xhr.readyState == 4) {
+      var error = true;
       var message = "";
-      if (xml) {
-        var root = xml.getElementsByTagName('root');
-        if (root.length && getNode(root[0], 'error') == 0) {
-          removeModal();
-          alert(lang["actionsuccess"]);
-          return;
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        if (xml) {
+          var root = xml.getElementsByTagName('root');
+          if (root.length && getNode(root[0], 'error') == 0) {
+            removeModal();
+            alert(lang["actionsuccess"]);
+            error = false;
+          } else if (root.length) {
+            errorMsg = getNode(root[0], 'message');
+            if (errorMsg) { message = errorMsg; }
+          }
         }
-        errorMsg = getNode(root[0], 'message');
-        if (errorMsg) { message = errorMsg; }
       }
-      alert(lang['actionfailure'] + '\n' + message);
+      if (error) {
+        alert(lang['actionfailure'] + '\n' + message);
+      }
       xhr = null;
     }
   }

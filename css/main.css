@@ -278,6 +278,10 @@ button {
   margin-right: 5px;
 }
 
+#cancel {
+  margin-top: 0.5em;
+}
+
 .red-button {
   color: white;
   float: right;

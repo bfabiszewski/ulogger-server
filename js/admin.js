@@ -81,26 +81,32 @@ function submitUser(action) {
   }
   var xhr = getXHR();
   xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      var xml = xhr.responseXML;
+    if (xhr.readyState == 4) {
+      var error = true;
       var message = "";
-      if (xml) {
-        var root = xml.getElementsByTagName('root');
-        if (root.length && getNode(root[0], 'error') == 0) {
-          removeModal();
-          alert(lang['actionsuccess']);
-          if (action == 'delete') {
-            // select current user in users form
-            var f = document.getElementsByName('user')[0];
-            f.remove(f.selectedIndex);
-            selectUser(f);
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        if (xml) {
+          var root = xml.getElementsByTagName('root');
+          if (root.length && getNode(root[0], 'error') == 0) {
+            removeModal();
+            alert(lang['actionsuccess']);
+            if (action == 'delete') {
+              // select current user in users form
+              var f = document.getElementsByName('user')[0];
+              f.remove(f.selectedIndex);
+              selectUser(f);
+            }
+            error = false;
+          } else if (root.length) {
+            errorMsg = getNode(root[0], 'message');
+            if (errorMsg) { message = errorMsg; }
           }
-          return;
         }
-        errorMsg = getNode(root[0], 'message');
-        if (errorMsg) { message = errorMsg; }
       }
-      alert(lang['actionfailure'] + '\n' + message);
+      if (error) {
+        alert(lang['actionfailure'] + '\n' + message);
+      }
       xhr = null;
     }
   }

@@ -32,7 +32,7 @@ session_start();
 $sid = session_id();
 
 // check for forced login to authorize admin in case of public access
-$force_login = (isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : false);
+$force_login = isset($_REQUEST['force_login']) ? $_REQUEST['force_login'] : false;
 if ($force_login) {
   uConfig::$require_authentication = true;
 }
@@ -41,10 +41,10 @@ $user = new uUser();
 $user->getFromSession();
 if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) {
   /* authentication */
-  $login = (isset($_REQUEST['user']) ? $_REQUEST['user'] : NULL);
-  $pass = (isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL);
-  $ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
-  $auth_error = (isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : 0);
+  $login = isset($_REQUEST['user']) ? $_REQUEST['user'] : NULL;
+  $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
+  $ssl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https";
+  $auth_error = isset($_REQUEST['auth_error']) ? $_REQUEST['auth_error'] : false;
 
   if (!$login) {
     // not authenticated and username not submited
@@ -87,9 +87,10 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) 
           <input type="password" name="pass"><br>
           <br>
           <input type="submit" value="' . $lang["login"] . '">
-          ' . (($force_login == 1) ? "<input type=\"hidden\" name=\"force_login\" value=\"1\">" : "") . '
+          ' . (($force_login) ? '<input type="hidden" name="force_login" value="1">
+          <div id="cancel"><a href="index.php">' . $lang["cancel"] . '</a></div>' : '') . '
           </form>
-          <div id="error">' . (($auth_error == 1) ? $lang["authfail"] : "") . '</div>
+          <div id="error">' . (($auth_error) ? $lang["authfail"] : "") . '</div>
         </div>
       </body>
     </html>';
@@ -114,6 +115,7 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) 
     } else {
       // unsuccessful
       $error = "?auth_error=1";
+      if ($force_login) { $error .= "&force_login=1"; }
       // destroy session
       $_SESSION = NULL;
       if (isset($_COOKIE[session_name('ulogger')])) {
