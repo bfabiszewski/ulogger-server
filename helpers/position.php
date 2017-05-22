@@ -158,7 +158,7 @@
                 LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
                 LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
-                ORDER BY p.time, p.id DESC LIMIT 1";
+                ORDER BY p.time DESC, p.id DESC LIMIT 1";
       $this->loadWithQuery($query, $params);
       return $this;
     }
