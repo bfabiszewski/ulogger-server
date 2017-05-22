@@ -132,7 +132,7 @@ if ($trackId && $userId) {
           "{$lang["user"]}: " . htmlspecialchars($position->userLogin) . "<br>{$lang["track"]}: " . htmlspecialchars($position->trackName) .
           "</div>" .
           "<div>" .
-          "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> {$position->time}<br>" .
+          "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> " . date("Y-m-d H:i:s (e)", $position->timestamp) . "<br>" .
           (!is_null($position->speed) ? "<b>{$lang["speed"]}:</b> " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}<br>" : "") .
           (!is_null($position->altitude) ? "<b>{$lang["altitude"]}:</b> " . round($position->altitude * $factor_m) . " {$unit_m}<br>" : "") .
           "<b>{$lang["ttime"]}:</b> " . toHMS($totalSeconds) . "<br>" .
@@ -182,7 +182,7 @@ if ($trackId && $userId) {
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
         $xml->writeElement("name", $positionsArr[0]->trackName);
-        $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", strtotime($positionsArr[0]->time)));
+        $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", $positionsArr[0]->timestamp));
       $xml->endElement();
       $xml->startElement("trk");
         $xml->writeElement("name", $positionsArr[0]->trackName);
@@ -200,11 +200,11 @@ if ($trackId && $userId) {
             $xml->writeAttribute("lat", $position->latitude);
             $xml->writeAttribute("lon", $position->longitude);
             if (!is_null($position->altitude)) { $xml->writeElement("ele", $position->altitude); }
-            $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", strtotime($position->time)));
+            $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", $position->timestamp));
             $xml->writeElement("name", ++$i);
             $xml->startElement("desc");
               $description =
-              "{$lang["user"]}: {$position->userLogin} {$lang["track"]}: {$position->trackName} {$lang["time"]}: {$position->time}" .
+              "{$lang["user"]}: {$position->userLogin} {$lang["track"]}: {$position->trackName} {$lang["time"]}: " . date("Y-m-d H:i:s (e)", $position->timestamp) .
               (!is_null($position->speed) ? " {$lang["speed"]}: " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}" : "") .
               (!is_null($position->altitude) ? " {$lang["altitude"]}: " . round($position->altitude * $factor_m) . " {$unit_m}" : "") .
               " {$lang["ttime"]}: " . toHMS($totalSeconds) .

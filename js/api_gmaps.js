@@ -81,10 +81,9 @@ function displayTrack(xml, update) {
       setTimeout(function () { google.maps.event.removeListener(zListener) }, 2000);
     }
   }
-  latestTime = p.dateoccured;
   polies.push(poly);
 
-  updateSummary(p.dateoccured, totalMeters, totalSeconds);
+  updateSummary(p.timestamp, totalMeters, totalSeconds);
   if (p.tid != trackid) {
     trackid = p.tid;
     setTrack(trackid);
@@ -120,7 +119,7 @@ function setMarker(p, i, posLen) {
   var marker = new google.maps.Marker({
     map: map,
     position: p.coordinates,
-    title: p.dateoccured
+    title: (new Date(p.timestamp * 1000)).toLocaleString()
   });
   if (latest == 1) { marker.setIcon('//maps.google.com/mapfiles/dd-end.png') }
   else if (i == 0) { marker.setIcon('//maps.google.com/mapfiles/marker_greenA.png') }

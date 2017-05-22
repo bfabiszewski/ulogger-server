@@ -119,10 +119,8 @@ function displayTrack(xml, update) {
       map.zoomOut();
     }
   }
-  latestTime = p.dateoccured;
-  //polies.push(poly);
 
-  updateSummary(p.dateoccured, totalMeters, totalSeconds);
+  updateSummary(p.timestamp, totalMeters, totalSeconds);
   if (p.tid != trackid) {
     trackid = p.tid;
     setTrack(trackid);
