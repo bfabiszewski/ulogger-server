@@ -99,7 +99,9 @@ foreach ($gpx->trk as $trk) {
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
       $ret = $position->add($user->id, $trackId,
-                    strtotime($point->time), $point["lat"], $point["lon"], $point->ele,
+                    (($point->time) ? strtotime($point->time) : NULL),
+                    $point["lat"], $point["lon"],
+                    (($point->ele) ? $point->ele : NULL),
                     NULL, NULL, NULL, "gps", NULL, NULL);
       if ($ret === false) {
         uUtils::exitWithError($lang["servererror"]);
