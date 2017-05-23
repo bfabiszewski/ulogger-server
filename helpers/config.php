@@ -164,7 +164,7 @@
     * Valid for both php and javascript
     */
     public static function passRegex() {
-      static $regex = "";
+      $regex = "";
       if (self::$pass_strength > 0) {
         // lower and upper case
         $regex .= "(?=.*[a-z])(?=.*[A-Z])";
@@ -180,10 +180,10 @@
       if (self::$pass_lenmin > 0) {
         $regex .= "(?=.{" . self::$pass_lenmin . ",})";
       }
-      if (!empty($regex)) {
-        $regex = "/" . $regex . "/";
+      if (empty($regex)) {
+        $regex = ".*";
       }
-      return $regex;
+      return "/" . $regex . "/";
     }
   }
 

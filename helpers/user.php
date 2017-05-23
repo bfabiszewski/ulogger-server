@@ -125,7 +125,7 @@
     */
     public function setPass($pass) {
       $ret = false;
-      if ($this->validPassStrength($pass)) {
+      if (!empty($this->login) && !empty($pass) && $this->validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $sql = "UPDATE `" . self::$db->table('users') . "` SET password = ? WHERE login = ?";
         $stmt = self::$db->prepare($sql);
