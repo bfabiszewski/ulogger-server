@@ -46,9 +46,7 @@ function displayChart() {
   data.addColumn('number', 'altitude');
   var altLen = altitudes.length;
   for (var i = 0; i < altLen; i++) {
-    if (altitudes[i]!=null){
-      data.addRow([(i + 1), Math.round((altitudes[i] * factor_m))]);
-    }
+    data.addRow([(i + 1), Math.round((altitudes[i] * factor_m))]);
   }
 
   var options = {
@@ -74,10 +72,18 @@ function toggleChart(i) {
   if (i == 0) {
     chart.clearChart();
     e.style.display = 'none';
-  }
-  else {
+  } else {
     e.style.display = 'block';
     displayChart();
+  }
+}
+
+function toggleChartLink() {
+  var link = document.getElementById('altitudes');
+  if (altitudes.length > 1) {
+    link.style.visibility = 'visible';
+  } else {
+    link.style.visibility = 'hidden';
   }
 }
 
@@ -127,6 +133,7 @@ function loadTrack(userid, trackid, update) {
         if (positions.length > 0) {
           clearMap();
           displayTrack(xml, update);
+          toggleChartLink();
         }
       }
       xhr = null;
@@ -143,7 +150,11 @@ function parsePosition(p) {
   var latitude = getNode(p, 'latitude');
   var longitude = getNode(p, 'longitude');
   var altitude = getNode(p, 'altitude'); // may be null
-  if (altitude != null) { altitude = parseInt(altitude); }
+  if (altitude != null) {
+    altitude = parseInt(altitude);
+    // save altitudes for chart
+    altitudes.push(altitude);
+  }
   var speed = getNode(p, 'speed'); // may be null
   if (speed != null) { speed = parseInt(speed); }
   var bearing = getNode(p, 'bearing'); // may be null

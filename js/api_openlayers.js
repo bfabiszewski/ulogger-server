@@ -104,8 +104,6 @@ function displayTrack(xml, update) {
     var point = new OpenLayers.Geometry.Point(p.longitude, p.latitude).transform(wgs84, mercator);
     latlngbounds.extend(point);
     points.push(point);
-    // save altitudes for chart
-    altitudes[i] = p.altitude;
   }
   var lineString = new OpenLayers.Geometry.LineString(points);
   var lineFeature = new OpenLayers.Feature.Vector(lineString, null, lineStyle);

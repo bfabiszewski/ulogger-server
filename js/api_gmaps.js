@@ -65,8 +65,6 @@ function displayTrack(xml, update) {
     // update polyline
     path.push(p.coordinates);
     latlngbounds.extend(p.coordinates);
-    // save altitudes for chart
-    altitudes[i] = p.altitude;
   }
   if (update) {
     map.fitBounds(latlngbounds);
