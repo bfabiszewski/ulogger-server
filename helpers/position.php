@@ -266,10 +266,11 @@
     private function loadWithQuery($query, $bindParams = NULL) {
       $stmt = self::$db->prepare($query);
       if (is_array($bindParams)) {
-        foreach ($bindParams as $key => &$value) {
-          $bindParams[$key] = $value;
+        $params = [];
+        foreach ($bindParams as &$value) {
+          $params[] =& $value;
         }
-        call_user_func_array([ $stmt, 'bind_param' ], $bindParams);
+        call_user_func_array([ $stmt, 'bind_param' ], $params);
       }
       if ($stmt->execute()) {
         $stmt->bind_result($this->id, $this->timestamp, $this->userId, $this->trackId,
