@@ -38,6 +38,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Follow instructions in setup script. It will add database tables and set up your μlogger user
 - **Remember to remove or disable `scripts/setup.php` script**
 - Log in with your new user on http://YOUR_HOST/ulogger-server/
+- You may also want to set your new user as an [admin in config file](https://github.com/bfabiszewski/ulogger-server/blob/v0.2/config.default.php#L67).
 
 ## Todo
 - improve track editing
