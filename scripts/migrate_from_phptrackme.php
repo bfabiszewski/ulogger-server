@@ -176,7 +176,7 @@ function process_user_tracks($user_id) {
  */
 function process_track($user_id, $old_id, $new_id) {
   global $pt_mysqli, $mysqli;
-  $sql = "SELECT Latitude, Longitude, Altitude, Speed, Angle, DateOccurred, Comments FROM pt_positions WHERE FK_Users_ID = ? AND FK_Trips_ID = ? ORDER BY DateOccurred";
+  $sql = "SELECT Latitude, Longitude, Altitude, Speed, Angle, UNIX_TIMESTAMP(DateOccurred), Comments FROM pt_positions WHERE FK_Users_ID = ? AND FK_Trips_ID = ? ORDER BY DateOccurred, ID";
   if (!($pos_select = $pt_mysqli->prepare($sql))) {
     echo "Prepare failed: (" . $pt_mysqli->errno . ") " . $pt_mysqli->error . "\n";
     exit(1);
@@ -185,7 +185,7 @@ function process_track($user_id, $old_id, $new_id) {
     echo "Binding parameters failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
     exit(1);
   }
-  if (!$pos_select->bind_result($lat, $lon, $altitude, $speed, $bearing, $time, $comment)) {
+  if (!$pos_select->bind_result($lat, $lon, $altitude, $speed, $bearing, $timestamp, $comment)) {
     echo "Binding parameters failed: (" . $pos_select->errno . ") " . $pos_select->error . "\n";
     exit(1);
   }
@@ -194,17 +194,17 @@ function process_track($user_id, $old_id, $new_id) {
     exit(1);
   }
   $pos_select->store_result();
-  if (!($pos_insert = $mysqli->prepare("INSERT INTO `$tPositions` (time, user_id, track_id, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
+  if (!($pos_insert = $mysqli->prepare("INSERT INTO `$tPositions` (FROM_UNIXTIME(time), user_id, track_id, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error . "\n";
     exit(1);
   }
-  $provider = $comment = $time = $imageid = null;
+  $provider = $comment = $timestamp = $imageid = null;
   $lat = $lon = 0;
   $altitude = $speed = $bearing = $accuracy = null;
 
   if (!$pos_insert->bind_param('siiddddddssi',
-            $time, $user_id, $new_id, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageid)) {
+            $timestamp, $user_id, $new_id, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageid)) {
     echo "Binding parameters failed: (" . $pos_insert->errno . ") " . $pos_insert->error . "\n";
     exit(1);
   }

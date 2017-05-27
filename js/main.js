@@ -33,7 +33,6 @@ if (units == 'imperial') {
   unit_km = 'km';
 }
 var latest = 0;
-var latestTime = 0;
 var live = 0;
 var chart;
 var altitudes = new Array();
@@ -73,10 +72,18 @@ function toggleChart(i) {
   if (i == 0) {
     chart.clearChart();
     e.style.display = 'none';
-  }
-  else {
+  } else {
     e.style.display = 'block';
     displayChart();
+  }
+}
+
+function toggleChartLink() {
+  var link = document.getElementById('altitudes');
+  if (altitudes.length > 1) {
+    link.style.visibility = 'visible';
+  } else {
+    link.style.visibility = 'hidden';
   }
 }
 
@@ -126,6 +133,7 @@ function loadTrack(userid, trackid, update) {
         if (positions.length > 0) {
           clearMap();
           displayTrack(xml, update);
+          toggleChartLink();
         }
       }
       xhr = null;
@@ -142,7 +150,11 @@ function parsePosition(p) {
   var latitude = getNode(p, 'latitude');
   var longitude = getNode(p, 'longitude');
   var altitude = getNode(p, 'altitude'); // may be null
-  if (altitude != null) { altitude = parseInt(altitude); }
+  if (altitude != null) {
+    altitude = parseInt(altitude);
+    // save altitudes for chart
+    altitudes.push(altitude);
+  }
   var speed = getNode(p, 'speed'); // may be null
   if (speed != null) { speed = parseInt(speed); }
   var bearing = getNode(p, 'bearing'); // may be null
@@ -154,7 +166,7 @@ function parsePosition(p) {
   var username = getNode(p, 'username');
   var trackname = getNode(p, 'trackname');
   var tid = getNode(p, 'trackid');
-  var dateoccured = getNode(p, 'dateoccured');
+  var timestamp = getNode(p, 'timestamp');
   var distance = parseInt(getNode(p, 'distance'));
   var seconds = parseInt(getNode(p, 'seconds'));
   return {
@@ -169,16 +181,24 @@ function parsePosition(p) {
     'username': username,
     'trackname': trackname,
     'tid': tid,
-    'dateoccured': dateoccured,
+    'timestamp': timestamp,
     'distance': distance,
     'seconds': seconds
   };
 }
 
 function getPopupHtml(p, i, count) {
-  var dateTime = p.dateoccured.split(" ");
-  var date = dateTime[0];
-  var time = dateTime[1];
+  var date = '–––';
+  var time = '–––';
+  if (p.timestamp > 0) {
+    var d = new Date(p.timestamp * 1000);
+    date = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    time = d.toTimeString();
+    var offset;
+    if ((offset = time.indexOf(' ')) >= 0) {
+      time = time.substr(0, offset) + ' <span class="smaller">' + time.substr(offset + 1) + '</span>';
+    }
+  }
   var provider = '';
   if (p.provider == 'gps') {
     provider = ' (<img class="icon" alt="' + lang['gps'] + '" title="' + lang['gps'] + '"  src="images/gps_dark.svg">)';
@@ -283,15 +303,26 @@ function removeLoader(el) {
   el.innerHTML = el.textContent || el.innerText;
 }
 
-function updateSummary(l, d, s) {
+function updateSummary(timestamp, d, s) {
   var t = document.getElementById('summary');
   if (latest == 0) {
     t.innerHTML = '<div class="menutitle u">' + lang['summary'] + '</div>' +
-      '<span><img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance.svg"> ' + (d.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '</span>' +
-      '<span><img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time.svg"> ' + s.toHMS() + '</span>';
-  }
-  else {
-    t.innerHTML = '<div class="menutitle u">' + lang['latest'] + ':</div>' + l;
+      '<div><img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance.svg"> ' + (d.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '</div>' +
+      '<div><img class="icon" alt="' + lang['ttime'] + '" title="' + lang['ttime'] + '" src="images/time.svg"> ' + s.toHMS() + '</div>';
+  } else {
+    var today = new Date();
+    var d = new Date(timestamp * 1000);
+    var dateString = '';
+    if (d.toDateString() != today.toDateString()) {
+      dateString += d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+      dateString += '<br>';
+    }
+    var timeString = d.toTimeString();
+    var offset;
+    if ((offset = timeString.indexOf(' ')) >= 0) {
+      timeString = timeString.substr(0, offset) + ' <span style="font-weight:normal">' + timeString.substr(offset + 1) + '</span>';
+    }
+    t.innerHTML = '<div class="menutitle u">' + lang['latest'] + ':</div>' + dateString + timeString;
   }
 }
 

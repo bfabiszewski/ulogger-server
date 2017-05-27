@@ -109,11 +109,10 @@ select {
 #user, #track, #summary, #export, #import, #other, #units {
   padding-bottom: 10px;
 }
-#summary span {
-  display: block;
+#summary div {
   padding-top: .3em;
 }
-#summary span img {
+#summary div img {
   margin-bottom: -2px;
 }
 #login {
@@ -169,6 +168,10 @@ select {
   display: inline-block;
   padding-top: 5px;
   padding-right: 20px;
+}
+#pbody .smaller {
+  color: gray;
+  font-size: .9em;
 }
 #pfooter {
   font-size: .6rem;
@@ -276,6 +279,10 @@ button {
   -webkit-border-radius: 5px;
   font-weight: bold;
   margin-right: 5px;
+}
+
+#cancel {
+  margin-top: 0.5em;
 }
 
 .red-button {
