@@ -99,6 +99,7 @@
     <?php endif; ?>
     <?php if ($user->isValid): ?>
       <script type="text/javascript" src="js/track.js"></script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="js/pass.js"></script>
     <script type="text/javascript" src="//www.google.com/jsapi"></script>
@@ -149,6 +150,7 @@
             <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
           </form>
           <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"> <?= $lang["reload"] ?></a><br>
+          <a href="javascript:void(0);" onclick=" $('.olLayerDiv img.olAlphaImg').toggle();"> <?= $lang["togglewaypoints"] ?></a><br>
         </div>
 
         <div id="summary"></div>
