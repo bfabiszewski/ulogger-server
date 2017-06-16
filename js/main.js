@@ -46,7 +46,7 @@ function displayChart() {
   data.addColumn('number', 'altitude');
   var altLen = altitudes.length;
   for (var i = 0; i < altLen; i++) {
-    if (altitudes[i]!=null){
+    if (altitudes[i]!=null && altitudes[i]!=0){
       data.addRow([(i + 1), Math.round((altitudes[i] * factor_m))]);
     }
   }
