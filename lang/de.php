@@ -49,5 +49,5 @@ $lang["units"] = "Maßsystem";
 $lang["metric"] = "Metrisches";
 $lang["imperial"] = "Angloamerikanisches";
 $lang["adminmenu"] = "Verwaltung";
-
+$lang["togglewaypoints"] = "Wegmarken ein/ausblenden";
 ?>
