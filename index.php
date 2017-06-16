@@ -154,7 +154,7 @@
         <div id="summary"></div>
 
         <div id="other">
-          <a href="javascript:void(0);" onclick="toggleChart();"><?= $lang["chart"] ?></a>
+          <a id="altitudes" href="javascript:void(0);" onclick="toggleChart();"><?= $lang["chart"] ?></a>
         </div>
 
         <div id="api">

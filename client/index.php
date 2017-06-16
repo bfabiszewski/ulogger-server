@@ -80,7 +80,7 @@ switch ($action) {
   case "addpos":
     $lat = isset($_REQUEST["lat"]) ? $_REQUEST["lat"] : NULL;
     $lon = isset($_REQUEST["lon"]) ? $_REQUEST["lon"] : NULL;
-    $time = isset($_REQUEST["time"]) ? $_REQUEST["time"] : NULL;
+    $timestamp = isset($_REQUEST["time"]) ? $_REQUEST["time"] : NULL;
     $altitude = isset($_REQUEST["altitude"]) ? $_REQUEST["altitude"] : NULL;
     $speed = isset($_REQUEST["speed"]) ? $_REQUEST["speed"] : NULL;
     $bearing = isset($_REQUEST["bearing"]) ? $_REQUEST["bearing"] : NULL;
@@ -90,7 +90,7 @@ switch ($action) {
     $imageId = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
     $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
 
-    if (is_null($lat) || is_null($lon) || is_null($time) || is_null($trackId)) {
+    if (is_null($lat) || is_null($lon) || is_null($timestamp) || is_null($trackId)) {
       setError($response, "missing required parameter");
       break;
     }
@@ -98,7 +98,7 @@ switch ($action) {
     require_once(ROOT_DIR . "/helpers/position.php");
     $position = new uPosition();
     $positionId = $position->add($user->id, $trackId,
-            $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+            $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
 
     if ($positionId === false) {
       setError($response, "Server error");

@@ -114,5 +114,10 @@ $lang["passrules"][3] = "Dovrebbe contenere almeno una lettera minuscola, una le
 $lang["owntrackswarn"] = "Puoi modificare solo le tue tracce";
 $lang["gmauthfailure"] = "In questa pagina potrebbe esserci un problema con le API di Google Maps.";
 $lang["gmapilink"] = "Puoi trovare maggiori informazioni sulle chiavi API a <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">questo indirizzo</a>.";
-
+$lang["import"] = "Importa traccia";
+$lang["iuploadfailure"] = "Caricamento fallito";
+$lang["iparsefailure"] = "Analisi fallita";
+$lang["idatafailure"] = "Nessun tracciato nel file importato";
+$lang["isizefailure"] = "La dimensione del file caricato non deve superare i %d byte"; // substitutes number of bytes
+$lang["imultiple"] = "Tracce multiple importate (%d)"; // substitutes number of imported tracks
 ?>

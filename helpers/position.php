@@ -25,7 +25,7 @@
   */
   class uPosition {
     public $id;
-    public $time;
+    public $timestamp;
     public $userId;
     public $userLogin;
     public $trackId;
@@ -53,7 +53,7 @@
       self::$db = uDb::getInstance();
 
       if (!empty($positionId)) {
-        $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+        $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
                   FROM `" . self::$db->table('positions') . "` p
@@ -82,9 +82,9 @@
     * @param int $imageId
     * @return int|bool New position id in database, false on error
     */
-    public function add($userId, $trackId, $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
+    public function add($userId, $trackId, $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
       $positionId = false;
-      if (!is_null($lat) && !is_null($lon) && !is_null($time) && !empty($userId) && !empty($trackId)) {
+      if (!is_null($lat) && !is_null($lon) && !is_null($timestamp) && !empty($userId) && !empty($trackId)) {
         $track = new uTrack($trackId);
         if ($track->isValid && $track->userId == $userId) {
           $query = "INSERT INTO `" . self::$db->table('positions') . "`
@@ -94,7 +94,7 @@
           $stmt = self::$db->prepare($query);
           $stmt->bind_param('iisddddddssi',
                   $userId, $trackId,
-                  $time, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+                  $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
           $stmt->execute();
           if (!self::$db->error && !$stmt->errno) {
             $positionId = self::$db->insert_id;
@@ -151,14 +151,14 @@
         $where = "";
         $params = NULL;
       }
-      $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+      $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM `" . self::$db->table('positions') . "` p
                 LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
                 LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
-                ORDER BY p.time, p.id DESC LIMIT 1";
+                ORDER BY p.time DESC, p.id DESC LIMIT 1";
       $this->loadWithQuery($query, $params);
       return $this;
     }
@@ -183,7 +183,7 @@
       } else {
         $where = "";
       }
-      $query = "SELECT p.id, p.time, p.user_id, p.track_id,
+      $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM `" . self::$db->table('positions') . "` p
@@ -227,7 +227,7 @@
     * @return int Number of seconds
     */
     public function secondsTo($target) {
-      return strtotime($this->time) - strtotime($target->time);
+      return $this->timestamp - $target->timestamp;
     }
 
    /**
@@ -239,7 +239,7 @@
     private function rowToObject($row) {
       $position = new uPosition();
       $position->id = $row['id'];
-      $position->time = $row['time'];
+      $position->timestamp = $row['tstamp'];
       $position->userId = $row['user_id'];
       $position->userLogin = $row['login'];
       $position->trackId = $row['track_id'];
@@ -265,14 +265,15 @@
     */
     private function loadWithQuery($query, $bindParams = NULL) {
       $stmt = self::$db->prepare($query);
-      if (is_array($bindParams) && ($types = array_shift($bindParams))) {
-        call_user_func_array(
-            [ $stmt, 'bind_param' ],
-            array_merge([ $types ], array_map(function(&$param) { return $param; }, $bindParams))
-        );
+      if (is_array($bindParams)) {
+        $params = [];
+        foreach ($bindParams as &$value) {
+          $params[] =& $value;
+        }
+        call_user_func_array([ $stmt, 'bind_param' ], $params);
       }
       if ($stmt->execute()) {
-        $stmt->bind_result($this->id, $this->time, $this->userId, $this->trackId,
+        $stmt->bind_result($this->id, $this->timestamp, $this->userId, $this->trackId,
                             $this->latitude, $this->longitude, $this->altitude, $this->speed,
                             $this->bearing, $this->accuracy, $this->provider,
                             $this->comment, $this->imageId, $this->userLogin, $this->trackName);

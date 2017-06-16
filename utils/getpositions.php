@@ -56,7 +56,7 @@ if ($userId) {
       $xml->writeElement("altitude", ($position->altitude) ? round($position->altitude) : $position->altitude);
       $xml->writeElement("speed", $position->speed);
       $xml->writeElement("bearing", $position->bearing);
-      $xml->writeElement("dateoccured", $position->time);
+      $xml->writeElement("timestamp", $position->timestamp);
       $xml->writeElement("accuracy", $position->accuracy);
       $xml->writeElement("provider", $position->provider);
       $xml->writeElement("comments", $position->comment);
