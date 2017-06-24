@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="https://github.com/bfabiszewski/ulogger-android/1"
+  targetNamespace="https://github.com/bfabiszewski/ulogger-android/1"
+  elementFormDefault="qualified">
+
+  <xsd:element name="accuracy" type="xsd:decimal">
+    <xsd:annotation>
+      <xsd:documentation>Estimated horizontal accuracy of the location, radial, in meters (radius of 68% confidence).</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="speed" type="xsd:decimal">
+    <xsd:annotation>
+      <xsd:documentation>Speed in meters per second over ground.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="bearing" type="degreesType">
+    <xsd:annotation>
+      <xsd:documentation>Horizontal direction of travel of the device, in degrees.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="provider" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation>Name of the provider that generated this fix.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:simpleType name="degreesType">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:minInclusive value="0.0" />
+      <xsd:maxExclusive value="360.0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>
