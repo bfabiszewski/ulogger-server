@@ -18,8 +18,9 @@
  */
 
 if (defined('headless')) {
-  ob_get_contents();
-  ob_end_clean();
+  if (ob_get_level()) {
+    ob_end_clean();
+  }
   error_reporting(0);
 }
 define('ROOT_DIR', __DIR__);
