@@ -4,7 +4,6 @@ This is a web application for real-time collection of geolocation data, tracks v
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
 
 ## Live demo:
-- http://flaa.fabiszewski.net/ulogger/ (view only)
 - http://ulogger.fabiszewski.net/ (test track upload and editing, login: demo, password: demo)
 
 ## Requirements:
