@@ -99,7 +99,7 @@ foreach ($gpx->trk as $trk) {
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
       $time = isset($point->time) ? strtotime($point->time) : NULL;
-      $altitude = isset($point->ele) ? $point->ele : NULL;
+      $altitude = isset($point->ele) ? (double) $point->ele : NULL;
       $speed = NULL;
       $bearing = NULL;
       $accuracy = NULL;
@@ -107,13 +107,13 @@ foreach ($gpx->trk as $trk) {
       if (!empty($point->extensions)) {
         // parse ulogger extensions
         $ext = $point->extensions->children('ulogger', TRUE);
-        if (isset($ext->speed)) { $speed = $ext->speed; }
-        if (isset($ext->bearing)) { $bearing = $ext->bearing; }
-        if (isset($ext->accuracy)) { $accuracy = $ext->accuracy; }
-        if (isset($ext->provider)) { $provider = $ext->provider; }
+        if (count($ext->speed)) { $speed = (double) $ext->speed; }
+        if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
+        if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
+        if (count($ext->provider)) { $provider = (string) $ext->provider; }
       }
       $ret = $position->add($user->id, $trackId,
-                    $time, $point["lat"], $point["lon"], $altitude,
+                    $time, (double) $point["lat"], (double) $point["lon"], $altitude,
                     $speed, $bearing, $accuracy, $provider, NULL, NULL);
       if ($ret === false) {
         uUtils::exitWithError($lang["servererror"]);
