@@ -96,8 +96,8 @@ if ($trackId && $userId) {
       $xml->setIndent(true);
       $xml->startDocument("1.0", "utf-8");
       $xml->startElement("kml");
-      $xml->writeAttributeNs('xsi', 'schemaLocation', NULL, "http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd");
-      $xml->writeAttributeNs('xmlns', 'xsi', NULL, 'http://www.w3.org/2001/XMLSchema-instance');
+      $xml->writeAttributeNs("xsi", "schemaLocation", NULL, "http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd");
+      $xml->writeAttributeNs("xmlns", "xsi", NULL, "http://www.w3.org/2001/XMLSchema-instance");
       $xml->writeAttribute("xmlns", "http://www.opengis.net/kml/2.2");
       $xml->startElement("Document");
       $xml->writeElement("name", $positionsArr[0]->trackName);
@@ -175,10 +175,11 @@ if ($trackId && $userId) {
       $xml->setIndent(true);
       $xml->startDocument("1.0", "utf-8");
       $xml->startElement("gpx");
-      $xml->writeAttributeNs('xsi', 'schemaLocation', NULL, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-      $xml->writeAttributeNs('xmlns', 'xsi', NULL, 'http://www.w3.org/2001/XMLSchema-instance');
       $xml->writeAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
-      $xml->writeAttribute("creator", "μlogger");
+      $xml->writeAttributeNs("xsi", "schemaLocation", NULL, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://github.com/bfabiszewski/ulogger-android/1 https://raw.githubusercontent.com/bfabiszewski/ulogger-server/master/scripts/gpx_extensions1.xsd");
+      $xml->writeAttributeNs("xmlns", "xsi", NULL, "http://www.w3.org/2001/XMLSchema-instance");
+      $xml->writeAttributeNs("xmlns", "ulogger", NULL, "https://github.com/bfabiszewski/ulogger-android/1");
+      $xml->writeAttribute("creator", "μlogger-server " . uConfig::$version);
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
         $xml->writeElement("name", $positionsArr[0]->trackName);
@@ -213,6 +214,24 @@ if ($trackId && $userId) {
               " " . sprintf($lang["pointof"], $i, count($positionsArr));
               $xml->writeCData($description);
             $xml->endElement();
+            if (!is_null($position->speed) || !is_null($position->bearing) || !is_null($position->accuracy) || !is_null($position->provider)) {
+              $xml->startElement("extensions");
+
+              if (!is_null($position->speed)) {
+                $xml->writeElementNS("ulogger", "speed", NULL, $position->speed);
+              }
+              if (!is_null($position->bearing)) {
+                $xml->writeElementNS("ulogger", "bearing", NULL, $position->bearing);
+              }
+              if (!is_null($position->accuracy)) {
+                $xml->writeElementNS("ulogger", "accuracy", NULL, $position->accuracy);
+              }
+              if (!is_null($position->provider)) {
+                $xml->writeElementNS("ulogger", "provider", NULL, $position->provider);
+              }
+
+              $xml->endElement();
+            }
           $xml->endElement();
         }
         $xml->endElement();
