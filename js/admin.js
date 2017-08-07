@@ -28,7 +28,7 @@ function addUser() {
 
 function editUser() {
   var userForm = document.getElementsByName('user')[0];
-  var userLogin = userForm.options[userForm.selectedIndex].text;
+  var userLogin = (userForm !== undefined) ? userForm.options[userForm.selectedIndex].text : auth;
   if (userLogin == auth) {
     alert(lang['selfeditwarn']);
     return;

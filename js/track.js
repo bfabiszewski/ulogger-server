@@ -18,7 +18,7 @@
 
 function editTrack() {
   var userForm = document.getElementsByName('user')[0];
-  var trackUser = userForm.options[userForm.selectedIndex].text;
+  var trackUser = (userForm !== undefined) ? userForm.options[userForm.selectedIndex].text : auth;
   if (trackUser != auth && !admin) {
     alert(lang['owntrackswarn']);
     return;
