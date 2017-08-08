@@ -40,8 +40,7 @@ $init_latitude = 52.23;
 $init_longitude = 21.01;
 
 // you may set your google maps api key
-// this is not obligatory by now
-//$gkey = "";
+$gkey = "";
 
 // MySQL config
 $dbhost = ""; // mysql host, eg. localhost
