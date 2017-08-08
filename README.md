@@ -39,6 +39,11 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Log in with your new user on http://YOUR_HOST/ulogger-server/
 - You may also want to set your new user as an [admin in config file](https://github.com/bfabiszewski/ulogger-server/blob/v0.2/config.default.php#L67).
 
+## Docker
+- Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser.
+- Optional configuration options with ENV variables, for list see [Dockerfile](https://github.com/bfabiszewski/ulogger-server/blob/master/Dockerfile).
+- For example: `docker run --name ulogger -e ULOGGER_LANG="pl" -p 8080:80 -d bfabiszewski/ulogger`.
+
 ## Todo
 - improve track editing
 - track display filters (accurracy, provider)
