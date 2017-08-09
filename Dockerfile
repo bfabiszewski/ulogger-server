@@ -4,7 +4,6 @@ MAINTAINER Bartek Fabiszewski (https://github.com/bfabiszewski)
 
 ARG DB_ROOT_PASS=secret1
 ARG DB_USER_PASS=secret2
-ARG ULOGGER_TAG
 
 ENV ULOGGER_ADMIN_USER admin
 ENV ULOGGER_PASS_STRENGTH 0
