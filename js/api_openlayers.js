@@ -85,7 +85,7 @@ function init() {
   layerMarkers = new OpenLayers.Layer.Markers('Markers');
 }
 function displayTrack(xml, update) {
-  altitudes.length = 0;
+  altitudes = {};
   var totalMeters = 0;
   var totalSeconds = 0;
   var points = new Array();
@@ -93,7 +93,7 @@ function displayTrack(xml, update) {
   var positions = xml.getElementsByTagName('position');
   var posLen = positions.length;
   for (var i = 0; i < posLen; i++) {
-    var p = parsePosition(positions[i]);
+    var p = parsePosition(positions[i], i);
     totalMeters += p.distance;
     totalSeconds += p.seconds;
     p['totalMeters'] = totalMeters;
@@ -169,17 +169,24 @@ function setMarker(p, i, posLen) {
       var popup = new OpenLayers.Popup.FramedCloud("popup_" + (i + 1), lonLat, null, content, icon, true);
       map.addPopup(popup);
       if (document.getElementById('bottom').style.display == 'block') {
-        chart.setSelection([{ row: i, column: null }]);
+        var index = 0;
+        for (var key in altitudes) {
+          if (altitudes.hasOwnProperty(key) && key == i) {
+            chart.setSelection([{ row: index, column: null }]);
+            break;
+          }
+          index++;
+        }
       }
     }
   })());
 }
 
-function addChartEvent(chart) {
+function addChartEvent(chart, data) {
   google.visualization.events.addListener(chart, 'select', function () {
     var selection = chart.getSelection()[0];
     if (selection) {
-      var id = selection.row;
+      var id = data.getValue(selection.row, 0) - 1;
       var marker = layerMarkers.markers[id];
       var url = marker.icon.url;
       marker.setUrl('//www.openstreetmap.org/openlayers/img/marker-gold.png');

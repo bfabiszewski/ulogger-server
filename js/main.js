@@ -35,7 +35,7 @@ if (units == 'imperial') {
 var latest = 0;
 var live = 0;
 var chart;
-var altitudes = new Array();
+var altitudes = {};
 var altTimeout;
 var gm_error = false;
 
@@ -43,10 +43,12 @@ function displayChart() {
   if (chart) { google.visualization.events.removeAllListeners(chart); }
   var data = new google.visualization.DataTable();
   data.addColumn('number', 'id');
-  data.addColumn('number', 'altitude');
-  var altLen = altitudes.length;
-  for (var i = 0; i < altLen; i++) {
-    data.addRow([(i + 1), Math.round((altitudes[i] * factor_m))]);
+  data.addColumn('number', lang['altitude']);
+
+  for (var id in altitudes) {
+    if (altitudes.hasOwnProperty(id)) {
+      data.addRow([parseInt(id) + 1, Math.round((altitudes[id] * factor_m))]);
+    }
   }
 
   var options = {
@@ -58,7 +60,7 @@ function displayChart() {
   chart = new google.visualization.LineChart(document.getElementById('chart'));
   chart.draw(data, options);
 
-  addChartEvent(chart);
+  addChartEvent(chart, data);
 }
 
 function toggleChart(i) {
@@ -80,7 +82,7 @@ function toggleChart(i) {
 
 function toggleChartLink() {
   var link = document.getElementById('altitudes');
-  if (altitudes.length > 1) {
+  if (Object.keys(altitudes).length > 1) {
     link.style.visibility = 'visible';
   } else {
     link.style.visibility = 'hidden';
@@ -145,7 +147,7 @@ function loadTrack(userid, trackid, update) {
   setLoader(title);
 }
 
-function parsePosition(p) {
+function parsePosition(p, id) {
   // read data
   var latitude = getNode(p, 'latitude');
   var longitude = getNode(p, 'longitude');
@@ -153,7 +155,7 @@ function parsePosition(p) {
   if (altitude != null) {
     altitude = parseInt(altitude);
     // save altitudes for chart
-    altitudes.push(altitude);
+    altitudes[id] = altitude;
   }
   var speed = getNode(p, 'speed'); // may be null
   if (speed != null) { speed = parseInt(speed); }
