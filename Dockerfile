@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-MAINTAINER Bartek Fabiszewski (https://github.com/bfabiszewski)
+LABEL maintainer="Bartek Fabiszewski (https://github.com/bfabiszewski)"
 
 ARG DB_ROOT_PASS=secret1
 ARG DB_USER_PASS=secret2
