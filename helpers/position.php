@@ -83,16 +83,18 @@
     * @param int $time Unix time stamp
     * @param double $lat
     * @param double $lon
-    * @param double $altitude
-    * @param double $speed
-    * @param double $bearing
-    * @param int $accuracy
-    * @param string $provider
-    * @param string $comment
-    * @param int $imageId
+    * @param double $altitude Optional
+    * @param double $speed Optional
+    * @param double $bearing Optional
+    * @param int $accuracy Optional
+    * @param string $provider Optional
+    * @param string $comment Optional
+    * @param int $imageId Optional
     * @return int|bool New position id in database, false on error
     */
-    public static function add($userId, $trackId, $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
+    public static function add($userId, $trackId, $timestamp, $lat, $lon,
+                               $altitude = NULL, $speed = NULL, $bearing = NULL, $accuracy = NULL,
+                               $provider = NULL, $comment = NULL, $imageId = NULL) {
       $positionId = false;
       if (!is_null($lat) && !is_null($lon) && !is_null($timestamp) && !empty($userId) && !empty($trackId)) {
         $track = new uTrack($trackId);
