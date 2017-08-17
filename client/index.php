@@ -45,8 +45,7 @@ switch ($action) {
     $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
     $pass = isset($_REQUEST['password']) ? $_REQUEST['password'] : NULL;
     if (!empty($login) && !empty($pass)) {
-      $newUser = new uUser();
-      $newId = $newUser->add($login, $pass);
+      $newId = uUser::add($login, $pass);
       if ($newId !== false) {
         // return user id
         $response['userid'] = $newId;
@@ -66,8 +65,7 @@ switch ($action) {
       break;
     }
     require_once(ROOT_DIR . "/helpers/track.php");
-    $track = new uTrack();
-    $trackId = $track->add($user->id, $trackName);
+    $trackId = uTrack::add($user->id, $trackName);
     if ($trackId === false) {
       setError($response, "Server error");
       break;
@@ -96,8 +94,7 @@ switch ($action) {
     }
 
     require_once(ROOT_DIR . "/helpers/position.php");
-    $position = new uPosition();
-    $positionId = $position->add($user->id, $trackId,
+    $positionId = uPosition::add($user->id, $trackId,
             $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
 
     if ($positionId === false) {

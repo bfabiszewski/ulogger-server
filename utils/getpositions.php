@@ -29,13 +29,13 @@ if ($userId) {
   $positionsArr = [];
 
   if (uConfig::$public_tracks || $user->isAdmin || $user->id === $userId) {
-    $position = new uPosition();
     if ($trackId) {
       // get all track data
-      $positionsArr = $position->getAll($userId, $trackId);
+      $positionsArr = uPosition::getAll($userId, $trackId);
     } else {
       // get data only for latest point
-      if ($position->getLast($userId)->isValid) {
+      $position = uPosition::getLast($userId);
+      if ($position->isValid) {
         $positionsArr[] = $position;
       }
     }

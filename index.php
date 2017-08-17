@@ -27,21 +27,19 @@
   if ($user->isAdmin || uConfig::$public_tracks) {
     // public access or admin user
     // get last position user
-    $lastPosition = new uPosition();
-    $lastPosition->getLast();
+    $lastPosition = uPosition::getLast();
     if ($lastPosition->isValid) {
       // display track of last position user
       $displayUserId = $lastPosition->userId;
     }
     // populate users array (for <select>)
-    $usersArr = $user->getAll();
+    $usersArr = uUser::getAll();
   } else if ($user->isValid) {
     // display track of authenticated user
     $displayUserId = $user->id;
   }
 
-  $track = new uTrack();
-  $tracksArr = $track->getAll($displayUserId);
+  $tracksArr = uTrack::getAll($displayUserId);
   if (!empty($tracksArr)) {
     // get id of the latest track
     $displayTrackId = $tracksArr[0]->id;

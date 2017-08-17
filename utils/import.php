@@ -88,14 +88,12 @@ $trackCnt = 0;
 foreach ($gpx->trk as $trk) {
   $trackName = empty($trk->name) ? $gpxName : $trk->name->__toString();
   $metaName = empty($gpx->metadata->name) ? NULL : $gpx->metadata->name->__toString();
-  $track = new uTrack();
-  $trackId = $track->add($user->id, $trackName, $metaName);
+  $trackId = uTrack::add($user->id, $trackName, $metaName);
   if ($trackId === false) {
     uUtils::exitWithError($lang["servererror"]);
     break;
   }
 
-  $position = new uPosition();
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
       $time = isset($point->time) ? strtotime($point->time) : NULL;
@@ -112,7 +110,7 @@ foreach ($gpx->trk as $trk) {
         if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
         if (count($ext->provider)) { $provider = (string) $ext->provider; }
       }
-      $ret = $position->add($user->id, $trackId,
+      $ret = uPosition::add($user->id, $trackId,
                     $time, (double) $point["lat"], (double) $point["lon"], $altitude,
                     $speed, $bearing, $accuracy, $provider, NULL, NULL);
       if ($ret === false) {

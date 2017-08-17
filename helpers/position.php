@@ -50,19 +50,29 @@
     */
     public function __construct($positionId = NULL) {
 
-      self::$db = uDb::getInstance();
-
       if (!empty($positionId)) {
         $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
-                  FROM `" . self::$db->table('positions') . "` p
-                  LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
-                  LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
+                  FROM `" . self::db()->table('positions') . "` p
+                  LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
+                  LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
                   WHERE id = ? LIMIT 1";
         $params = [ 'i', $positionId ];
         $this->loadWithQuery($query, $params);
       }
+    }
+
+    /**
+     * Get db instance
+     *
+     * @return uDb instance
+     */
+    private static function db() {
+      if (is_null(self::$db)) {
+        self::$db = uDb::getInstance();
+      }
+      return self::$db;
     }
 
    /**
@@ -82,22 +92,22 @@
     * @param int $imageId
     * @return int|bool New position id in database, false on error
     */
-    public function add($userId, $trackId, $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
+    public static function add($userId, $trackId, $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId) {
       $positionId = false;
       if (!is_null($lat) && !is_null($lon) && !is_null($timestamp) && !empty($userId) && !empty($trackId)) {
         $track = new uTrack($trackId);
         if ($track->isValid && $track->userId == $userId) {
-          $query = "INSERT INTO `" . self::$db->table('positions') . "`
+          $query = "INSERT INTO `" . self::db()->table('positions') . "`
                     (user_id, track_id,
                     time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
                     VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-          $stmt = self::$db->prepare($query);
+          $stmt = self::db()->prepare($query);
           $stmt->bind_param('iisddddddssi',
                   $userId, $trackId,
                   $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
           $stmt->execute();
-          if (!self::$db->error && !$stmt->errno) {
-            $positionId = self::$db->insert_id;
+          if (!self::db()->error && !$stmt->errno) {
+            $positionId = self::db()->insert_id;
           }
           $stmt->close();
         }
@@ -112,7 +122,7 @@
     * @param int $trackId Optional track id
     * @return bool True if success, false otherwise
     */
-    public function deleteAll($userId, $trackId = NULL) {
+    public static function deleteAll($userId, $trackId = NULL) {
       $ret = false;
       if (!empty($userId)) {
         $args = [];
@@ -124,11 +134,11 @@
           $args[0] .= "i";
           $args[2] = &$trackId;
         }
-        $query = "DELETE FROM `" . self::$db->table('positions') . "` $where";
-        $stmt = self::$db->prepare($query);
+        $query = "DELETE FROM `" . self::db()->table('positions') . "` $where";
+        $stmt = self::db()->prepare($query);
         call_user_func_array([ $stmt, 'bind_param' ], $args);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
         }
         $stmt->close();
@@ -137,13 +147,13 @@
     }
 
    /**
-    * Fill class properties with last position data from database
+    * Get last position data from database
     * (for given user if specified)
     *
     * @param int $userId Optional user id
-    * @return uPosition Self
+    * @return uPosition Position
     */
-    public function getLast($userId = NULL) {
+    public static function getLast($userId = NULL) {
       if (!empty($userId)) {
         $where = "WHERE p.user_id = ?";
         $params = [ 'i', $userId ];
@@ -154,13 +164,14 @@
       $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM `" . self::$db->table('positions') . "` p
-                LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
-                LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
+                FROM `" . self::db()->table('positions') . "` p
+                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
+                LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time DESC, p.id DESC LIMIT 1";
-      $this->loadWithQuery($query, $params);
-      return $this;
+      $position = new uPosition();
+      $position->loadWithQuery($query, $params);
+      return $position;
     }
 
    /**
@@ -170,13 +181,13 @@
     * @param int $trackId Optional limit to given track id
     * @return array|bool Array of uPosition positions, false on error
     */
-    public function getAll($userId = NULL, $trackId = NULL) {
+    public static function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];
       if (!empty($userId)) {
-        $rules[] = "p.user_id = '" . self::$db->real_escape_string($userId) ."'";
+        $rules[] = "p.user_id = '" . self::db()->real_escape_string($userId) ."'";
       }
       if (!empty($trackId)) {
-        $rules[] = "p.track_id = '" . self::$db->real_escape_string($trackId) ."'";
+        $rules[] = "p.track_id = '" . self::db()->real_escape_string($trackId) ."'";
       }
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);
@@ -186,18 +197,18 @@
       $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM `" . self::$db->table('positions') . "` p
-                LEFT JOIN `" . self::$db->table('users') . "` u ON (p.user_id = u.id)
-                LEFT JOIN `" . self::$db->table('tracks') . "` t ON (p.track_id = t.id)
+                FROM `" . self::db()->table('positions') . "` p
+                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
+                LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time, p.id";
-      $result = self::$db->query($query);
+      $result = self::db()->query($query);
       if ($result === false) {
         return false;
       }
       $positionsArr = [];
       while ($row = $result->fetch_assoc()) {
-        $positionsArr[] = $this->rowToObject($row);
+        $positionsArr[] = self::rowToObject($row);
       }
       $result->close();
       return $positionsArr;
@@ -236,7 +247,7 @@
     * @param array $row Row
     * @return uPosition Position
     */
-    private function rowToObject($row) {
+    private static function rowToObject($row) {
       $position = new uPosition();
       $position->id = $row['id'];
       $position->timestamp = $row['tstamp'];
@@ -264,7 +275,7 @@
     * @param array|null $bindParams Optional array of bind parameters (types, params)
     */
     private function loadWithQuery($query, $bindParams = NULL) {
-      $stmt = self::$db->prepare($query);
+      $stmt = self::db()->prepare($query);
       if (is_array($bindParams)) {
         $params = [];
         foreach ($bindParams as &$value) {

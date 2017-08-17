@@ -79,9 +79,7 @@ if (uConfig::$units == "imperial") {
 }
 
 if ($trackId && $userId) {
-  $position = new uPosition();
-  $positionsArr = [];
-  $positionsArr = $position->getAll($userId, $trackId);
+  $positionsArr = uPosition::getAll($userId, $trackId);
   if (empty($positionsArr)) {
     exit();
   }

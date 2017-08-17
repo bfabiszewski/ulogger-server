@@ -124,8 +124,7 @@ switch ($command) {
       $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
       $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
 
-      $user = new uUser();
-      if ($user->add($login, $pass) !== false) {
+      if (uUser::add($login, $pass) !== false) {
         $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
         $messages[] = $langSetup["setupcomplete"];
         $messages[] = "<span class=\"warn\">{$langSetup["disablewarn"]}</span><br>";

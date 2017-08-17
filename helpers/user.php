@@ -34,7 +34,7 @@
     public $isAdmin = false;
     public $isValid = false;
 
-    private static $db;
+    private static $db = null;
 
    /**
     * Constructor
@@ -42,10 +42,9 @@
     * @param string $login Login
     */
     public function __construct($login = NULL) {
-      self::$db = uDb::getInstance();
       if (!empty($login)) {
-        $sql = "SELECT id, login, password FROM `" . self::$db->table('users') . "` WHERE login = ? LIMIT 1";
-        $stmt = self::$db->prepare($sql);
+        $sql = "SELECT id, login, password FROM `" . self::db()->table('users') . "` WHERE login = ? LIMIT 1";
+        $stmt = self::db()->prepare($sql);
         $stmt->bind_param('s', $login);
         $stmt->execute();
         $stmt->bind_result($this->id, $this->login, $this->hash);
@@ -53,8 +52,20 @@
           $this->isValid = true;
         }
         $stmt->close();
-        $this->isAdmin = $this->isAdmin($this->login);
+        $this->isAdmin = self::isAdmin($this->login);
       }
+    }
+
+    /**
+     * Get db instance
+     *
+     * @return uDb instance
+     */
+    private static function db() {
+      if (is_null(self::$db)) {
+        self::$db = uDb::getInstance();
+      }
+      return self::$db;
     }
 
    /**
@@ -64,16 +75,16 @@
     * @param string $pass Password
     * @return int|bool New user id, false on error
     */
-    public function add($login, $pass) {
+    public static function add($login, $pass) {
       $userid = false;
-      if (!empty($login) && !empty($pass) && $this->validPassStrength($pass)) {
+      if (!empty($login) && !empty($pass) && self::validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO `" . self::$db->table('users') . "` (login, password) VALUES (?, ?)";
-        $stmt = self::$db->prepare($sql);
+        $sql = "INSERT INTO `" . self::db()->table('users') . "` (login, password) VALUES (?, ?)";
+        $stmt = self::db()->prepare($sql);
         $stmt->bind_param('ss', $login, $hash);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
-          $userid = self::$db->insert_id;
+        if (!self::db()->error && !$stmt->errno) {
+          $userid = self::db()->insert_id;
         }
         $stmt->close();
       }
@@ -90,21 +101,19 @@
       $ret = false;
       if ($this->isValid) {
         // remove positions
-        $position = new uPosition();
-        if ($position->deleteAll($this->id) === false) {
+        if (uPosition::deleteAll($this->id) === false) {
           return false;
         }
         // remove tracks
-        $track = new uTrack();
-        if ($track->deleteAll($this->id) === false) {
+        if (uTrack::deleteAll($this->id) === false) {
           return false;
         }
         // remove user
-        $sql = "DELETE FROM `" . self::$db->table('users') . "` WHERE id = ?";
-        $stmt = self::$db->prepare($sql);
+        $sql = "DELETE FROM `" . self::db()->table('users') . "` WHERE id = ?";
+        $stmt = self::db()->prepare($sql);
         $stmt->bind_param('i', $this->id);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
           $this->id = NULL;
           $this->login = NULL;
@@ -125,13 +134,13 @@
     */
     public function setPass($pass) {
       $ret = false;
-      if (!empty($this->login) && !empty($pass) && $this->validPassStrength($pass)) {
+      if (!empty($this->login) && !empty($pass) && self::validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "UPDATE `" . self::$db->table('users') . "` SET password = ? WHERE login = ?";
-        $stmt = self::$db->prepare($sql);
+        $sql = "UPDATE `" . self::db()->table('users') . "` SET password = ? WHERE login = ?";
+        $stmt = self::db()->prepare($sql);
         $stmt->bind_param('ss', $hash, $this->login);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
         }
         $stmt->close();
@@ -155,7 +164,7 @@
     * @param String $password Password
     * @return bool True if matches, false otherwise
     */
-    private function validPassStrength($password) {
+    private static function validPassStrength($password) {
       return preg_match(uConfig::passRegex(), $password);
     }
 
@@ -187,15 +196,15 @@
     *
     * @return array|bool Array of uUser users, false on error
     */
-    public function getAll() {
-      $query = "SELECT id, login, password FROM `" . self::$db->table('users') . "` ORDER BY login";
-      $result = self::$db->query($query);
+    public static function getAll() {
+      $query = "SELECT id, login, password FROM `" . self::db()->table('users') . "` ORDER BY login";
+      $result = self::db()->query($query);
       if ($result === false) {
         return false;
       }
       $userArr = [];
       while ($row = $result->fetch_assoc()) {
-        $userArr[] = $this->rowToObject($row);
+        $userArr[] = self::rowToObject($row);
       }
       $result->close();
       return $userArr;
@@ -207,12 +216,12 @@
     * @param array $row Row
     * @return uUser User
     */
-    private function rowToObject($row) {
+    private static function rowToObject($row) {
       $user = new uUser();
       $user->id = $row['id'];
       $user->login = $row['login'];
       $user->hash = $row['password'];
-      $user->isAdmin = $this->isAdmin($row['login']);
+      $user->isAdmin = self::isAdmin($row['login']);
       $user->isValid = true;
       return $user;
     }
@@ -223,7 +232,7 @@
     * @param string $login Login
     * @return bool True if admin, false otherwise
     */
-    private function isAdmin($login) {
+    private static function isAdmin($login) {
       return (!empty(uConfig::$admin_user) && uConfig::$admin_user == $login);
     }
   }

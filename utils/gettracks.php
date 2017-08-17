@@ -27,8 +27,7 @@ if ($userId) {
   $tracksArr = [];
 
   if (uConfig::$public_tracks || $user->isAdmin || $user->id === $userId) {
-    $track = new uTrack();
-    $tracksArr = $track->getAll($userId);
+    $tracksArr = uTrack::getAll($userId);
   }
 
   header("Content-type: text/xml");

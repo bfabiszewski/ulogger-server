@@ -35,7 +35,7 @@
       if ($aUser->isValid) {
         uUtils::exitWithError($lang["userexists"]);
       }
-      if (empty($pass) || $aUser->add($login, $pass) === false) {
+      if (empty($pass) || uUser::add($login, $pass) === false) {
         uUtils::exitWithError($lang["servererror"]);
       }
       break;

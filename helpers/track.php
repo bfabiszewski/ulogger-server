@@ -31,7 +31,7 @@
 
     public $isValid = false;
 
-    private static $db;
+    private static $db = null;
 
    /**
     * Constructor
@@ -40,11 +40,9 @@
     */
     public function __construct($trackId = NULL) {
 
-      self::$db = uDb::getInstance();
-
       if (!empty($trackId)) {
-        $query = "SELECT id, user_id, name, comment FROM `" . self::$db->table('tracks') . "` WHERE id = ? LIMIT 1";
-        $stmt = self::$db->prepare($query);
+        $query = "SELECT id, user_id, name, comment FROM `" . self::db()->table('tracks') . "` WHERE id = ? LIMIT 1";
+        $stmt = self::db()->prepare($query);
         $stmt->bind_param('i', $trackId);
         $stmt->execute();
         $stmt->bind_result($this->id, $this->userId, $this->name, $this->comment);
@@ -56,6 +54,18 @@
       }
     }
 
+    /**
+     * Get db instance
+     *
+     * @return uDb instance
+     */
+    private static function db() {
+      if (is_null(self::$db)) {
+        self::$db = uDb::getInstance();
+      }
+      return self::$db;
+    }
+
    /**
     * Add new track
     *
@@ -64,15 +74,15 @@
     * @param string $comment Optional comment
     * @return int|bool New track id, false on error
     */
-    public function add($userId, $name, $comment = NULL) {
+    public static function add($userId, $name, $comment = NULL) {
       $trackId = false;
       if (!empty($userId) && !empty($name)) {
-        $query = "INSERT INTO `" . self::$db->table('tracks') . "` (user_id, name, comment) VALUES (?, ?, ?)";
-        $stmt = self::$db->prepare($query);
+        $query = "INSERT INTO `" . self::db()->table('tracks') . "` (user_id, name, comment) VALUES (?, ?, ?)";
+        $stmt = self::db()->prepare($query);
         $stmt->bind_param('iss', $userId, $name, $comment);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
-          $trackId = self::$db->insert_id;
+        if (!self::db()->error && !$stmt->errno) {
+          $trackId = self::db()->insert_id;
         }
         $stmt->close();
       }
@@ -88,16 +98,15 @@
       $ret = false;
       if ($this->isValid) {
         // delete positions
-        $position = new uPosition();
-        if ($position->deleteAll($this->userId, $this->id) === false) {
+        if (uPosition::deleteAll($this->userId, $this->id) === false) {
           return false;
         }
         // delete track metadata
-        $query = "DELETE FROM `" . self::$db->table('tracks') . "` WHERE id = ?";
-        $stmt = self::$db->prepare($query);
+        $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE id = ?";
+        $stmt = self::db()->prepare($query);
         $stmt->bind_param('i', $this->id);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
           $this->id = NULL;
           $this->userId = NULL;
@@ -123,11 +132,11 @@
       if (is_null($comment)) { $comment = $this->comment; }
       if ($comment == "") { $comment = NULL; }
       if ($this->isValid) {
-        $query = "UPDATE `" . self::$db->table('tracks') . "` SET name = ?, comment = ? WHERE id = ?";
-        $stmt = self::$db->prepare($query);
+        $query = "UPDATE `" . self::db()->table('tracks') . "` SET name = ?, comment = ? WHERE id = ?";
+        $stmt = self::db()->prepare($query);
         $stmt->bind_param('ssi', $name, $comment, $this->id);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
           $this->name = $name;
           $this->comment = $comment;
@@ -143,14 +152,14 @@
     * @param string $userId User id
     * @return bool True if success, false otherwise
     */
-    public function deleteAll($userId) {
+    public static function deleteAll($userId) {
       $ret = false;
       if (!empty($userId)) {
-        $query = "DELETE FROM `" . self::$db->table('tracks') . "` WHERE user_id = ?";
-        $stmt = self::$db->prepare($query);
+        $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE user_id = ?";
+        $stmt = self::db()->prepare($query);
         $stmt->bind_param('i', $userId);
         $stmt->execute();
-        if (!self::$db->error && !$stmt->errno) {
+        if (!self::db()->error && !$stmt->errno) {
           $ret = true;
         }
         $stmt->close();
@@ -164,20 +173,20 @@
     * @param int $userId Optional limit to user id
     * @return array|bool Array of uTrack tracks, false on error
     */
-    public function getAll($userId = NULL) {
+    public static function getAll($userId = NULL) {
       if (!empty($userId)) {
-        $where = "WHERE user_id='" . self::$db->real_escape_string($userId) ."'";
+        $where = "WHERE user_id='" . self::db()->real_escape_string($userId) ."'";
       } else {
         $where = "";
       }
-      $query = "SELECT id, user_id, name, comment FROM `" . self::$db->table('tracks') . "` $where ORDER BY id DESC";
-      $result = self::$db->query($query);
+      $query = "SELECT id, user_id, name, comment FROM `" . self::db()->table('tracks') . "` $where ORDER BY id DESC";
+      $result = self::db()->query($query);
       if ($result === false) {
         return false;
       }
       $trackArr = [];
       while ($row = $result->fetch_assoc()) {
-        $trackArr[] = $this->rowToObject($row);
+        $trackArr[] = self::rowToObject($row);
       }
       $result->close();
       return $trackArr;
@@ -189,7 +198,7 @@
     * @param array $row Row
     * @return uTrack Track
     */
-    private function rowToObject($row) {
+    private static function rowToObject($row) {
       $track = new uTrack();
       $track->id = $row['id'];
       $track->userId = $row['user_id'];
