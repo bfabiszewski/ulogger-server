@@ -44,9 +44,11 @@
     * @param string $user
     * @param string $pass
     * @param string $name
+    * @param int $port
+    * @param string $socket
     */
-    public function __construct($host, $user, $pass, $name) {
-      parent::__construct($host, $user, $pass, $name);
+    public function __construct($host, $user, $pass, $name, $port = null, $socket = null) {
+      @parent::__construct($host, $user, $pass, $name, $port, $socket);
       if ($this->connect_error) {
         if (defined('headless')) {
           header("HTTP/1.1 503 Service Unavailable");
@@ -55,19 +57,28 @@
         die("Database connection error (" . $this->connect_error . ")");
       }
       $this->set_charset('utf8');
+      $this->initTables();
+    }
+
+    /**
+     * Initialize table names based on config
+     */
+    private function initTables() {
+      self::$tables = [];
+      $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
+      self::$tables['positions'] = $prefix . "positions";
+      self::$tables['tracks'] = $prefix . "tracks";
+      self::$tables['users'] = $prefix . "users";
     }
 
    /**
     * Returns singleton instance
+    *
+    * @return object Singleton instance
     */
     public static function getInstance() {
       if (!self::$instance) {
         self::$instance = new self(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
-        self::$tables = [];
-        $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
-        self::$tables['positions'] = $prefix . "positions";
-        self::$tables['tracks'] = $prefix . "tracks";
-        self::$tables['users'] = $prefix . "users";
       }
       return self::$instance;
     }
