@@ -155,14 +155,19 @@
     public static function deleteAll($userId) {
       $ret = false;
       if (!empty($userId)) {
-        $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE user_id = ?";
-        $stmt = self::db()->prepare($query);
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
-          $ret = true;
+        // remove all positions
+        if (uPosition::deleteAll($userId) === true) {
+          // remove all tracks
+          $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE user_id = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->bind_param('i', $userId);
+          $stmt->execute();
+          if (!self::db()->error && !$stmt->errno) {
+            $ret = true;
+          }
+          $stmt->close();
         }
-        $stmt->close();
+
       }
       return $ret;
     }

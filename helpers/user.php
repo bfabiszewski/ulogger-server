@@ -100,11 +100,7 @@
     public function delete() {
       $ret = false;
       if ($this->isValid) {
-        // remove positions
-        if (uPosition::deleteAll($this->id) === false) {
-          return false;
-        }
-        // remove tracks
+        // remove tracks and positions
         if (uTrack::deleteAll($this->id) === false) {
           return false;
         }
