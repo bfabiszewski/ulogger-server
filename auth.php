@@ -21,7 +21,7 @@ if (defined('headless')) {
   if (ob_get_level()) {
     ob_end_clean();
   }
-  error_reporting(0);
+  ini_set('display_errors', '0');
 }
 define('ROOT_DIR', __DIR__);
 require_once(ROOT_DIR . "/helpers/config.php");
