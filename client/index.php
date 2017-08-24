@@ -92,7 +92,7 @@ switch ($action) {
     $imageId = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
     $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
 
-    if (is_null($lat) || is_null($lon) || is_null($timestamp) || is_null($trackId)) {
+    if (!is_numeric($lat) || !is_numeric($lon) || !is_numeric($timestamp) || !is_numeric($trackId)) {
       setError($response, "Missing required parameter");
       break;
     }
