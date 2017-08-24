@@ -65,7 +65,7 @@ switch ($action) {
   case "addtrack":
     $trackName = isset($_REQUEST['track']) ? $_REQUEST['track'] : NULL;
     if (empty($trackName)) {
-      setError($response, "missing required parameter");
+      setError($response, "Missing required parameter");
       break;
     }
     require_once(ROOT_DIR . "/helpers/track.php");
@@ -93,7 +93,7 @@ switch ($action) {
     $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
 
     if (is_null($lat) || is_null($lon) || is_null($timestamp) || is_null($trackId)) {
-      setError($response, "missing required parameter");
+      setError($response, "Missing required parameter");
       break;
     }
 
@@ -105,7 +105,11 @@ switch ($action) {
       setError($response, "Server error");
     }
     break;
-}
+
+  default:
+    setError($response, "Unknown command");
+    break;
+  }
 
 header('Content-Type: application/json');
 echo json_encode($response);
