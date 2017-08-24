@@ -111,8 +111,12 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) 
       session_name('ulogger');
       session_start();
       $user->storeInSession();
-      $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
-      header("Location: $ssl://$url");
+      if (!defined('client')) {
+        // redirect
+        $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
+        header("Location: $ssl://$url");
+        exit();
+      }
     } else {
       // unsuccessful
       $error = "?auth_error=1";
@@ -130,8 +134,8 @@ if (!$user->isValid && (uConfig::$require_authentication || defined('client'))) 
         $url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
         header("Location: $ssl://$url$error");
       }
+      exit();
     }
-    exit();
   }
   /* end of authentication */
 }
