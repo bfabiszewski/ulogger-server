@@ -42,6 +42,10 @@ switch ($action) {
 
   // action: adduser (currently unused)
   case "adduser":
+    if (!$user->isAdmin) {
+      setError($response, "User not authorized");
+      break;
+    }
     $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
     $pass = isset($_REQUEST['password']) ? $_REQUEST['password'] : NULL;
     if (!empty($login) && !empty($pass)) {
