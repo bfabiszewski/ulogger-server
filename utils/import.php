@@ -96,7 +96,7 @@ foreach ($gpx->trk as $trk) {
 
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
-      $time = isset($point->time) ? strtotime($point->time) : NULL;
+      $time = isset($point->time) ? strtotime($point->time) : 0;
       $altitude = isset($point->ele) ? (double) $point->ele : NULL;
       $speed = NULL;
       $bearing = NULL;
