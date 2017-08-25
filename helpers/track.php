@@ -89,6 +89,29 @@
       return $trackId;
     }
 
+    /**
+     * Add new position to track
+     *
+     * @param int $userId
+     * @param int $time Unix time stamp
+     * @param double $lat
+     * @param double $lon
+     * @param double $altitude Optional
+     * @param double $speed Optional
+     * @param double $bearing Optional
+     * @param int $accuracy Optional
+     * @param string $provider Optional
+     * @param string $comment Optional
+     * @param int $imageId Optional
+     * @return int|bool New position id in database, false on error
+     */
+    public function addPosition($userId, $timestamp, $lat, $lon,
+                                $altitude = NULL, $speed = NULL, $bearing = NULL, $accuracy = NULL,
+                                $provider = NULL, $comment = NULL, $imageId = NULL) {
+      return $ret = uPosition::add($userId, $this->id, $timestamp, $lat, $lon,
+                                   $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+    }
+
    /**
     * Delete track with all positions
     *
