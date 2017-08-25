@@ -93,6 +93,7 @@ foreach ($gpx->trk as $trk) {
     uUtils::exitWithError($lang["servererror"]);
     break;
   }
+  $track = new uTrack($trackId);
 
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
@@ -110,10 +111,11 @@ foreach ($gpx->trk as $trk) {
         if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
         if (count($ext->provider)) { $provider = (string) $ext->provider; }
       }
-      $ret = uPosition::add($user->id, $trackId,
+      $ret = $track->addPosition($auth->user->id,
                     $time, (double) $point["lat"], (double) $point["lon"], $altitude,
                     $speed, $bearing, $accuracy, $provider, NULL, NULL);
       if ($ret === false) {
+        $track->delete();
         uUtils::exitWithError($lang["servererror"]);
       }
     }
