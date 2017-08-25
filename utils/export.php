@@ -17,8 +17,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/position.php");
+require_once(ROOT_DIR . "/lang.php");
+
+
+$auth = new uAuth();
 
 /**
  * Add kml marker style element
@@ -42,7 +46,7 @@ function addStyle($xml, $name, $url) {
 /**
  * Convert seconds to [day], hour, minute, second string
  *
- * @param [type] $s Number of seconds
+ * @param int $s Number of seconds
  * @return string [d ]hhmmss
  */
 function toHMS($s) {
@@ -57,7 +61,8 @@ $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "kml";
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
 
-if (!uConfig::$public_tracks && !$user->isAdmin && $user->id !== $userId) {
+if (!uConfig::$public_tracks &&
+    (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $userId))) {
   // unauthorized
   exit();
 }

@@ -50,10 +50,7 @@
     public function __construct($host, $user, $pass, $name, $port = null, $socket = null) {
       @parent::__construct($host, $user, $pass, $name, $port, $socket);
       if ($this->connect_error) {
-        if (defined('headless')) {
-          header("HTTP/1.1 503 Service Unavailable");
-          exit;
-        }
+        header("HTTP/1.1 503 Service Unavailable");
         die("Database connection error (" . $this->connect_error . ")");
       }
       $this->set_charset('utf8');

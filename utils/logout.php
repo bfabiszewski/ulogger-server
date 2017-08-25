@@ -17,15 +17,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-session_name('ulogger');
-session_start();
-$_SESSION = NULL;
-if (isset($_COOKIE[session_name('ulogger') ])) {
-  setcookie(session_name('ulogger'), '', time() - 42000, '/');
-}
-session_destroy();
-$ssl = ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https");
-$url = str_replace("//", "/", $_SERVER['HTTP_HOST'] . dirname(dirname($_SERVER['SCRIPT_NAME'])) . "/index.php");
-header("Location: $ssl://$url");
+include_once(dirname(__DIR__) . "/helpers/auth.php");
+
+$auth = new uAuth();
+$auth->logOutWithRedirect(dirname(dirname($_SERVER['SCRIPT_NAME'])) . "/");
 
 ?>

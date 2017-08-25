@@ -17,16 +17,18 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-define("headless", true);
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/track.php");
+
+$auth = new uAuth();
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 
 if ($userId) {
   $tracksArr = [];
 
-  if (uConfig::$public_tracks || $user->isAdmin || $user->id === $userId) {
+  if (uConfig::$public_tracks ||
+      ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     $tracksArr = uTrack::getAll($userId);
   }
 

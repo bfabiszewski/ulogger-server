@@ -17,10 +17,11 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-define("headless", true);
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/position.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
+
+$auth = new uAuth();
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
@@ -28,7 +29,8 @@ $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (
 if ($userId) {
   $positionsArr = [];
 
-  if (uConfig::$public_tracks || $user->isAdmin || $user->id === $userId) {
+  if (uConfig::$public_tracks ||
+      ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     if ($trackId) {
       // get all track data
       $positionsArr = uPosition::getAll($userId, $trackId);

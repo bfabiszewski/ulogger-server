@@ -17,10 +17,11 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  define("headless", true);
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+  require_once(dirname(__DIR__) . "/helpers/auth.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
+
+  $auth = new uAuth();
 
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $trackId = isset($_REQUEST['trackid']) ? trim($_REQUEST['trackid']) : NULL;
@@ -29,7 +30,8 @@
     uUtils::exitWithError($lang["servererror"]);
   }
   $track = new uTrack($trackId);
-  if (!$track->isValid || (!$user->isAdmin && $user->id != $track->userId)) {
+  if (!$track->isValid ||
+      (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id != $track->userId))) {
     uUtils::exitWithError($lang["servererror"]);
   }
 

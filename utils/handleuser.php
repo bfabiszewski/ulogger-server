@@ -17,14 +17,15 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  define("headless", true);
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+  require_once(dirname(__DIR__) . "/helpers/auth.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
+
+  $auth = new uAuth();
 
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
-  if (!$user->isAdmin || empty($action) || empty($login) || $user->login == $login) {
+  if (!$auth->isAuthenticated() || !$auth->isAdmin || $auth->user->login == $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }
 

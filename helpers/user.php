@@ -173,7 +173,7 @@
 
    /**
     * Fill uUser object properties from session data
-    * @return uPosition Self
+    * @return uUser
     */
     public function getFromSession() {
       if (isset($_SESSION['user'])) {

@@ -17,11 +17,13 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-define("headless", true);
-require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 require_once(ROOT_DIR . "/helpers/position.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
+require_once(ROOT_DIR . "/lang.php");
+
+$auth = new uAuth();
 
 $uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
 $uploadErrors[UPLOAD_ERR_FORM_SIZE] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
@@ -31,8 +33,8 @@ $uploadErrors[UPLOAD_ERR_NO_TMP_DIR] = "Missing a temporary folder";
 $uploadErrors[UPLOAD_ERR_CANT_WRITE] = "Failed to write file to disk";
 $uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped the file upload";
 
-if (!$user->isValid) {
-  uUtils::exitWithError($lang["servererror"]);
+if (!$auth->isAuthenticated()) {
+  uUtils::exitWithError($lang["private"]);
 }
 
 if (!isset($_FILES["gpx"])) {
@@ -88,7 +90,7 @@ $trackCnt = 0;
 foreach ($gpx->trk as $trk) {
   $trackName = empty($trk->name) ? $gpxName : $trk->name->__toString();
   $metaName = empty($gpx->metadata->name) ? NULL : $gpx->metadata->name->__toString();
-  $trackId = uTrack::add($user->id, $trackName, $metaName);
+  $trackId = uTrack::add($auth->user->id, $trackName, $metaName);
   if ($trackId === false) {
     uUtils::exitWithError($lang["servererror"]);
     break;

@@ -17,9 +17,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  define("headless", true);
-  require_once(dirname(__DIR__) . "/auth.php"); // sets $user
+  require_once(dirname(__DIR__) . "/helpers/auth.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
+
+  $auth = new uAuth();
+  if (!$auth->isAuthenticated()) {
+    $auth->sendUnauthorizedHeader();
+    uUtils::exitWithError("Unauthorized");
+  }
 
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $oldpass = isset($_REQUEST['oldpass']) ? $_REQUEST['oldpass'] : NULL;
@@ -27,7 +32,7 @@
   if (empty($pass)) {
     uUtils::exitWithError("Empty password");
   }
-  if ($user->isAdmin && !empty($login)) {
+  if ($auth->isAdmin() && !empty($login)) {
     // different user, only admin
     $passUser = new uUser($login);
     if (!$passUser->valid) {
@@ -35,7 +40,7 @@
     }
   } else {
     // current user
-    $passUser = $user;
+    $passUser = $auth->user;
     if (!$passUser->validPassword($oldpass)) {
       uUtils::exitWithError("Wrong old password");
     }

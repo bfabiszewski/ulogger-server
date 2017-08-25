@@ -17,14 +17,26 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(__DIR__ . "/auth.php"); // sets $user
+  require_once(__DIR__ . "/helpers/auth.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
   require_once(ROOT_DIR . "/helpers/position.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
+  require_once(ROOT_DIR . "/lang.php");
+
+  $auth = new uAuth();
+
+  if (!$auth->isAuthenticated() && $auth->isLoginAttempt()) {
+    $auth->exitWithRedirect("/login.php?auth_error=1");
+  }
+  if (!$auth->isAuthenticated() && uConfig::$require_authentication) {
+    $auth->exitWithRedirect("/login.php");
+  }
+
 
   $displayUserId = NULL;
   $usersArr = [];
-  if ($user->isAdmin || uConfig::$public_tracks) {
+  if ($auth->isAdmin() || uConfig::$public_tracks) {
     // public access or admin user
     // get last position user
     $lastPosition = uPosition::getLast();
@@ -34,9 +46,9 @@
     }
     // populate users array (for <select>)
     $usersArr = uUser::getAll();
-  } else if ($user->isValid) {
+  } else if ($auth->isAuthenticated()) {
     // display track of authenticated user
-    $displayUserId = $user->id;
+    $displayUserId = $auth->user->id;
   }
 
   $tracksArr = uTrack::getAll($displayUserId);
@@ -53,18 +65,7 @@
 <html>
   <head>
     <title><?= $lang["title"] ?></title>
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="icons/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="icons/favicon-16x16.png" sizes="16x16">
-    <link rel="manifest" href="manifest.json">
-    <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="icons/favicon.ico">
-    <meta name="msapplication-config" content="browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <?php include("meta.php"); ?>
     <script>
       var interval = '<?= uConfig::$interval ?>';
       var userid = '<?= ($displayUserId) ? $displayUserId : -1 ?>';
@@ -79,8 +80,8 @@
       var init_latitude = '<?= uConfig::$init_latitude ?>';
       var init_longitude = '<?= uConfig::$init_longitude ?>';
       var lang = <?= json_encode($lang) ?>;
-      var admin = <?= json_encode($user->isAdmin) ?>;
-      var auth = '<?= ($user->isValid) ? $user->login : "null" ?>';
+      var admin = <?= json_encode($auth->isAdmin()) ?>;
+      var auth = '<?= ($auth->isAuthenticated()) ? $auth->user->login : "null" ?>';
       var pass_regex = <?= uConfig::passRegex() ?>;
     </script>
     <script type="text/javascript" src="js/main.js"></script>
@@ -92,10 +93,10 @@
       <script type="text/javascript" src="//openlayers.org/api/OpenLayers.js"></script>
       <script type="text/javascript" src="js/api_openlayers.js"></script>
     <?php endif; ?>
-    <?php if ($user->isAdmin): ?>
+    <?php if ($auth->isAdmin()): ?>
       <script type="text/javascript" src="js/admin.js"></script>
     <?php endif; ?>
-    <?php if ($user->isValid): ?>
+    <?php if ($auth->isAuthenticated()): ?>
       <script type="text/javascript" src="js/track.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="js/pass.js"></script>
@@ -109,16 +110,16 @@
     <div id="menu">
       <div id="menu-content">
 
-        <?php if ($user->isValid): ?>
+        <?php if ($auth->isAuthenticated()): ?>
           <div id="user_menu">
-            <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($user->login) ?></a>
+            <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
             <div id="user_dropdown" class="dropdown">
               <a href="javascript:void(0)" onclick="changePass()"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
               <a href="utils/logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
             </div>
           </div>
         <?php else: ?>
-          <a href="index.php?force_login=1"><img class="icon" alt="<?= $lang["login"] ?>" src="images/key.svg"> <?= $lang["login"] ?></a>
+          <a href="login.php"><img class="icon" alt="<?= $lang["login"] ?>" src="images/key.svg"> <?= $lang["login"] ?></a>
         <?php endif; ?>
 
         <div id="user">
@@ -193,7 +194,7 @@
           <a class="menulink" href="javascript:void(0);" onclick="exportFile('gpx', userid, trackid);">gpx</a>
         </div>
 
-        <?php if ($user->isValid): ?>
+        <?php if ($auth->isAuthenticated()): ?>
           <div id="import">
             <div class="menutitle u"><?= $lang["import"] ?></div>
             <form id="importForm" enctype="multipart/form-data" method="post">
@@ -205,7 +206,7 @@
 
           <div id="admin_menu">
             <div class="menutitle u"><?= $lang["adminmenu"] ?></div>
-            <?php if ($user->isAdmin): ?>
+            <?php if ($auth->isAdmin()): ?>
               <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
               <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>
             <?php endif; ?>
