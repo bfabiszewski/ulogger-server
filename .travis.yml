@@ -1,0 +1,26 @@
+language: php
+
+sudo: required
+
+php:
+  - 7.0
+
+env:
+  - DB_HOST="localhost"
+  - DB_NAME="ulogger"
+  - DB_USER="ulogger"
+  - DB_PASS="secret2"
+  - DB_PORT=8081
+  - ULOGGER_URL="http://127.0.0.1:8080"
+
+services:
+  - docker
+
+before_install:
+  - docker build -t ulogger .
+  - docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger
+  - composer install
+  - until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
+
+script:
+  - ./vendor/bin/phpunit  -c .tests/phpunit.xml

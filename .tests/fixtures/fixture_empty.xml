@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="ulogger">
+	<table_data name="positions">
+	</table_data>
+	<table_data name="tracks">
+	</table_data>
+	<table_data name="users">
+	</table_data>
+</database>
+</mysqldump>

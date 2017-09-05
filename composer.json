@@ -1,0 +1,13 @@
+{
+    "require": {
+        "phpunit/phpunit": "^5.7",
+        "vlucas/phpdotenv": "^2.4",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    },
+    "require-dev": {
+        "phpunit/dbunit": "^2.0"
+    }
+}

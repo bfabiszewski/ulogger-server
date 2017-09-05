@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="ulogger">
+	<table_data name="positions">
+	</table_data>
+	<table_data name="tracks">
+	</table_data>
+	<table_data name="users">
+    <!-- admin:admin -->
+    <row>
+      <field name="id">1</field>
+      <field name="login">admin</field>
+      <field name="password">$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq</field>
+    </row>
+	</table_data>
+</database>
+</mysqldump>
