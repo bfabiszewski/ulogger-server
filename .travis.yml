@@ -7,7 +7,7 @@ php:
 
 env:
   global:
-    - DB_HOST=localhost
+    - DB_HOST=127.0.0.1
     - DB_NAME=ulogger
     - DB_USER=ulogger
     - DB_PASS=secret2
