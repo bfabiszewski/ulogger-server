@@ -6,12 +6,13 @@ php:
   - 7.0
 
 env:
-  - DB_HOST="localhost"
-  - DB_NAME="ulogger"
-  - DB_USER="ulogger"
-  - DB_PASS="secret2"
-  - DB_PORT=8081
-  - ULOGGER_URL="http://127.0.0.1:8080"
+  global:
+    - DB_HOST=localhost
+    - DB_NAME=ulogger
+    - DB_USER=ulogger
+    - DB_PASS=secret2
+    - DB_PORT=8081
+    - ULOGGER_URL="http://127.0.0.1:8080"
 
 services:
   - docker
