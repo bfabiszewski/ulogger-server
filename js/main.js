@@ -531,9 +531,7 @@ function addScript(url) {
   var tag = document.createElement('script');
   tag.setAttribute('type', 'text/javascript');
   tag.setAttribute('src', url);
-  if (typeof tag != 'undefined') {
-    document.getElementsByTagName('head')[0].appendChild(tag);
-  }
+  document.getElementsByTagName('head')[0].appendChild(tag);
 }
 
 function isScriptLoaded(url) {
