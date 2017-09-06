@@ -35,5 +35,5 @@ addons:
       description: "Build submitted via Travis CI"
     notification_email: scan.coverity@fabiszewski.net
     build_command_prepend: ""
-    build_command: "cov-build --dir cov-int --no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/"
+    build_command: "--no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/"
     branch_pattern: master
