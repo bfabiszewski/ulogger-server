@@ -39,7 +39,7 @@
     <div id="login">
       <div id="title"><?=  $lang["title"] ?></div>
       <div id="subtitle"><?=  $lang["private"] ?></div>
-      <form action="/" method="post">
+      <form action="<?= BASE_URL ?>" method="post">
       <?= $lang["username"] ?>:<br>
       <input type="text" name="user"><br>
       <?=  $lang["password"] ?>:<br>
@@ -48,7 +48,7 @@
       <input type="submit" value="<?= $lang["login"] ?>">
       <input type="hidden" name="action" value="auth">
       <?php if (!uConfig::$require_authentication): ?>
-        <div id="cancel"><a href="/"><?= $lang["cancel"] ?></a></div>
+        <div id="cancel"><a href="<?= BASE_URL ?>"><?= $lang["cancel"] ?></a></div>
       <?php endif; ?>
       </form>
       <div id="error"><?= (($auth_error) ? $lang["authfail"] : "") ?></div>

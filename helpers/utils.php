@@ -108,6 +108,21 @@
       exit;
     }
 
+    public static function getBaseUrl() {
+      $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] == "" || $_SERVER["HTTPS"] == "off") ? "http://" : "https://";
+      $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "";
+      if (realpath($_SERVER["SCRIPT_FILENAME"])) {
+        $scriptPath = substr(dirname(realpath($_SERVER["SCRIPT_FILENAME"])), strlen(ROOT_DIR));
+      } else {
+        // for phpunit
+        $scriptPath = substr(dirname($_SERVER["SCRIPT_FILENAME"]), strlen(ROOT_DIR));
+      }
+      $self = dirname($_SERVER["PHP_SELF"]);
+      $path = str_replace("\\", "/", substr($self, 0, strlen($self) - strlen($scriptPath)));
+
+      return $proto . str_replace("//", "/", $host . $path . "/");
+    }
+
   }
 
 ?>

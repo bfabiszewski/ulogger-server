@@ -17,4 +17,7 @@
     <logging>
       <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
     </logging>
+    <php>
+        <server name='HTTP_HOST' value='http://127.0.0.1' />
+    </php>
 </phpunit>

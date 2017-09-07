@@ -20,6 +20,6 @@
 include_once(dirname(__DIR__) . "/helpers/auth.php");
 
 $auth = new uAuth();
-$auth->logOutWithRedirect(dirname(dirname($_SERVER['SCRIPT_NAME'])) . "/");
+$auth->logOutWithRedirect();
 
 ?>

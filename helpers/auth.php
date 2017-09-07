@@ -17,8 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  define('ROOT_DIR', dirname(__DIR__));
+  if (!defined('ROOT_DIR')) { define('ROOT_DIR', dirname(__DIR__)); }
   require_once(ROOT_DIR . "/helpers/user.php");
+  require_once(ROOT_DIR . "/helpers/utils.php");
+  if (!defined('BASE_URL')) { define('BASE_URL', uUtils::getBaseUrl()); }
 
  /**
   * Authentication
@@ -143,7 +145,7 @@
      * @param string $path URL path
      * @return void
      */
-    public function logOutWithRedirect($path = NULL) {
+    public function logOutWithRedirect($path = "") {
       $this->sessionEnd();
       $this->exitWithRedirect($path);
     }
@@ -174,14 +176,8 @@
      * @param string $path Redirect URL path
      * @return void
      */
-    public function exitWithRedirect($path = NULL) {
-      $ssl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "" || $_SERVER['HTTPS'] == "off") ? "http" : "https";
-      $url = $_SERVER['HTTP_HOST'];
-      if (is_null($path)) {
-        $path = dirname($_SERVER['SCRIPT_NAME']) . "/";
-      }
-      $url = str_replace("//", "/", $url . $path);
-      header("Location: $ssl://$url");
+    public function exitWithRedirect($path = "") {
+      header("Location: " . BASE_URL . $path);
       exit();
     }
   }
