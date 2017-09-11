@@ -17,6 +17,7 @@
  */
 
 // general stuff
+var factor_kmh, unit_kmh, factor_m, unit_m, factor_km, unit_km;
 if (units == 'imperial') {
   factor_kmh = 0.62; //to mph
   unit_kmh = 'mph';
@@ -38,6 +39,9 @@ var chart;
 var altitudes = {};
 var altTimeout;
 var gm_error = false;
+var loadTime = 0;
+var auto;
+var savedBounds = null;
 
 function displayChart() {
   if (chart) { google.visualization.events.removeAllListeners(chart); }
@@ -149,8 +153,8 @@ function loadTrack(userid, trackid, update) {
 
 function parsePosition(p, id) {
   // read data
-  var latitude = getNode(p, 'latitude');
-  var longitude = getNode(p, 'longitude');
+  var latitude = parseFloat(getNode(p, 'latitude'));
+  var longitude = parseFloat(getNode(p, 'longitude'));
   var altitude = getNode(p, 'altitude'); // may be null
   if (altitude != null) {
     altitude = parseInt(altitude);
@@ -219,7 +223,7 @@ function getPopupHtml(p, i, count) {
       '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg"> ' +
       (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
   }
-  popup =
+  var popup =
     '<div id="popup">' +
     '<div id="pheader">' +
     '<div><img alt="' + lang['user'] + '" title="' + lang['user'] + '" src="images/user_dark.svg"> ' + htmlEncode(p.username) + '</div>' +
@@ -440,7 +444,6 @@ function clearOptions(el) {
   }
 }
 
-var auto;
 function autoReload() {
   if (live == 0) {
     live = 1;
@@ -469,38 +472,41 @@ function setTime() {
 }
 
 // dynamic change of map api
-var savedBounds;
 function loadMapAPI(api) {
-  mapapi = api;
-  try {
-    savedBounds = getBounds();
-  } catch (e) {
-    savedBounds = null;
+  if (api) {
+    mapapi = api;
+    try {
+      savedBounds = getBounds();
+    } catch (e) {
+      savedBounds = null;
+    }
+    cleanup();
   }
-  document.getElementById("map-canvas").innerHTML = '';
-  var url = new Array();
-  if (api == 'gmaps') {
-    url.push('js/api_gmaps.js');
-    url.push('//maps.googleapis.com/maps/api/js?' + ((gkey !== null) ? ('key=' + gkey + '&') : '') + 'callback=init');
+  removeElementById('mapapi');
+  var urls = [];
+  if (mapapi == 'gmaps') {
+    addScript('js/api_gmaps.js', 'mapapi');
+    urls.push('//maps.googleapis.com/maps/api/js?' + ((gkey !== null) ? ('key=' + gkey + '&') : '') + 'callback=init');
+  } else if (mapapi == 'openlayers') {
+    addScript('js/api_openlayers.js', 'mapapi');
+    urls.push('//openlayers.org/api/OpenLayers.js');
+  } else {
+    addScript('js/api_openlayers3.js', 'mapapi');
+    urls.push('//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList')
+    urls.push('//openlayers.org/en/v4.3.2/build/ol.js');
   }
-  else {
-    url.push('js/api_openlayers.js');
-    url.push('//openlayers.org/api/OpenLayers.js');
-  }
-  addScript(url[0]);
-  waitAndLoad(api, url);
+  waitAndLoad(mapapi, urls);
 }
 
-var loadTime = 0;
-function waitAndLoad(api, url) {
+function waitAndLoad(api, urls) {
   // wait till first script loaded
   if (loadTime > 5000) { loadTime = 0; alert(sprintf(lang['apifailure'], api)); return; }
-  if (loadedAPI !== api) {
-    setTimeout(function () { loadTime += 50; waitAndLoad(api, url); }, 50);
+  if (typeof loadedAPI === 'undefined' || loadedAPI !== api) {
+    setTimeout(function () { loadTime += 50; waitAndLoad(api, urls); }, 50);
     return;
   }
-  if (!isScriptLoaded(url[1])) {
-    addScript(url[1]);
+  for (var i = 0; i < urls.length; i++) {
+    addScript(urls[i], 'mapapi_' + api + '_' + i);
   }
   loadTime = 0;
   waitAndInit(api);
@@ -511,8 +517,7 @@ function waitAndInit(api) {
   if (loadTime > 10000) { loadTime = 0; alert(sprintf(lang['apifailure'], api)); return; }
   try {
     init();
-  }
-  catch (e) {
+  } catch (e) {
     setTimeout(function () { loadTime += 50; waitAndInit(api); }, 50);
     return;
   }
@@ -527,21 +532,38 @@ function waitAndInit(api) {
   setCookie('api', api, 30);
 }
 
-function addScript(url) {
+function addScript(url, id) {
+  if (id && document.getElementById(id)) {
+    return;
+  }
   var tag = document.createElement('script');
-  tag.setAttribute('type', 'text/javascript');
-  tag.setAttribute('src', url);
+  tag.type = 'text/javascript';
+  tag.src = url;
+  if (id) {
+    tag.id = id;
+  }
   document.getElementsByTagName('head')[0].appendChild(tag);
 }
 
-function isScriptLoaded(url) {
-  scripts = document.getElementsByTagName('script');
-  for (var i = scripts.length; i--;) {
-    // check if url matches src
-    var scriptUrl = scripts[i].src.replace(/https?:/, '');
-    if (scriptUrl != '' && url.indexOf(scriptUrl) !== -1) return true;
+function addCss(url, id) {
+  if (id && document.getElementById(id)) {
+    return;
   }
-  return false;
+  var tag = document.createElement('link');
+  tag.type = 'text/css';
+  tag.rel = 'stylesheet';
+  tag.href = url;
+  if (id) {
+    tag.id = id;
+  }
+  document.getElementsByTagName('head')[0].appendChild(tag);
+}
+
+function removeElementById(id) {
+  var tag = document.getElementById(id);
+  if (tag && tag.parentNode) {
+    tag.parentNode.removeChild(tag);
+  }
 }
 
 function setCookie(name, value, days) {
@@ -549,8 +571,7 @@ function setCookie(name, value, days) {
     var date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     var expires = '; expires=' + date.toGMTString();
-  }
-  else {
+  } else {
     var expires = '';
   }
   document.cookie = 'ulogger_' + name + '=' + value + expires + '; path=/';

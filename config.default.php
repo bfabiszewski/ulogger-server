@@ -21,19 +21,18 @@
 // Copy it to config.php and customize
 
 // default map drawing framework
-// (gmaps = google maps, openlayers = openlayers/osm)
-//$mapapi = "gmaps";
-$mapapi = "openlayers";
+//$mapapi = "gmaps"; // google maps
+//$mapapi = "openlayers"; // openlayers 2
+$mapapi = "openlayers3"; // openlayers 3+
 
-// openlayers additional map layers
-// OpenCycleMap (0 = no, 1 = yes)
-$layer_ocm = 1;
-// MapQuest-OSM (0 = no, 1 = yes)
-$layer_mq = 1;
-// osmapa.pl (0 = no, 1 = yes)
-$layer_osmapa = 1;
-// UMP (0 = no, 1 = yes)
-$layer_ump = 1;
+// openlayers additional map layers in XYZ format
+// name => url
+$ol_layers['OpenCycleMap'] = 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey='; // api key needed
+$ol_layers['OpenTopoMap'] = 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png';
+$ol_layers['ESRI'] = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+$ol_layers['UMP'] = 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png';
+$ol_layers['Osmapa.pl'] = 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png';
+
 
 // default coordinates for initial map
 $init_latitude = 52.23;

@@ -37,14 +37,7 @@
     static $gkey = null;
 
     // openlayers additional map layers
-    // OpenCycleMap (0 = no, 1 = yes)
-    static $layer_ocm = 1;
-    // MapQuest-OSM (0 = no, 1 = yes)
-    static $layer_mq = 1;
-    // osmapa.pl (0 = no, 1 = yes)
-    static $layer_osmapa = 1;
-    // UMP (0 = no, 1 = yes)
-    static $layer_ump = 1;
+    static $ol_layers = [];
 
     // default coordinates for initial map
     static $init_latitude = 52.23;
@@ -114,10 +107,7 @@
 
       if (isset($mapapi)) { self::$mapapi = $mapapi; }
       if (isset($gkey)) { self::$gkey = $gkey; }
-      if (isset($layer_ocm)) { self::$layer_ocm = $layer_ocm; }
-      if (isset($layer_mq)) { self::$layer_mq = $layer_mq; }
-      if (isset($layer_osmapa)) { self::$layer_osmapa = $layer_osmapa; }
-      if (isset($layer_ump)) { self::$layer_ump = $layer_ump; }
+      if (isset($ol_layers)) { self::$ol_layers = $ol_layers; }
       if (isset($init_latitude)) { self::$init_latitude = $init_latitude; }
       if (isset($init_longitude)) { self::$init_longitude = $init_longitude; }
       if (isset($dbhost)) { self::$dbhost = $dbhost; }

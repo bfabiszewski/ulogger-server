@@ -323,3 +323,94 @@ button {
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+/* openlayers 3 popup */
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 280px;
+}
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+.ol-popup-closer:after {
+  content: "✖";
+}
+
+#switcher {
+  display: none;
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+  min-width: 200px;
+}
+.ol-layerswitcher {
+  margin: 1px;
+  color: #fff;
+  background-color: rgba(0, 60, 136, .5);
+  border: none;
+  border-radius: 2px;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: .9em;
+  padding: 0.5em;
+}
+.ol-layerswitcher:hover {
+  background-color: rgba(0, 60, 136, .7)
+}
+.ol-layerswitcher label {
+  display: block;
+  clear: both;
+  margin: .5em 0;
+  cursor: pointer;
+}
+.ol-layerswitcher label:hover {
+  color: #c8dcf2;
+}
+.ol-layerswitcher input {
+  margin-right: 1em;
+}
+label.ol-datalayer {
+  margin-top: 1.5em;
+}
+.ol-datalayer ~ .ol-datalayer {
+  margin-top: .5em;
+}
+.ol-switcher-button {
+  top: 6.6em;
+  left: .5em;
+}
+.ol-touch .ol-switcher-button {
+  top: 10em;
+}

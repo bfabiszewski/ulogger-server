@@ -73,26 +73,15 @@
       var units = '<?= uConfig::$units ?>';
       var mapapi = '<?= uConfig::$mapapi ?>';
       var gkey = '<?= !empty(uConfig::$gkey) ? uConfig::$gkey : "null" ?>';
-      var layer_ocm = '<?= uConfig::$layer_ocm ?>';
-      var layer_mq = '<?= uConfig::$layer_mq ?>';
-      var layer_osmapa = '<?= uConfig::$layer_osmapa ?>';
-      var layer_ump = '<?= uConfig::$layer_ump ?>';
-      var init_latitude = '<?= uConfig::$init_latitude ?>';
-      var init_longitude = '<?= uConfig::$init_longitude ?>';
+      var ol_layers = <?= json_encode(uConfig::$ol_layers) ?>;
+      var init_latitude = <?= uConfig::$init_latitude ?>;
+      var init_longitude = <?= uConfig::$init_longitude ?>;
       var lang = <?= json_encode($lang) ?>;
       var admin = <?= json_encode($auth->isAdmin()) ?>;
       var auth = '<?= ($auth->isAuthenticated()) ? $auth->user->login : "null" ?>';
       var pass_regex = <?= uConfig::passRegex() ?>;
     </script>
     <script type="text/javascript" src="js/main.js"></script>
-
-    <?php if (uConfig::$mapapi == "gmaps"): ?>
-      <script type="text/javascript" src="//maps.googleapis.com/maps/api/js<?= !empty(uConfig::$gkey) ? "?key=" . uConfig::$gkey : "" ?>"></script>
-      <script type="text/javascript" src="js/api_gmaps.js"></script>
-    <?php else: ?>
-      <script type="text/javascript" src="//openlayers.org/api/OpenLayers.js"></script>
-      <script type="text/javascript" src="js/api_openlayers.js"></script>
-    <?php endif; ?>
     <?php if ($auth->isAdmin()): ?>
       <script type="text/javascript" src="js/admin.js"></script>
     <?php endif; ?>
@@ -106,7 +95,7 @@
     </script>
   </head>
 
-  <body onload="init(); loadTrack(userid, trackid, 1);">
+  <body onload="loadMapAPI();">
     <div id="menu">
       <div id="menu-content">
 
@@ -161,7 +150,8 @@
           <form>
             <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
               <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
-              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
+              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers 2</option>
+              <option value="openlayers3"<?= (uConfig::$mapapi == "openlayers3") ? " selected" : "" ?>>OpenLayers 3+</option>
             </select>
           </form>
         </div>

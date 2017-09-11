@@ -18,9 +18,10 @@
 
 // google maps
 var map;
-var polies = new Array();
-var markers = new Array();
-var popups = new Array();
+var polies = [];
+var markers = [];
+var popups = [];
+var popup;
 var polyOptions;
 var mapOptions;
 var loadedAPI = 'gmaps';
@@ -40,6 +41,16 @@ function init() {
     scaleControl: true
   };
   map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+}
+function cleanup() {
+  map = undefined;
+  polies = undefined;
+  markers = undefined;
+  popups = undefined;
+  popup = undefined;
+  polyOptions = undefined;
+  mapOptions = undefined;
+  document.getElementById("map-canvas").innerHTML = '';
 }
 
 function displayTrack(xml, update) {
@@ -111,7 +122,6 @@ function clearMap() {
   popups.lentgth = 0;
 }
 
-var popup;
 function setMarker(p, i, posLen) {
   // marker
   var marker = new google.maps.Marker({
@@ -119,10 +129,10 @@ function setMarker(p, i, posLen) {
     position: p.coordinates,
     title: (new Date(p.timestamp * 1000)).toLocaleString()
   });
-  if (latest == 1) { marker.setIcon('//maps.google.com/mapfiles/dd-end.png') }
-  else if (i == 0) { marker.setIcon('//maps.google.com/mapfiles/marker_greenA.png') }
-  else if (i == posLen - 1) { marker.setIcon('//maps.google.com/mapfiles/markerB.png') }
-  else { marker.setIcon('//maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png') }
+  if (latest == 1) { marker.setIcon('images/marker-red.png') }
+  else if (i == 0) { marker.setIcon('images/marker-green.png') }
+  else if (i == posLen - 1) { marker.setIcon('images/marker-red.png') }
+  else { marker.setIcon('images/marker-white.png') }
   // popup
   var content = getPopupHtml(p, i, posLen);
   popup = new google.maps.InfoWindow();
@@ -153,7 +163,7 @@ function addChartEvent(chart, data) {
     if (selection) {
       var id = data.getValue(selection.row, 0) - 1;
       var icon = markers[id].getIcon();
-      markers[id].setIcon('//maps.google.com/mapfiles/marker_orange.png');
+      markers[id].setIcon('images/marker-gold.png');
       altTimeout = setTimeout(function () { markers[id].setIcon(icon); }, 2000);
     }
   });
@@ -161,12 +171,11 @@ function addChartEvent(chart, data) {
 
 //((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
 function getBounds() {
-  var b = map.getBounds().toString();
-  var bounds = b.split(',', 4);
-  var lat_sw = bounds[0].replace(/\(/g, '');
-  var lon_sw = bounds[1].replace(/[ )]/g, '');
-  var lat_ne = bounds[2].replace(/[ (]/g, '');
-  var lon_ne = bounds[3].replace(/[ )]/g, '');
+  var bounds = map.getBounds();
+  var lat_sw = bounds.getSouthWest().lat();
+  var lon_sw = bounds.getSouthWest().lng();
+  var lat_ne = bounds.getNorthEast().lat();
+  var lon_ne = bounds.getNorthEast().lng();
   return [lon_sw, lat_sw, lon_ne, lat_ne];
 }
 

@@ -19,7 +19,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - multiple users
 - user authentication
 - Google Maps API v3
-- OpenLayers v2 (OpenStreet and other layers)
+- OpenLayers v2 or v3 (OpenStreet and other layers)
 - ajax
 - user preferences stored in cookies
 - simple admin menu
