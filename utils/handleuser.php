@@ -18,6 +18,7 @@
  */
 
   require_once(dirname(__DIR__) . "/helpers/auth.php");
+  require_once(ROOT_DIR . "/lang.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
 
   $auth = new uAuth();
@@ -25,7 +26,7 @@
   $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
   $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
   $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
-  if (!$auth->isAuthenticated() || !$auth->isAdmin || $auth->user->login == $login || empty($action) || empty($login)) {
+  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login == $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }
 

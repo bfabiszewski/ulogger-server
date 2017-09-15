@@ -18,6 +18,7 @@
  */
 
   require_once(dirname(__DIR__) . "/helpers/auth.php");
+  require_once(ROOT_DIR . "/lang.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
 
