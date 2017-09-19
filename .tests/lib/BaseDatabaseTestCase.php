@@ -20,7 +20,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   protected $testTrackComment = "test track comment";
   protected $testTimestamp = 1502974402;
   protected $testLat = 0;
-  protected $testLon = 10.01;
+  protected $testLon = 10.604001083;
   protected $testAltitude = 10.01;
   protected $testSpeed = 10.01;
   protected $testBearing = 10.01;
@@ -101,6 +101,20 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   }
 
   /**
+   * Execute raw insert query on database
+   *
+   * @param string $query Insert query
+   * @return int|null Last insert id if available, NULL otherwise
+   */
+  private function pdoInsertRaw($query) {
+    $ret = NULL;
+    if (self::$pdo->exec($query) !== false) {
+      $ret = self::$pdo->lastInsertId();
+    }
+    return $ret;
+  }
+
+  /**
    * Get single column from first row of query result
    *
    * @param string $query SQL query
@@ -143,7 +157,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   protected function addTestTrack($userId = NULL, $trackName = NULL, $comment = NULL) {
     if (is_null($userId)) { $userId = $this->testUserId; }
     if (is_null($trackName)) { $trackName = $this->testTrackName; }
-    if (is_null($comment)) { $comment = $this->testComment; }
+    if (is_null($comment)) { $comment = $this->testTrackComment; }
     return $this->pdoInsert('tracks', [ 'user_id' => $userId, 'name' => $trackName, 'comment' => $comment ]);
   }
 
@@ -165,7 +179,9 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
     if (is_null($latitude)) { $latitude = $this->testLat; }
     if (is_null($longitude)) { $longitude = $this->testLon; }
 
-    return $this->pdoInsert('positions', [ "user_id" => $userId, "track_id" => $trackId, "time" => date("Y-m-d H:m:s", $timeStamp), "latitude" => $latitude, "longitude" => $longitude ]);
+    $query = "INSERT INTO positions (user_id, track_id, time, latitude, longitude)
+              VALUES ('$userId', '$trackId', FROM_UNIXTIME($timeStamp), '$latitude', '$longitude')";
+    return $this->pdoInsertRaw($query);
   }
 }
 ?>
