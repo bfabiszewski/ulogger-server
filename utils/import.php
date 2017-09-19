@@ -82,23 +82,31 @@ if ($gpx === false) {
   }
   uUtils::exitWithError($message);
 }
+else if ($gpx->getName() != "gpx") {
+    uUtils::exitWithError($lang["iparsefailure"]);
+}
 else if (empty($gpx->trk)) {
   uUtils::exitWithError($lang["idatafailure"]);
 }
 
 $trackCnt = 0;
 foreach ($gpx->trk as $trk) {
-  $trackName = empty($trk->name) ? $gpxName : $trk->name->__toString();
-  $metaName = empty($gpx->metadata->name) ? NULL : $gpx->metadata->name->__toString();
+  $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
+  $metaName = empty($gpx->metadata->name) ? NULL : (string) $gpx->metadata->name;
   $trackId = uTrack::add($auth->user->id, $trackName, $metaName);
   if ($trackId === false) {
     uUtils::exitWithError($lang["servererror"]);
     break;
   }
   $track = new uTrack($trackId);
+  $posCnt = 0;
 
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
+      if (!isset($point["lat"]) || !isset($point["lon"])) {
+        $track->delete();
+        uUtils::exitWithError($lang["iparsefailure"]);
+      }
       $time = isset($point->time) ? strtotime($point->time) : 0;
       $altitude = isset($point->ele) ? (double) $point->ele : NULL;
       $speed = NULL;
@@ -120,12 +128,17 @@ foreach ($gpx->trk as $trk) {
         $track->delete();
         uUtils::exitWithError($lang["servererror"]);
       }
+      $posCnt++;
     }
   }
-  $trackCnt++;
+  if ($posCnt) {
+    $trackCnt++;
+  } else {
+    $track->delete();
+  }
 }
 
-// return track id and tracks count
+// return last track id and tracks count
 uUtils::exitWithSuccess([ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
 
 ?>
