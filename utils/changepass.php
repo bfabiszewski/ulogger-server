@@ -38,6 +38,8 @@
     if (!$passUser->isValid) {
       uUtils::exitWithError("User unknown");
     }
+  } else if (!empty($login)) {
+    uUtils::exitWithError("Unauthorized");
   } else {
     // current user
     $passUser = $auth->user;
