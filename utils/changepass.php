@@ -35,7 +35,7 @@
   if ($auth->isAdmin() && !empty($login)) {
     // different user, only admin
     $passUser = new uUser($login);
-    if (!$passUser->valid) {
+    if (!$passUser->isValid) {
       uUtils::exitWithError("User unknown");
     }
   } else {
