@@ -26,9 +26,8 @@ $auth = new uAuth();
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
 
+$positionsArr = [];
 if ($userId) {
-  $positionsArr = [];
-
   if (uConfig::$public_tracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     if ($trackId) {
@@ -42,40 +41,40 @@ if ($userId) {
       }
     }
   }
-
-  header("Content-type: text/xml");
-  $xml = new XMLWriter();
-  $xml->openURI("php://output");
-  $xml->startDocument("1.0");
-  $xml->setIndent(true);
-  $xml->startElement('root');
-
-  foreach ($positionsArr as $position) {
-    $xml->startElement("position");
-    $xml->writeAttribute("id", $position->id);
-      $xml->writeElement("latitude", $position->latitude);
-      $xml->writeElement("longitude", $position->longitude);
-      $xml->writeElement("altitude", ($position->altitude) ? round($position->altitude) : $position->altitude);
-      $xml->writeElement("speed", $position->speed);
-      $xml->writeElement("bearing", $position->bearing);
-      $xml->writeElement("timestamp", $position->timestamp);
-      $xml->writeElement("accuracy", $position->accuracy);
-      $xml->writeElement("provider", $position->provider);
-      $xml->writeElement("comments", $position->comment);
-      $xml->writeElement("username", $position->userLogin);
-      $xml->writeElement("trackid", $position->trackId);
-      $xml->writeElement("trackname", $position->trackName);
-      $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
-      $xml->writeElement("distance", round($distance));
-      $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
-      $xml->writeElement("seconds", $seconds);
-    $xml->endElement();
-    $prevPosition = $position;
-  }
-
-  $xml->endElement();
-  $xml->endDocument();
-  $xml->flush();
 }
+
+header("Content-type: text/xml");
+$xml = new XMLWriter();
+$xml->openURI("php://output");
+$xml->startDocument("1.0");
+$xml->setIndent(true);
+$xml->startElement('root');
+
+foreach ($positionsArr as $position) {
+  $xml->startElement("position");
+  $xml->writeAttribute("id", $position->id);
+    $xml->writeElement("latitude", $position->latitude);
+    $xml->writeElement("longitude", $position->longitude);
+    $xml->writeElement("altitude", ($position->altitude) ? round($position->altitude) : $position->altitude);
+    $xml->writeElement("speed", $position->speed);
+    $xml->writeElement("bearing", $position->bearing);
+    $xml->writeElement("timestamp", $position->timestamp);
+    $xml->writeElement("accuracy", $position->accuracy);
+    $xml->writeElement("provider", $position->provider);
+    $xml->writeElement("comments", $position->comment);
+    $xml->writeElement("username", $position->userLogin);
+    $xml->writeElement("trackid", $position->trackId);
+    $xml->writeElement("trackname", $position->trackName);
+    $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+    $xml->writeElement("distance", round($distance));
+    $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+    $xml->writeElement("seconds", $seconds);
+  $xml->endElement();
+  $prevPosition = $position;
+}
+
+$xml->endElement();
+$xml->endDocument();
+$xml->flush();
 
 ?>

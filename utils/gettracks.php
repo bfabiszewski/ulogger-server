@@ -24,33 +24,32 @@ $auth = new uAuth();
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 
+$tracksArr = [];
 if ($userId) {
-  $tracksArr = [];
-
   if (uConfig::$public_tracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     $tracksArr = uTrack::getAll($userId);
   }
-
-  header("Content-type: text/xml");
-  $xml = new XMLWriter();
-  $xml->openURI("php://output");
-  $xml->startDocument("1.0");
-  $xml->setIndent(true);
-  $xml->startElement('root');
-
-  if (!empty($tracksArr)) {
-    foreach ($tracksArr as $aTrack) {
-      $xml->startElement("track");
-        $xml->writeElement("trackid", $aTrack->id);
-        $xml->writeElement("trackname", $aTrack->name);
-      $xml->endElement();
-    }
-  }
-
-  $xml->endElement();
-  $xml->endDocument();
-  $xml->flush();
 }
+
+header("Content-type: text/xml");
+$xml = new XMLWriter();
+$xml->openURI("php://output");
+$xml->startDocument("1.0");
+$xml->setIndent(true);
+$xml->startElement('root');
+
+if (!empty($tracksArr)) {
+  foreach ($tracksArr as $aTrack) {
+    $xml->startElement("track");
+      $xml->writeElement("trackid", $aTrack->id);
+      $xml->writeElement("trackname", $aTrack->name);
+    $xml->endElement();
+  }
+}
+
+$xml->endElement();
+$xml->endDocument();
+$xml->flush();
 
 ?>
