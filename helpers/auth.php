@@ -72,9 +72,14 @@
     /**
      * Start php session
      *
+     * @param string $id Optional session id
      * @return void
      */
     private function sessionStart() {
+      $id = $this->getToken();
+      if (!is_null($id)) {
+        session_id($id);
+      }
       session_name("ulogger");
       session_start();
     }
@@ -137,6 +142,14 @@
           }
         }
       }
+    }
+
+    /**
+     * Check token authentication
+     * This is session id stored in request's token parameter
+     */
+    private function getToken() {
+      return (isset($_REQUEST["token"]) && strlen($_REQUEST["token"])) ? $_REQUEST["token"] : NULL;
     }
 
     /**

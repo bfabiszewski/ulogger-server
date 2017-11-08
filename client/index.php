@@ -58,7 +58,7 @@
   switch ($action) {
     // action: authorize
     case "auth":
-      exitWithSuccess();
+      exitWithSuccess(['token' => session_id()]);
       break;
 
     // action: adduser (currently unused)
