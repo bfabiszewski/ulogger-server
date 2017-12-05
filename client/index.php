@@ -107,6 +107,8 @@
       $imageId = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
       $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
 
+      include("../phpMQTT/publish.php");
+      
       if (!is_numeric($lat) || !is_numeric($lon) || !is_numeric($timestamp) || !is_numeric($trackId)) {
         exitWithError("Missing required parameter");
       }
