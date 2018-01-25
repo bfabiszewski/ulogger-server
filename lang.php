@@ -26,7 +26,8 @@
     "fr" => "Français",
     "it" => "Italiano",
     "es" => "Español",
-    "nl" => "Nederlands"
+    "nl" => "Nederlands",
+    "zh" => "中文"
   ];
 
   // always load en base
