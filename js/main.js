@@ -113,6 +113,7 @@ function toggleMenu(i) {
     ebutton.style.right = '165px';
     ebutton.innerHTML = '»';
   }
+  updateSize();
 }
 
 function getXHR() {
@@ -493,7 +494,7 @@ function loadMapAPI(api) {
   } else {
     addScript('js/api_openlayers3.js', 'mapapi');
     urls.push('//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList')
-    urls.push('//openlayers.org/en/v4.3.2/build/ol.js');
+    urls.push('//openlayers.org/en/v4.6.4/build/ol.js');
   }
   waitAndLoad(mapapi, urls);
 }

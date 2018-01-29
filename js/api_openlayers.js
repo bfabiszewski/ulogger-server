@@ -229,4 +229,6 @@ function expandUrl(url) {
   return urls;
 }
 
-
+function updateSize() {
+  // ignore
+}

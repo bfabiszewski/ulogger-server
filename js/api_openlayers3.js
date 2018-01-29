@@ -26,7 +26,7 @@ var loadedAPI = 'openlayers3';
 
 function init() {
 
-  addCss('https://openlayers.org/en/v4.3.2/css/ol.css', 'ol3css');
+  addCss('https://openlayers.org/en/v4.6.4/css/ol.css', 'ol3css');
 
   var controls = [
     new ol.control.Zoom(),
@@ -408,4 +408,8 @@ function getBounds() {
 function zoomToBounds(b) {
   var bounds = ol.proj.transformExtent(b, 'EPSG:4326', 'EPSG:900913');
   map.getView().fit(bounds);
+}
+
+function updateSize() {
+  map.updateSize();
 }

@@ -193,3 +193,7 @@ function gm_authFailure() {
   message += '<br><br>' + lang['gmapilink'];
   showModal(message);
 };
+
+function updateSize() {
+  // ignore
+}
