@@ -32,7 +32,7 @@ function init() {
     new ol.control.Zoom(),
     new ol.control.Rotate(),
     new ol.control.ScaleLine(),
-    new ol.control.ZoomToExtent(),
+    new ol.control.ZoomToExtent({ label: getExtentImg() }),
   ];
 
   var view = new ol.View({
@@ -252,7 +252,10 @@ function init() {
   };
 
   var switcherButton = document.createElement('button');
-  switcherButton.innerHTML = 'L';
+  var layerImg = document.createElement('img');
+  layerImg.src = 'images/layers.svg';
+  layerImg.style.width = '60%';
+  switcherButton.appendChild(layerImg);
 
   var switcherHandle = function() {
     var el = document.getElementById('switcher');
@@ -332,7 +335,8 @@ function displayTrack(xml, update) {
   }
 
   var zoomToExtentControl = new ol.control.ZoomToExtent({
-    extent: extent
+    extent: extent,
+    label: getExtentImg()
   });
   map.addControl(zoomToExtentControl);
 
@@ -412,4 +416,11 @@ function zoomToBounds(b) {
 
 function updateSize() {
   map.updateSize();
+}
+
+function getExtentImg() {
+  var extentImg = document.createElement('img');
+  extentImg.src = 'images/extent.svg';
+  extentImg.style.width = '60%';
+  return extentImg;
 }
