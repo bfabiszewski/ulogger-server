@@ -177,7 +177,8 @@
      * @return void
      */
     public function exitWithRedirect($path = "") {
-      header("Location: " . BASE_URL . $path);
+      $location = str_replace("//", "/", BASE_URL . $path);
+      header("Location: $location");
       exit();
     }
   }

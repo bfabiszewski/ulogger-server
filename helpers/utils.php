@@ -108,6 +108,11 @@
       exit;
     }
 
+    /**
+     * Calculate app base URL
+     *
+     * @return string URL
+     */
     public static function getBaseUrl() {
       $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] == "" || $_SERVER["HTTPS"] == "off") ? "http://" : "https://";
       $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "";
