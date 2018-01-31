@@ -142,7 +142,7 @@
     /**
      * Log out with redirect
      *
-     * @param string $path URL path
+     * @param string $path URL path (without leading slash)
      * @return void
      */
     public function logOutWithRedirect($path = "") {
@@ -173,11 +173,11 @@
     /**
      * Redirect browser and exit
      *
-     * @param string $path Redirect URL path
+     * @param string $path Redirect URL path (without leading slash)
      * @return void
      */
     public function exitWithRedirect($path = "") {
-      $location = str_replace("//", "/", BASE_URL . $path);
+      $location = BASE_URL . $path;
       header("Location: $location");
       exit();
     }

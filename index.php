@@ -27,10 +27,10 @@
   $auth = new uAuth();
 
   if (!$auth->isAuthenticated() && $auth->isLoginAttempt()) {
-    $auth->exitWithRedirect("/login.php?auth_error=1");
+    $auth->exitWithRedirect("login.php?auth_error=1");
   }
   if (!$auth->isAuthenticated() && uConfig::$require_authentication) {
-    $auth->exitWithRedirect("/login.php");
+    $auth->exitWithRedirect("login.php");
   }
 
 

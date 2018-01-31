@@ -110,6 +110,7 @@
 
     /**
      * Calculate app base URL
+     * Returned URL has trailing slash.
      *
      * @return string URL
      */
