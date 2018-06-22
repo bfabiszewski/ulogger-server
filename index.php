@@ -119,7 +119,7 @@
             <div class="menutitle" style="padding-top: 1em"><?= $lang["user"] ?></div>
             <form>
               <select name="user" onchange="selectUser(this);">
-                <option value="0"><?= $lang["suser"] ?></option>
+                <option value="0" disabled><?= $lang["suser"] ?></option>
                 <?php foreach ($usersArr as $aUser): ?>
                   <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= htmlspecialchars($aUser->login) ?></option>
                 <?php endforeach; ?>

@@ -387,9 +387,6 @@ function selectTrack(f) {
 
 function selectUser(f) {
   userid = f.options[f.selectedIndex].value;
-  if (f.options[0].disabled == false) {
-    f.options[0].disabled = true;
-  }
   document.getElementById('latest').checked = false;
   if (latest == 1) { toggleLatest(); }
   getTracks(userid);
