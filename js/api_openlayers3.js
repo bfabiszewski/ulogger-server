@@ -73,8 +73,8 @@ function init() {
   // init layers
   var lineStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'rgba(255, 0, 0, 0.5)',
-      width: 2
+      color: hexToRGBA(strokeColor, strokeOpacity),
+      width: strokeWeight
     })
   });
   layerTrack = new ol.layer.Vector({

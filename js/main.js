@@ -641,6 +641,11 @@ function htmlEncode(s) {
           .replace(/>/g, '&gt;');
 }
 
+// Convert hex string and opacity to an rgba string
+function hexToRGBA(hex, opacity) {
+	return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length/3 + '})', 'g')).map(function(l) { return parseInt(hex.length%2 ? l+l : l, 16) }).concat(opacity||1).join(',') + ')';
+}
+
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
     return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
