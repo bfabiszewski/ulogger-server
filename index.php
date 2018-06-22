@@ -81,7 +81,7 @@
       var auth = '<?= ($auth->isAuthenticated()) ? $auth->user->login : "null" ?>';
       var pass_regex = <?= uConfig::passRegex() ?>;
       var strokeWeight = <?= uConfig::$strokeWeight ?>;
-      var strokeColor = '<?= !empty(uConfig::$strokeColor) ? uConfig::$strokeColor : "#FF0000" ?>';
+      var strokeColor = '<?= uConfig::$strokeColor ?>';
       var strokeOpacity = <?= uConfig::$strokeOpacity ?>;
     </script>
     <script type="text/javascript" src="js/main.js"></script>
