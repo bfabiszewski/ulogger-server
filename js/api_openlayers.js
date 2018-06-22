@@ -95,7 +95,7 @@ function displayTrack(xml, update) {
     points.push(point);
   }
   var lineString = new OpenLayers.Geometry.LineString(points);
-  var lineStyle = { strokeColor: '#FF0000', strokeOpacity: 1, strokeWidth: 2 };
+  var lineStyle = { strokeColor: strokeColor, strokeOpacity: strokeOpacity, strokeWidth: strokeWeight };
   var lineFeature = new OpenLayers.Feature.Vector(lineString, null, lineStyle);
   layerTrack.addFeatures([lineFeature]);
   map.addLayer(layerTrack);

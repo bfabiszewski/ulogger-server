@@ -30,9 +30,9 @@ function init() {
   if (gm_error) { return gm_authFailure(); }
   google.maps.visualRefresh = true;
   polyOptions = {
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
+    strokeColor: strokeColor,
+    strokeOpacity: strokeOpacity,
+    strokeWeight: strokeWeight
   }
   mapOptions = {
     center: new google.maps.LatLng(init_latitude, init_longitude),

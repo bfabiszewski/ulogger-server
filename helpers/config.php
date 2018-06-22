@@ -79,6 +79,10 @@
     // units
     static $units = "metric";
 
+    static $strokeWeight = 2;
+    static $strokeColor = '#ff0000';
+    static $strokeOpacity = 1;
+    
     private static $fileLoaded = false;
 
     private static $initialized = false;
@@ -123,6 +127,9 @@
       if (isset($interval)) { self::$interval = (int) $interval; }
       if (isset($lang)) { self::$lang = $lang; }
       if (isset($units)) { self::$units = $units; }
+      if (isset($strokeWeight)) { self::$strokeWeight = $strokeWeight; }
+      if (isset($strokeColor)) { self::$strokeColor = $strokeColor; }
+      if (isset($strokeOpacity)) { self::$strokeOpacity = $strokeOpacity; }
 
       if (!self::$require_authentication) {
         // tracks must be public if we don't require authentication

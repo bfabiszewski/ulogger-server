@@ -91,4 +91,9 @@ $lang = "en";
 $units = "metric";
 //$units = "imperial";
 
+// These need to be copied to config.php
+$strokeWeight = 2;
+$strokeColor = '#FF0000';
+$strokeOpacity = 1.0;
+
 ?>
