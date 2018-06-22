@@ -643,7 +643,7 @@ function htmlEncode(s) {
 
 // Convert hex string and opacity to an rgba string
 function hexToRGBA(hex, opacity) {
-	return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length/3 + '})', 'g')).map(function(l) { return parseInt(hex.length%2 ? l+l : l, 16) }).concat(opacity||1).join(',') + ')';
+  return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length/3 + '})', 'g')).map(function(l) { return parseInt(hex.length%2 ? l+l : l, 16) }).concat(opacity||1).join(',') + ')';
 }
 
 if (!String.prototype.trim) {
