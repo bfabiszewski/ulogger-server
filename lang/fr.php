@@ -48,6 +48,7 @@ $lang["api"] = "API des cartes";
 $lang["units"] = "Unités";
 $lang["metric"] = "Système métrique";
 $lang["imperial"] = "Système anglophone";
+$lang["nautical"] = "Nautique";
 $lang["adminmenu"] = "Administration";
 $lang["passwordrepeat"] = "Répetez le mot de passe";
 $lang["passwordenter"] = "Entrez votre mot de passe";
