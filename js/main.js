@@ -25,6 +25,13 @@ if (units == 'imperial') {
   unit_m = 'ft';
   factor_km = 0.62; // to miles
   unit_km = 'mi';
+} else if (units == 'nautical') {
+  factor_kmh = 0.54; //to knots
+  unit_kmh = 'kt';
+  factor_m = 1; //
+  unit_m = 'm';
+  factor_km = 0.54; // to nautical miles
+  unit_km = 'nm';
 } else {
   factor_kmh = 1;
   unit_kmh = 'km/h';
