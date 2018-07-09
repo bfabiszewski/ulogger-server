@@ -87,9 +87,10 @@ $lang = "en";
 //$lang = "it";
 
 // units
-// (metric, imperial)
+// (metric, imperial, nautical)
 $units = "metric";
 //$units = "imperial";
+//$units = "nautical";
 
 // These need to be copied to config.php
 $strokeWeight = 2;
