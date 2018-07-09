@@ -72,6 +72,7 @@ $lang["api"] = "Map API";
 $lang["units"] = "Jednostki";
 $lang["metric"] = "Metryczne";
 $lang["imperial"] = "Anglosaskie";
+$lang["nautical"] = "Nawigacyjne";
 $lang["adminmenu"] = "Administracja";
 $lang["passwordrepeat"] = "Powtórz hasło";
 $lang["passwordenter"] = "Podaj hasło";

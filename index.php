@@ -177,6 +177,7 @@
             <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
               <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
               <option value="imperial"<?= (uConfig::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
+              <option value="nautical"<?= (uConfig::$units == "nautical") ? " selected" : "" ?>><?= $lang["nautical"] ?></option>
             </select>
           </form>
         </div>
