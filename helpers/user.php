@@ -190,9 +190,10 @@
    /**
     * Get all users
     *
-    * @return array|bool Array of uUser users, false on error
+    * @param bool $hide_admin Don't load admin user into array if true.
+    * @return array bool Array of uUser users, false on error
     */
-    public static function getAll() {
+    public static function getAll($hide_admin = false) {
       $query = "SELECT id, login, password FROM `" . self::db()->table('users') . "` ORDER BY login";
       $result = self::db()->query($query);
       if ($result === false) {
@@ -200,6 +201,8 @@
       }
       $userArr = [];
       while ($row = $result->fetch_assoc()) {
+         if ($hide_admin && !empty(uConfig::$admin_user) && (uConfig::$admin_user == $row['login']))
+            continue;
         $userArr[] = self::rowToObject($row);
       }
       $result->close();

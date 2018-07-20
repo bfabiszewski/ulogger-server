@@ -45,7 +45,7 @@
       $displayUserId = $lastPosition->userId;
     }
     // populate users array (for <select>)
-    $usersArr = uUser::getAll();
+    $usersArr = uUser::getAll(!$auth->isAuthenticated());
   } else if ($auth->isAuthenticated()) {
     // display track of authenticated user
     $displayUserId = $auth->user->id;
