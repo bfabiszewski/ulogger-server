@@ -108,7 +108,7 @@ foreach ($gpx->trk as $trk) {
         $track->delete();
         uUtils::exitWithError($lang["iparsefailure"]);
       }
-      $time = isset($point->time) ? strtotime($point->time) : 0;
+      $time = isset($point->time) ? strtotime($point->time) : 1;
       $altitude = isset($point->ele) ? (double) $point->ele : NULL;
       $speed = NULL;
       $bearing = NULL;
