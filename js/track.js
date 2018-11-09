@@ -67,7 +67,7 @@ function submitTrack(action) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       var error = true;
-      var message = "";
+      var message = '';
       if (xhr.status == 200) {
         var xml = xhr.responseXML;
         if (xml) {

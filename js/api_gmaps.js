@@ -40,7 +40,7 @@ function init() {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     scaleControl: true
   };
-  map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 function cleanup() {
   map = undefined;
@@ -50,7 +50,7 @@ function cleanup() {
   popup = undefined;
   polyOptions = undefined;
   mapOptions = undefined;
-  document.getElementById("map-canvas").innerHTML = '';
+  document.getElementById('map-canvas').innerHTML = '';
 }
 
 function displayTrack(xml, update) {
@@ -188,7 +188,7 @@ function zoomToBounds(b) {
 
 function gm_authFailure() {
   gm_error = true;
-  message = sprintf(lang['apifailure'], "Google Maps");
+  message = sprintf(lang['apifailure'], 'Google Maps');
   message += '<br><br>' + lang['gmauthfailure'];
   message += '<br><br>' + lang['gmapilink'];
   showModal(message);

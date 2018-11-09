@@ -48,14 +48,14 @@ function submitPass() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       var error = true;
-      var message = "";
+      var message = '';
       if (xhr.status == 200) {
         var xml = xhr.responseXML;
         if (xml) {
           var root = xml.getElementsByTagName('root');
           if (root.length && getNode(root[0], 'error') == 0) {
             removeModal();
-            alert(lang["actionsuccess"]);
+            alert(lang['actionsuccess']);
             error = false;
           } else if (root.length) {
             errorMsg = getNode(root[0], 'message');

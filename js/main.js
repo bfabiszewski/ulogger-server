@@ -135,7 +135,7 @@ function getXHR() {
 }
 
 function loadTrack(userid, trackid, update) {
-  var title = document.getElementById("track").getElementsByClassName("menutitle")[0];
+  var title = document.getElementById('track').getElementsByClassName('menutitle')[0];
   if (trackid < 0) { return; }
   if (latest == 1) { trackid = 0; }
   var xhr = getXHR();
@@ -262,7 +262,7 @@ function exportFile(type, userid, trackid) {
 
 function importFile(input) {
   var form = input.parentElement;
-  var title = form.parentElement.getElementsByClassName("menutitle")[0];
+  var title = form.parentElement.getElementsByClassName('menutitle')[0];
   var sizeMax = form.elements['MAX_FILE_SIZE'].value;
   if (input.files && input.files.length == 1 && input.files[0].size > sizeMax) {
     alert(sprintf(lang['isizefailure'], sizeMax));
@@ -272,7 +272,7 @@ function importFile(input) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       var error = true;
-      var message = "";
+      var message = '';
       if (xhr.status == 200) {
         var xml = xhr.responseXML;
         if (xml) {
@@ -298,9 +298,9 @@ function importFile(input) {
       xhr = null;
     }
   }
-  xhr.open("POST", "utils/import.php", true);
+  xhr.open('POST', 'utils/import.php', true);
   xhr.send(new FormData(form));
-  input.value = "";
+  input.value = '';
   setLoader(title);
 }
 
@@ -400,7 +400,7 @@ function selectUser(f) {
 }
 
 function getTracks(userid, trackid) {
-  var title = document.getElementById("track").getElementsByClassName("menutitle")[0];
+  var title = document.getElementById('track').getElementsByClassName('menutitle')[0];
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
@@ -431,7 +431,7 @@ function fillOptions(xml, uid, tid) {
   for (var i = 0; i < trackLen; i++) {
     var trackid = getNode(tracks[i], 'trackid');
     var trackname = getNode(tracks[i], 'trackname');
-    var option = document.createElement("option");
+    var option = document.createElement('option');
     option.value = trackid;
     option.innerHTML = htmlEncode(trackname);
     trackSelect.appendChild(option);

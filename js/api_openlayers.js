@@ -185,7 +185,7 @@ function init() {
   });
 
   // change mouse cursor when over marker
-  map.on("pointermove", function(e) {
+  map.on('pointermove', function(e) {
     var hit = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
       if (layer.get('name') == 'Markers') {
         return true;
@@ -287,7 +287,7 @@ function cleanup() {
   olStyles = undefined;
   removeElementById('popup');
   removeElementById('switcher');
-  document.getElementById("map-canvas").innerHTML = '';
+  document.getElementById('map-canvas').innerHTML = '';
 }
 
 function displayTrack(xml, update) {
