@@ -372,7 +372,7 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $expected = [
       "id" => 1,
-      "time" => 0,
+      "time" => 1,
       "user_id" => 1,
       "track_id" => 1,
       "latitude" => $this->testLat,
