@@ -22,8 +22,7 @@
 
 // default map drawing framework
 //$mapapi = "gmaps"; // google maps
-//$mapapi = "openlayers"; // openlayers 2
-$mapapi = "openlayers3"; // openlayers 3+
+$mapapi = "openlayers"; // openlayers
 
 // openlayers additional map layers in XYZ format
 // name => url

@@ -153,8 +153,7 @@
           <form>
             <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
               <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
-              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers 2</option>
-              <option value="openlayers3"<?= (uConfig::$mapapi == "openlayers3") ? " selected" : "" ?>>OpenLayers 3+</option>
+              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
             </select>
           </form>
         </div>

@@ -492,11 +492,8 @@ function loadMapAPI(api) {
   if (mapapi == 'gmaps') {
     addScript('js/api_gmaps.js', 'mapapi');
     urls.push('//maps.googleapis.com/maps/api/js?' + ((gkey !== null) ? ('key=' + gkey + '&') : '') + 'callback=init');
-  } else if (mapapi == 'openlayers') {
-    addScript('js/api_openlayers.js', 'mapapi');
-    urls.push('//openlayers.org/api/OpenLayers.js');
   } else {
-    addScript('js/api_openlayers3.js', 'mapapi');
+    addScript('js/api_openlayers.js', 'mapapi');
     urls.push('//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList')
     urls.push('js/ol.js');
   }
