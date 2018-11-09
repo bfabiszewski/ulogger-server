@@ -108,7 +108,7 @@
     /**
      * Mark as authenticated, set user
      *
-     * @param [type] $user
+     * @param uUser $user
      * @return void
      */
     private function setAuthenticated($user) {

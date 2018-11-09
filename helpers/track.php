@@ -108,7 +108,7 @@
     public function addPosition($userId, $timestamp, $lat, $lon,
                                 $altitude = NULL, $speed = NULL, $bearing = NULL, $accuracy = NULL,
                                 $provider = NULL, $comment = NULL, $imageId = NULL) {
-      return $ret = uPosition::add($userId, $this->id, $timestamp, $lat, $lon,
+      return uPosition::add($userId, $this->id, $timestamp, $lat, $lon,
                                    $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
     }
 

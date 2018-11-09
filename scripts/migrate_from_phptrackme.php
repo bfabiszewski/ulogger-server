@@ -124,7 +124,7 @@ exit(0);
 /* Helper functions */
 
 /** Import tracks metadata for given user
- * @param $user_id User id
+ * @param int $user_id User id
  */
 function process_user_tracks($user_id) {
   global $pt_mysqli, $mysqli;
@@ -170,9 +170,9 @@ function process_user_tracks($user_id) {
 }
 
 /** Import positions for given track
- * @param $user_id User id
- * @param $old_id Old database track id
- * @param $new_id New database track id
+ * @param int $user_id User id
+ * @param int $old_id Old database track id
+ * @param int $new_id New database track id
  */
 function process_track($user_id, $old_id, $new_id) {
   global $pt_mysqli, $mysqli;

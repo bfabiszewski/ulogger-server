@@ -120,7 +120,9 @@ if ($trackId && $userId) {
       $i = 0;
       $totalMeters = 0;
       $totalSeconds = 0;
+      $coordinate = [];
       foreach ($positionsArr as $position) {
+        /** @var uPosition $prevPosition */
         $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
         $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
         $prevPosition = $position;

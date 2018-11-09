@@ -25,6 +25,7 @@ require_once(ROOT_DIR . "/lang.php");
 
 $auth = new uAuth();
 
+$uploadErrors = [];
 $uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
 $uploadErrors[UPLOAD_ERR_FORM_SIZE] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
 $uploadErrors[UPLOAD_ERR_PARTIAL] = "The uploaded file was only partially uploaded";
@@ -56,9 +57,9 @@ if ($uploadErr == UPLOAD_ERR_OK) {
   $gpxFile = $gpxUpload["tmp_name"];
   $gpxName = basename($gpxUpload["name"]);
 } else {
-  $message = $lang("iuploadfailure");
-  if (isset($errorMessage[$uploadErr])) {
-    $message .= ": " . $errorMessage[$uploadErr];
+  $message = $lang["iuploadfailure"];
+  if (isset($uploadErrors[$uploadErr])) {
+    $message .= ": " . $uploadErrors[$uploadErr];
   }
   $message .= " ($uploadErr)";
   uUtils::exitWithError($message);

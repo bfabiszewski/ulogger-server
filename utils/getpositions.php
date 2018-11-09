@@ -51,6 +51,7 @@ $xml->setIndent(true);
 $xml->startElement('root');
 
 foreach ($positionsArr as $position) {
+  /** @var uPosition $prevPosition */
   $xml->startElement("position");
   $xml->writeAttribute("id", $position->id);
     $xml->writeElement("latitude", $position->latitude);
