@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>getopt-php - {{ page.title }}</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/styles.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/highlight.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h2>GetOpt.php<br /><small>a better getopt for php</small></h2>
+
+        <menu>
+          <ul>
+            {% for link in site.data.menu %}
+            {% if link[1].index %}
+              <li {% if page.url == link[1].index %}class="selected"{% endif %}>
+                <a href="{{ site.baseurl }}{{ link[1].index }}">{{ link[0] }}</a>
+                <ul>
+                  {% for sublink in link[1].sub %}
+                    <li {% if page.url == sublink[1] %}class="selected"{% endif %}>
+                      <a href="{{ site.baseurl }}{{ sublink[1] }}">{{ sublink[0] }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% else %}
+              <li {% if page.url == link[1] %}class="selected"{% endif %}>
+                <a href="{{ site.baseurl }}{{ link[1] }}">{{ link[0] }}</a>
+              </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </menu>
+
+        <p class="view"><a href="https://github.com/getopt-php/getopt-php">View the Project on GitHub <small>getopt-php/getopt-php</small></a></p>
+
+        <a href="https://travis-ci.org/getopt-php/getopt-php"><img src="https://travis-ci.org/getopt-php/getopt-php.svg?branch=master" alt="Build Status" /></a>
+        <a href='https://coveralls.io/github/getopt-php/getopt-php?branch=master'><img src='https://coveralls.io/repos/github/getopt-php/getopt-php/badge.svg?branch=master' alt='Coverage Status' /></a>
+        <a href="https://packagist.org/packages/ulrichsg/getopt-php"><img src="https://poser.pugx.org/ulrichsg/getopt-php/v/stable.svg" alt="Latest Stable Version" /></a>
+        <a href="https://packagist.org/packages/ulrichsg/getopt-php"><img src="https://poser.pugx.org/ulrichsg/getopt-php/downloads.svg" alt="Total Downloads" /></a>
+        <a href="https://packagist.org/packages/ulrichsg/getopt-php"><img src="https://poser.pugx.org/ulrichsg/getopt-php/license.svg" alt="Total Downloads" /></a>
+
+      </header>
+      <section>
+        {{ content }}
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/tflori">tflori</a>, authored by <a href="https://github.com/ulrichsg">ulrichsg</a> with contributions by <a href="https://github.com/getopt-php/getopt-php/graphs/contributors">these fine people</a>. Thank you very much!</p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="{{ site.baseurl }}/javascripts/scale.fix.js"></script>
+
+  </body>
+</html>
