@@ -114,8 +114,8 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (empty(uConfig::$dbname) || empty(uConfig::$dbhost) || empty(uConfig::$dbuser)) {
-      $messages[] = sprintf($langSetup["nodbsettings"], "\$dbname, \$dbhost, \$dbuser, \$dbpass");
+    if (empty(uConfig::$dbdsn) || empty(uConfig::$dbuser)) {
+      $messages[] = sprintf($langSetup["nodbsettings"], "\$dbdsn, \$dbuser, \$dbpass");
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
