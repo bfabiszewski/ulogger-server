@@ -44,10 +44,9 @@
     static $init_longitude = 21.01;
 
     // MySQL config
-    static $dbhost = ""; // mysql host, eg. localhost
+    static $dbdsn = ""; // database dsn
     static $dbuser = ""; // database user
     static $dbpass = ""; // database pass
-    static $dbname = ""; // database name
     static $dbprefix = ""; // optional table names prefix, eg. "ulogger_"
 
     // require login/password authentication
@@ -82,7 +81,7 @@
     static $strokeWeight = 2;
     static $strokeColor = '#ff0000';
     static $strokeOpacity = 1;
-    
+
     private static $fileLoaded = false;
 
     private static $initialized = false;
@@ -114,10 +113,9 @@
       if (isset($ol_layers)) { self::$ol_layers = $ol_layers; }
       if (isset($init_latitude)) { self::$init_latitude = $init_latitude; }
       if (isset($init_longitude)) { self::$init_longitude = $init_longitude; }
-      if (isset($dbhost)) { self::$dbhost = $dbhost; }
+      if (isset($dbdsn)) { self::$dbdsn = $dbdsn; }
       if (isset($dbuser)) { self::$dbuser = $dbuser; }
       if (isset($dbpass)) { self::$dbpass = $dbpass; }
-      if (isset($dbname)) { self::$dbname = $dbname; }
       if (isset($dbprefix)) { self::$dbprefix = $dbprefix; }
       if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
       if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }

@@ -41,15 +41,20 @@
     public function __construct($trackId = NULL) {
 
       if (!empty($trackId)) {
-        $query = "SELECT id, user_id, name, comment FROM `" . self::db()->table('tracks') . "` WHERE id = ? LIMIT 1";
-        $stmt = self::db()->prepare($query);
-        $stmt->bind_param('i', $trackId);
-        $stmt->execute();
-        $stmt->bind_result($this->id, $this->userId, $this->name, $this->comment);
-        if ($stmt->fetch()) {
+        try {
+          $query = "SELECT id, user_id, name, comment FROM " . self::db()->table('tracks') . " WHERE id = ? LIMIT 1";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([$trackId]);
+          $stmt->bindColumn('id', $this->id);
+          $stmt->bindColumn('user_id', $this->userId);
+          $stmt->bindColumn('name', $this->name);
+          $stmt->bindColumn('comment', $this->comment);
+          $stmt->fetch();
           $this->isValid = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
 
       }
     }
@@ -77,14 +82,17 @@
     public static function add($userId, $name, $comment = NULL) {
       $trackId = false;
       if (!empty($userId) && !empty($name)) {
-        $query = "INSERT INTO `" . self::db()->table('tracks') . "` (user_id, name, comment) VALUES (?, ?, ?)";
-        $stmt = self::db()->prepare($query);
-        $stmt->bind_param('iss', $userId, $name, $comment);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
-          $trackId = self::db()->insert_id;
+        try {
+          $table = self::db()->table('tracks');
+          $query = "INSERT INTO $table (user_id, name, comment) VALUES (?, ?, ?)";
+          $stmt = self::db()->prepare($query);
+          $params = [ $userId, $name, $comment ];
+          $stmt->execute($params);
+          $trackId = self::db()->lastInsertId("${table}_id_seq");
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $trackId;
     }
@@ -125,19 +133,20 @@
           return false;
         }
         // delete track metadata
-        $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE id = ?";
-        $stmt = self::db()->prepare($query);
-        $stmt->bind_param('i', $this->id);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
+        try {
+          $query = "DELETE FROM " . self::db()->table('tracks') . " WHERE id = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $this->id ]);
           $ret = true;
           $this->id = NULL;
           $this->userId = NULL;
           $this->name = NULL;
           $this->comment = NULL;
           $this->isValid = false;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $ret;
     }
@@ -155,16 +164,18 @@
       if (is_null($comment)) { $comment = $this->comment; }
       if ($comment == "") { $comment = NULL; }
       if ($this->isValid) {
-        $query = "UPDATE `" . self::db()->table('tracks') . "` SET name = ?, comment = ? WHERE id = ?";
-        $stmt = self::db()->prepare($query);
-        $stmt->bind_param('ssi', $name, $comment, $this->id);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
+        try {
+          $query = "UPDATE " . self::db()->table('tracks') . " SET name = ?, comment = ? WHERE id = ?";
+          $stmt = self::db()->prepare($query);
+          $params = [ $name, $comment, $this->id ];
+          $stmt->execute($params);
           $ret = true;
           $this->name = $name;
           $this->comment = $comment;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $ret;
     }
@@ -181,14 +192,15 @@
         // remove all positions
         if (uPosition::deleteAll($userId) === true) {
           // remove all tracks
-          $query = "DELETE FROM `" . self::db()->table('tracks') . "` WHERE user_id = ?";
-          $stmt = self::db()->prepare($query);
-          $stmt->bind_param('i', $userId);
-          $stmt->execute();
-          if (!self::db()->error && !$stmt->errno) {
+          try {
+            $query = "DELETE FROM " . self::db()->table('tracks') . " WHERE user_id = ?";
+            $stmt = self::db()->prepare($query);
+            $stmt->execute([ $userId ]);
             $ret = true;
+          } catch (PDOException $e) {
+            // TODO: handle exception
+throw $e;
           }
-          $stmt->close();
         }
 
       }
@@ -203,20 +215,22 @@
     */
     public static function getAll($userId = NULL) {
       if (!empty($userId)) {
-        $where = "WHERE user_id='" . self::db()->real_escape_string($userId) ."'";
+        $where = "WHERE user_id=" . self::db()->quote($userId);
       } else {
         $where = "";
       }
-      $query = "SELECT id, user_id, name, comment FROM `" . self::db()->table('tracks') . "` $where ORDER BY id DESC";
-      $result = self::db()->query($query);
-      if ($result === false) {
-        return false;
+      $query = "SELECT id, user_id, name, comment FROM " . self::db()->table('tracks') . " $where ORDER BY id DESC";
+      try {
+        $result = self::db()->query($query);
+        $trackArr = [];
+        while ($row = $result->fetch()) {
+          $trackArr[] = self::rowToObject($row);
+        }
+      } catch (PDOException $e) {
+        // TODO: handle exception
+throw $e;
+        $trackArr = false;
       }
-      $trackArr = [];
-      while ($row = $result->fetch_assoc()) {
-        $trackArr[] = self::rowToObject($row);
-      }
-      $result->close();
       return $trackArr;
     }
 

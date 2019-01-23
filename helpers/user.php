@@ -43,15 +43,19 @@
     */
     public function __construct($login = NULL) {
       if (!empty($login)) {
-        $sql = "SELECT id, login, password FROM `" . self::db()->table('users') . "` WHERE login = ? LIMIT 1";
-        $stmt = self::db()->prepare($sql);
-        $stmt->bind_param('s', $login);
-        $stmt->execute();
-        $stmt->bind_result($this->id, $this->login, $this->hash);
-        if ($stmt->fetch()) {
+        try {
+          $query = "SELECT id, login, password FROM " . self::db()->table('users') . " WHERE login = ? LIMIT 1";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $login ]);
+          $stmt->bindColumn('id', $this->id);
+          $stmt->bindColumn('login', $this->login);
+          $stmt->bindColumn('password', $this->hash);
+          $stmt->fetch();
           $this->isValid = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
         $this->isAdmin = self::isAdmin($this->login);
       }
     }
@@ -79,14 +83,16 @@
       $userid = false;
       if (!empty($login) && !empty($pass) && self::validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO `" . self::db()->table('users') . "` (login, password) VALUES (?, ?)";
-        $stmt = self::db()->prepare($sql);
-        $stmt->bind_param('ss', $login, $hash);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
-          $userid = self::db()->insert_id;
+        $table = self::db()->table('users');
+        try {
+          $query = "INSERT INTO $table (login, password) VALUES (?, ?)";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $login, $hash ]);
+          $userid = self::db()->lastInsertId("${table}_id_seq");
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $userid;
     }
@@ -105,19 +111,20 @@
           return false;
         }
         // remove user
-        $sql = "DELETE FROM `" . self::db()->table('users') . "` WHERE id = ?";
-        $stmt = self::db()->prepare($sql);
-        $stmt->bind_param('i', $this->id);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
+        try {
+          $query = "DELETE FROM " . self::db()->table('users') . " WHERE id = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $this->id ]);
           $ret = true;
           $this->id = NULL;
           $this->login = NULL;
           $this->hash = NULL;
           $this->isValid = false;
           $this->isAdmin = false;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $ret;
     }
@@ -132,14 +139,15 @@
       $ret = false;
       if (!empty($this->login) && !empty($pass) && self::validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "UPDATE `" . self::db()->table('users') . "` SET password = ? WHERE login = ?";
-        $stmt = self::db()->prepare($sql);
-        $stmt->bind_param('ss', $hash, $this->login);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
+        try {
+          $query = "UPDATE " . self::db()->table('users') . " SET password = ? WHERE login = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $hash, $this->login ]);
           $ret = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $ret;
     }
@@ -193,16 +201,18 @@
     * @return array|bool Array of uUser users, false on error
     */
     public static function getAll() {
-      $query = "SELECT id, login, password FROM `" . self::db()->table('users') . "` ORDER BY login";
-      $result = self::db()->query($query);
-      if ($result === false) {
-        return false;
+      try {
+        $query = "SELECT id, login, password FROM " . self::db()->table('users') . " ORDER BY login";
+        $result = self::db()->query($query);
+        $userArr = [];
+        while ($row = $result->fetch()) {
+          $userArr[] = self::rowToObject($row);
+        }
+      } catch (PDOException $e) {
+        // TODO: handle exception
+throw $e;
+        $userArr = false;
       }
-      $userArr = [];
-      while ($row = $result->fetch_assoc()) {
-        $userArr[] = self::rowToObject($row);
-      }
-      $result->close();
       return $userArr;
     }
 

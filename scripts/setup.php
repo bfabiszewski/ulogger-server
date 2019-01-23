@@ -18,7 +18,7 @@
  */
 
 // This script is disabled by default. Change below to true before running.
-$enabled = false;
+$enabled = true;
 
 
 /* -------------------------------------------- */
@@ -43,70 +43,27 @@ $tUsers = $prefix . "users";
 $messages = [];
 switch ($command) {
   case "setup":
-    $queries = [];
-    // positions
-    $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
-    $queries[] = "CREATE TABLE `$tPositions` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    `user_id` int(11) NOT NULL,
-                    `track_id` int(11) NOT NULL,
-                    `latitude` double NOT NULL,
-                    `longitude` double NOT NULL,
-                    `altitude` double DEFAULT NULL,
-                    `speed` double DEFAULT NULL,
-                    `bearing` double DEFAULT NULL,
-                    `accuracy` int(11) DEFAULT NULL,
-                    `provider` varchar(100) DEFAULT NULL,
-                    `comment` varchar(255) DEFAULT NULL,
-                    `image_id` int(11) DEFAULT NULL,
-                    PRIMARY KEY (`id`),
-                    KEY `index_trip_id` (`track_id`),
-                    KEY `index_user_id` (`user_id`)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-
-    // tracks
-    $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
-    $queries[] = "CREATE TABLE `$tTracks` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `user_id` int(11) NOT NULL,
-                    `name` varchar(255) DEFAULT NULL,
-                    `comment` varchar(1024) DEFAULT NULL,
-                    PRIMARY KEY (`id`),
-                    KEY `user_id` (`user_id`)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-
-    // users
-    $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
-    $queries[] = "CREATE TABLE `$tUsers` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `login` varchar(15) CHARACTER SET latin1 NOT NULL,
-                    `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
-                    PRIMARY KEY (`id`),
-                    UNIQUE KEY `login` (`login`)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
     $error = false;
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     try {
-      $mysqli = new mysqli(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
-    } catch (mysqli_sql_exception $e ) {
+      $db = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass);
+    } catch (PDOException $e ) {
       $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
       $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
       $messages[] = $langSetup["checkdbsettings"];
       break;
     }
     try {
-      $mysqli->set_charset('utf8');
+      $queries = getQueries($db);
       foreach ($queries as $query) {
-        $mysqli->query($query);
+        $db->query($query);
       }
-    } catch (mysqli_sql_exception $e) {
+    } catch (PDOException $e) {
         $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
         $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
         $error = true;
     }
-    $mysqli->close();
+    $db = null;
     if (!$error) {
       $messages[] = "<span class=\"ok\">{$langSetup["dbtablessuccess"]}</span>";
       $messages[] = $langSetup["setupuser"];
@@ -167,6 +124,146 @@ switch ($command) {
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
+}
+
+function getQueries($db) {
+    $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+    $queries = [];
+    switch($driver) {
+      case "mysql":
+        // positions
+        $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+        $queries[] = "CREATE TABLE `$tPositions` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        `user_id` int(11) NOT NULL,
+                        `track_id` int(11) NOT NULL,
+                        `latitude` double NOT NULL,
+                        `longitude` double NOT NULL,
+                        `altitude` double DEFAULT NULL,
+                        `speed` double DEFAULT NULL,
+                        `bearing` double DEFAULT NULL,
+                        `accuracy` int(11) DEFAULT NULL,
+                        `provider` varchar(100) DEFAULT NULL,
+                        `comment` varchar(255) DEFAULT NULL,
+                        `image_id` int(11) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        KEY `index_trip_id` (`track_id`),
+                        KEY `index_user_id` (`user_id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+        // tracks
+        $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+        $queries[] = "CREATE TABLE `$tTracks` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `user_id` int(11) NOT NULL,
+                        `name` varchar(255) DEFAULT NULL,
+                        `comment` varchar(1024) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        KEY `user_id` (`user_id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+        // users
+        $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+        $queries[] = "CREATE TABLE `$tUsers` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `login` varchar(15) CHARACTER SET latin1 NOT NULL,
+                        `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `login` (`login`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+       break;
+
+      case "pgsql":
+        // positions
+        $queries[] = "DROP TABLE IF EXISTS $tPositions";
+        $queries[] = "CREATE TABLE $tPositions (
+                        id SERIAL PRIMARY KEY,
+                        time TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        user_id INT NOT NULL,
+                        track_id INT NOT NULL,
+                        latitude DOUBLE PRECISION NOT NULL,
+                        longitude DOUBLE PRECISION NOT NULL,
+                        altitude DOUBLE PRECISION DEFAULT NULL,
+                        speed DOUBLE PRECISION DEFAULT NULL,
+                        bearing DOUBLE PRECISION DEFAULT NULL,
+                        accuracy INT DEFAULT NULL,
+                        provider VARCHAR(100) DEFAULT NULL,
+                        comment VARCHAR(255) DEFAULT NULL,
+                        image_id INT DEFAULT NULL
+                      )";
+        $queries[] = "CREATE INDEX index_trip_id ON $tPositions (track_id)";
+        $queries[] = "CREATE INDEX index_user_id ON $tPositions (user_id)";
+
+        // tracks
+        $queries[] = "DROP TABLE IF EXISTS $tTracks";
+        $queries[] = "CREATE TABLE $tTracks (
+                        id SERIAL PRIMARY KEY,
+                        user_id INT NOT NULL,
+                        name VARCHAR(255) DEFAULT NULL,
+                        comment VARCHAR(1024) DEFAULT NULL
+                      )";
+        $queries[] = "CREATE INDEX user_id ON $tTracks (user_id)";
+
+        // users
+        $queries[] = "DROP TABLE IF EXISTS $tUsers";
+        $queries[] = "CREATE TABLE $tUsers (
+                        id SERIAL PRIMARY KEY,
+                        login varchar(15) NOT NULL UNIQUE,
+                        password varchar(255) NOT NULL DEFAULT ''
+                      )";
+        break;
+
+      case "sqlite":
+
+        // positions
+        $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+        $queries[] = "CREATE TABLE `$tPositions` (
+                        `id` INTEGER NOT NULL ,
+                        `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        `user_id` INTEGER NOT NULL,
+                        `track_id` INTEGER NOT NULL,
+                        `latitude` double NOT NULL,
+                        `longitude` double NOT NULL,
+                        `altitude` double DEFAULT NULL,
+                        `speed` double DEFAULT NULL,
+                        `bearing` double DEFAULT NULL,
+                        `accuracy` INTEGER DEFAULT NULL,
+                        `provider` TEXT DEFAULT NULL,
+                        `comment` TEXT DEFAULT NULL,
+                        `image_id` INTEGER DEFAULT NULL,
+                        PRIMARY KEY (`id`)
+                      )";
+        $queries[] = "CREATE INDEX `positions_index_trip_id` ON `$tPositions` (`track_id`)";
+        $queries[] = "CREATE INDEX `positions_index_user_id` ON `$tPositions` (`user_id`)";
+
+        // tracks
+        $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+        $queries[] = "CREATE TABLE `$tTracks` (
+                        `id` INTEGER NOT NULL,
+                        `user_id` INTEGER NOT NULL,
+                        `name` TEXT DEFAULT NULL,
+                        `comment` TEXT DEFAULT NULL,
+                        PRIMARY KEY (`id`)
+                      )";
+        $queries[] = "CREATE INDEX `tracks_user_id` ON `$tTracks` (`user_id`)";
+
+        // users
+        $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+        $queries[] = "CREATE TABLE `$tUsers` (
+                        `id` INTEGER NOT NULL ,
+                        `login` TEXT  NOT NULL,
+                        `password` TEXT  NOT NULL DEFAULT '',
+                        PRIMARY KEY (`id`)
+                      )";
+        $queries[] = "CREATE UNIQUE INDEX `users_login` ON `$tUsers` (`login`)";
+        break;
+
+      default:
+        throw InvalidArgumentException("Driver not supported");
+    }
+
+
 }
 
 ?>

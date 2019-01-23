@@ -20,9 +20,9 @@
   require_once(ROOT_DIR . "/helpers/config.php");
 
  /**
-  * mysqli wrapper
+  * PDO wrapper
   */
-  class uDb extends mysqli {
+  class uDb extends PDO {
     /**
      * Singleton instance
      *
@@ -38,23 +38,25 @@
     protected static $tables;
 
    /**
-    * Private constuctor
+    * PDO constuctor
     *
-    * @param string $host
+    * @param string $dsn
     * @param string $user
     * @param string $pass
-    * @param string $name
-    * @param int $port
-    * @param string $socket
     */
-    public function __construct($host, $user, $pass, $name, $port = null, $socket = null) {
-      @parent::__construct($host, $user, $pass, $name, $port, $socket);
-      if ($this->connect_error) {
+    public function __construct($dsn, $user, $pass) {
+      try {
+        $options = [
+          PDO::ATTR_EMULATE_PREPARES   => false, // try to use native prepared statements
+          PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // throw exceptions
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // return assoc array by default
+        ];
+        @parent::__construct($dsn, $user, $pass, $options);
+        $this->initTables();
+      } catch (PDOException $e) {
         header("HTTP/1.1 503 Service Unavailable");
-        die("Database connection error (" . $this->connect_error . ")");
+        die("Database connection error (" . $e->getMessage() . ")");
       }
-      $this->set_charset('utf8');
-      $this->initTables();
     }
 
     /**
@@ -75,7 +77,7 @@
     */
     public static function getInstance() {
       if (!self::$instance) {
-        self::$instance = new self(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
+        self::$instance = new self(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass);
       }
       return self::$instance;
     }

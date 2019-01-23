@@ -54,12 +54,17 @@
         $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
-                  FROM `" . self::db()->table('positions') . "` p
-                  LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
-                  LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
+                  FROM " . self::db()->table('positions') . " p
+                  LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
+                  LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
                   WHERE id = ? LIMIT 1";
-        $params = [ 'i', $positionId ];
-        $this->loadWithQuery($query, $params);
+        $params = [ $positionId ];
+        try {
+          $this->loadWithQuery($query, $params);
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
+        }
       }
     }
 
@@ -99,19 +104,20 @@
       if (is_numeric($lat) && is_numeric($lon) && is_numeric($timestamp) && is_numeric($userId) && is_numeric($trackId)) {
         $track = new uTrack($trackId);
         if ($track->isValid && $track->userId == $userId) {
-          $query = "INSERT INTO `" . self::db()->table('positions') . "`
-                    (user_id, track_id,
-                    time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
-                    VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-          $stmt = self::db()->prepare($query);
-          $stmt->bind_param('iisddddddssi',
-                  $userId, $trackId,
-                  $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
-          $stmt->execute();
-          if (!self::db()->error && !$stmt->errno) {
-            $positionId = self::db()->insert_id;
+          try {
+            $table = self::db()->table('positions');
+            $query = "INSERT INTO $table
+                      (user_id, track_id,
+                      time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
+                      VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = self::db()->prepare($query);
+            $params = [ $userId, $trackId,
+                    $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId ];
+            $stmt->execute($params);
+            $positionId = self::db()->lastInsertId("${table}_id_seq");
+          } catch (PDOException $e) {
+            // TODO: handle error
           }
-          $stmt->close();
         }
       }
       return $positionId;
@@ -129,21 +135,20 @@
       if (!empty($userId)) {
         $args = [];
         $where = "WHERE user_id = ?";
-        $args[0] = "i";
-        $args[1] = &$userId;
+        $args[] = $userId;
         if (!empty($trackId)) {
           $where .= " AND track_id = ?";
-          $args[0] .= "i";
-          $args[2] = &$trackId;
+          $args[] = $trackId;
         }
-        $query = "DELETE FROM `" . self::db()->table('positions') . "` $where";
-        $stmt = self::db()->prepare($query);
-        call_user_func_array([ $stmt, 'bind_param' ], $args);
-        $stmt->execute();
-        if (!self::db()->error && !$stmt->errno) {
+        try {
+          $query = "DELETE FROM " . self::db()->table('positions') . " $where";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute($args);
           $ret = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+throw $e;
         }
-        $stmt->close();
       }
       return $ret;
     }
@@ -158,7 +163,7 @@
     public static function getLast($userId = NULL) {
       if (!empty($userId)) {
         $where = "WHERE p.user_id = ?";
-        $params = [ 'i', $userId ];
+        $params = [ $userId ];
       } else {
         $where = "";
         $params = NULL;
@@ -166,13 +171,18 @@
       $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM `" . self::db()->table('positions') . "` p
-                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
-                LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
+                FROM " . self::db()->table('positions') . " p
+                LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
+                LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time DESC, p.id DESC LIMIT 1";
       $position = new uPosition();
-      $position->loadWithQuery($query, $params);
+      try {
+        $position->loadWithQuery($query, $params);
+      } catch (PDOException $e) {
+        // TODO: handle exception
+throw $e;
+      }
       return $position;
     }
 
@@ -186,10 +196,10 @@
     public static function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];
       if (!empty($userId)) {
-        $rules[] = "p.user_id = '" . self::db()->real_escape_string($userId) ."'";
+        $rules[] = "p.user_id = " . self::db()->quote($userId);
       }
       if (!empty($trackId)) {
-        $rules[] = "p.track_id = '" . self::db()->real_escape_string($trackId) ."'";
+        $rules[] = "p.track_id = " . self::db()->quote($trackId);
       }
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);
@@ -199,20 +209,21 @@
       $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
-                FROM `" . self::db()->table('positions') . "` p
-                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
-                LEFT JOIN `" . self::db()->table('tracks') . "` t ON (p.track_id = t.id)
+                FROM " . self::db()->table('positions') . " p
+                LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
+                LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time, p.id";
-      $result = self::db()->query($query);
-      if ($result === false) {
-        return false;
+      try {
+        $positionsArr = [];
+        $result = self::db()->query($query);
+        while ($row = $result->fetch()) {
+          $positionsArr[] = self::rowToObject($row);
+        }
+      } catch (PDOException $e) {
+        // TODO: handle exception
+throw $e;
       }
-      $positionsArr = [];
-      while ($row = $result->fetch_assoc()) {
-        $positionsArr[] = self::rowToObject($row);
-      }
-      $result->close();
       return $positionsArr;
     }
 
@@ -274,27 +285,32 @@
     * Fill class properties with database query result
     *
     * @param string $query Query
-    * @param array|null $bindParams Optional array of bind parameters (types, params)
+    * @param array|null $params Optional array of bind parameters
+    * @throws PDOException
     */
-    private function loadWithQuery($query, $bindParams = NULL) {
+    private function loadWithQuery($query, $params = NULL) {
       $stmt = self::db()->prepare($query);
-      if (is_array($bindParams)) {
-        $params = [];
-        foreach ($bindParams as &$value) {
-          $params[] =& $value;
-        }
-        call_user_func_array([ $stmt, 'bind_param' ], $params);
-      }
-      if ($stmt->execute()) {
-        $stmt->bind_result($this->id, $this->timestamp, $this->userId, $this->trackId,
-                            $this->latitude, $this->longitude, $this->altitude, $this->speed,
-                            $this->bearing, $this->accuracy, $this->provider,
-                            $this->comment, $this->imageId, $this->userLogin, $this->trackName);
-        if ($stmt->fetch()) {
-          $this->isValid = true;
-        }
-      }
-      $stmt->close();
+      $stmt->execute($params);
+
+      $stmt->bindColumn('id', $this->id);
+      $stmt->bindColumn('tstamp', $this->timestamp);
+      $stmt->bindColumn('user_id', $this->userId);
+      $stmt->bindColumn('track_id', $this->trackId);
+      $stmt->bindColumn('latitude', $this->latitude);
+      $stmt->bindColumn('longitude', $this->longitude);
+      $stmt->bindColumn('altitude', $this->altitude);
+      $stmt->bindColumn('speed', $this->speed);
+      $stmt->bindColumn('bearing', $this->bearing);
+      $stmt->bindColumn('accuracy', $this->accuracy);
+      $stmt->bindColumn('provider', $this->provider);
+      $stmt->bindColumn('comment', $this->comment);
+      $stmt->bindColumn('image_id', $this->imageId);
+      $stmt->bindColumn('login', $this->userLogin);
+      $stmt->bindColumn('name', $this->trackName);
+
+      $stmt->fetch(PDO::FETCH_BOUND);
+      $this->isValid = true;
+      $stmt = null;
     }
   }
 
