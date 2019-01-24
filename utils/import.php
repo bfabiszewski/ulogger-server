@@ -43,6 +43,8 @@ if (!isset($_FILES["gpx"])) {
   $lastErr = error_get_last();
   if (!empty($lastErr)) {
     $message .= ": " . $lastErr["message"];
+  } else {
+    $message .= ": no uploaded file";
   }
   uUtils::exitWithError($message);
 }

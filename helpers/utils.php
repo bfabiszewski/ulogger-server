@@ -129,6 +129,55 @@
       return $proto . str_replace("//", "/", $host . $path . "/");
     }
 
+    public static function postFloat($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_FLOAT);
+    }
+
+    public static function getFloat($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_FLOAT);
+    }
+
+    public static function postPass($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_POST);
+    }
+
+    public static function postString($name, $default = NULL) {
+      if (is_string(($val = self::requestValue($name, $default, INPUT_POST)))) {
+        return trim($val);
+      } else {
+        return $val;
+      }
+    }
+
+    public static function getBool($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public static function postInt($name, $default = NULL) {
+      if (is_float(($val = self::postFloat($name, $default)))) {
+        return (int) round($val);
+      } else {
+        return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_INT);
+      }
+    }
+
+    public static function getInt($name, $default = NULL) {
+      if (is_float(($val = self::getFloat($name, $default)))) {
+        return (int) round($val);
+      } else {
+        return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_INT);
+      }
+    }
+
+    public static function requestValue($name, $default = NULL, $type = INPUT_POST, $filters = FILTER_DEFAULT, $flags = NULL) {
+      $input = filter_input($type, $name, $filters, $flags);
+      if ($input !== false && !is_null($input)) {
+        return $input;
+      } else {
+        return $default;
+      }
+    }
+
   }
 
 ?>

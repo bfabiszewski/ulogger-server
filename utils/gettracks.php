@@ -22,7 +22,7 @@ require_once(ROOT_DIR . "/helpers/track.php");
 
 $auth = new uAuth();
 
-$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
+$userId = uUtils::getInt('userid');
 
 $tracksArr = [];
 if ($userId) {

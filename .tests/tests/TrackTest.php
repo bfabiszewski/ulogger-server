@@ -7,7 +7,9 @@ require_once(__DIR__ . "/../../helpers/track.php");
 class TrackTest extends UloggerDatabaseTestCase {
 
   public function testAddTrack() {
+    $this->addTestUser();
     $trackId = uTrack::add($this->testUserId, $this->testTrackName, $this->testTrackComment);
+    $this->assertNotFalse($trackId, "Track id should not be false");
     $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $this->assertEquals(1, $trackId, "Wrong track id returned");
     $expected = [ "id" => $trackId, "user_id" => $this->testUserId, "name" => $this->testTrackName, "comment" => $this->testTrackComment ];
@@ -19,8 +21,9 @@ class TrackTest extends UloggerDatabaseTestCase {
   }
 
   public function testDeleteTrack() {
-    $trackId = $this->addTestTrack($this->testUserId);
-    $this->addTestPosition($this->testUserId, $trackId);
+    $userId = $this->addTestUser();
+    $trackId = $this->addTestTrack($userId);
+    $this->addTestPosition($userId, $trackId);
     $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
@@ -32,20 +35,22 @@ class TrackTest extends UloggerDatabaseTestCase {
   }
 
   public function testAddPosition() {
-    $trackId = $this->addTestTrack($this->testUserId);
+    $userId = $this->addTestUser();
+    $userId2 = $this->addTestUser($this->testUser2);
+    $trackId = $this->addTestTrack($userId);
     $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
     $track = new uTrack($trackId + 1);
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
     $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $this->assertFalse($posId, "Adding position with nonexistant track should fail");
 
     $track = new uTrack($trackId);
-    $posId = $track->addPosition($this->testUserId2, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = $track->addPosition($userId2, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
     $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $this->assertFalse($posId, "Adding position with wrong user should fail");
 
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
     $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $expected = [
       "id" => $posId,
@@ -64,28 +69,28 @@ class TrackTest extends UloggerDatabaseTestCase {
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
-      "SELECT id, user_id, track_id, UNIX_TIMESTAMP(time) AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 
-    $posId = $track->addPosition($this->testUserId, NULL, $this->testLat, $this->testLon);
+    $posId = $track->addPosition($userId, NULL, $this->testLat, $this->testLon);
     $this->assertFalse($posId, "Adding position with null time stamp should fail");
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, NULL, $this->testLon);
+    $posId = $track->addPosition($userId, $this->testTimestamp, NULL, $this->testLon);
     $this->assertFalse($posId, "Adding position with null latitude should fail");
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, $this->testLat, NULL);
+    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, NULL);
     $this->assertFalse($posId, "Adding position with null longitude should fail");
 
-    $posId = $track->addPosition($this->testUserId, "", $this->testLat, $this->testLon);
+    $posId = $track->addPosition($userId, "", $this->testLat, $this->testLon);
     $this->assertFalse($posId, "Adding position with empty time stamp should fail");
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, "", $this->testLon);
+    $posId = $track->addPosition($userId, $this->testTimestamp, "", $this->testLon);
     $this->assertFalse($posId, "Adding position with empty latitude should fail");
-    $posId = $track->addPosition($this->testUserId, $this->testTimestamp, $this->testLat, "");
+    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, "");
     $this->assertFalse($posId, "Adding position with empty longitude should fail");
   }
 
   public function testGetAll() {
-    $this->addTestTrack();
-    $this->addTestTrack();
+    $this->addTestTrack($this->addTestUser());
+    $this->addTestTrack($this->addTestUser($this->testUser2));
     $this->assertEquals(2, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
     $trackArr = uTrack::getAll();
@@ -94,24 +99,27 @@ class TrackTest extends UloggerDatabaseTestCase {
   }
 
   public function testDeleteAll() {
-    $trackId = $this->addTestTrack();
-    $this->addTestTrack();
-    $this->addTestPosition($this->testUserId, $trackId);
+    $userId = $this->addTestUser();
+    $trackId = $this->addTestTrack($userId);
+    $this->addTestTrack($userId);
+    $this->addTestPosition($userId, $trackId);
 
-    $trackId2 = $this->addTestTrack($this->testUserId2);
-    $this->addTestPosition($this->testUserId2, $trackId2);
+    $userId2 = $this->addTestUser($this->testUser2);
+    $trackId2 = $this->addTestTrack($userId2);
+    $this->addTestPosition($userId2, $trackId2);
 
     $this->assertEquals(3, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $this->assertEquals(2, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
-    uTrack::deleteAll($this->testUserId);
+    uTrack::deleteAll($userId);
     $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $this->assertFalse(uTrack::deleteAll(NULL), "User id should not be empty");
   }
 
   public function testUpdate() {
-    $trackId = $this->addTestTrack();
+    $userId = $this->addTestUser();
+    $trackId = $this->addTestTrack($userId);
     $track = new uTrack($trackId);
     $track->update("newName", "newComment");
     $expected = [ "id" => $trackId, "user_id" => $this->testUserId, "name" => "newName", "comment" => "newComment" ];
@@ -123,7 +131,8 @@ class TrackTest extends UloggerDatabaseTestCase {
   }
 
   public function testIsValid() {
-    $trackId = $this->addTestTrack();
+    $userId = $this->addTestUser();
+    $trackId = $this->addTestTrack($userId);
     $trackValid = new uTrack($trackId);
     $this->assertTrue($trackValid->isValid, "Track should be valid");
     $trackInvalid = new uTrack($trackId + 1);

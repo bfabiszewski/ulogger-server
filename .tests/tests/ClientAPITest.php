@@ -251,7 +251,7 @@ class ClientAPITest extends UloggerAPITestCase {
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
-      "SELECT id, user_id, track_id, UNIX_TIMESTAMP(time) AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }

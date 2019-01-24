@@ -24,9 +24,10 @@
 
   $auth = new uAuth();
 
-  $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
-  $trackId = isset($_REQUEST['trackid']) ? trim($_REQUEST['trackid']) : NULL;
-  $trackName = isset($_REQUEST['trackname']) ? trim($_REQUEST['trackname']) : NULL;
+  $action = uUtils::postString('action');
+  $trackId = uUtils::postInt('trackid');
+  $trackName = uUtils::postString('trackname');
+
   if (empty($action) || empty($trackId)) {
     uUtils::exitWithError($lang["servererror"]);
   }

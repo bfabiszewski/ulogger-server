@@ -47,16 +47,17 @@
           $query = "SELECT id, login, password FROM " . self::db()->table('users') . " WHERE login = ? LIMIT 1";
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $login ]);
-          $stmt->bindColumn('id', $this->id);
+          $stmt->bindColumn('id', $this->id, PDO::PARAM_INT);
           $stmt->bindColumn('login', $this->login);
           $stmt->bindColumn('password', $this->hash);
-          $stmt->fetch();
-          $this->isValid = true;
+          if ($stmt->fetch(PDO::FETCH_BOUND)) {
+            $this->isValid = true;
+            $this->isAdmin = self::isAdmin($this->login);
+          }
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
-        $this->isAdmin = self::isAdmin($this->login);
       }
     }
 
@@ -91,7 +92,7 @@ throw $e;
           $userid = self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $userid;
@@ -123,7 +124,7 @@ throw $e;
           $this->isAdmin = false;
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $ret;
@@ -146,7 +147,7 @@ throw $e;
           $ret = true;
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $ret;
@@ -210,7 +211,7 @@ throw $e;
         }
       } catch (PDOException $e) {
         // TODO: handle exception
-throw $e;
+        syslog(LOG_ERR, $e->getMessage());
         $userArr = false;
       }
       return $userArr;

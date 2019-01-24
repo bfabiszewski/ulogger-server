@@ -45,15 +45,16 @@
           $query = "SELECT id, user_id, name, comment FROM " . self::db()->table('tracks') . " WHERE id = ? LIMIT 1";
           $stmt = self::db()->prepare($query);
           $stmt->execute([$trackId]);
-          $stmt->bindColumn('id', $this->id);
-          $stmt->bindColumn('user_id', $this->userId);
+          $stmt->bindColumn('id', $this->id, PDO::PARAM_INT);
+          $stmt->bindColumn('user_id', $this->userId, PDO::PARAM_INT);
           $stmt->bindColumn('name', $this->name);
           $stmt->bindColumn('comment', $this->comment);
-          $stmt->fetch();
-          $this->isValid = true;
+          if ($stmt->fetch(PDO::FETCH_BOUND)) {
+            $this->isValid = true;
+          }
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
 
       }
@@ -91,7 +92,7 @@ throw $e;
           $trackId = self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $trackId;
@@ -145,7 +146,7 @@ throw $e;
           $this->isValid = false;
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $ret;
@@ -174,7 +175,7 @@ throw $e;
           $this->comment = $comment;
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $ret;
@@ -199,7 +200,7 @@ throw $e;
             $ret = true;
           } catch (PDOException $e) {
             // TODO: handle exception
-throw $e;
+            syslog(LOG_ERR, $e->getMessage());
           }
         }
 
@@ -228,7 +229,7 @@ throw $e;
         }
       } catch (PDOException $e) {
         // TODO: handle exception
-throw $e;
+        syslog(LOG_ERR, $e->getMessage());
         $trackArr = false;
       }
       return $trackArr;

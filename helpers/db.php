@@ -52,6 +52,7 @@
           PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // return assoc array by default
         ];
         @parent::__construct($dsn, $user, $pass, $options);
+        $this->setCharset("utf8");
         $this->initTables();
       } catch (PDOException $e) {
         header("HTTP/1.1 503 Service Unavailable");
@@ -90,6 +91,42 @@
     */
     public function table($name) {
       return self::$tables[$name];
+    }
+
+    public function unix_timestamp($column) {
+      $driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
+      switch ($driver) {
+        default:
+        case "mysql":
+          return "UNIX_TIMESTAMP($column)";
+          break;
+        case "pgsql":
+          return "EXTRACT(EPOCH FROM $column)";
+          break;
+        case "sqlite":
+          return "STRFTIME('%s', $column)";
+          break;
+      }
+    }
+
+    public function from_unixtime($column) {
+      $driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
+      switch ($driver) {
+        default:
+        case "mysql":
+          return "FROM_UNIXTIME($column)";
+          break;
+        case "pgsql":
+          return "TO_TIMESTAMP($column)";
+          break;
+        case "sqlite":
+          return "DATE($column, 'unixepoch')";
+          break;
+      }
+    }
+
+    private function setCharset($charset) {
+      $this->query("SET NAMES '$charset'");
     }
   }
 ?>

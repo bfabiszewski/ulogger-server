@@ -24,20 +24,35 @@
   * Positions handling
   */
   class uPosition {
+    /** @param int Position id */
     public $id;
+    /** @param int Unix time stamp */
     public $timestamp;
+    /** @param int User id */
     public $userId;
+    /** @param String User login */
     public $userLogin;
+    /** @param int Track id */
     public $trackId;
+    /** @param String Track name */
     public $trackName;
+    /** @param double Latitude */
     public $latitude;
+    /** @param double Longitude */
     public $longitude;
+    /** @param double Altitude */
     public $altitude;
+    /** @param double Speed */
     public $speed;
+    /** @param double Bearing */
     public $bearing;
+    /** @param int Accuracy */
     public $accuracy;
+    /** @param String Provider */
     public $provider;
+    /** @param String Comment */
     public $comment; // not used yet
+    /** @param int Image id */
     public $imageId; // not used yet
 
     public $isValid = false;
@@ -51,7 +66,7 @@
     public function __construct($positionId = NULL) {
 
       if (!empty($positionId)) {
-        $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
+        $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
                   p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                   p.comment, p.image_id, u.login, t.name
                   FROM " . self::db()->table('positions') . " p
@@ -63,7 +78,7 @@
           $this->loadWithQuery($query, $params);
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
     }
@@ -85,7 +100,7 @@ throw $e;
     *
     * @param int $userId
     * @param int $trackId
-    * @param int $time Unix time stamp
+    * @param int $timestamp Unix time stamp
     * @param double $lat
     * @param double $lon
     * @param double $altitude Optional
@@ -109,7 +124,7 @@ throw $e;
             $query = "INSERT INTO $table
                       (user_id, track_id,
                       time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id)
-                      VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                      VALUES (?, ?, " . self::db()->from_unixtime('?') . ", ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = self::db()->prepare($query);
             $params = [ $userId, $trackId,
                     $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId ];
@@ -117,6 +132,7 @@ throw $e;
             $positionId = self::db()->lastInsertId("${table}_id_seq");
           } catch (PDOException $e) {
             // TODO: handle error
+            syslog(LOG_ERR, $e->getMessage());
           }
         }
       }
@@ -147,7 +163,7 @@ throw $e;
           $ret = true;
         } catch (PDOException $e) {
           // TODO: handle exception
-throw $e;
+          syslog(LOG_ERR, $e->getMessage());
         }
       }
       return $ret;
@@ -168,7 +184,7 @@ throw $e;
         $where = "";
         $params = NULL;
       }
-      $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
+      $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM " . self::db()->table('positions') . " p
@@ -181,7 +197,7 @@ throw $e;
         $position->loadWithQuery($query, $params);
       } catch (PDOException $e) {
         // TODO: handle exception
-throw $e;
+        syslog(LOG_ERR, $e->getMessage());
       }
       return $position;
     }
@@ -206,7 +222,7 @@ throw $e;
       } else {
         $where = "";
       }
-      $query = "SELECT p.id, UNIX_TIMESTAMP(p.time) AS tstamp, p.user_id, p.track_id,
+      $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
                 p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
                 p.comment, p.image_id, u.login, t.name
                 FROM " . self::db()->table('positions') . " p
@@ -222,7 +238,7 @@ throw $e;
         }
       } catch (PDOException $e) {
         // TODO: handle exception
-throw $e;
+        syslog(LOG_ERR, $e->getMessage());
       }
       return $positionsArr;
     }
@@ -292,25 +308,24 @@ throw $e;
       $stmt = self::db()->prepare($query);
       $stmt->execute($params);
 
-      $stmt->bindColumn('id', $this->id);
-      $stmt->bindColumn('tstamp', $this->timestamp);
-      $stmt->bindColumn('user_id', $this->userId);
-      $stmt->bindColumn('track_id', $this->trackId);
+      $stmt->bindColumn('id', $this->id, PDO::PARAM_INT);
+      $stmt->bindColumn('tstamp', $this->timestamp, PDO::PARAM_INT);
+      $stmt->bindColumn('user_id', $this->userId, PDO::PARAM_INT);
+      $stmt->bindColumn('track_id', $this->trackId, PDO::PARAM_INT);
       $stmt->bindColumn('latitude', $this->latitude);
       $stmt->bindColumn('longitude', $this->longitude);
       $stmt->bindColumn('altitude', $this->altitude);
       $stmt->bindColumn('speed', $this->speed);
       $stmt->bindColumn('bearing', $this->bearing);
-      $stmt->bindColumn('accuracy', $this->accuracy);
+      $stmt->bindColumn('accuracy', $this->accuracy, PDO::PARAM_INT);
       $stmt->bindColumn('provider', $this->provider);
       $stmt->bindColumn('comment', $this->comment);
-      $stmt->bindColumn('image_id', $this->imageId);
+      $stmt->bindColumn('image_id', $this->imageId, PDO::PARAM_INT);
       $stmt->bindColumn('login', $this->userLogin);
       $stmt->bindColumn('name', $this->trackName);
-
-      $stmt->fetch(PDO::FETCH_BOUND);
-      $this->isValid = true;
-      $stmt = null;
+      if ($stmt->fetch(PDO::FETCH_BOUND)) {
+        $this->isValid = true;
+      }
     }
   }
 

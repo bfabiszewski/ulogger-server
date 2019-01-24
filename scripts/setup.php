@@ -33,7 +33,7 @@ require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/lang.php");
 
-$command = isset($_REQUEST['command']) ? $_REQUEST['command'] : NULL;
+$command = uUtils::postString('command');
 
 $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
 $tPositions = $prefix . "positions";
@@ -78,8 +78,8 @@ switch ($command) {
     break;
 
   case "adduser":
-      $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
-      $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
+      $login = uUtils::postString('login');
+      $pass = uUtils::postPass('pass');
 
       if (uUser::add($login, $pass) !== false) {
         $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
@@ -127,143 +127,141 @@ switch ($command) {
 }
 
 function getQueries($db) {
-    $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
-    $queries = [];
-    switch($driver) {
-      case "mysql":
-        // positions
-        $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
-        $queries[] = "CREATE TABLE `$tPositions` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        `user_id` int(11) NOT NULL,
-                        `track_id` int(11) NOT NULL,
-                        `latitude` double NOT NULL,
-                        `longitude` double NOT NULL,
-                        `altitude` double DEFAULT NULL,
-                        `speed` double DEFAULT NULL,
-                        `bearing` double DEFAULT NULL,
-                        `accuracy` int(11) DEFAULT NULL,
-                        `provider` varchar(100) DEFAULT NULL,
-                        `comment` varchar(255) DEFAULT NULL,
-                        `image_id` int(11) DEFAULT NULL,
-                        PRIMARY KEY (`id`),
-                        KEY `index_trip_id` (`track_id`),
-                        KEY `index_user_id` (`user_id`)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-
-        // tracks
-        $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
-        $queries[] = "CREATE TABLE `$tTracks` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `user_id` int(11) NOT NULL,
-                        `name` varchar(255) DEFAULT NULL,
-                        `comment` varchar(1024) DEFAULT NULL,
-                        PRIMARY KEY (`id`),
-                        KEY `user_id` (`user_id`)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-
-        // users
-        $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
-        $queries[] = "CREATE TABLE `$tUsers` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `login` varchar(15) CHARACTER SET latin1 NOT NULL,
-                        `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
-                        PRIMARY KEY (`id`),
-                        UNIQUE KEY `login` (`login`)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-       break;
-
-      case "pgsql":
-        // positions
-        $queries[] = "DROP TABLE IF EXISTS $tPositions";
-        $queries[] = "CREATE TABLE $tPositions (
-                        id SERIAL PRIMARY KEY,
-                        time TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        user_id INT NOT NULL,
-                        track_id INT NOT NULL,
-                        latitude DOUBLE PRECISION NOT NULL,
-                        longitude DOUBLE PRECISION NOT NULL,
-                        altitude DOUBLE PRECISION DEFAULT NULL,
-                        speed DOUBLE PRECISION DEFAULT NULL,
-                        bearing DOUBLE PRECISION DEFAULT NULL,
-                        accuracy INT DEFAULT NULL,
-                        provider VARCHAR(100) DEFAULT NULL,
-                        comment VARCHAR(255) DEFAULT NULL,
-                        image_id INT DEFAULT NULL
-                      )";
-        $queries[] = "CREATE INDEX index_trip_id ON $tPositions (track_id)";
-        $queries[] = "CREATE INDEX index_user_id ON $tPositions (user_id)";
-
-        // tracks
-        $queries[] = "DROP TABLE IF EXISTS $tTracks";
-        $queries[] = "CREATE TABLE $tTracks (
-                        id SERIAL PRIMARY KEY,
-                        user_id INT NOT NULL,
-                        name VARCHAR(255) DEFAULT NULL,
-                        comment VARCHAR(1024) DEFAULT NULL
-                      )";
-        $queries[] = "CREATE INDEX user_id ON $tTracks (user_id)";
-
-        // users
-        $queries[] = "DROP TABLE IF EXISTS $tUsers";
-        $queries[] = "CREATE TABLE $tUsers (
-                        id SERIAL PRIMARY KEY,
-                        login varchar(15) NOT NULL UNIQUE,
-                        password varchar(255) NOT NULL DEFAULT ''
-                      )";
-        break;
-
-      case "sqlite":
-
-        // positions
-        $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
-        $queries[] = "CREATE TABLE `$tPositions` (
-                        `id` INTEGER NOT NULL ,
-                        `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        `user_id` INTEGER NOT NULL,
-                        `track_id` INTEGER NOT NULL,
-                        `latitude` double NOT NULL,
-                        `longitude` double NOT NULL,
-                        `altitude` double DEFAULT NULL,
-                        `speed` double DEFAULT NULL,
-                        `bearing` double DEFAULT NULL,
-                        `accuracy` INTEGER DEFAULT NULL,
-                        `provider` TEXT DEFAULT NULL,
-                        `comment` TEXT DEFAULT NULL,
-                        `image_id` INTEGER DEFAULT NULL,
-                        PRIMARY KEY (`id`)
-                      )";
-        $queries[] = "CREATE INDEX `positions_index_trip_id` ON `$tPositions` (`track_id`)";
-        $queries[] = "CREATE INDEX `positions_index_user_id` ON `$tPositions` (`user_id`)";
-
-        // tracks
-        $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
-        $queries[] = "CREATE TABLE `$tTracks` (
-                        `id` INTEGER NOT NULL,
-                        `user_id` INTEGER NOT NULL,
-                        `name` TEXT DEFAULT NULL,
-                        `comment` TEXT DEFAULT NULL,
-                        PRIMARY KEY (`id`)
-                      )";
-        $queries[] = "CREATE INDEX `tracks_user_id` ON `$tTracks` (`user_id`)";
-
-        // users
-        $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
-        $queries[] = "CREATE TABLE `$tUsers` (
-                        `id` INTEGER NOT NULL ,
-                        `login` TEXT  NOT NULL,
-                        `password` TEXT  NOT NULL DEFAULT '',
-                        PRIMARY KEY (`id`)
-                      )";
-        $queries[] = "CREATE UNIQUE INDEX `users_login` ON `$tUsers` (`login`)";
-        break;
-
-      default:
-        throw InvalidArgumentException("Driver not supported");
-    }
+  $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+  $queries = [];
+  switch($driver) {
+    case "mysql":
+      // users
+      $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+      $queries[] = "CREATE TABLE `$tUsers` (
+                      `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
+                      `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
 
+      // tracks
+      $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+      $queries[] = "CREATE TABLE `$tTracks` (
+                      `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      `user_id` int(11) NOT NULL,
+                      `name` varchar(255) DEFAULT NULL,
+                      `comment` varchar(1024) DEFAULT NULL,
+                      INDEX `idx_user_id` (`user_id`),
+                      FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+      // positions
+      $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+      $queries[] = "CREATE TABLE `$tPositions` (
+                      `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                      `user_id` int(11) NOT NULL,
+                      `track_id` int(11) NOT NULL,
+                      `latitude` double NOT NULL,
+                      `longitude` double NOT NULL,
+                      `altitude` double DEFAULT NULL,
+                      `speed` double DEFAULT NULL,
+                      `bearing` double DEFAULT NULL,
+                      `accuracy` int(11) DEFAULT NULL,
+                      `provider` varchar(100) DEFAULT NULL,
+                      `comment` varchar(255) DEFAULT NULL,
+                      `image_id` int(11) DEFAULT NULL,
+                      INDEX `idx_track_id` (`track_id`),
+                      INDEX `idx_user_id` (`user_id`),
+                      FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
+                      FOREIGN KEY(`track_id`) REFERENCES `$tTracks`(`id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+      break;
+
+    case "pgsql":
+      // users
+      $queries[] = "DROP TABLE IF EXISTS $tUsers";
+      $queries[] = "CREATE TABLE $tUsers (
+                      id SERIAL PRIMARY KEY,
+                      login VARCHAR(15) NOT NULL UNIQUE,
+                      password VARCHAR(255) NOT NULL DEFAULT ''
+                    )";
+
+      // tracks
+      $queries[] = "DROP TABLE IF EXISTS $tTracks";
+      $queries[] = "CREATE TABLE $tTracks (
+                      id SERIAL PRIMARY KEY,
+                      user_id INT NOT NULL,
+                      name VARCHAR(255) DEFAULT NULL,
+                      comment VARCHAR(1024) DEFAULT NULL,
+                      FOREIGN KEY(user_id) REFERENCES $tUsers(id)
+                    )";
+      $queries[] = "CREATE INDEX idx_user_id ON $tTracks(user_id)";
+
+      // positions
+      $queries[] = "DROP TABLE IF EXISTS $tPositions";
+      $queries[] = "CREATE TABLE $tPositions (
+                      id SERIAL PRIMARY KEY,
+                      time TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                      user_id INT NOT NULL,
+                      track_id INT NOT NULL,
+                      latitude DOUBLE PRECISION NOT NULL,
+                      longitude DOUBLE PRECISION NOT NULL,
+                      altitude DOUBLE PRECISION DEFAULT NULL,
+                      speed DOUBLE PRECISION DEFAULT NULL,
+                      bearing DOUBLE PRECISION DEFAULT NULL,
+                      accuracy INT DEFAULT NULL,
+                      provider VARCHAR(100) DEFAULT NULL,
+                      comment VARCHAR(255) DEFAULT NULL,
+                      image_id INT DEFAULT NULL,
+                      FOREIGN KEY(user_id) REFERENCES $tUsers(id),
+                      FOREIGN KEY(track_id) REFERENCES $tTracks(id)
+                    )";
+      $queries[] = "CREATE INDEX idx_ptrack_id ON $tPositions(track_id)";
+      $queries[] = "CREATE INDEX idx_puser_id ON $tPositions(user_id)";
+    break;
+
+  case "sqlite":
+    // users
+    $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+    $queries[] = "CREATE TABLE `$tUsers` (
+                    `id` integer PRIMARY KEY AUTOINCREMENT,
+                    `login` varchar(15) NOT NULL UNIQUE,
+                    `password` varchar(255) NOT NULL DEFAULT ''
+                  )";
+   // tracks
+   $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+   $queries[] = "CREATE TABLE `$tTracks` (
+                   `id` integer PRIMARY KEY AUTOINCREMENT,
+                   `user_id` integer NOT NULL,
+                   `name` varchar(255) DEFAULT NULL,
+                   `comment` varchar(1024) DEFAULT NULL,
+                   FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`)
+                 )";
+   $queries[] = "CREATE INDEX `idx_user_id` ON `$tTracks`(`user_id`)";
+
+  // positions
+    $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+    $queries[] = "CREATE TABLE `$tPositions` (
+                    `id` integer PRIMARY KEY AUTOINCREMENT,
+                    `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `user_id` integer NOT NULL,
+                    `track_id` integer NOT NULL,
+                    `latitude` double NOT NULL,
+                    `longitude` double NOT NULL,
+                    `altitude` double DEFAULT NULL,
+                    `speed` double DEFAULT NULL,
+                    `bearing` double DEFAULT NULL,
+                    `accuracy` integer DEFAULT NULL,
+                    `provider` varchar(100) DEFAULT NULL,
+                    `comment` varchar(255) DEFAULT NULL,
+                    `image_id` integer DEFAULT NULL,
+                    FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
+                    FOREIGN KEY(`track_id`) REFERENCES `$tTracks`(`id`)
+                  )";
+    $queries[] = "CREATE INDEX `idx_ptrack_id` ON `$tPositions`(`track_id`)";
+    $queries[] = "CREATE INDEX `idx_puser_id` ON `$tPositions`(`user_id`)";
+    break;
+
+  default:
+    throw InvalidArgumentException("Driver not supported");
+  }
 }
 
 ?>

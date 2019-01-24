@@ -47,18 +47,25 @@
 
   require_once(dirname(__DIR__) . "/helpers/auth.php");
 
+  $action = uUtils::postString('action');
+
   $auth = new uAuth();
-  if (!$auth->isAuthenticated()) {
+  if (!$auth->isAuthenticated() && $action != "auth") {
     $auth->sendUnauthorizedHeader();
     exitWithError("Unauthorized");
   }
 
-  $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
-
   switch ($action) {
     // action: authorize
     case "auth":
-      exitWithSuccess();
+      $login = uUtils::postString('user');
+      $pass = uUtils::postPass('pass');
+      if ($auth->checkLogin($login, $pass)) {
+        exitWithSuccess();
+      } else {
+        $auth->sendUnauthorizedHeader();
+        exitWithError("Unauthorized");
+      }
       break;
 
     // action: adduser (currently unused)
@@ -66,8 +73,8 @@
       if (!$auth->user->isAdmin) {
         exitWithError("Not allowed");
       }
-      $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : NULL;
-      $pass = isset($_REQUEST['password']) ? $_REQUEST['password'] : NULL;
+      $login = uUtils::postString('login');
+      $pass = uUtils::postPass('password');
       if (empty($login) || empty($pass)) {
         exitWithError("Empty login or password");
       }
@@ -80,7 +87,7 @@
 
     // action: addtrack
     case "addtrack":
-      $trackName = isset($_REQUEST['track']) ? $_REQUEST['track'] : NULL;
+      $trackName = uUtils::postString('track');
       if (empty($trackName)) {
         exitWithError("Missing required parameter");
       }
@@ -95,19 +102,19 @@
 
     // action: addposition
     case "addpos":
-      $lat = isset($_REQUEST["lat"]) ? $_REQUEST["lat"] : NULL;
-      $lon = isset($_REQUEST["lon"]) ? $_REQUEST["lon"] : NULL;
-      $timestamp = isset($_REQUEST["time"]) ? $_REQUEST["time"] : NULL;
-      $altitude = isset($_REQUEST["altitude"]) ? $_REQUEST["altitude"] : NULL;
-      $speed = isset($_REQUEST["speed"]) ? $_REQUEST["speed"] : NULL;
-      $bearing = isset($_REQUEST["bearing"]) ? $_REQUEST["bearing"] : NULL;
-      $accuracy = isset($_REQUEST["accuracy"]) ? $_REQUEST["accuracy"] : NULL;
-      $provider = isset($_REQUEST["provider"]) ? $_REQUEST["provider"] : NULL;
-      $comment = isset($_REQUEST["comment"]) ? $_REQUEST["comment"] : NULL;
-      $imageId = isset($_REQUEST["imageid"]) ? $_REQUEST["imageid"] : NULL;
-      $trackId = isset($_REQUEST["trackid"]) ? $_REQUEST["trackid"] : NULL;
+      $lat = uUtils::postFloat('lat');
+      $lon = uUtils::postFloat('lon');
+      $timestamp = uUtils::postInt('time');
+      $altitude = uUtils::postFloat('altitude');
+      $speed = uUtils::postFloat('speed');
+      $bearing = uUtils::postFloat('bearing');
+      $accuracy = uUtils::postInt('accuracy');
+      $provider = uUtils::postString('provider');
+      $comment = uUtils::postString('comment');
+      $imageId = uUtils::postInt('imageid');
+      $trackId = uUtils::postInt('trackid');
 
-      if (!is_numeric($lat) || !is_numeric($lon) || !is_numeric($timestamp) || !is_numeric($trackId)) {
+      if (!is_float($lat) || !is_float($lon) || !is_int($timestamp) || !is_int($trackId)) {
         exitWithError("Missing required parameter");
       }
 

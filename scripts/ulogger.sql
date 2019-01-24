@@ -5,6 +5,36 @@
 CREATE DATABASE IF NOT EXISTS `ulogger` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `ulogger`;
 
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
+  `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tracks`
+--
+
+DROP TABLE IF EXISTS `tracks`;
+CREATE TABLE `tracks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `comment` varchar(1024) DEFAULT NULL,
+  INDEX `idx_user_id` (`user_id`),
+  FOREIGN KEY(`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 --
@@ -13,7 +43,7 @@ USE `ulogger`;
 
 DROP TABLE IF EXISTS `positions`;
 CREATE TABLE `positions` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(11) NOT NULL,
   `track_id` int(11) NOT NULL,
@@ -25,77 +55,13 @@ CREATE TABLE `positions` (
   `accuracy` int(11) DEFAULT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
-  `image_id` int(11) DEFAULT NULL
+  `image_id` int(11) DEFAULT NULL,
+  INDEX `idx_ptrack_id` (`track_id`),
+  INDEX `index_puser_id` (`user_id`),
+  FOREIGN KEY(`user_id`) REFERENCES `users`(`id`),
+  FOREIGN KEY(`track_id`) REFERENCES `tracks`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `tracks`
---
-
-DROP TABLE IF EXISTS `tracks`;
-CREATE TABLE `tracks` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `comment` varchar(1024) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `login` varchar(15) CHARACTER SET latin1 NOT NULL,
-  `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `positions`
---
-ALTER TABLE `positions`
-  ADD PRIMARY KEY (`id`), ADD KEY `index_trip_id` (`track_id`), ADD KEY `index_user_id` (`user_id`);
-
---
--- Indexes for table `tracks`
---
-ALTER TABLE `tracks`
-  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `login` (`login`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `positions`
---
-ALTER TABLE `positions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `tracks`
---
-ALTER TABLE `tracks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- This will add default user admin with password admin
