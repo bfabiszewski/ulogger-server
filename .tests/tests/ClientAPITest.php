@@ -43,7 +43,6 @@ class ClientAPITest extends UloggerAPITestCase {
 
   public function testAddUser() {
     $this->assertTrue($this->authenticate(), "Authentication failed");
-
     $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [

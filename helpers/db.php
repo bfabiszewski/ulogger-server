@@ -37,6 +37,13 @@
      */
     protected static $tables;
 
+    /**
+     * Database driver name
+     *
+     * @var String Driver
+     */
+    protected static $driver;
+
    /**
     * PDO constuctor
     *
@@ -52,6 +59,7 @@
           PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // return assoc array by default
         ];
         @parent::__construct($dsn, $user, $pass, $options);
+        self::$driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
         $this->setCharset("utf8");
         $this->initTables();
       } catch (PDOException $e) {
@@ -94,8 +102,7 @@
     }
 
     public function unix_timestamp($column) {
-      $driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
-      switch ($driver) {
+      switch (self::$driver) {
         default:
         case "mysql":
           return "UNIX_TIMESTAMP($column)";
@@ -110,8 +117,7 @@
     }
 
     public function from_unixtime($column) {
-      $driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
-      switch ($driver) {
+      switch (self::$driver) {
         default:
         case "mysql":
           return "FROM_UNIXTIME($column)";
@@ -120,13 +126,15 @@
           return "TO_TIMESTAMP($column)";
           break;
         case "sqlite":
-          return "DATE($column, 'unixepoch')";
+          return "DATETIME($column, 'unixepoch')";
           break;
       }
     }
 
     private function setCharset($charset) {
-      $this->query("SET NAMES '$charset'");
+      if (self::$driver == "pgsql" || self::$driver == "mysql") {
+        $this->query("SET NAMES '$charset'");
+      }
     }
   }
 ?>

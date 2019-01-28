@@ -6,6 +6,10 @@ DB_USER_PASS=$2
 mkdir -p /run/nginx
 chown nginx:nginx /run/nginx
 
+# Fix permission issues on mounted volume in macOS
+sed -i "s/^nobody:.*$/nobody:x:1000:50::nobody:\/:\/sbin\/nologin/" /etc/passwd
+sed -i "s/^nobody:.*$/nobody:x:50:/" /etc/group
+
 sed -i "s/^\$dbuser = .*$/\$dbuser = \"ulogger\";/" /var/www/html/config.php
 sed -i "s/^\$dbpass = .*$/\$dbpass = \"${DB_USER_PASS}\";/" /var/www/html/config.php
 
@@ -28,7 +32,11 @@ if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
   su postgres -c "pg_ctl -w stop"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"pgsql:host=localhost;port=5432;dbname=ulogger\";/" /var/www/html/config.php
 elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
-  sqlite3 /data/ulogger.db < /var/www/html/scripts/ulogger.sqlite
+  mkdir -p /data
+  chown nobody:nobody /data
+  sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/ulogger.db
+  sqlite3 -line /data/ulogger.db "INSERT INTO users (login, password) VALUES ('admin', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq')"
+  sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else
   mkdir -p /run/mysqld
   chown mysql:mysql /run/mysqld

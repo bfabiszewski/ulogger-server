@@ -18,7 +18,7 @@
  */
 
 // This script is disabled by default. Change below to true before running.
-$enabled = true;
+$enabled = false;
 
 
 /* -------------------------------------------- */
@@ -31,6 +31,7 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
 define("ROOT_DIR", dirname(__DIR__));
 require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
 require_once(ROOT_DIR . "/lang.php");
 
 $command = uUtils::postString('command');
@@ -39,6 +40,7 @@ $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
 $tPositions = $prefix . "positions";
 $tTracks = $prefix . "tracks";
 $tUsers = $prefix . "users";
+$dbDriver = null;
 
 $messages = [];
 switch ($command) {
@@ -46,7 +48,9 @@ switch ($command) {
 
     $error = false;
     try {
-      $db = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass);
+      $options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ];
+      $pdo = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
+      $dbDriver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     } catch (PDOException $e ) {
       $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
       $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
@@ -54,16 +58,16 @@ switch ($command) {
       break;
     }
     try {
-      $queries = getQueries($db);
+      $queries = getQueries($pdo);
       foreach ($queries as $query) {
-        $db->query($query);
+        $pdo->query($query);
       }
     } catch (PDOException $e) {
         $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
         $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
         $error = true;
     }
-    $db = null;
+    $pdo = null;
     if (!$error) {
       $messages[] = "<span class=\"ok\">{$langSetup["dbtablessuccess"]}</span>";
       $messages[] = $langSetup["setupuser"];
@@ -114,22 +118,28 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (empty(uConfig::$dbdsn) || empty(uConfig::$dbuser)) {
-      $messages[] = sprintf($langSetup["nodbsettings"], "\$dbdsn, \$dbuser, \$dbpass");
+    if (empty(uConfig::$dbdsn) || ($dbDriver != "sqlite" && empty(uConfig::$dbuser))) {
+      if ($dbDriver == "sqlite") {
+        $required = "\$dbdsn";
+      } else {
+        $required = "\$dbdsn, \$dbuser, \$dbpass";
+      }
+      $messages[] = sprintf($langSetup["nodbsettings"], $required);
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>" . uConfig::$dbname . "</b>");
+    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>" . getDbname(uConfig::$dbdsn) . "</b>");
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
 }
 
-function getQueries($db) {
-  $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+function getQueries($pdo) {
+  global $tPositions, $tUsers, $tTracks, $dbDriver;
+
   $queries = [];
-  switch($driver) {
+  switch($dbDriver) {
     case "mysql":
       // users
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
@@ -262,6 +272,29 @@ function getQueries($db) {
   default:
     throw InvalidArgumentException("Driver not supported");
   }
+  return $queries;
+}
+
+function getDbname($dsn) {
+  if (strpos($dsn, ':') !== false) {
+    list($scheme, $dsnWithoutScheme) = explode(':', $dsn, 2);
+    switch ($scheme) {
+      case 'sqlite':
+      case 'sqlite2':
+      case 'sqlite3':
+        return $dsnWithoutScheme;
+        break;
+
+      default:
+        $pattern = '~dbname=([^;]*)(?:;|$)~';
+        $result = preg_match($pattern, $dsnWithoutScheme, $matches);
+        if ($result === 1 && !empty($matches[1])) {
+            return $matches[1];
+        }
+        break;
+    }
+  }
+  return "noname";
 }
 
 ?>

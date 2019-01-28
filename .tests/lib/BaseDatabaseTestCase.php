@@ -37,7 +37,6 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 
   public function setUp() {
     parent::setUp();
-
   }
 
   public static function setUpBeforeClass() {
@@ -81,15 +80,19 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * @return PHPUnit_Extensions_Database_DataSet_IDataSet
    */
   protected function getDataSet() {
-    $this->resetSequences();
-    return $this->createMySQLXMLDataSet(__DIR__ . '/../fixtures/fixture_empty.xml');
+    $this->resetAutoincrement();
+    return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_empty.xml');
   }
 
-  protected function resetSequences($users = 1, $tracks = 1, $positions = 1) {
+  protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1) {
     if (self::$driver == "pgsql") {
       self::$pdo->query("ALTER SEQUENCE users_id_seq RESTART WITH $users");
       self::$pdo->query("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
       self::$pdo->query("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
+    } else if (self::$driver == "sqlite") {
+      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
+      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
+      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
     }
   }
 
@@ -224,7 +227,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
         return "TO_TIMESTAMP($column)";
         break;
       case "sqlite":
-        return "DATE($column, 'unixepoch')";
+        return "DATETIME($column, 'unixepoch')";
         break;
     }
   }

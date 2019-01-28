@@ -57,9 +57,9 @@ function toHMS($s) {
   return (($d > 0) ? "$d d " : "") . sprintf("%02d:%02d:%02d", $h, $m, $s);
 }
 
-$type = uUtils::postString('type', 'kml');
-$userId = uUtils::postInt('userid');
-$trackId = uUtils::postInt('trackid');
+$type = uUtils::getString('type', 'kml');
+$userId = uUtils::getInt('userid');
+$trackId = uUtils::getInt('trackid');
 
 if (!uConfig::$public_tracks &&
     (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $userId))) {

@@ -142,11 +142,11 @@
     }
 
     public static function postString($name, $default = NULL) {
-      if (is_string(($val = self::requestValue($name, $default, INPUT_POST)))) {
-        return trim($val);
-      } else {
-        return $val;
-      }
+      return self::requestString($name, $default, INPUT_POST);
+    }
+
+    public static function getString($name, $default = NULL) {
+      return self::requestString($name, $default, INPUT_GET);
     }
 
     public static function getBool($name, $default = NULL) {
@@ -154,22 +154,30 @@
     }
 
     public static function postInt($name, $default = NULL) {
-      if (is_float(($val = self::postFloat($name, $default)))) {
-        return (int) round($val);
-      } else {
-        return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_INT);
-      }
+      return self::requestInt($name, $default, INPUT_POST);
     }
 
     public static function getInt($name, $default = NULL) {
-      if (is_float(($val = self::getFloat($name, $default)))) {
-        return (int) round($val);
+      return self::requestInt($name, $default, INPUT_GET);
+    }
+
+    private static function requestString($name, $default, $type) {
+      if (is_string(($val = self::requestValue($name, $default, $type)))) {
+        return trim($val);
       } else {
-        return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_INT);
+        return $val;
       }
     }
 
-    public static function requestValue($name, $default = NULL, $type = INPUT_POST, $filters = FILTER_DEFAULT, $flags = NULL) {
+    private static function requestInt($name, $default, $type) {
+      if (is_float(($val = self::requestValue($name, $default, $type, FILTER_VALIDATE_FLOAT)))) {
+        return (int) round($val);
+      } else {
+        return self::requestValue($name, $default, $type, FILTER_VALIDATE_INT);
+      }
+    }
+
+    private static function requestValue($name, $default, $type, $filters = FILTER_DEFAULT, $flags = NULL) {
       $input = filter_input($type, $name, $filters, $flags);
       if ($input !== false && !is_null($input)) {
         return $input;

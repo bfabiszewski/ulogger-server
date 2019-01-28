@@ -18,7 +18,7 @@ grep '^\$' /var/www/html/config.php
 # start services
 if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
   su postgres -c 'pg_ctl -D /data start'
-else
+elif [ "$ULOGGER_DB_DRIVER" = "mysql" ]; then
   mysqld_safe --datadir=/data &
 fi
 nginx
