@@ -109,9 +109,9 @@ $lang["deltrack"] = "Remove track";
 $lang["trackname"] = "Track name";
 $lang["edittrack"] = "Edit track";
 $lang["passlenmin"] = "Password must be at least %d characters"; // substitutes password minimum length
-$lang["passrules"][1] = "It should contain at least one lower case letter, one upper case letter";
-$lang["passrules"][2] = "It should contain at least one lower case letter, one upper case letter and one digit";
-$lang["passrules"][3] = "It should contain at least one lower case letter, one upper case letter, one digit and one non-alphanumeric character";
+$lang["passrules_1"] = "It should contain at least one lower case letter, one upper case letter";
+$lang["passrules_2"] = "It should contain at least one lower case letter, one upper case letter and one digit";
+$lang["passrules_3"] = "It should contain at least one lower case letter, one upper case letter, one digit and one non-alphanumeric character";
 $lang["owntrackswarn"] = "Your can only edit your own tracks";
 $lang["gmauthfailure"] = "There may be problem with Google Maps API key on this page";
 $lang["gmapilink"] = "You may find more information about API keys on <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">this Google webpage</a>";

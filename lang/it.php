@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
- 
-// italian translation
+
+// default language for translations
 
 // strings only used in setup
 $langSetup["dbconnectfailed"] = "Connessione al database fallita.";
@@ -64,7 +64,7 @@ $lang["altitude"] = "Altitudine";
 $lang["ttime"] = "Tempo totale";
 $lang["aspeed"] = "Velocità media";
 $lang["tdistance"] = "Distanza totale";
-$lang["point"] = "Punto %d di %d";
+$lang["pointof"] = "Point %d of %d"; // e.g. Point 3 of 10
 $lang["summary"] = "Sommario";
 $lang["suser"] = "scegli utente";
 $lang["logout"] = "Esci";
@@ -77,6 +77,7 @@ $lang["api"] = "API Mappe";
 $lang["units"] = "Unità";
 $lang["metric"] = "Metriche";
 $lang["imperial"] = "Imperiali";
+$lang["nautical"] = "Nautical";
 $lang["adminmenu"] = "Amministazione";
 $lang["passwordrepeat"] = "Ripeti password";
 $lang["passwordenter"] = "Immetti password";
@@ -85,7 +86,7 @@ $lang["adduser"] = "Aggiungi utente";
 $lang["userexists"] = "L'utente esiste già";
 $lang["cancel"] ="Annulla";
 $lang["submit"] = "Invia";
-$lang["oldpassword"] = "Vecchia password"; // new strings
+$lang["oldpassword"] = "Vecchia password";
 $lang["newpassword"] = "Nuova password";
 $lang["newpasswordrepeat"] = "Ripeti nuova password";
 $lang["changepass"] = "Cambia password";
@@ -108,9 +109,9 @@ $lang["deltrack"] = "Elimina traccia";
 $lang["trackname"] = "Nome traccia";
 $lang["edittrack"] = "Modifica traccia";
 $lang["passlenmin"] = "La password deve essere almeno di %d caratteri"; // substitutes password minimum length
-$lang["passrules"][1] = "Dovrebbe contenere almeno una lettera minuscola e una lettera maiuscola";
-$lang["passrules"][2] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola e un numero";
-$lang["passrules"][3] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola, un numero ed un carattere non alfanumerico";
+$lang["passrules_1"] = "Dovrebbe contenere almeno una lettera minuscola e una lettera maiuscola";
+$lang["passrules_2"] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola e un numero";
+$lang["passrules_3"] = "Dovrebbe contenere almeno una lettera minuscola, una lettera maiuscola, un numero ed un carattere non alfanumerico";
 $lang["owntrackswarn"] = "Puoi modificare solo le tue tracce";
 $lang["gmauthfailure"] = "In questa pagina potrebbe esserci un problema con le API di Google Maps.";
 $lang["gmapilink"] = "Puoi trovare maggiori informazioni sulle chiavi API a <a target=\"_blank\" href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\">questo indirizzo</a>.";

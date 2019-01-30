@@ -40,7 +40,7 @@
   }
 
   // choose password messages based on config
-  $lang['passrules'] = isset($lang["passrules"][uConfig::$pass_strength]) ? $lang["passrules"][uConfig::$pass_strength] : "";
+  $lang['passrules'] = isset($lang["passrules_" . uConfig::$pass_strength]) ? $lang["passrules_" . uConfig::$pass_strength] : "";
   $lang['passlenmin'] = sprintf($lang["passlenmin"], uConfig::$pass_lenmin);
 
 ?>

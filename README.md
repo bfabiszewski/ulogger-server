@@ -68,6 +68,9 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - track display filters (accurracy, provider)
 - improve interface on mobile devices
 
+## Translations
+- translations may be contributed via [Transifex](https://www.transifex.com/bfabiszewski/ulogger-android/).
+
 ## License
 - GPL
 - μlogger is a fork of phpTrackme - tracks viewer I wrote for TrackMe app
