@@ -23,9 +23,9 @@
 
   $auth = new uAuth();
 
-  $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
-  $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
-  $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
+  $action = uUtils::postString('action');
+  $login = uUtils::postString('login');
+  $pass = uUtils::postPass('pass');
   if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login == $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }

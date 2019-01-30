@@ -23,8 +23,8 @@ require_once(ROOT_DIR . "/helpers/utils.php");
 
 $auth = new uAuth();
 
-$userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
-$trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
+$userId = uUtils::getInt('userid');
+$trackId = uUtils::getInt('trackid');
 
 $positionsArr = [];
 if ($userId) {

@@ -26,10 +26,10 @@
     uUtils::exitWithError("Unauthorized");
   }
 
-  $login = isset($_REQUEST['login']) ? trim($_REQUEST['login']) : NULL;
-  $oldpass = isset($_REQUEST['oldpass']) ? $_REQUEST['oldpass'] : NULL;
-  $pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : NULL;
-  // FIXME: stings need to be localized
+  $login = uUtils::postString('login');
+  $oldpass = uUtils::postPass('oldpass');
+  $pass = uUtils::postPass('pass');
+  // FIXME: strings need to be localized
   if (empty($pass)) {
     uUtils::exitWithError("Empty password");
   }

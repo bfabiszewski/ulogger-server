@@ -41,10 +41,9 @@ $init_longitude = 21.01;
 $gkey = "";
 
 // MySQL config
-$dbhost = ""; // mysql host, eg. localhost
+$dbdsn = ""; // DSN eg. "mysql:host=localhost;port=3307;dbname=testdb;charset=utf8"
 $dbuser = ""; // database user
 $dbpass = ""; // database pass
-$dbname = ""; // database name
 $dbprefix = ""; // optional table names prefix, eg. "ulogger_"
 
 // other

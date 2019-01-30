@@ -129,6 +129,63 @@
       return $proto . str_replace("//", "/", $host . $path . "/");
     }
 
+    public static function postFloat($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_FLOAT);
+    }
+
+    public static function getFloat($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_FLOAT);
+    }
+
+    public static function postPass($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_POST);
+    }
+
+    public static function postString($name, $default = NULL) {
+      return self::requestString($name, $default, INPUT_POST);
+    }
+
+    public static function getString($name, $default = NULL) {
+      return self::requestString($name, $default, INPUT_GET);
+    }
+
+    public static function getBool($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public static function postInt($name, $default = NULL) {
+      return self::requestInt($name, $default, INPUT_POST);
+    }
+
+    public static function getInt($name, $default = NULL) {
+      return self::requestInt($name, $default, INPUT_GET);
+    }
+
+    private static function requestString($name, $default, $type) {
+      if (is_string(($val = self::requestValue($name, $default, $type)))) {
+        return trim($val);
+      } else {
+        return $val;
+      }
+    }
+
+    private static function requestInt($name, $default, $type) {
+      if (is_float(($val = self::requestValue($name, $default, $type, FILTER_VALIDATE_FLOAT)))) {
+        return (int) round($val);
+      } else {
+        return self::requestValue($name, $default, $type, FILTER_VALIDATE_INT);
+      }
+    }
+
+    private static function requestValue($name, $default, $type, $filters = FILTER_DEFAULT, $flags = NULL) {
+      $input = filter_input($type, $name, $filters, $flags);
+      if ($input !== false && !is_null($input)) {
+        return $input;
+      } else {
+        return $default;
+      }
+    }
+
   }
 
 ?>

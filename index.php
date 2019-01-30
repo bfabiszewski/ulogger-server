@@ -24,9 +24,16 @@
   require_once(ROOT_DIR . "/helpers/utils.php");
   require_once(ROOT_DIR . "/lang.php");
 
-  $auth = new uAuth();
+  $login = uUtils::postString('user');
+  $pass = uUtils::postPass('pass');
+  $action = uUtils::postString('action');
 
-  if (!$auth->isAuthenticated() && $auth->isLoginAttempt()) {
+  $auth = new uAuth();
+  if ($action == "auth") {
+    $auth->checkLogin($login, $pass);
+  }
+
+  if (!$auth->isAuthenticated() && $action == "auth") {
     $auth->exitWithRedirect("login.php?auth_error=1");
   }
   if (!$auth->isAuthenticated() && uConfig::$require_authentication) {

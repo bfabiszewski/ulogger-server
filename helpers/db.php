@@ -20,9 +20,9 @@
   require_once(ROOT_DIR . "/helpers/config.php");
 
  /**
-  * mysqli wrapper
+  * PDO wrapper
   */
-  class uDb extends mysqli {
+  class uDb extends PDO {
     /**
      * Singleton instance
      *
@@ -37,24 +37,35 @@
      */
     protected static $tables;
 
+    /**
+     * Database driver name
+     *
+     * @var String Driver
+     */
+    protected static $driver;
+
    /**
-    * Private constuctor
+    * PDO constuctor
     *
-    * @param string $host
+    * @param string $dsn
     * @param string $user
     * @param string $pass
-    * @param string $name
-    * @param int $port
-    * @param string $socket
     */
-    public function __construct($host, $user, $pass, $name, $port = null, $socket = null) {
-      @parent::__construct($host, $user, $pass, $name, $port, $socket);
-      if ($this->connect_error) {
+    public function __construct($dsn, $user, $pass) {
+      try {
+        $options = [
+          PDO::ATTR_EMULATE_PREPARES   => false, // try to use native prepared statements
+          PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // throw exceptions
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // return assoc array by default
+        ];
+        @parent::__construct($dsn, $user, $pass, $options);
+        self::$driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $this->setCharset("utf8");
+        $this->initTables();
+      } catch (PDOException $e) {
         header("HTTP/1.1 503 Service Unavailable");
-        die("Database connection error (" . $this->connect_error . ")");
+        die("Database connection error (" . $e->getMessage() . ")");
       }
-      $this->set_charset('utf8');
-      $this->initTables();
     }
 
     /**
@@ -75,7 +86,7 @@
     */
     public static function getInstance() {
       if (!self::$instance) {
-        self::$instance = new self(uConfig::$dbhost, uConfig::$dbuser, uConfig::$dbpass, uConfig::$dbname);
+        self::$instance = new self(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass);
       }
       return self::$instance;
     }
@@ -88,6 +99,42 @@
     */
     public function table($name) {
       return self::$tables[$name];
+    }
+
+    public function unix_timestamp($column) {
+      switch (self::$driver) {
+        default:
+        case "mysql":
+          return "UNIX_TIMESTAMP($column)";
+          break;
+        case "pgsql":
+          return "EXTRACT(EPOCH FROM $column)";
+          break;
+        case "sqlite":
+          return "STRFTIME('%s', $column)";
+          break;
+      }
+    }
+
+    public function from_unixtime($column) {
+      switch (self::$driver) {
+        default:
+        case "mysql":
+          return "FROM_UNIXTIME($column)";
+          break;
+        case "pgsql":
+          return "TO_TIMESTAMP($column)";
+          break;
+        case "sqlite":
+          return "DATETIME($column, 'unixepoch')";
+          break;
+      }
+    }
+
+    private function setCharset($charset) {
+      if (self::$driver == "pgsql" || self::$driver == "mysql") {
+        $this->query("SET NAMES '$charset'");
+      }
     }
   }
 ?>

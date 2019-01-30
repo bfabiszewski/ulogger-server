@@ -21,7 +21,7 @@
   require_once(ROOT_DIR . "/lang.php");
   require_once(ROOT_DIR . "/helpers/config.php");
 
-  $auth_error = isset($_REQUEST['auth_error']) ? (bool) $_REQUEST['auth_error'] : false;
+  $auth_error = uUtils::getBool('auth_error', false);
 
 ?>
 <!DOCTYPE html>

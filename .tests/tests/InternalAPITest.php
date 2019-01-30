@@ -21,9 +21,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
+      "query" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -60,9 +60,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $userId, "trackid" => $trackId ],
+      "query" => [ "userid" => $userId, "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -100,9 +100,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
+      "query" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -124,9 +124,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $userId, "trackid" => $trackId ],
+      "query" => [ "userid" => $userId, "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -162,9 +162,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "query" => [ "userid" => $this->testUserId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -192,9 +192,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "trackid" => $trackId ],
+      "query" => [ "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -211,9 +211,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
+      "query" => [ "userid" => $this->testUserId, "trackid" => $trackId ],
     ];
-    $response = $this->http->post("/utils/getpositions.php", $options);
+    $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -237,9 +237,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "query" => [ "userid" => $this->testUserId ],
     ];
-    $response = $this->http->post("/utils/gettracks.php", $options);
+    $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -267,9 +267,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $userId ],
+      "query" => [ "userid" => $userId ],
     ];
-    $response = $this->http->post("/utils/gettracks.php", $options);
+    $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -297,9 +297,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "query" => [ "userid" => $this->testUserId ],
     ];
-    $response = $this->http->post("/utils/gettracks.php", $options);
+    $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);
@@ -320,7 +320,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
     ];
-    $response = $this->http->post("/utils/gettracks.php", $options);
+    $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $xml = $this->getXMLfromResponse($response);
     $this->assertTrue($xml !== false, "XML object is not false");
@@ -336,9 +336,9 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "query" => [ "userid" => $this->testUserId ],
     ];
-    $response = $this->http->post("/utils/gettracks.php", $options);
+    $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $xml = $this->getXMLfromResponse($response);

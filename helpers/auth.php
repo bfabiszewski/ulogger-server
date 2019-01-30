@@ -28,7 +28,6 @@
   class uAuth {
 
     private $isAuthenticated = false;
-    private $isLoginAttempt = false;
     public $user = null;
 
     public function __construct() {
@@ -37,8 +36,6 @@
       $user = (new uUser())->getFromSession();
       if ($user->isValid) {
         $this->setAuthenticated($user);
-      } else {
-        $this->checkLogin();
       }
     }
 
@@ -49,15 +46,6 @@
      */
     public function isAuthenticated() {
       return $this->isAuthenticated;
-    }
-
-    /**
-     * Has user attempted to log in
-     *
-     * @return boolean True if attempted login, false otherwise
-     */
-    public function isLoginAttempt() {
-      return $this->isLoginAttempt;
     }
 
     /**
@@ -121,22 +109,19 @@
      *
      * @return void
      */
-    private function checkLogin() {
-      $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : NULL;
-      $login = isset($_REQUEST["user"]) ? $_REQUEST["user"] : NULL;
-      $pass = isset($_REQUEST["pass"]) ? $_REQUEST["pass"] : NULL;
-
-      if ($action == "auth" && !is_null($login) && !is_null($pass)) {
-        $this->isLoginAttempt = true;
+    public function checkLogin($login, $pass) {
+      if (!is_null($login) && !is_null($pass)) {
         if (!empty($login) && !empty($pass)) {
           $user = new uUser($login);
           if ($user->isValid && $user->validPassword($pass)) {
             $this->setAuthenticated($user);
             $this->sessionCleanup();
             $user->storeInSession();
+            return true;
           }
         }
       }
+      return false;
     }
 
     /**

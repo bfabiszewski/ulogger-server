@@ -26,7 +26,8 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
   }
 
   protected function getDataSet() {
-    return $this->createMySQLXMLDataSet(__DIR__ . '/../fixtures/fixture_admin.xml');
+    $this->resetAutoincrement(2);
+    return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_admin.xml');
   }
 
   /**
