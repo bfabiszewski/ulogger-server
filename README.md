@@ -1,4 +1,4 @@
-# ![ulogger_logo_small](https://cloud.githubusercontent.com/assets/3366666/24080878/0288f046-0ca8-11e7-9ffd-753e5c417756.png)μlogger   [![Build Status](https://travis-ci.org/bfabiszewski/ulogger-server.svg?branch=master)](https://travis-ci.org/bfabiszewski/ulogger-server) 
+# ![ulogger_logo_small](https://cloud.githubusercontent.com/assets/3366666/24080878/0288f046-0ca8-11e7-9ffd-753e5c417756.png)μlogger   [![Build Status](https://travis-ci.org/bfabiszewski/ulogger-server.svg?branch=master)](https://travis-ci.org/bfabiszewski/ulogger-server)
 
 This is a web application for real-time collection of geolocation data, tracks viewing and management.
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
@@ -8,7 +8,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 
 ## Requirements:
 - PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/04b2b771398d8511bfa6fe8a85d58162bd32fc46/helpers/user.php#L24))
-- MySQL 4.1
+- MySQL, PostgreSQL or SQLite (over PDO driver)
 - browser with javascript enabled, cookies for authentication and saving preferences
 
 ## Features:
@@ -45,12 +45,12 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Optional configuration options with ENV variables, for list see [Dockerfile](https://github.com/bfabiszewski/ulogger-server/blob/master/Dockerfile). The variables correspond to main μlogger configuration parameteres.
 - For example: `docker run --name ulogger -e ULOGGER_LANG="pl" -p 8080:80 -d bfabiszewski/ulogger`.
 - You may also build the image yourself. Run `docker build .` from the root folder where `Dockerfile` reside. There are optional build-time arguments that allow you to set default database passwords for root and ulogger users.
-- For example: `docker build --build-arg DB_ROOT_PASS=secret1 --build-arg DB_USER_PASS=secret2 .`.
+- For example: `docker build --build-arg DB_ROOT_PASS=secret1 --build-arg DB_USER_PASS=secret2 --build-arg DB_DRIVER=sqlite .`.
 
 ## Tests
 - Install tests dependecies.
   - `composer install`
-- Integration tests may be run against docker image. We need exposed http and mysql ports (eg. mapped to localhost 8080 and 8081).
+- Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup.
   - `docker build -t ulogger .`
   - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger`
 - Use environment variables (or create `.env` file in `.tests/` folder) to set up connection details (below database credentials are docker defaults)
@@ -73,5 +73,4 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 
 ## License
 - GPL
-- μlogger is a fork of phpTrackme - tracks viewer I wrote for TrackMe app
 - most icons come from [iconmonstr](https://iconmonstr.com)
