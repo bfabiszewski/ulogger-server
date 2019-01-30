@@ -28,7 +28,7 @@
   */
   class uConfig {
     // version number
-    static $version = "0.5-beta";
+    static $version = "0.5";
 
     // default map drawing framework
     static $mapapi = "openlayers";
@@ -82,7 +82,7 @@
     static $strokeWeight = 2;
     static $strokeColor = '#ff0000';
     static $strokeOpacity = 1;
-    
+
     private static $fileLoaded = false;
 
     private static $initialized = false;
