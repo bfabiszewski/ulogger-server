@@ -125,5 +125,4 @@ $lang["allusers"] = "All users";
 $lang["notrackname"] = "No track";
 $lang["nousername"] = "No user";
 $lang["nocomment"] = "No comment";
-
 ?>
