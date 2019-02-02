@@ -202,6 +202,7 @@
             <?php if ($auth->isAdmin()): ?>
               <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
               <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>
+              <a class="menulink" href="javascript:void(0);" onclick="loadLastPositionAllUsers()"><?= $lang["lastpositionallusers"] ?></a>
             <?php endif; ?>
             <a class="menulink" href="javascript:void(0);" onclick="editTrack()"><?= $lang["edittrack"] ?></a>
           </div>
