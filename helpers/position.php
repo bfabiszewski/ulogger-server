@@ -176,6 +176,50 @@
       return $position;
     }
 
+    /**
+    * Get last position data from database
+    * (for all users)
+    *
+    * @return array|bool Array of uPosition positions, false on error
+    */
+    public static function getLastAllUsers() {
+      $query = "SELECT
+                  p.id, 
+                  UNIX_TIMESTAMP(p.time) AS tstamp, 
+                  p.user_id, 
+                  p.track_id,
+                  p.latitude, 
+                  p.longitude, 
+                  p.altitude, 
+                  p.speed, 
+                  p.bearing, 
+                  p.accuracy, 
+                  p.provider,
+                  p.comment, 
+                  p.image_id, 
+                  u.login, 
+                  'ALL'
+                FROM " . self::db()->table('positions') . " p
+                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
+                WHERE p.id IN(
+                  SELECT 
+                    MAX(id)
+                  FROM 
+                    " . self::db()->table('positions') . "
+                  GROUP BY user_id
+              )";
+      $result = self::db()->query($query);
+      if ($result === false) {
+        return false;
+      }
+      $positionsArr = [];
+      while ($row = $result->fetch_assoc()) {
+        $positionsArr[] = self::rowToObject($row);
+      }
+      $result->close();
+      return $positionsArr;
+    }
+
    /**
     * Get array of all positions
     *
