@@ -25,6 +25,7 @@ $auth = new uAuth();
 
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
+$last = uUtils::getInt('last');
 
 $positionsArr = [];
 if ($userId) {
@@ -40,6 +41,11 @@ if ($userId) {
         $positionsArr[] = $position;
       }
     }
+  }
+}
+else{
+  if ($last) {
+    $positionsArr = uPosition::getLastAllUsers();
   }
 }
 
