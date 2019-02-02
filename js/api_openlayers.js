@@ -352,6 +352,41 @@ function displayTrack(xml, update) {
   }
 }
 
+function displayAllUsers(xml, update) {
+  altitudes = {};
+  var totalMeters = 0;
+  var totalSeconds = 0;
+  var points = [];
+  var positions = xml.getElementsByTagName('position');
+  var posLen = positions.length;
+  for (var i = 0; i < posLen; i++) {
+    var p = parsePosition(positions[i], i);
+    totalMeters += p.distance;
+    totalSeconds += p.seconds;
+    p['totalMeters'] = totalMeters;
+    p['totalSeconds'] = totalSeconds;
+    // set marker
+    setMarker(p, i, posLen);
+    // update polyline
+    var point = ol.proj.fromLonLat([p.longitude, p.latitude]);
+    points.push(point);
+  }
+  var extent = layerTrack.getSource().getExtent();
+
+  map.getControls().forEach(function (el) {
+    if (el instanceof ol.control.ZoomToExtent) {
+      map.removeControl(el);
+    }
+  });
+
+  var zoomToExtentControl = new ol.control.ZoomToExtent({
+    extent: extent,
+    label: getExtentImg()
+  });
+  map.addControl(zoomToExtentControl);
+
+}
+
 function clearMap() {
   if (layerTrack) {
     layerTrack.getSource().clear();

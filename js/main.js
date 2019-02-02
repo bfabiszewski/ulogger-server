@@ -159,6 +159,27 @@ function loadTrack(userid, trackid, update) {
   setLoader(title);
 }
 
+function loadLastPositionAllUsers(userid) {
+  if (latest == 1) { trackid = 0; }
+  var xhr = getXHR();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        var xml = xhr.responseXML;
+        var positions = xml.getElementsByTagName('position');
+        if (positions.length > 0) {
+          clearMap();
+          displayAllUsers(xml, 10);
+          toggleChartLink();
+        }
+      }
+      xhr = null;
+    }
+  }
+  xhr.open('GET', 'utils/getlastpositions.php', true);
+  xhr.send();
+}
+
 function parsePosition(p, id) {
   // read data
   var latitude = parseFloat(getNode(p, 'latitude'));
@@ -230,6 +251,15 @@ function getPopupHtml(p, i, count) {
       ((p.totalSeconds > 0) ? ((p.totalMeters / p.totalSeconds).toKmH() * factor_kmh).toFixed() : 0) + ' ' + unit_kmh + '<br>' +
       '<img class="icon" alt="' + lang['tdistance'] + '" title="' + lang['tdistance'] + '" src="images/distance_blue.svg"> ' +
       (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
+  }
+  if (p.username == null){
+    p.username = "ALL";
+  }
+  if (p.trackname == null){
+    p.trackname = "ALL";
+  }
+  if (p.comments == null){
+    p.comments = "ALL";
   }
   var popup =
     '<div id="popup">' +
