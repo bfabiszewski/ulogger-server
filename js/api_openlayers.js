@@ -366,7 +366,7 @@ function displayAllUsers(xml, update) {
     p['totalMeters'] = totalMeters;
     p['totalSeconds'] = totalSeconds;
     // set marker
-    setMarker(p, i, posLen);
+    setMarker(p, i, posLen, true);
     // update polyline
     var point = ol.proj.fromLonLat([p.longitude, p.latitude]);
     points.push(point);
@@ -396,20 +396,26 @@ function clearMap() {
   }
 }
 
-function setMarker(p, i, posLen) {
+function setMarker(p, i, posLen, option) {
+  option = typeof option !== 'undefined' ? option : false;
   // marker
   var marker = new ol.Feature({
     geometry: new ol.geom.Point(ol.proj.fromLonLat([p.longitude, p.latitude]))
   });
 
-  if (latest == 1) {
-    var iconStyle = olStyles['red'];
-  } else if (i == 0) {
-    var iconStyle = olStyles['green'];
-  } else if (i == posLen - 1) {
-    var iconStyle = olStyles['red'];
-  } else {
-    var iconStyle = olStyles['white'];
+  if (option == false){
+  	if (latest == 1) {
+	    var iconStyle = olStyles['red'];
+  	} else if (i == 0) {
+	    var iconStyle = olStyles['green'];
+  	} else if (i == posLen - 1) {
+	    var iconStyle = olStyles['red'];
+  	} else {
+	    var iconStyle = olStyles['white'];
+  	}
+  }
+  else{
+  	var iconStyle = olStyles['red'];
   }
   marker.setStyle(iconStyle);
   marker.setId(i);
