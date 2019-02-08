@@ -198,7 +198,7 @@
                   p.comment, 
                   p.image_id, 
                   u.login, 
-                  'ALL'
+                  'ALL' as name
                 FROM " . self::db()->table('positions') . " p
                 LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
                 WHERE p.id IN(
