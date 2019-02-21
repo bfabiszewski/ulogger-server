@@ -117,8 +117,8 @@
     public static function getBaseUrl() {
       $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] == "" || $_SERVER["HTTPS"] == "off") ? "http://" : "https://";
       // Check if we are behind an https proxy
-      if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-        $proto = 'https://';
+      if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https") {
+        $proto = "https://";
       }
       $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "";
       if (realpath($_SERVER["SCRIPT_FILENAME"])) {
