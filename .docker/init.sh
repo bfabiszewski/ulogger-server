@@ -32,9 +32,9 @@ if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
   su postgres -c "pg_ctl -w stop"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"pgsql:host=localhost;port=5432;dbname=ulogger\";/" /var/www/html/config.php
 elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
-  mkdir -p /data
-  chown nobody:nobody /data
-  sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/ulogger.db
+  mkdir -p /data/sqlite
+  chown -R nobody:nobody /data
+  sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/sqlite/ulogger.db
   sqlite3 -line /data/ulogger.db "INSERT INTO users (login, password) VALUES ('admin', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq')"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else

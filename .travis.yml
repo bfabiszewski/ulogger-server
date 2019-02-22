@@ -32,7 +32,12 @@ before_install:
         docker run -d --name ulogger -p 8080:80 -p 8081:5432 --expose 5432 ulogger
         ;;
       sqlite*)
-        mkdir -p /tmp/data
+        sudo apt-get update -qq
+        sudo apt-get install sqlite3
+        mkdir -p /tmp/data/sqlite
+        sqlite3 -init scripts/ulogger.sqlite /data/sqlite/ulogger.db
+        sudo chown -R travis:travis /tmp/data
+        sudo chmod -R 777 /tmp/data
         docker build -t ulogger --build-arg DB_DRIVER=sqlite .
         docker run -d --name ulogger -p 8080:80 -v /tmp/data:/data ulogger
         ;;
