@@ -183,31 +183,38 @@
     * @return array|bool Array of uPosition positions, false on error
     */
     public static function getLastAllUsers() {
-      $query = "SELECT
+      $query = "SELECT 
                   p.id, 
                   UNIX_TIMESTAMP(p.time) AS tstamp, 
                   p.user_id, 
-                  p.track_id,
+                  p.track_id, 
                   p.latitude, 
                   p.longitude, 
                   p.altitude, 
                   p.speed, 
                   p.bearing, 
                   p.accuracy, 
-                  p.provider,
+                  p.provider, 
                   p.comment, 
                   p.image_id, 
-                  u.login, 
-                  'ALL' as name
-                FROM " . self::db()->table('positions') . " p
-                LEFT JOIN `" . self::db()->table('users') . "` u ON (p.user_id = u.id)
-                WHERE p.id IN(
-                  SELECT 
-                    MAX(id)
-                  FROM 
-                    " . self::db()->table('positions') . "
-                  GROUP BY user_id
-              )";
+                  u.login
+                FROM   
+                  " . self::db()->table('positions') . " p 
+                LEFT JOIN " . self::db()->table('users') . " u 
+                  ON ( p.user_id = u.id ) 
+                WHERE  p.id = (
+                        SELECT 
+                          p2.id 
+                        FROM   
+                          " . self::db()->table('positions') . " p2 
+                        WHERE  
+                          p2.user_id = p.user_id 
+                        ORDER BY 
+                          p2.time DESC, 
+                          p2.id DESC 
+                        LIMIT  1
+                )";
+
       $result = self::db()->query($query);
       if ($result === false) {
         return false;
