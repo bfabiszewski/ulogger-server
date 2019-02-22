@@ -6,12 +6,13 @@ php:
   - 7.0
 
 env:
+  matrix:
+    - DB_DSN="mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8"
+    - DB_DSN="pgsql:host=127.0.0.1;port=8081;dbname=ulogger"
+    - DB_DSN="sqlite:/tmp/data/sqlite/ulogger.db"
   global:
-    - DB_HOST=127.0.0.1
-    - DB_NAME=ulogger
     - DB_USER=ulogger
     - DB_PASS=secret2
-    - DB_PORT=8081
     - ULOGGER_URL="http://127.0.0.1:8080"
     # - secure: "fajUnR8y0+EkMLHTpDpqEsNc2UWSNQchy9Vw6bP+AVEdLnU2tdc9ZTrWfHx+vQdvo6xd/eY6TJm4cWtesG8inFhZHSzPYeeWX8xDto+fPohjTBJggvkGmhO6xYidjwTL2niKsHOVPh0ja55eCzp/DYWX/jVUNWTFsFiLwOlrZrhhoZs3JNldiPOUAgroR5SvlW1TZ1MgWO0ZLXpjpRhG3w42pRM75pzGpfwnjeA6BYCO8j/NXCiuCo9YTTGR/zM5yfYuTIxviIVcRw2Y6SQrh/nzQw3bCB7y9PvtDt/eNAzJVO8GQOQeN7cgY4kU/NMMlIxwL1nUDyaZj1+KxZj3BsG/pPxJblAE28yDdFlpTeolHuFDZpOXvbD8EnUYjk+NXUDe73tYPZT/iiojMBJ4ja+SCnq8VYvATjOHiAqDmlrrEWWwBC+i2laFSVBMJROvg+Ga85vmyV6/nvSd0fRJzrGLyeyGqSBwbGk2lS8HXPcDc5Bfn6v9sP0Sks7xXvW9A6zc262GRcSZqlvmUpbp7VteJigFNv3t3vjJRNlspvpzpPqHGKDJ3UCgt2i7+ve8zqFfevDUiDBKkMEPhIQdXPtqhzHMq4GXMDpGwq9DWcR0m/ZQISfS2K1ONnpv+4ShkGaFFk7o435GcIkitMAxRvpcA4m92l0POuqAbrXPaUU="
 
@@ -20,8 +21,22 @@ services:
 
 before_install:
   # - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - docker build -t ulogger .
-  - docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger
+  - |
+    case "$DB_DSN" in
+      mysql*)
+        docker build -t ulogger --build-arg DB_DRIVER=mysql .
+        docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger
+        ;;
+      pgsql*)
+        docker build -t ulogger --build-arg DB_DRIVER=pgsql .
+        docker run -d --name ulogger -p 8080:80 -p 8081:5432 --expose 5432 ulogger
+        ;;
+      sqlite*)
+        mkdir -p /tmp/data
+        docker build -t ulogger --build-arg DB_DRIVER=sqlite .
+        docker run -d --name ulogger -p 8080:80 -v /tmp/data:/data ulogger
+        ;;
+    esac
   - composer install
   - until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
 
