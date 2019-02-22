@@ -4,6 +4,7 @@ LABEL maintainer="Bartek Fabiszewski (https://github.com/bfabiszewski)"
 
 ARG DB_ROOT_PASS=secret1
 ARG DB_USER_PASS=secret2
+# supported drivers: mysql, pgsql, sqlite
 ARG DB_DRIVER=mysql
 
 ENV ULOGGER_ADMIN_USER admin

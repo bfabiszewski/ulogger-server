@@ -18,8 +18,8 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - altitudes graph
 - multiple users
 - user authentication
-- Google Maps API v3
-- OpenLayers v2 or v3 (OpenStreet and other layers)
+- Google Maps
+- OpenLayers (OpenStreet and other layers)
 - ajax
 - user preferences stored in cookies
 - simple admin menu
@@ -29,10 +29,10 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Install
 - Download zipped archive or clone the repository on your computer
 - Move it to your web server directory (unzip if needed)
-- Create database and MySQL user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script)
+- Create database and database user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script)
 - Create a copy of `config.default.php` and rename it to `config.php`. Customize it and add database credentials
 - Edit `scripts/setup.php` script, enable it by setting [$enabled](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/setup.php#L21) value to `true`
-- Make sure you have a web server running with PHP and MySQL
+- Make sure you have a web server running with PHP and chosen database
 - Open http://YOUR_HOST/ulogger-server/scripts/setup.php page in your browser
 - Follow instructions in setup script. It will add database tables and set up your μlogger user
 - **Remember to remove or disable `scripts/setup.php` script**

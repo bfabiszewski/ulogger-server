@@ -40,7 +40,7 @@ $init_longitude = 21.01;
 // you may set your google maps api key
 $gkey = "";
 
-// MySQL config
+// Database config
 $dbdsn = ""; // DSN eg. "mysql:host=localhost;port=3307;dbname=testdb;charset=utf8"
 $dbuser = ""; // database user
 $dbpass = ""; // database pass
@@ -76,7 +76,7 @@ $pass_strength = 2;
 $interval = 10;
 
 // Default language
-// (en, pl, de, hu)
+// (en, pl, de, hu, fr, it)
 $lang = "en";
 //$lang = "pl";
 //$lang = "de";
@@ -90,7 +90,7 @@ $units = "metric";
 //$units = "imperial";
 //$units = "nautical";
 
-// These need to be copied to config.php
+// track line stroke
 $strokeWeight = 2;
 $strokeColor = '#FF0000';
 $strokeOpacity = 1.0;
