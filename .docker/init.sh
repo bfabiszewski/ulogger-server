@@ -34,7 +34,7 @@ if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
 elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   mkdir -p /data/sqlite
   chown -R nobody:nobody /data
-  sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/sqlite/ulogger.db
+  sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/sqlite/ulogger.db .exit
   sqlite3 -line /data/ulogger.db "INSERT INTO users (login, password) VALUES ('admin', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq')"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else
