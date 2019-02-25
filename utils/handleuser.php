@@ -18,7 +18,8 @@
  */
 
   require_once(dirname(__DIR__) . "/helpers/auth.php");
-  require_once(ROOT_DIR . "/lang.php");
+  require_once(ROOT_DIR . "/helpers/lang.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
 
   $auth = new uAuth();
@@ -26,6 +27,9 @@
   $action = uUtils::postString('action');
   $login = uUtils::postString('login');
   $pass = uUtils::postPass('pass');
+
+  $lang = (new uLang(uConfig::$lang))->getStrings();
+
   if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login == $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }

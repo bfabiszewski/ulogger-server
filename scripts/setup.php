@@ -32,9 +32,12 @@ define("ROOT_DIR", dirname(__DIR__));
 require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
-require_once(ROOT_DIR . "/lang.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
 $command = uUtils::postString('command');
+
+$lang = (new uLang(uConfig::$lang))->getStrings();
+$langSetup = (new uLang(uConfig::$lang))->getSetupStrings();
 
 $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
 $tPositions = $prefix . "positions";

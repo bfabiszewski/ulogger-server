@@ -21,9 +21,12 @@ require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 require_once(ROOT_DIR . "/helpers/position.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
-require_once(ROOT_DIR . "/lang.php");
+require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
 $auth = new uAuth();
+
+$lang = (new uLang(uConfig::$lang))->getStrings();
 
 $uploadErrors = [];
 $uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";

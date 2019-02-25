@@ -3,7 +3,7 @@
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(ROOT_DIR . "/helpers/config.php");
-require_once(ROOT_DIR . "/lang.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
 class InternalAPITest extends UloggerAPITestCase {
 
@@ -527,7 +527,6 @@ class InternalAPITest extends UloggerAPITestCase {
   /* handletrack.php */
 
   public function testHandleTrackDeleteAdmin() {
-    global $lang;
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -551,7 +550,6 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackDeleteSelf() {
-    global $lang;
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -575,7 +573,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackDeleteOtherUser() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -597,7 +595,6 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackUpdate() {
-    global $lang;
     $newName = "New name";
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -639,7 +636,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackUpdateEmptyName() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -663,7 +660,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackUpdateNonexistantTrack() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $newName = "New name";
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -687,8 +684,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackMissingAction() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -706,8 +702,7 @@ class InternalAPITest extends UloggerAPITestCase {
   /* handleuser.php */
 
   public function testHandleUserMissingAction() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -722,8 +717,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserNonAdmin() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -743,8 +737,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserSelf() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -762,8 +755,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserEmptyLogin() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -781,7 +773,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserNoAuth() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -825,8 +817,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserAddSameLogin() {
-    global $lang;
-
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -864,7 +855,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserUpdateEmptyPass() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");

@@ -3,7 +3,7 @@
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(ROOT_DIR . "/helpers/config.php");
-require_once(ROOT_DIR . "/lang.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
 class ImportTest extends UloggerAPITestCase {
 
@@ -609,7 +609,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoLongitude() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -656,7 +656,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoLatitude() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -703,7 +703,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoGPX() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -744,7 +744,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportCorrupt() {
-    global $lang;
+    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");

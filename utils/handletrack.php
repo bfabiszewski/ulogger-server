@@ -18,15 +18,18 @@
  */
 
   require_once(dirname(__DIR__) . "/helpers/auth.php");
-  require_once(ROOT_DIR . "/lang.php");
+  require_once(ROOT_DIR . "/helpers/lang.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
 
   $auth = new uAuth();
 
   $action = uUtils::postString('action');
   $trackId = uUtils::postInt('trackid');
   $trackName = uUtils::postString('trackname');
+
+  $lang = (new uLang(uConfig::$lang))->getStrings();
 
   if (empty($action) || empty($trackId)) {
     uUtils::exitWithError($lang["servererror"]);

@@ -19,10 +19,11 @@
 
 require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/position.php");
-require_once(ROOT_DIR . "/lang.php");
-
+require_once(ROOT_DIR . "/helpers/lang.php");
+require_once(ROOT_DIR . "/helpers/config.php");
 
 $auth = new uAuth();
+$lang = (new uLang(uConfig::$lang))->getStrings();
 
 /**
  * Add kml marker style element

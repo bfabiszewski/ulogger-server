@@ -18,10 +18,12 @@
  */
 
   require_once("helpers/auth.php");
-  require_once(ROOT_DIR . "/lang.php");
+  require_once(ROOT_DIR . "/helpers/lang.php");
   require_once(ROOT_DIR . "/helpers/config.php");
 
   $auth_error = uUtils::getBool('auth_error', false);
+
+  $lang = (new uLang(uConfig::$lang))->getStrings();
 
 ?>
 <!DOCTYPE html>

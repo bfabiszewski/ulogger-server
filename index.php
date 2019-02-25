@@ -22,11 +22,15 @@
   require_once(ROOT_DIR . "/helpers/position.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/utils.php");
-  require_once(ROOT_DIR . "/lang.php");
+  require_once(ROOT_DIR . "/helpers/lang.php");
 
   $login = uUtils::postString('user');
   $pass = uUtils::postPass('pass');
   $action = uUtils::postString('action');
+
+  $lang = (new uLang(uConfig::$lang))->getStrings();
+  $langsArr = uLang::getLanguages();
+  asort($langsArr);
 
   $auth = new uAuth();
   if ($action == "auth") {
@@ -169,7 +173,6 @@
           <div class="menutitle"><?= $lang["language"] ?></div>
           <form>
             <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
-              <?php asort($langsArr); ?>
               <?php foreach ($langsArr as $langCode => $langName): ?>
                 <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
               <?php endforeach; ?>
