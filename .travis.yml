@@ -3,7 +3,8 @@ language: php
 sudo: required
 
 php:
-  - 7.0
+  - 5.5
+  - 7.3
 
 env:
   matrix:
@@ -14,13 +15,13 @@ env:
     - DB_USER=ulogger
     - DB_PASS=secret2
     - ULOGGER_URL="http://127.0.0.1:8080"
-    # - secure: "fajUnR8y0+EkMLHTpDpqEsNc2UWSNQchy9Vw6bP+AVEdLnU2tdc9ZTrWfHx+vQdvo6xd/eY6TJm4cWtesG8inFhZHSzPYeeWX8xDto+fPohjTBJggvkGmhO6xYidjwTL2niKsHOVPh0ja55eCzp/DYWX/jVUNWTFsFiLwOlrZrhhoZs3JNldiPOUAgroR5SvlW1TZ1MgWO0ZLXpjpRhG3w42pRM75pzGpfwnjeA6BYCO8j/NXCiuCo9YTTGR/zM5yfYuTIxviIVcRw2Y6SQrh/nzQw3bCB7y9PvtDt/eNAzJVO8GQOQeN7cgY4kU/NMMlIxwL1nUDyaZj1+KxZj3BsG/pPxJblAE28yDdFlpTeolHuFDZpOXvbD8EnUYjk+NXUDe73tYPZT/iiojMBJ4ja+SCnq8VYvATjOHiAqDmlrrEWWwBC+i2laFSVBMJROvg+Ga85vmyV6/nvSd0fRJzrGLyeyGqSBwbGk2lS8HXPcDc5Bfn6v9sP0Sks7xXvW9A6zc262GRcSZqlvmUpbp7VteJigFNv3t3vjJRNlspvpzpPqHGKDJ3UCgt2i7+ve8zqFfevDUiDBKkMEPhIQdXPtqhzHMq4GXMDpGwq9DWcR0m/ZQISfS2K1ONnpv+4ShkGaFFk7o435GcIkitMAxRvpcA4m92l0POuqAbrXPaUU="
+    - secure: "fajUnR8y0+EkMLHTpDpqEsNc2UWSNQchy9Vw6bP+AVEdLnU2tdc9ZTrWfHx+vQdvo6xd/eY6TJm4cWtesG8inFhZHSzPYeeWX8xDto+fPohjTBJggvkGmhO6xYidjwTL2niKsHOVPh0ja55eCzp/DYWX/jVUNWTFsFiLwOlrZrhhoZs3JNldiPOUAgroR5SvlW1TZ1MgWO0ZLXpjpRhG3w42pRM75pzGpfwnjeA6BYCO8j/NXCiuCo9YTTGR/zM5yfYuTIxviIVcRw2Y6SQrh/nzQw3bCB7y9PvtDt/eNAzJVO8GQOQeN7cgY4kU/NMMlIxwL1nUDyaZj1+KxZj3BsG/pPxJblAE28yDdFlpTeolHuFDZpOXvbD8EnUYjk+NXUDe73tYPZT/iiojMBJ4ja+SCnq8VYvATjOHiAqDmlrrEWWwBC+i2laFSVBMJROvg+Ga85vmyV6/nvSd0fRJzrGLyeyGqSBwbGk2lS8HXPcDc5Bfn6v9sP0Sks7xXvW9A6zc262GRcSZqlvmUpbp7VteJigFNv3t3vjJRNlspvpzpPqHGKDJ3UCgt2i7+ve8zqFfevDUiDBKkMEPhIQdXPtqhzHMq4GXMDpGwq9DWcR0m/ZQISfS2K1ONnpv+4ShkGaFFk7o435GcIkitMAxRvpcA4m92l0POuqAbrXPaUU="
 
 services:
   - docker
 
 before_install:
-  # - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - |
     case "$DB_DSN" in
       mysql*)
@@ -60,12 +61,12 @@ after_success:
 script:
   - ./vendor/bin/phpunit  -c .tests/phpunit.xml
 
-# addons:
-#   coverity_scan:
-#     project:
-#       name: "bfabiszewski/ulogger-server"
-#       description: "Build submitted via Travis CI"
-#     notification_email: scan.coverity@fabiszewski.net
-#     build_command_prepend: ""
-#     build_command: "--no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/"
-#     branch_pattern: master
+addons:
+  coverity_scan:
+    project:
+      name: "bfabiszewski/ulogger-server"
+      description: "Build submitted via Travis CI"
+    notification_email: scan.coverity@fabiszewski.net
+    build_command_prepend: ""
+    build_command: "--no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/"
+    branch_pattern: master
