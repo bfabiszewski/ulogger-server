@@ -458,7 +458,6 @@ function selectUser(f) {
   }
   else{
     document.getElementById('latest').checked = false;
-    //if (latest == 1) { toggleLatest(); }
     getTracks(userid);
   }
 }
