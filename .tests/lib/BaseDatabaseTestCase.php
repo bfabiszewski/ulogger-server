@@ -41,7 +41,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 
   public static function setUpBeforeClass() {
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::create(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['DB_DSN', 'DB_USER', 'DB_PASS']);
     }
