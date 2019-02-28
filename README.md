@@ -54,11 +54,9 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - `docker build -t ulogger .`
   - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger`
 - Use environment variables (or create `.env` file in `.tests/` folder) to set up connection details (below database credentials are docker defaults)
-  - `DB_HOST=127.0.0.1`
-  - `DB_NAME=ulogger`
+  - `DB_DSN="mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8"`
   - `DB_USER=ulogger`
   - `DB_PASS=secret2`
-  - `DB_PORT=8081`
   - `ULOGGER_URL="http://127.0.0.1:8080"`
 - Run tests
   - `./vendor/bin/phpunit -c .tests/phpunit.xml`

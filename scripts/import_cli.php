@@ -26,12 +26,19 @@ require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 require_once(ROOT_DIR . "/helpers/position.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
-require_once(ROOT_DIR . "/lang.php");
-require_once(ROOT_DIR . '/vendor/autoload.php');
+require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
+if (file_exists(ROOT_DIR . '/vendor/autoload.php')) {
+  require_once(ROOT_DIR . '/vendor/autoload.php');
+}
 
 // check we are running in CLI mode
 if (PHP_SAPI != 'cli') {
   exit('Call me on CLI only!' . PHP_EOL);
+}
+
+if (!class_exists("GetOpt\GetOpt")) {
+  exit('This script needs ulrichsg/getopt-php package. Please install dependencies via Composer.' . PHP_EOL);
 }
 
 // set up argument parsing
@@ -64,7 +71,7 @@ try {
 } catch (Exception $exception) {
   // be nice if the user just asked for help
   if (!$getopt->getOption('help')) {
-    exit('ERROR: '.$exception->getMessage().PHP_EOL);
+    exit('ERROR: ' . $exception->getMessage() . PHP_EOL);
   }
 }
 
@@ -90,20 +97,22 @@ foreach ($gpxFiles as $i => $gpxFile) {
   if (!$getopt->getOption('import-existing-track')) {
     foreach ($tracksArr as $track) {
       if ($track->name === $gpxName) {
-        print('WARNING: '.$gpxName.' already present, skipping...'.PHP_EOL);
+        print('WARNING: ' . $gpxName . ' already present, skipping...' . PHP_EOL);
         continue 2;
       }
     }
   }
 
-  print('importing '.$gpxFile.'...'.PHP_EOL);
+  print('importing ' . $gpxFile.'...' . PHP_EOL);
+
+  $lang = (new uLang(uConfig::$lang))->getStrings();
 
   $gpx = false;
   libxml_use_internal_errors(true);
   if ($gpxFile && file_exists($gpxFile)) {
     $gpx = simplexml_load_file($gpxFile);
   }
-  
+
   if ($gpx === false) {
     $message = $lang["iparsefailure"];
     $parserMessages = [];
@@ -122,7 +131,7 @@ foreach ($gpxFiles as $i => $gpxFile) {
   else if (empty($gpx->trk)) {
     uUtils::exitWithError($lang["idatafailure"]);
   }
-  
+
   $trackCnt = 0;
   foreach ($gpx->trk as $trk) {
     $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
@@ -134,7 +143,7 @@ foreach ($gpxFiles as $i => $gpxFile) {
     }
     $track = new uTrack($trackId);
     $posCnt = 0;
-  
+
     foreach($trk->trkseg as $segment) {
       foreach($segment->trkpt as $point) {
         if (!isset($point["lat"]) || !isset($point["lon"])) {

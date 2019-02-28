@@ -1,0 +1,12 @@
+Script for importing GPX files on command line
+
+Usage: import_cli.php [options] <gpx> [<gpx>...]
+
+Operands:
+  <gpx>  One or more GPX files to import
+
+Options:
+  -h, --help                   Show usage/help
+  -u, --user-id [<arg>]        Which user to import the track(s) for (default: 1)
+  -e, --import-existing-track  Import already existing tracks (based on track name)
+  -l, --skip-last-track        Skip the last track (for special use cases)
