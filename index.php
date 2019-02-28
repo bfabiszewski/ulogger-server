@@ -139,7 +139,7 @@
             <input id="latest" type="checkbox" onchange="toggleLatest();"> <?= $lang["latest"] ?><br>
             <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
           </form>
-          <a href="javascript:void(0);" onclick="loadTrack(userid, trackid, 0);"> <?= $lang["reload"] ?></a><br>
+          <a href="javascript:void(0);" onclick="reload(userid, trackid);"> <?= $lang["reload"] ?></a><br>
         </div>
 
         <div id="summary"></div>
@@ -202,7 +202,6 @@
             <?php if ($auth->isAdmin()): ?>
               <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
               <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>
-              <a class="menulink" href="javascript:void(0);" onclick="loadLastPositionAllUsers()"><?= $lang["lastpositionallusers"] ?></a>
             <?php endif; ?>
             <a class="menulink" href="javascript:void(0);" onclick="editTrack()"><?= $lang["edittrack"] ?></a>
           </div>
