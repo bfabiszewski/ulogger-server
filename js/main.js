@@ -134,6 +134,16 @@ function getXHR() {
   return xmlhttp;
 }
 
+function reload(userid, trackid){
+  var usersSelect = document.getElementsByName('user')[0];
+  if (usersSelect[usersSelect.selectedIndex].text == lang['allusers']) {
+      loadLastPositionAllUsers();
+    }
+    else{
+      loadTrack(userid, trackid, 0);
+    }
+}
+
 function loadTrack(userid, trackid, update) {
   var title = document.getElementById('track').getElementsByClassName('menutitle')[0];
   if (trackid < 0) { return; }
@@ -154,12 +164,12 @@ function loadTrack(userid, trackid, update) {
       removeLoader(title);
     }
   }
-  xhr.open('GET', 'utils/getpositions.php?trackid=' + trackid + '&userid=' + userid, true);
+  xhr.open('GET', 'utils/getpositions.php?trackid=' + trackid + '&userid=' + userid + '&last=' + latest, true);
   xhr.send();
   setLoader(title);
 }
 
-function loadLastPositionAllUsers(userid) {
+function loadLastPositionAllUsers() {
   if (latest == 1) { trackid = 0; }
   var xhr = getXHR();
   xhr.onreadystatechange = function () {
@@ -167,16 +177,17 @@ function loadLastPositionAllUsers(userid) {
       if (xhr.status == 200) {
         var xml = xhr.responseXML;
         var positions = xml.getElementsByTagName('position');
-        if (positions.length > 0) {
-          clearMap();
-          displayAllUsers(xml, 10);
-          toggleChartLink();
+        var posLen = positions.length;
+        for (var i = 0; i < posLen; i++) {
+          var p = parsePosition(positions[i], i);
+          // set marker
+          setMarker(p, i, posLen);
         }
       }
       xhr = null;
     }
   }
-  xhr.open('GET', 'utils/getlastpositions.php', true);
+  xhr.open('GET', 'utils/getpositions.php?trackid=' + trackid + '&userid=' + userid + '&last=' + latest, true);
   xhr.send();
 }
 
@@ -253,13 +264,16 @@ function getPopupHtml(p, i, count) {
       (p.totalMeters.toKm() * factor_km).toFixed(2) + ' ' + unit_km + '<br>' + '</div>';
   }
   if (p.username == null){
-    p.username = "ALL";
+    p.username = lang["nousername"];
+    console.log("username");
   }
   if (p.trackname == null){
-    p.trackname = "ALL";
+    p.trackname = lang["notrackname"];
+    console.log("trackname");
   }
   if (p.comments == null){
-    p.comments = "ALL";
+    p.comments = lang["nocomment"];
+    console.log("comments");
   }
   var popup =
     '<div id="popup">' +
@@ -397,13 +411,25 @@ Number.prototype.toKmH = function() {
 
 // negate value
 function toggleLatest() {
+  var usersSelect = document.getElementsByName('user')[0];
   if (latest == 0) {
+    if (usersSelect.options[usersSelect.length-1].text != lang['allusers']){
+      var option = document.createElement("option");
+      option.text = lang['allusers'];
+      if (usersSelect.length >= 2){
+        usersSelect.add(option);
+      }
+    }
     latest = 1;
     loadTrack(userid, 0, 1);
   }
   else {
+    if (usersSelect.options[usersSelect.length-1].text == lang['allusers']){
+      usersSelect.remove(usersSelect.length-1);
+    }
     latest = 0;
     loadTrack(userid, trackid, 1);
+
   }
 }
 
@@ -418,15 +444,23 @@ function selectTrack(f) {
     trackid = 0;
   }
   document.getElementById('latest').checked = false;
+  var usersSelect = document.getElementsByName('user')[0];
   if (latest == 1) { toggleLatest(); }
   loadTrack(userid, trackid, 1);
 }
 
 function selectUser(f) {
   userid = f.options[f.selectedIndex].value;
-  document.getElementById('latest').checked = false;
-  if (latest == 1) { toggleLatest(); }
-  getTracks(userid);
+  
+  if (f.options[f.selectedIndex].text == lang['allusers']){
+    getTracks(userid);
+    loadLastPositionAllUsers();
+  }
+  else{
+    document.getElementById('latest').checked = false;
+    //if (latest == 1) { toggleLatest(); }
+    getTracks(userid);
+  }
 }
 
 function getTracks(userid, trackid) {
@@ -482,7 +516,13 @@ function clearOptions(el) {
 function autoReload() {
   if (live == 0) {
     live = 1;
-    auto = setInterval(function () { loadTrack(userid, trackid, 0); }, interval * 1000);
+    var usersSelect = document.getElementsByName('user')[0];
+    if (usersSelect[usersSelect.selectedIndex].text == lang['allusers']) {
+      auto = setInterval(function () { loadLastPositionAllUsers(); }, interval * 1000);
+    }
+    else{
+      auto = setInterval(function () { loadTrack(userid, trackid, 0); }, interval * 1000);
+    }
   }
   else {
     live = 0;

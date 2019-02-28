@@ -352,41 +352,6 @@ function displayTrack(xml, update) {
   }
 }
 
-function displayAllUsers(xml, update) {
-  altitudes = {};
-  var totalMeters = 0;
-  var totalSeconds = 0;
-  var points = [];
-  var positions = xml.getElementsByTagName('position');
-  var posLen = positions.length;
-  for (var i = 0; i < posLen; i++) {
-    var p = parsePosition(positions[i], i);
-    totalMeters += p.distance;
-    totalSeconds += p.seconds;
-    p['totalMeters'] = totalMeters;
-    p['totalSeconds'] = totalSeconds;
-    // set marker
-    setMarker(p, i, posLen, true);
-    // update polyline
-    var point = ol.proj.fromLonLat([p.longitude, p.latitude]);
-    points.push(point);
-  }
-  var extent = layerTrack.getSource().getExtent();
-
-  map.getControls().forEach(function (el) {
-    if (el instanceof ol.control.ZoomToExtent) {
-      map.removeControl(el);
-    }
-  });
-
-  var zoomToExtentControl = new ol.control.ZoomToExtent({
-    extent: extent,
-    label: getExtentImg()
-  });
-  map.addControl(zoomToExtentControl);
-
-}
-
 function clearMap() {
   if (layerTrack) {
     layerTrack.getSource().clear();
@@ -396,26 +361,20 @@ function clearMap() {
   }
 }
 
-function setMarker(p, i, posLen, option) {
-  option = typeof option !== 'undefined' ? option : false;
+function setMarker(p, i, posLen) {
   // marker
   var marker = new ol.Feature({
     geometry: new ol.geom.Point(ol.proj.fromLonLat([p.longitude, p.latitude]))
   });
 
-  if (option == false){
-  	if (latest == 1) {
-	    var iconStyle = olStyles['red'];
-  	} else if (i == 0) {
-	    var iconStyle = olStyles['green'];
-  	} else if (i == posLen - 1) {
-	    var iconStyle = olStyles['red'];
-  	} else {
-	    var iconStyle = olStyles['white'];
-  	}
-  }
-  else{
-  	var iconStyle = olStyles['red'];
+  if (latest == 1) {
+    var iconStyle = olStyles['red'];
+  } else if (i == 0) {
+    var iconStyle = olStyles['green'];
+  } else if (i == posLen - 1) {
+    var iconStyle = olStyles['red'];
+  } else {
+    var iconStyle = olStyles['white'];
   }
   marker.setStyle(iconStyle);
   marker.setId(i);
