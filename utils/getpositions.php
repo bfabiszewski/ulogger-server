@@ -25,6 +25,7 @@ $auth = new uAuth();
 
 $userId = (isset($_REQUEST["userid"]) && is_numeric($_REQUEST["userid"])) ? (int) $_REQUEST["userid"] : NULL;
 $trackId = (isset($_REQUEST["trackid"]) && is_numeric($_REQUEST["trackid"])) ? (int) $_REQUEST["trackid"] : NULL;
+$last = (isset($_REQUEST["last"]) && is_numeric($_REQUEST["last"])) ? (int) $_REQUEST["last"] : NULL;
 
 $positionsArr = [];
 if ($userId) {
@@ -40,6 +41,11 @@ if ($userId) {
         $positionsArr[] = $position;
       }
     }
+  }
+}
+else{
+  if ($last) {
+    $positionsArr = uPosition::getLastAllUsers();
   }
 }
 
