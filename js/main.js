@@ -175,6 +175,7 @@ function loadLastPositionAllUsers() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       if (xhr.status == 200) {
+        clearMap();
         var xml = xhr.responseXML;
         var positions = xml.getElementsByTagName('position');
         var posLen = positions.length;
@@ -453,7 +454,11 @@ function selectUser(f) {
   userid = f.options[f.selectedIndex].value;
   
   if (f.options[f.selectedIndex].text == lang['allusers']){
-    getTracks(userid);
+    var trackSelect = document.getElementsByName('track')[0];
+    var length = trackSelect.options.length;
+    for (i = 0; i < length; i++) {
+      trackSelect.options[i] = null;
+    }
     loadLastPositionAllUsers();
   }
   else{
