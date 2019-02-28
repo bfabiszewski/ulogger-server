@@ -121,5 +121,9 @@ $lang["iparsefailure"] = "Parsing failed";
 $lang["idatafailure"] = "No track data in imported file";
 $lang["isizefailure"] = "The uploaded file size should not exceed %d bytes"; // substitutes number of bytes
 $lang["imultiple"] = "Notice, multiple tracks imported (%d)"; // substitutes number of imported tracks
-$lang["lastpositionallusers"] = "Last Position All Users";
+$lang["allusers"] = "All Users";
+$lang["notrackname"] = "No Track";
+$lang["nousername"] = "No User";
+$lang["nocomment"] = "No Comment";
+
 ?>
