@@ -266,15 +266,12 @@ function getPopupHtml(p, i, count) {
   }
   if (p.username == null){
     p.username = lang["nousername"];
-    console.log("username");
   }
   if (p.trackname == null){
     p.trackname = lang["notrackname"];
-    console.log("trackname");
   }
   if (p.comments == null){
     p.comments = lang["nocomment"];
-    console.log("comments");
   }
   var popup =
     '<div id="popup">' +
