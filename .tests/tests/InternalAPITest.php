@@ -150,6 +150,87 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
   }
 
+  public function testGetPositionsUserLatest() {
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+
+    $trackId = $this->addTestTrack($this->testUserId);
+    $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp);
+    $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp + 3);
+    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+
+    $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
+    $trackId2 = $this->addTestTrack($userId);
+    $this->addTestPosition($userId, $trackId2, $this->testTimestamp + 2);
+    $this->addTestPosition($userId, $trackId2, $this->testTimestamp + 1);
+    $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    $this->assertEquals(4, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+
+    $options = [
+      "http_errors" => false,
+      "query" => [ "userid" => $this->testUserId, "last" => 1 ],
+    ];
+    $response = $this->http->get("/utils/getpositions.php", $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+
+    $xml = $this->getXMLfromResponse($response);
+    $this->assertTrue($xml !== false, "XML object is false");
+    $this->assertEquals($xml->position->count(), 1, "Wrong count of positions");
+
+    $position = $xml->position[0];
+    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
+    $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
+    $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 3, "Wrong timestamp");
+    $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
+    $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
+  }
+
+  public function testGetPositionsAllUsersLatest() {
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+    $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
+
+    $trackId = $this->addTestTrack($this->testUserId);
+    $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp);
+    $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp + 3);
+    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+
+    $trackName = "Track 2";
+    $trackId2 = $this->addTestTrack($userId, $trackName);
+    $this->addTestPosition($userId, $trackId2, $this->testTimestamp + 2);
+    $this->addTestPosition($userId, $trackId2, $this->testTimestamp + 1);
+    $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    $this->assertEquals(4, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+
+    $options = [
+      "http_errors" => false,
+      "query" => [ "last" => 1 ],
+    ];
+    $response = $this->http->get("/utils/getpositions.php", $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+
+    $xml = $this->getXMLfromResponse($response);
+    $this->assertTrue($xml !== false, "XML object is false");
+    $this->assertEquals($xml->position->count(), 2, "Wrong count of positions");
+
+    $position = $xml->position[0];
+    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
+    $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
+    $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 3, "Wrong timestamp");
+    $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
+    $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
+
+    $position = $xml->position[1];
+    $this->assertEquals((int) $position["id"], 3, "Wrong position id");
+    $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
+    $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
+    $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 2, "Wrong timestamp");
+    $this->assertEquals((string) $position->username, $this->testUser, "Wrong username");
+    $this->assertEquals((string) $position->trackname, $trackName, "Wrong trackname");
+  }
+
   public function testGetPositionsNoTrackId() {
 
     $this->assertTrue($this->authenticate(), "Authentication failed");
@@ -169,15 +250,7 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $xml = $this->getXMLfromResponse($response);
     $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 1, "Wrong count of positions");
-
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
-    $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
-    $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
-    $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 1, "Wrong timestamp");
-    $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
-    $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
+    $this->assertEquals(0, $xml->position->count(), "Wrong count of positions");
   }
 
   public function testGetPositionsNoUserId() {
@@ -199,8 +272,8 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $xml = $this->getXMLfromResponse($response);
 
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals($xml->position->count(), 0, "Wrong count of positions");
+    $this->assertTrue($xml !== false, "XML object is false");
+    $this->assertEquals(0, $xml->position->count(), "Wrong count of positions");
   }
 
   public function testGetPositionsNoAuth() {

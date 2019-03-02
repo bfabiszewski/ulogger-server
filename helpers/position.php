@@ -202,54 +202,34 @@
       return $position;
     }
 
-    /**
-    * Get last position data from database
-    * (for all users)
+   /**
+    * Get last positions for all users
     *
     * @return array|bool Array of uPosition positions, false on error
     */
     public static function getLastAllUsers() {
-      $query = "SELECT 
-                  p.id, 
-                  UNIX_TIMESTAMP(p.time) AS tstamp, 
-                  p.user_id, 
-                  p.track_id, 
-                  p.latitude, 
-                  p.longitude, 
-                  p.altitude, 
-                  p.speed, 
-                  p.bearing, 
-                  p.accuracy, 
-                  p.provider, 
-                  p.comment, 
-                  p.image_id, 
-                  u.login
-                FROM   
-                  " . self::db()->table('positions') . " p 
-                LEFT JOIN " . self::db()->table('users') . " u 
-                  ON ( p.user_id = u.id ) 
+      $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
+                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+                p.comment, p.image_id, u.login, t.name
+                FROM " . self::db()->table('positions') . " p
+                LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
+                LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
                 WHERE  p.id = (
-                        SELECT 
-                          p2.id 
-                        FROM   
-                          " . self::db()->table('positions') . " p2 
-                        WHERE  
-                          p2.user_id = p.user_id 
-                        ORDER BY 
-                          p2.time DESC, 
-                          p2.id DESC 
-                        LIMIT  1
+                  SELECT p2.id FROM " . self::db()->table('positions') . " p2
+                  WHERE p2.user_id = p.user_id
+                  ORDER BY p2.time DESC, p2.id DESC
+                  LIMIT 1
                 )";
-
-      $result = self::db()->query($query);
-      if ($result === false) {
-        return false;
-      }
       $positionsArr = [];
-      while ($row = $result->fetch_assoc()) {
-        $positionsArr[] = self::rowToObject($row);
+      try {
+        $result = self::db()->query($query);
+        while ($row = $result->fetch()) {
+          $positionsArr[] = self::rowToObject($row);
+        }
+      } catch (PDOException $e) {
+        // TODO: handle exception
+        syslog(LOG_ERR, $e->getMessage());
       }
-      $result->close();
       return $positionsArr;
     }
 
@@ -281,8 +261,8 @@
                 LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
                 $where
                 ORDER BY p.time, p.id";
+      $positionsArr = [];
       try {
-        $positionsArr = [];
         $result = self::db()->query($query);
         while ($row = $result->fetch()) {
           $positionsArr[] = self::rowToObject($row);

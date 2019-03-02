@@ -34,7 +34,7 @@ if ($userId) {
     if ($trackId) {
       // get all track data
       $positionsArr = uPosition::getAll($userId, $trackId);
-    } else {
+    } else if ($last) {
       // get data only for latest point
       $position = uPosition::getLast($userId);
       if ($position->isValid) {
@@ -42,9 +42,8 @@ if ($userId) {
       }
     }
   }
-}
-else{
-  if ($last) {
+} else if ($last) {
+  if (uConfig::$public_tracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
     $positionsArr = uPosition::getLastAllUsers();
   }
 }
@@ -72,9 +71,9 @@ foreach ($positionsArr as $position) {
     $xml->writeElement("username", $position->userLogin);
     $xml->writeElement("trackid", $position->trackId);
     $xml->writeElement("trackname", $position->trackName);
-    $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+    $distance = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
     $xml->writeElement("distance", round($distance));
-    $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+    $seconds = !$last && isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
     $xml->writeElement("seconds", $seconds);
   $xml->endElement();
   $prevPosition = $position;

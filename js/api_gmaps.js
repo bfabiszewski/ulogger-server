@@ -68,9 +68,9 @@ function displayTrack(xml, update) {
     var p = parsePosition(positions[i], i);
     totalMeters += p.distance;
     totalSeconds += p.seconds;
-    p['totalMeters'] = totalMeters;
-    p['totalSeconds'] = totalSeconds;
-    p['coordinates'] = new google.maps.LatLng(p.latitude, p.longitude);
+    p.totalMeters = totalMeters;
+    p.totalSeconds = totalSeconds;
+    p.coordinates = new google.maps.LatLng(p.latitude, p.longitude);
     // set marker
     setMarker(p, i, posLen);
     // update polyline
@@ -126,7 +126,7 @@ function setMarker(p, i, posLen) {
   // marker
   var marker = new google.maps.Marker({
     map: map,
-    position: p.coordinates,
+    position: new google.maps.LatLng(p.latitude, p.longitude),
     title: (new Date(p.timestamp * 1000)).toLocaleString()
   });
   if (latest == 1) { marker.setIcon('images/marker-red.png') }
@@ -177,6 +177,15 @@ function getBounds() {
   var lat_ne = bounds.getNorthEast().lat();
   var lon_ne = bounds.getNorthEast().lng();
   return [lon_sw, lat_sw, lon_ne, lat_ne];
+}
+
+function zoomToExtent() {
+  var latlngbounds = new google.maps.LatLngBounds();
+  for (var i = 0; i < markers.length; i++) {
+    var coordinates = new google.maps.LatLng(markers[i].position.lat(), markers[i].position.lng());
+    latlngbounds.extend(coordinates);
+  }
+  map.fitBounds(latlngbounds);
 }
 
 function zoomToBounds(b) {

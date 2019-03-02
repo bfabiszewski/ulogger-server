@@ -290,6 +290,7 @@ function cleanup() {
   document.getElementById('map-canvas').innerHTML = '';
 }
 
+
 function displayTrack(xml, update) {
   altitudes = {};
   var totalMeters = 0;
@@ -301,8 +302,8 @@ function displayTrack(xml, update) {
     var p = parsePosition(positions[i], i);
     totalMeters += p.distance;
     totalSeconds += p.seconds;
-    p['totalMeters'] = totalMeters;
-    p['totalSeconds'] = totalSeconds;
+    p.totalMeters = totalMeters;
+    p.totalSeconds = totalSeconds;
     // set marker
     setMarker(p, i, posLen);
     // update polyline
@@ -407,6 +408,10 @@ function getBounds() {
   var lon_ne = bounds[2];
   var lat_ne = bounds[3];
   return [lon_sw, lat_sw, lon_ne, lat_ne];
+}
+
+function zoomToExtent() {
+  map.getView().fit(layerMarkers.getSource().getExtent())
 }
 
 function zoomToBounds(b) {

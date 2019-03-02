@@ -106,6 +106,38 @@ class PositionTest extends UloggerDatabaseTestCase {
     $this->assertEquals($lastPosition->id, $pos4, "Wrong last position (user)");
   }
 
+  public function testGetLastAllUsers() {
+    $userId = $this->addTestUser();
+    $userId2 = $this->addTestUser($this->testUser2);
+    $trackId1 = $this->addTestTrack($userId);
+    $trackId2 = $this->addTestTrack($userId);
+    $pos1 = $this->addTestPosition($userId, $trackId1, $this->testTimestamp + 3);
+    $pos2 = $this->addTestPosition($userId2, $trackId2, $this->testTimestamp + 1);
+    $pos3 = $this->addTestPosition($userId, $trackId1, $this->testTimestamp);
+    $pos4 = $this->addTestPosition($userId2, $trackId2, $this->testTimestamp + 2);
+    $this->assertEquals(2, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    $this->assertEquals(4, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    $posArr = uPosition::getLastAllUsers();
+    $this->assertEquals(2, count($posArr), "Wrong row count");
+    foreach ($posArr as $position) {
+      /** @var uPosition $position */
+      switch ($position->id) {
+        case 1:
+          $this->assertEquals($this->testTimestamp + 3, $position->timestamp);
+          $this->assertEquals($userId, $position->userId);
+          $this->assertEquals($trackId1, $position->trackId);
+          break;
+        case 4:
+          $this->assertEquals($this->testTimestamp + 2, $position->timestamp);
+          $this->assertEquals($userId2, $position->userId);
+          $this->assertEquals($trackId2, $position->trackId);
+          break;
+        default:
+          $this->assert("Unexpected position: {$position->id}");
+      }
+    }
+  }
+
   public function testGetAll() {
     $userId = $this->addTestUser();
     $userId2 = $this->addTestUser($this->testUser2);
