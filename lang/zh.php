@@ -121,4 +121,5 @@ $lang["iparsefailure"] = "解析失敗";
 $lang["idatafailure"] = "在上傳的檔案中未發現路徑數據";
 $lang["isizefailure"] = "上傳的檔案大小不能超過 %d 比特哦"; // substitutes number of bytes
 $lang["imultiple"] = "恭喜，%d 條路徑已導入"; // substitutes number of imported tracks
+$lang["allusers"] = "All users";
 ?>

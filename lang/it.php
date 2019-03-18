@@ -121,4 +121,5 @@ $lang["iparsefailure"] = "Analisi fallita";
 $lang["idatafailure"] = "Nessun tracciato nel file importato";
 $lang["isizefailure"] = "La dimensione del file caricato non deve superare i %d byte"; // substitutes number of bytes
 $lang["imultiple"] = "Tracce multiple importate (%d)"; // substitutes number of imported tracks
+$lang["allusers"] = "All users";
 ?>

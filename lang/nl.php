@@ -121,4 +121,5 @@ $lang["iparsefailure"] = "Verwerking mislukt";
 $lang["idatafailure"] = "Geen track data in geïmporteerd bestand";
 $lang["isizefailure"] = "Het upload bestand kan niet groter zijn dan %d bytes"; // substitutes number of bytes
 $lang["imultiple"] = "Info, meerdere tracks geïmporteerd (%d)"; // substitutes number of imported tracks
+$lang["allusers"] = "All users";
 ?>
