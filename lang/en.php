@@ -122,7 +122,4 @@ $lang["idatafailure"] = "No track data in imported file";
 $lang["isizefailure"] = "The uploaded file size should not exceed %d bytes"; // substitutes number of bytes
 $lang["imultiple"] = "Notice, multiple tracks imported (%d)"; // substitutes number of imported tracks
 $lang["allusers"] = "All users";
-$lang["notrackname"] = "No track";
-$lang["nousername"] = "No user";
-$lang["nocomment"] = "No comment";
 ?>
