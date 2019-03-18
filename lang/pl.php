@@ -121,4 +121,5 @@ $lang["iparsefailure"] = "Błąd parsowania pliku";
 $lang["idatafailure"] = "Brak trasy w importowanym pliku";
 $lang["isizefailure"] = "Wielkość importowanego pliku nie może przekraczać %d bajtów"; // substitutes number of bytes
 $lang["imultiple"] = "Uwaga, zaimportowano kilka tras (%d)"; // substitutes number of imported tracks
+$lang["allusers"] = "Wszyscy";
 ?>
