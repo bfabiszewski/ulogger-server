@@ -28,6 +28,7 @@ body {
 a {
   color: #bce;
   text-decoration: none;
+  cursor: pointer;
 }
 :link, :visited {
   color: #bce;
@@ -105,9 +106,19 @@ select {
   border-radius: 11px 0 0 11px;
   cursor: pointer;
 }
-
-#user, #track, #summary, #export, #import, #other, #units {
+label[for=user] {
+  padding-top: 1em;
+  display: block;
+}
+.section {
   padding-bottom: 10px;
+  display: block;
+}
+.section:first-child {
+  padding-top: 1em;
+}
+#inputFile {
+  display: none;
 }
 #summary div {
   padding-top: .3em;
@@ -190,16 +201,14 @@ select {
   background-color: white;
   opacity: 0.8;
 }
-#close {
+#chart_close {
   position: fixed;
   bottom: 175px;
   right: 175px;
   z-index: 10001;
   font-size: 0.8em;
-}
-
-#close a, #close:link, #close:visited {
   color: #5070af;
+  cursor: pointer;
 }
 
 .mi {

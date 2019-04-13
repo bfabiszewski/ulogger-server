@@ -17,192 +17,280 @@
  */
 
 // google maps
-var map;
-var polies = [];
-var markers = [];
-var popups = [];
-var popup;
-var polyOptions;
-var mapOptions;
-var loadedAPI = 'gmaps';
+/** @namespace */
+var uLogger = uLogger || {};
+/** @namespace */
+uLogger.mapAPI = uLogger.mapAPI || {};
+/** @namespace */
+uLogger.mapAPI.gmaps = (function(ns) {
 
-function init() {
-  if (gm_error) { return gm_authFailure(); }
-  google.maps.visualRefresh = true;
-  polyOptions = {
-    strokeColor: strokeColor,
-    strokeOpacity: strokeOpacity,
-    strokeWeight: strokeWeight
-  }
-  mapOptions = {
-    center: new google.maps.LatLng(init_latitude, init_longitude),
-    zoom: 8,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    scaleControl: true
-  };
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-}
-function cleanup() {
-  map = undefined;
-  polies = undefined;
-  markers = undefined;
-  popups = undefined;
-  popup = undefined;
-  polyOptions = undefined;
-  mapOptions = undefined;
-  document.getElementById('map-canvas').innerHTML = '';
-}
+  /** @type {google.maps.Map} */
+  var map;
+  /** @type {google.maps.Polyline[]} */
+  var polies = [];
+  /** @type {google.maps.Marker[]} */
+  var markers = [];
+  /** @type {google.maps.InfoWindow[]} */
+  var popups = [];
+  /** @type {google.maps.InfoWindow} */
+  var popup;
+  /** @type {google.maps.PolylineOptions} */
+  var polyOptions;
+  /** @type {google.maps.MapOptions} */
+  var mapOptions;
+  /** @type {number} */
+  var timeoutHandle;
+  var name = 'gmaps';
+  var isLoaded = false;
+  var authError = false;
 
-function displayTrack(xml, update) {
-  altitudes = {};
-  var totalMeters = 0;
-  var totalSeconds = 0;
-  // init polyline
-  var poly = new google.maps.Polyline(polyOptions);
-  poly.setMap(map);
-  var path = poly.getPath();
-  var latlngbounds = new google.maps.LatLngBounds();
-  var positions = xml.getElementsByTagName('position');
-  var posLen = positions.length;
-  for (var i = 0; i < posLen; i++) {
-    var p = parsePosition(positions[i], i);
-    totalMeters += p.distance;
-    totalSeconds += p.seconds;
-    p.totalMeters = totalMeters;
-    p.totalSeconds = totalSeconds;
-    p.coordinates = new google.maps.LatLng(p.latitude, p.longitude);
-    // set marker
-    setMarker(p, i, posLen);
-    // update polyline
-    path.push(p.coordinates);
-    latlngbounds.extend(p.coordinates);
-  }
-  if (update) {
-    map.fitBounds(latlngbounds);
-    if (i == 1) {
-      // only one point, zoom out
-      zListener =
-        google.maps.event.addListenerOnce(map, 'bounds_changed', function (event) {
-          if (this.getZoom()) {
-            this.setZoom(15);
-          }
-        });
-      setTimeout(function () { google.maps.event.removeListener(zListener) }, 2000);
+  /**
+   * Initialize map
+   */
+  function init() {
+    var url = '//maps.googleapis.com/maps/api/js?' + ((ns.config.gkey != null) ? ('key=' + ns.config.gkey + '&') : '') + 'callback=uLogger.mapAPI.gmaps.setLoaded';
+    ns.addScript(url, 'mapapi_gmaps');
+    if (!isLoaded) {
+      throw new Error("Google Maps API not ready");
     }
+    start();
   }
-  polies.push(poly);
 
-  updateSummary(p.timestamp, totalMeters, totalSeconds);
-  if (p.tid != trackid) {
-    trackid = p.tid;
-    setTrack(trackid);
-  }
-  if (document.getElementById('bottom').style.display == 'block') {
-    // update altitudes chart
-    chart.clearChart();
-    displayChart();
-  }
-}
-
-function clearMap() {
-  if (polies) {
-    for (var i = 0; i < polies.length; i++) {
-      polies[i].setMap(null);
+  /**
+   * Start map engine when loaded
+   */
+  function start() {
+    if (authError) {
+      gm_authFailure();
+      return;
     }
+    google.maps.visualRefresh = true;
+    // noinspection JSValidateTypes
+    polyOptions = {
+      strokeColor: ns.config.strokeColor,
+      strokeOpacity: ns.config.strokeOpacity,
+      strokeWeight: ns.config.strokeWeight
+    };
+    // noinspection JSValidateTypes
+    mapOptions = {
+      center: new google.maps.LatLng(ns.config.init_latitude, ns.config.init_longitude),
+      zoom: 8,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      scaleControl: true
+    };
+    map = new google.maps.Map(ns.ui.map, mapOptions);
   }
-  if (markers) {
-    for (var i = 0; i < markers.length; i++) {
-      google.maps.event.removeListener(popups[i].listener);
-      popups[i].setMap(null);
-      markers[i].setMap(null);
-    }
-  }
-  markers.length = 0;
-  polies.length = 0;
-  popups.lentgth = 0;
-}
 
-function setMarker(p, i, posLen) {
-  // marker
-  var marker = new google.maps.Marker({
-    map: map,
-    position: new google.maps.LatLng(p.latitude, p.longitude),
-    title: (new Date(p.timestamp * 1000)).toLocaleString()
-  });
-  if (latest == 1) { marker.setIcon('images/marker-red.png') }
-  else if (i == 0) { marker.setIcon('images/marker-green.png') }
-  else if (i == posLen - 1) { marker.setIcon('images/marker-red.png') }
-  else { marker.setIcon('images/marker-white.png') }
-  // popup
-  var content = getPopupHtml(p, i, posLen);
-  popup = new google.maps.InfoWindow();
-  popup.listener = google.maps.event.addListener(marker, 'click', (function (marker, content) {
-    return function () {
-      popup.setContent(content);
-      popup.open(map, marker);
-      if (document.getElementById('bottom').style.display == 'block') {
-        var index = 0;
-        for (var key in altitudes) {
-          if (altitudes.hasOwnProperty(key) && key == i) {
-            chart.setSelection([{ row: index, column: null }]);
-            break;
-          }
-          index++;
-        }
+  /**
+   * Clean up API
+   */
+  function cleanup() {
+    polies = [];
+    markers = [];
+    popups = [];
+    map = null;
+    polyOptions = null;
+    mapOptions = null;
+    popup = null;
+    ns.clearMapCanvas();
+  }
+
+  /**
+   * Display track
+   * @param {HTMLCollection} positions XML element
+   * @param {boolean} update Should fit bounds if true
+   */
+  function displayTrack(positions, update) {
+    var totalMeters = 0;
+    var totalSeconds = 0;
+    // init polyline
+    var poly = new google.maps.Polyline(polyOptions);
+    poly.setMap(map);
+    var path = poly.getPath();
+    var latlngbounds = new google.maps.LatLngBounds();
+    var posLen = positions.length;
+    for (var i = 0; i < posLen; i++) {
+      var p = ns.parsePosition(positions[i], i);
+      totalMeters += p.distance;
+      totalSeconds += p.seconds;
+      p.totalMeters = totalMeters;
+      p.totalSeconds = totalSeconds;
+      // set marker
+      setMarker(p, i, posLen);
+      // update polyline
+      var coordinates = new google.maps.LatLng(p.latitude, p.longitude);
+      path.push(coordinates);
+      latlngbounds.extend(coordinates);
+    }
+    if (update) {
+      map.fitBounds(latlngbounds);
+      if (i === 1) {
+        // only one point, zoom out
+        var zListener =
+          google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
+            if (this.getZoom()) {
+              this.setZoom(15);
+            }
+          });
+        setTimeout(function () { google.maps.event.removeListener(zListener) }, 2000);
       }
     }
-  })(marker, content));
-  markers.push(marker);
-  popups.push(popup);
-}
+    polies.push(poly);
 
-function addChartEvent(chart, data) {
-  google.visualization.events.addListener(chart, 'select', function () {
-    if (popup) { popup.close(); clearTimeout(altTimeout); }
-    var selection = chart.getSelection()[0];
-    if (selection) {
-      var id = data.getValue(selection.row, 0) - 1;
-      var icon = markers[id].getIcon();
-      markers[id].setIcon('images/marker-gold.png');
-      altTimeout = setTimeout(function () { markers[id].setIcon(icon); }, 2000);
+    ns.updateSummary(p.timestamp, totalMeters, totalSeconds);
+    if (p.tid !== ns.config.trackid) {
+      ns.config.trackid = p.tid;
+      ns.setTrack(ns.config.trackid);
     }
-  });
-}
-
-//((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
-function getBounds() {
-  var bounds = map.getBounds();
-  var lat_sw = bounds.getSouthWest().lat();
-  var lon_sw = bounds.getSouthWest().lng();
-  var lat_ne = bounds.getNorthEast().lat();
-  var lon_ne = bounds.getNorthEast().lng();
-  return [lon_sw, lat_sw, lon_ne, lat_ne];
-}
-
-function zoomToExtent() {
-  var latlngbounds = new google.maps.LatLngBounds();
-  for (var i = 0; i < markers.length; i++) {
-    var coordinates = new google.maps.LatLng(markers[i].position.lat(), markers[i].position.lng());
-    latlngbounds.extend(coordinates);
+    ns.updateChart();
   }
-  map.fitBounds(latlngbounds);
-}
 
-function zoomToBounds(b) {
-  var sw = new google.maps.LatLng(b[1], b[0]);
-  var ne = new google.maps.LatLng(b[3], b[2]);
-  var bounds = new google.maps.LatLngBounds(sw, ne);
-  map.fitBounds(bounds);
-}
+  /**
+   * Clear map
+   */
+  function clearMap() {
+    if (polies) {
+      for (var i = 0; i < polies.length; i++) {
+        polies[i].setMap(null);
+      }
+    }
+    if (markers) {
+      for (var j = 0; j < markers.length; j++) {
+        google.maps.event.removeListener(popups[j].listener);
+        popups[j].setMap(null);
+        markers[j].setMap(null);
+      }
+    }
+    markers.length = 0;
+    polies.length = 0;
+    popups.lentgth = 0;
+  }
 
+  /**
+   * Set marker
+   * @param {uLogger.Position} pos
+   * @param {number} id
+   * @param {number} posLen
+   */
+  function setMarker(pos, id, posLen) {
+    // marker
+    // noinspection JSCheckFunctionSignatures
+    var marker = new google.maps.Marker({
+      position: new google.maps.LatLng(pos.latitude, pos.longitude),
+      title: (new Date(pos.timestamp * 1000)).toLocaleString(),
+      map: map
+    });
+    if (ns.isLatest()) {
+      marker.setIcon('images/marker-red.png');
+    } else if (id === 0) {
+      marker.setIcon('images/marker-green.png');
+    } else if (id === posLen - 1) {
+      marker.setIcon('images/marker-red.png');
+    } else {
+      marker.setIcon('images/marker-white.png');
+    }
+    // popup
+    var content = ns.getPopupHtml(pos, id, posLen);
+    popup = new google.maps.InfoWindow();
+    // noinspection JSUndefinedPropertyAssignment
+    popup.listener = google.maps.event.addListener(marker, 'click', (function (_marker, _content) {
+      return function () {
+        popup.setContent(_content);
+        popup.open(map, _marker);
+        ns.chartShowPosition(id);
+      }
+    })(marker, content));
+    markers.push(marker);
+    popups.push(popup);
+  }
+
+  /**
+   * Add listener on chart to show position on map
+   * @param {google.visualization.LineChart} chart
+   * @param {google.visualization.DataTable} data
+   */
+  function addChartEvent(chart, data) {
+    google.visualization.events.addListener(chart, 'select', function () {
+      if (popup) { popup.close(); clearTimeout(timeoutHandle); }
+      var selection = chart.getSelection()[0];
+      if (selection) {
+        var id = data.getValue(selection.row, 0) - 1;
+        var icon = markers[id].getIcon();
+        markers[id].setIcon('images/marker-gold.png');
+        timeoutHandle = setTimeout(function () { markers[id].setIcon(icon); }, 2000);
+      }
+    });
+  }
+
+  /**
+   * Get map bounds
+   * eg. ((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
+   * @returns {number[]} Bounds
+   */
+  function getBounds() {
+    var bounds = map.getBounds();
+    var lat_sw = bounds.getSouthWest().lat();
+    var lon_sw = bounds.getSouthWest().lng();
+    var lat_ne = bounds.getNorthEast().lat();
+    var lon_ne = bounds.getNorthEast().lng();
+    return [lon_sw, lat_sw, lon_ne, lat_ne];
+  }
+
+  /**
+   * Zoom to track extent
+   */
+  function zoomToExtent() {
+    var latlngbounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < markers.length; i++) {
+      var coordinates = new google.maps.LatLng(markers[i].position.lat(), markers[i].position.lng());
+      latlngbounds.extend(coordinates);
+    }
+    map.fitBounds(latlngbounds);
+  }
+
+  /**
+   * Zoom to bounds
+   * @param {number[]} bounds
+   */
+  function zoomToBounds(bounds) {
+    var sw = new google.maps.LatLng(bounds[1], bounds[0]);
+    var ne = new google.maps.LatLng(bounds[3], bounds[2]);
+    var latLngBounds = new google.maps.LatLngBounds(sw, ne);
+    map.fitBounds(latLngBounds);
+  }
+
+  /**
+   * Update size
+   */
+  function updateSize() {
+    // ignore for google API
+  }
+
+  return {
+    name: name,
+    init: init,
+    setLoaded: function () { isLoaded = true; },
+    cleanup: cleanup,
+    displayTrack: displayTrack,
+    clearMap: clearMap,
+    setMarker: setMarker,
+    addChartEvent: addChartEvent,
+    getBounds: getBounds,
+    zoomToExtent: zoomToExtent,
+    zoomToBounds: zoomToBounds,
+    updateSize: updateSize
+  }
+
+})(uLogger);
+
+/**
+ * Callback for Google Maps API
+ * It will be called when authentication fails
+ */
 function gm_authFailure() {
-  gm_error = true;
-  message = sprintf(lang['apifailure'], 'Google Maps');
-  message += '<br><br>' + lang['gmauthfailure'];
-  message += '<br><br>' + lang['gmapilink'];
-  showModal(message);
-};
-
-function updateSize() {
-  // ignore
+  uLogger.mapAPI.gmaps.authError = true;
+  var message = uLogger.sprintf(uLogger.lang.strings['apifailure'], 'Google Maps');
+  message += '<br><br>' + uLogger.lang.strings['gmauthfailure'];
+  message += '<br><br>' + uLogger.lang.strings['gmapilink'];
+  uLogger.ui.showModal(message);
 }

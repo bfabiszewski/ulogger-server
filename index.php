@@ -73,51 +73,79 @@
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?= uConfig::$lang ?>">
   <head>
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
     <script>
-      var interval = '<?= uConfig::$interval ?>';
-      var userid = '<?= ($displayUserId) ? $displayUserId : -1 ?>';
-      var trackid = '<?= ($displayTrackId) ? $displayTrackId : -1 ?>';
-      var units = '<?= uConfig::$units ?>';
-      var mapapi = '<?= uConfig::$mapapi ?>';
-      var gkey = '<?= !empty(uConfig::$gkey) ? uConfig::$gkey : "null" ?>';
-      var ol_layers = <?= json_encode(uConfig::$ol_layers) ?>;
-      var init_latitude = <?= uConfig::$init_latitude ?>;
-      var init_longitude = <?= uConfig::$init_longitude ?>;
-      var lang = <?= json_encode($lang) ?>;
-      var admin = <?= json_encode($auth->isAdmin()) ?>;
-      var auth = '<?= ($auth->isAuthenticated()) ? $auth->user->login : "null" ?>';
-      var pass_regex = <?= uConfig::passRegex() ?>;
-      var strokeWeight = <?= uConfig::$strokeWeight ?>;
-      var strokeColor = '<?= uConfig::$strokeColor ?>';
-      var strokeOpacity = <?= uConfig::$strokeOpacity ?>;
+      /** @namespace uLogger */
+      var uLogger = window.uLogger || {};
+      /** @type {number} userId */
+      uLogger.userId = <?= json_encode($displayUserId ? $displayUserId : -1) ?>;
+      /** @type {number} trackId */
+      uLogger.trackId = <?= json_encode($displayTrackId ? $displayTrackId : -1) ?>;
+
+      /** @type {uLogger.config} */
+      uLogger.config = {
+        /** @type {number} */
+        interval: <?= json_encode(uConfig::$interval) ?>,
+        /** @type {string} */
+        units: <?= json_encode(uConfig::$units) ?>,
+        /** @type {string} */
+        mapapi: <?= json_encode(uConfig::$mapapi) ?>,
+        /** @type {?string} */
+        gkey: <?= json_encode(uConfig::$gkey) ?>,
+        /** @type {Object.<string, string>} */
+        ol_layers: <?= json_encode(uConfig::$ol_layers) ?>,
+        /** @type {number} */
+        init_latitude: <?= json_encode(uConfig::$init_latitude) ?>,
+        /** @type {number} */
+        init_longitude: <?= json_encode(uConfig::$init_longitude) ?>,
+        /** @type {boolean} */
+        admin: <?= json_encode($auth->isAdmin()) ?>,
+        /** @type {?string} */
+        auth: <?= json_encode($auth->isAuthenticated() ? $auth->user->login : NULL) ?>,
+        /** @type {RegExp} */
+        pass_regex: <?= uConfig::passRegex() ?>,
+        /** @type {number} */
+        strokeWeight: <?= json_encode(uConfig::$strokeWeight) ?>,
+        /** @type {string} */
+        strokeColor: <?= json_encode(uConfig::$strokeColor) ?>,
+        /** @type {number} */
+        strokeOpacity: <?= json_encode(uConfig::$strokeOpacity) ?>
+      };
+
+      /** @type {uLogger.lang} */
+      uLogger.lang = {
+        /** @type {Object.<string, string>} */
+        strings: <?= json_encode($lang) ?>
+      };
     </script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script src="js/main.js"></script>
     <?php if ($auth->isAdmin()): ?>
-      <script type="text/javascript" src="js/admin.js"></script>
+      <script src="js/admin.js"></script>
     <?php endif; ?>
     <?php if ($auth->isAuthenticated()): ?>
-      <script type="text/javascript" src="js/track.js"></script>
+      <script src="js/track.js"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="js/pass.js"></script>
-    <script type="text/javascript" src="//www.google.com/jsapi"></script>
-    <script type="text/javascript">
+    <script src="js/pass.js"></script>
+    <script src="js/api_gmaps.js"></script>
+    <script src="js/api_openlayers.js"></script>
+    <script src="//www.google.com/jsapi"></script>
+    <script>
       google.load('visualization', '1', { packages:['corechart'] });
     </script>
   </head>
 
-  <body onload="loadMapAPI();">
+  <body>
     <div id="menu">
       <div id="menu-content">
 
         <?php if ($auth->isAuthenticated()): ?>
           <div id="user_menu">
-            <a href="javascript:void(0);" onclick="userMenu()"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
+            <a id="menu_head"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
             <div id="user_dropdown" class="dropdown">
-              <a href="javascript:void(0)" onclick="changePass()"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
+              <a id="menu_pass"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
               <a href="utils/logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
             </div>
           </div>
@@ -125,11 +153,11 @@
           <a href="login.php"><img class="icon" alt="<?= $lang["login"] ?>" src="images/key.svg"> <?= $lang["login"] ?></a>
         <?php endif; ?>
 
-        <div id="user">
+        <div class="section">
           <?php if (!empty($usersArr)): ?>
-            <div class="menutitle" style="padding-top: 1em"><?= $lang["user"] ?></div>
+            <label for="user" class="menutitle"><?= $lang["user"] ?></label>
             <form>
-              <select name="user" onchange="selectUser(this);">
+              <select id="user" name="user">
                 <option value="0" disabled><?= $lang["suser"] ?></option>
                 <?php foreach ($usersArr as $aUser): ?>
                   <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= htmlspecialchars($aUser->login) ?></option>
@@ -139,40 +167,40 @@
           <?php endif; ?>
         </div>
 
-        <div id="track">
-          <div class="menutitle"><?= $lang["track"] ?></div>
+        <div class="section">
+          <label for="track" class="menutitle"><?= $lang["track"] ?></label>
           <form>
-            <select name="track" onchange="selectTrack(this)">
+            <select id="track" name="track">
               <?php foreach ($tracksArr as $aTrack): ?>
                 <option value="<?= $aTrack->id ?>"><?= htmlspecialchars($aTrack->name) ?></option>
               <?php endforeach; ?>
             </select>
-            <input id="latest" type="checkbox" onchange="toggleLatest();"> <?= $lang["latest"] ?><br>
-            <input type="checkbox" onchange="autoReload();"> <?= $lang["autoreload"] ?> (<a href="javascript:void(0);" onclick="setTime();"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
+            <input id="latest" type="checkbox"> <label for="latest"><?= $lang["latest"] ?></label><br>
+            <input id="auto_reload" type="checkbox"> <label for="auto_reload"><?= $lang["autoreload"] ?></label> (<a id="set_time"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
           </form>
-          <a href="javascript:void(0);" onclick="reload(userid, trackid);"> <?= $lang["reload"] ?></a><br>
+          <a id="force_reload"> <?= $lang["reload"] ?></a><br>
         </div>
 
-        <div id="summary"></div>
+        <div id="summary" class="section"></div>
 
-        <div id="other">
-          <a id="altitudes" href="javascript:void(0);" onclick="toggleChart();"><?= $lang["chart"] ?></a>
+        <div id="other" class="section">
+          <a id="altitudes"><?= $lang["chart"] ?></a>
         </div>
 
-        <div id="api">
-          <div class="menutitle"><?= $lang["api"] ?></div>
+        <div>
+          <label for="api" class="menutitle"><?= $lang["api"] ?></label>
           <form>
-            <select name="api" onchange="loadMapAPI(this.options[this.selectedIndex].value);">
+            <select id="api" name="api">
               <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
               <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
             </select>
           </form>
         </div>
 
-        <div id="lang">
-          <div class="menutitle"><?= $lang["language"] ?></div>
+        <div>
+          <label for="lang" class="menutitle"><?= $lang["language"] ?></label>
           <form>
-            <select name="units" onchange="setLang(this.options[this.selectedIndex].value);">
+            <select id="lang" name="lang">
               <?php foreach ($langsArr as $langCode => $langName): ?>
                 <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
               <?php endforeach; ?>
@@ -180,10 +208,10 @@
           </form>
         </div>
 
-        <div id="units">
-          <div class="menutitle"><?= $lang["units"] ?></div>
+        <div class="section">
+          <label for="units" class="menutitle"><?= $lang["units"] ?></label>
           <form>
-            <select name="units" onchange="setUnits(this.options[this.selectedIndex].value);">
+            <select id="units" name="units">
               <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
               <option value="imperial"<?= (uConfig::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
               <option value="nautical"<?= (uConfig::$units == "nautical") ? " selected" : "" ?>><?= $lang["nautical"] ?></option>
@@ -191,34 +219,34 @@
           </form>
         </div>
 
-        <div id="export">
+        <div id="export" class="section">
           <div class="menutitle u"><?= $lang["export"] ?></div>
-          <a class="menulink" href="javascript:void(0);" onclick="exportFile('kml', userid, trackid);">kml</a>
-          <a class="menulink" href="javascript:void(0);" onclick="exportFile('gpx', userid, trackid);">gpx</a>
+          <a id="export_kml" class="menulink">kml</a>
+          <a id="export_gpx" class="menulink">gpx</a>
         </div>
 
         <?php if ($auth->isAuthenticated()): ?>
-          <div id="import">
+          <div id="import" class="section">
             <div class="menutitle u"><?= $lang["import"] ?></div>
             <form id="importForm" enctype="multipart/form-data" method="post">
               <input type="hidden" name="MAX_FILE_SIZE" value="<?= uUtils::getUploadMaxSize() ?>" />
-              <input type="file" id="inputFile" name="gpx" style="display:none" onchange="importFile(this)" />
+              <input type="file" id="inputFile" name="gpx" />
             </form>
-            <a class="menulink" href="javascript:void(0);" onclick="document.getElementById('inputFile').click();">gpx</a>
+            <a id="import_gpx" class="menulink">gpx</a>
           </div>
 
           <div id="admin_menu">
             <div class="menutitle u"><?= $lang["adminmenu"] ?></div>
             <?php if ($auth->isAdmin()): ?>
-              <a class="menulink" href="javascript:void(0);" onclick="addUser()"><?= $lang["adduser"] ?></a>
-              <a class="menulink" href="javascript:void(0);" onclick="editUser()"><?= $lang["edituser"] ?></a>
+              <a id="adduser" class="menulink"><?= $lang["adduser"] ?></a>
+              <a id="edituser" class="menulink"><?= $lang["edituser"] ?></a>
             <?php endif; ?>
-            <a class="menulink" href="javascript:void(0);" onclick="editTrack()"><?= $lang["edittrack"] ?></a>
+            <a id="edittrack" class="menulink"><?= $lang["edittrack"] ?></a>
           </div>
         <?php endif; ?>
 
       </div>
-      <div id="menu-close" onclick="toggleMenu();">»</div>
+      <div id="menu-close">»</div>
       <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> <?= uConfig::$version ?></div>
     </div>
 
@@ -226,7 +254,7 @@
       <div id="map-canvas"></div>
       <div id="bottom">
         <div id="chart"></div>
-        <div id="close"><a href="javascript:void(0);" onclick="toggleChart(0);"><?= $lang["close"] ?></a></div>
+        <div id="chart_close"><?= $lang["close"] ?></div>
       </div>
     </div>
 

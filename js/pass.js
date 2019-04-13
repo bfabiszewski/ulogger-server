@@ -16,63 +16,62 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-function changePass() {
-  var form = '<form id="passForm" method="post" onsubmit="submitPass(); return false">';
-  form += '<label><b>' + lang['oldpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="oldpass" required>';
-  form += '<label><b>' + lang['newpassword'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass" required>';
-  form += '<label><b>' + lang['newpasswordrepeat'] + '</b></label><input type="password" placeholder="' + lang['passwordenter'] + '" name="pass2" required>';
-  form += '<button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button>';
-  form += '</form>';
-  showModal(form);
-}
+/** @namespace */
+var uLogger = window.uLogger || {};
+(function (ns) {
 
-function submitPass() {
-  var form = document.getElementById('passForm');
-  var oldpass = form.elements['oldpass'].value;
-  var pass = form.elements['pass'].value;
-  var pass2 = form.elements['pass2'].value;
-  if (!oldpass || !pass || !pass2) {
-    alert(lang['allrequired']);
-    return;
-  }
-  if (pass != pass2) {
-    alert(lang['passnotmatch']);
-    return;
-  }
-  if (!pass_regex.test(pass)) {
-    alert(lang['passlenmin'] + '\n' + lang['passrules']);
-    return;
+  /**
+   * Show change password dialog
+   */
+  function changePass() {
+    var form = '<form id="passForm" method="post" onsubmit="uLogger.submitPass(); return false">';
+    form += '<label><b>' + ns.lang.strings['oldpassword'] + '</b></label><input type="password" placeholder="' + ns.lang.strings['passwordenter'] + '" name="oldpass" required>';
+    form += '<label><b>' + ns.lang.strings['newpassword'] + '</b></label><input type="password" placeholder="' + ns.lang.strings['passwordenter'] + '" name="pass" required>';
+    form += '<label><b>' + ns.lang.strings['newpasswordrepeat'] + '</b></label><input type="password" placeholder="' + ns.lang.strings['passwordenter'] + '" name="pass2" required>';
+    form += '<button type="button" onclick="uLogger.ui.removeModal()">' + ns.lang.strings['cancel'] + '</button><button type="submit">' + ns.lang.strings['submit'] + '</button>';
+    form += '</form>';
+    ns.ui.showModal(form);
   }
 
-  var xhr = getXHR();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      var error = true;
-      var message = '';
-      if (xhr.status == 200) {
-        var xml = xhr.responseXML;
-        if (xml) {
-          var root = xml.getElementsByTagName('root');
-          if (root.length && getNode(root[0], 'error') == 0) {
-            removeModal();
-            alert(lang['actionsuccess']);
-            error = false;
-          } else if (root.length) {
-            errorMsg = getNode(root[0], 'message');
-            if (errorMsg) { message = errorMsg; }
-          }
-        }
-      }
-      if (error) {
-        alert(lang['actionfailure'] + '\n' + message);
-      }
-      xhr = null;
+  /**
+   * Submit password form
+   */
+  function submitPass() {
+    var form = document.getElementById('passForm');
+    var oldpass = form.elements['oldpass'].value;
+    var pass = form.elements['pass'].value;
+    var pass2 = form.elements['pass2'].value;
+    if (!oldpass || !pass || !pass2) {
+      alert(ns.lang.strings['allrequired']);
+      return;
     }
+    if (pass !== pass2) {
+      alert(ns.lang.strings['passnotmatch']);
+      return;
+    }
+    if (!ns.config.pass_regex.test(pass)) {
+      alert(ns.lang.strings['passlenmin'] + '\n' + ns.lang.strings['passrules']);
+      return;
+    }
+
+    ns.post('utils/changepass.php',
+      {
+        oldpass: oldpass,
+        pass: pass
+      },
+      {
+        success: function () {
+          ns.ui.removeModal();
+          alert(ns.lang.strings['actionsuccess']);
+        },
+        fail: function (message) {
+          alert(ns.lang.strings['actionfailure'] + '\n' + message);
+        }
+      });
   }
-  xhr.open('POST', 'utils/changepass.php', true);
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  var params = 'oldpass=' + encodeURIComponent(oldpass) + '&pass=' + encodeURIComponent(pass);
-  params = params.replace(/%20/g, '+');
-  xhr.send(params);
-  return;
-}
+
+  // exports
+  ns.changePass = changePass;
+  ns.submitPass = submitPass;
+
+})(uLogger);

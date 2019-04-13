@@ -16,91 +16,94 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-function editTrack() {
-  var userForm = document.getElementsByName('user')[0];
-  var trackUser = (userForm !== undefined) ? userForm.options[userForm.selectedIndex].text : auth;
-  if (trackUser != auth && !admin) {
-    alert(lang['owntrackswarn']);
-    return;
-  }
-  var trackForm = document.getElementsByName('track')[0];
-  if (trackForm.selectedIndex < 0) {
-    return;
-  }
-  var trackId = trackForm.options[trackForm.selectedIndex].value;
-  var trackName = trackForm.options[trackForm.selectedIndex].text;
-  var message = '<div style="float:left">' + sprintf(lang['editingtrack'], '<b>' + htmlEncode(trackName) + '</b>') + '</div>';
-  message += '<div class="red-button"><b><a href="javascript:void(0);" onclick="submitTrack(\'delete\'); return false">' + lang['deltrack'] + '</a></b></div>';
-  message += '<div style="clear: both; padding-bottom: 1em;"></div>';
+/** @namespace */
+var uLogger = window.uLogger || {};
+(function (ns) {
 
-  var form = '<form id="trackForm" method="post" onsubmit="submitTrack(\'update\'); return false">';
-  form += '<input type="hidden" name="trackid" value="' + trackId + '">';
-  form += '<label><b>' + lang['trackname'] + '</b></label><input type="text" placeholder="' + lang['trackname'] + '" name="trackname" value="' + htmlEncode(trackName) + '" required>';
-  form += '<div class="buttons"><button type="button" onclick="removeModal()">' + lang['cancel'] + '</button><button type="submit">' + lang['submit'] + '</button></div>';
-  form += '</form>';
-  showModal(message + form);
-}
-
-function confirmedDelete(name) {
-  return confirm(sprintf(lang['trackdelwarn'], '"' + name + '"'));
-}
-
-function submitTrack(action) {
-  var form = document.getElementById('trackForm');
-  var trackId = parseInt(form.elements['trackid'].value);
-  var trackName = form.elements['trackname'].value.trim();
-  if (isNaN(trackId)) {
-      alert(lang['allrequired']);
-      return;
-  }
-  if (action != 'delete') {
-    if (!trackName) {
-      alert(lang['allrequired']);
+  /**
+   * Show edit track dialog
+   */
+  function editTrack() {
+    var userForm = ns.ui.userSelect;
+    var trackUser = (userForm) ? userForm.options[userForm.selectedIndex].text : ns.config.auth;
+    if (trackUser !== ns.config.auth && !ns.config.admin) {
+      alert(ns.lang.strings['owntrackswarn']);
       return;
     }
-  } else {
-    if (!confirmedDelete(trackName)) {
+    var trackForm = ns.ui.trackSelect;
+    if (trackForm.selectedIndex < 0) {
       return;
     }
+    var trackId = trackForm.options[trackForm.selectedIndex].value;
+    var trackName = trackForm.options[trackForm.selectedIndex].text;
+    var message = '<div style="float:left">' + ns.sprintf(ns.lang.strings['editingtrack'], '<b>' + ns.htmlEncode(trackName) + '</b>') + '</div>';
+    message += '<div class="red-button"><b><a href="javascript:void(0);" onclick="uLogger.submitTrack(\'delete\'); return false">' + ns.lang.strings['deltrack'] + '</a></b></div>';
+    message += '<div style="clear: both; padding-bottom: 1em;"></div>';
+
+    var form = '<form id="trackForm" method="post" onsubmit="uLogger.submitTrack(\'update\'); return false">';
+    form += '<input type="hidden" name="trackid" value="' + trackId + '">';
+    form += '<label><b>' + ns.lang.strings['trackname'] + '</b></label><input type="text" placeholder="' + ns.lang.strings['trackname'] + '" name="trackname" value="' + ns.htmlEncode(trackName) + '" required>';
+    form += '<div class="buttons"><button type="button" onclick="uLogger.ui.removeModal()">' + ns.lang.strings['cancel'] + '</button><button type="submit">' + ns.lang.strings['submit'] + '</button></div>';
+    form += '</form>';
+    ns.ui.showModal(message + form);
   }
-  var xhr = getXHR();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      var error = true;
-      var message = '';
-      if (xhr.status == 200) {
-        var xml = xhr.responseXML;
-        if (xml) {
-          var root = xml.getElementsByTagName('root');
-          if (root.length && getNode(root[0], 'error') == 0) {
-            removeModal();
-            alert(lang['actionsuccess']);
-            var f = document.getElementsByName('track')[0];
-            if (action == 'delete') {
-              // select current track in tracks form
-              f.remove(f.selectedIndex);
-              clearMap();
-              selectTrack(f);
-            } else {
-              f.options[f.selectedIndex].innerHTML = htmlEncode(trackName);
-            }
-            error = false;
-          } else if (root.length) {
-            errorMsg = getNode(root[0], 'message');
-            if (errorMsg) { message = errorMsg; }
+
+  /**
+   * Show confirmation dialog
+   * @param {string} name
+   * @returns {boolean} True if confirmed
+   */
+  function confirmedDelete(name) {
+    return confirm(ns.sprintf(ns.lang.strings['trackdelwarn'], '"' + name + '"'));
+  }
+
+  /**
+   * Submit form dialog
+   * @param action
+   */
+  function submitTrack(action) {
+    var form = document.getElementById('trackForm');
+    var trackId = parseInt(form.elements['trackid'].value);
+    var trackName = form.elements['trackname'].value.trim();
+    if (isNaN(trackId)) {
+      alert(ns.lang.strings['allrequired']);
+      return;
+    }
+    if (action !== 'delete') {
+      if (!trackName) {
+        alert(ns.lang.strings['allrequired']);
+        return;
+      }
+    } else if (!confirmedDelete(trackName)) {
+      return;
+    }
+
+    ns.post('utils/handletrack.php',
+      {
+        action: action,
+        trackid: trackId,
+        trackname: trackName
+      },
+      {
+        success: function () {
+          ns.ui.removeModal();
+          alert(ns.lang.strings['actionsuccess']);
+          var el = ns.ui.trackSelect;
+          if (action === 'delete') {
+            el.remove(el.selectedIndex);
+            ns.map.clearMap();
+            ns.selectTrack();
+          } else {
+            el.options[el.selectedIndex].innerHTML = ns.htmlEncode(trackName);
           }
+        },
+        fail: function (message) {
+          alert(ns.lang.strings['actionfailure'] + '\n' + message);
         }
-      }
-      if (error) {
-        alert(lang['actionfailure'] + '\n' + message);
-      }
-      xhr = null;
-    }
+      });
   }
-  xhr.open('POST', 'utils/handletrack.php', true);
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  var params = 'action=' + action + '&trackid=' + trackId + '&trackname=' + encodeURIComponent(trackName);
-  params = params.replace(/%20/g, '+');
-  xhr.send(params);
-  return;
-}
+
+  ns.editTrack = editTrack;
+  ns.submitTrack = submitTrack;
+
+})(uLogger);

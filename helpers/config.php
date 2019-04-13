@@ -27,59 +27,108 @@
   * Handles config values
   */
   class uConfig {
-    // version number
+    /**
+     * @var string Version number
+     */
     static $version = "1.0-beta";
 
-    // default map drawing framework
+    /**
+     * @var string Default map drawing framework
+     */
     static $mapapi = "openlayers";
 
-    // gmaps key
+    /**
+     * @var string|null Google maps key
+     */
     static $gkey = null;
 
-    // openlayers additional map layers
+    /**
+     * @var array Openlayers additional map layers
+     */
     static $ol_layers = [];
 
-    // default coordinates for initial map
+    /**
+     * @var float Default latitude for initial map
+     */
     static $init_latitude = 52.23;
+    /**
+     * @var float Default longitude for initial map
+     */
     static $init_longitude = 21.01;
 
-    // MySQL config
-    static $dbdsn = ""; // database dsn
-    static $dbuser = ""; // database user
-    static $dbpass = ""; // database pass
-    static $dbprefix = ""; // optional table names prefix, eg. "ulogger_"
+    /**
+     * @var string Database dsn
+     */
+    static $dbdsn = "";
+    /**
+     * @var string Database user
+     */
+    static $dbuser = "";
+    /**
+     * @var string Database pass
+     */
+    static $dbpass = "";
+    /**
+     * @var string Optional table names prefix, eg. "ulogger_"
+     */
+    static $dbprefix = "";
 
-    // require login/password authentication
+    /**
+     * @var bool Require login/password authentication
+     */
     static $require_authentication = true;
 
-    // all users tracks are visible to authenticated user
+    /**
+     * @var bool All users tracks are visible to authenticated user
+     */
     static $public_tracks = false;
 
-    // admin user who has access to all users locations
-    // none if empty
+    /**
+     * @var string Admin user who has access to all users locations
+     * none if empty
+     */
     static $admin_user = "";
 
-    // miniumum required length of user password
+    /**
+     * @var int Miniumum required length of user password
+     */
     static $pass_lenmin = 12;
 
-    // required strength of user password
-    //   0 = no requirements,
-    //   1 = require mixed case letters (lower and upper),
-    //   2 = require mixed case and numbers
-    //   3 = require mixed case, numbers and non-alphanumeric characters
+    /**
+     * @var int Required strength of user password
+     * 0 = no requirements,
+     * 1 = require mixed case letters (lower and upper),
+     * 2 = require mixed case and numbers
+     * 3 = require mixed case, numbers and non-alphanumeric characters
+     */
     static $pass_strength = 2;
 
-    // Default interval in seconds for live auto reload
+    /**
+     * @var int Default interval in seconds for live auto reload
+     */
     static $interval = 10;
 
-    // Default language
+    /**
+     * @var string Default language code
+     */
     static $lang = "en";
 
-    // units
+    /**
+     * @var string Default units
+     */
     static $units = "metric";
 
+    /**
+     * @var int Stroke weight
+     */
     static $strokeWeight = 2;
+    /**
+     * @var string Stroke color
+     */
     static $strokeColor = '#ff0000';
+    /**
+     * @var int Stroke opacity
+     */
     static $strokeOpacity = 1;
 
     private static $fileLoaded = false;
@@ -109,7 +158,7 @@
       include_once($configFile);
 
       if (isset($mapapi)) { self::$mapapi = $mapapi; }
-      if (isset($gkey)) { self::$gkey = $gkey; }
+      if (isset($gkey) && !empty($gkey)) { self::$gkey = $gkey; }
       if (isset($ol_layers)) { self::$ol_layers = $ol_layers; }
       if (isset($init_latitude)) { self::$init_latitude = $init_latitude; }
       if (isset($init_longitude)) { self::$init_longitude = $init_longitude; }
