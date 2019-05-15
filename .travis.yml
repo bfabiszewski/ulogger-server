@@ -25,11 +25,11 @@ before_install:
     case "$DB_DSN" in
       mysql*)
         docker build -t ulogger --build-arg DB_DRIVER=mysql .
-        docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger
+        docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 -e ULOGGER_ENABLE_SETUP=1 ulogger
         ;;
       pgsql*)
         docker build -t ulogger --build-arg DB_DRIVER=pgsql .
-        docker run -d --name ulogger -p 8080:80 -p 8081:5432 --expose 5432 ulogger
+        docker run -d --name ulogger -p 8080:80 -p 8081:5432 --expose 5432 -e ULOGGER_ENABLE_SETUP=1 ulogger
         ;;
       sqlite*)
         sudo apt-get update -qq
@@ -39,7 +39,7 @@ before_install:
         sudo chown -R travis:travis /tmp/data
         sudo chmod -R 777 /tmp/data
         docker build -t ulogger --build-arg DB_DRIVER=sqlite .
-        docker run -d --name ulogger -p 8080:80 -v /tmp/data:/data ulogger
+        docker run -d --name ulogger -p 8080:80 -v /tmp/data:/data -e ULOGGER_ENABLE_SETUP=1 ulogger
         ;;
     esac
   - composer install

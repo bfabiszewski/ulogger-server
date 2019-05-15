@@ -1,9 +1,17 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
+if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
+
 abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase {
 
+  /**
+   * @var PDO $pdo
+   */
   static private $pdo = null;
+  /**
+   * @var PHPUnit_Extensions_Database_DB_IDatabaseConnection $conn
+   */
   private $conn = null;
   static private $driver = "mysql";
 
@@ -90,9 +98,21 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
       self::$pdo->query("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
       self::$pdo->query("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
     } else if (self::$driver == "sqlite") {
-      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
-      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
-      self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
+      $retry = 1;
+      do {
+        try {
+          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
+          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
+          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
+          $retry = 0;
+        } catch (Exception $e) {
+          // sqlite raises error when db schema changes in another connection.
+          if (strpos($e->getMessage(), 'database schema has changed') !== false) {
+            self::$pdo = null;
+            self::setUpBeforeClass();
+          }
+        }
+      } while ($retry--);
     }
   }
 

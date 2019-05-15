@@ -54,21 +54,21 @@ switch ($command) {
       $options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ];
       $pdo = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
       $dbDriver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-    } catch (PDOException $e ) {
+    } catch (PDOException $e) {
       $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
       $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
       $messages[] = $langSetup["checkdbsettings"];
       break;
     }
     try {
-      $queries = getQueries($pdo);
+      $queries = getQueries();
       foreach ($queries as $query) {
         $pdo->query($query);
       }
     } catch (PDOException $e) {
-        $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
-        $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
-        $error = true;
+      $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
+      $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
+      $error = true;
     }
     $pdo = null;
     if (!$error) {
@@ -85,21 +85,21 @@ switch ($command) {
     break;
 
   case "adduser":
-      $login = uUtils::postString('login');
-      $pass = uUtils::postPass('pass');
+    $login = uUtils::postString('login');
+    $pass = uUtils::postPass('pass');
 
-      if (uUser::add($login, $pass) !== false) {
-        $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
-        $messages[] = $langSetup["setupcomplete"];
-        $messages[] = "<span class=\"warn\">{$langSetup["disablewarn"]}</span><br>";
-        $messages[] = sprintf($langSetup["disabledesc"], "<b>\$enabled</b>", "<b>false</b>");
-      } else {
-        $messages[] = "<span class=\"warn\">{$langSetup["setupfailed"]}</span>";
-      }
+    if (uUser::add($login, $pass) !== false) {
+      $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
+      $messages[] = $langSetup["setupcomplete"];
+      $messages[] = "<span class=\"warn\">{$langSetup["disablewarn"]}</span><br>";
+      $messages[] = sprintf($langSetup["disabledesc"], "<b>\$enabled</b>", "<b>false</b>");
+    } else {
+      $messages[] = "<span class=\"warn\">{$langSetup["setupfailed"]}</span>";
+    }
     break;
 
   default:
-    $messages[] = "<img src=\"../icons/favicon-32x32.png\">" . $langSetup["welcome"];
+    $messages[] = "<img src=\"../icons/favicon-32x32.png\" alt=\"µLogger\">" . $langSetup["welcome"];
     if (!isset($enabled) || $enabled === false) {
       $messages[] = sprintf($langSetup["disabledwarn"], "<b>\$enabled</b>", "<b>true</b>");
       $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");
@@ -132,20 +132,34 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
+    if (ini_get("session.auto_start") == '1') {
+      $messages[] = sprintf($langSetup["optionwarn"], "session.auto_start", "0 (off)");
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      break;
+    }
+    if (!extension_loaded("pdo")) {
+      $messages[] = sprintf($langSetup["extensionwarn"], "PDO");
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      break;
+    }
     $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>" . getDbname(uConfig::$dbdsn) . "</b>");
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
 }
 
-function getQueries($pdo) {
+function getQueries() {
   global $tPositions, $tUsers, $tTracks, $dbDriver;
 
   $queries = [];
-  switch($dbDriver) {
+  switch ($dbDriver) {
     case "mysql":
-      // users
+      $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+      $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+
       $queries[] = "CREATE TABLE `$tUsers` (
                       `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
@@ -153,8 +167,6 @@ function getQueries($pdo) {
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
 
-      // tracks
-      $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "CREATE TABLE `$tTracks` (
                       `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       `user_id` int(11) NOT NULL,
@@ -164,8 +176,6 @@ function getQueries($pdo) {
                       FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-      // positions
-      $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
       $queries[] = "CREATE TABLE `$tPositions` (
                       `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -188,16 +198,16 @@ function getQueries($pdo) {
       break;
 
     case "pgsql":
-      // users
+      $queries[] = "DROP TABLE IF EXISTS $tPositions";
+      $queries[] = "DROP TABLE IF EXISTS $tTracks";
       $queries[] = "DROP TABLE IF EXISTS $tUsers";
+
       $queries[] = "CREATE TABLE $tUsers (
                       id SERIAL PRIMARY KEY,
                       login VARCHAR(15) NOT NULL UNIQUE,
                       password VARCHAR(255) NOT NULL DEFAULT ''
                     )";
 
-      // tracks
-      $queries[] = "DROP TABLE IF EXISTS $tTracks";
       $queries[] = "CREATE TABLE $tTracks (
                       id SERIAL PRIMARY KEY,
                       user_id INT NOT NULL,
@@ -207,8 +217,6 @@ function getQueries($pdo) {
                     )";
       $queries[] = "CREATE INDEX idx_user_id ON $tTracks(user_id)";
 
-      // positions
-      $queries[] = "DROP TABLE IF EXISTS $tPositions";
       $queries[] = "CREATE TABLE $tPositions (
                       id SERIAL PRIMARY KEY,
                       time TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -228,30 +236,28 @@ function getQueries($pdo) {
                     )";
       $queries[] = "CREATE INDEX idx_ptrack_id ON $tPositions(track_id)";
       $queries[] = "CREATE INDEX idx_puser_id ON $tPositions(user_id)";
-    break;
+      break;
 
-  case "sqlite":
-    // users
-    $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
-    $queries[] = "CREATE TABLE `$tUsers` (
+    case "sqlite":
+      $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
+      $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
+      $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+
+      $queries[] = "CREATE TABLE `$tUsers` (
                     `id` integer PRIMARY KEY AUTOINCREMENT,
                     `login` varchar(15) NOT NULL UNIQUE,
                     `password` varchar(255) NOT NULL DEFAULT ''
                   )";
-   // tracks
-   $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
-   $queries[] = "CREATE TABLE `$tTracks` (
+      $queries[] = "CREATE TABLE `$tTracks` (
                    `id` integer PRIMARY KEY AUTOINCREMENT,
                    `user_id` integer NOT NULL,
                    `name` varchar(255) DEFAULT NULL,
                    `comment` varchar(1024) DEFAULT NULL,
                    FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`)
                  )";
-   $queries[] = "CREATE INDEX `idx_user_id` ON `$tTracks`(`user_id`)";
+      $queries[] = "CREATE INDEX `idx_user_id` ON `$tTracks`(`user_id`)";
 
-  // positions
-    $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
-    $queries[] = "CREATE TABLE `$tPositions` (
+      $queries[] = "CREATE TABLE `$tPositions` (
                     `id` integer PRIMARY KEY AUTOINCREMENT,
                     `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `user_id` integer NOT NULL,
@@ -268,12 +274,12 @@ function getQueries($pdo) {
                     FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
                     FOREIGN KEY(`track_id`) REFERENCES `$tTracks`(`id`)
                   )";
-    $queries[] = "CREATE INDEX `idx_ptrack_id` ON `$tPositions`(`track_id`)";
-    $queries[] = "CREATE INDEX `idx_puser_id` ON `$tPositions`(`user_id`)";
-    break;
+      $queries[] = "CREATE INDEX `idx_ptrack_id` ON `$tPositions`(`track_id`)";
+      $queries[] = "CREATE INDEX `idx_puser_id` ON `$tPositions`(`user_id`)";
+      break;
 
-  default:
-    throw InvalidArgumentException("Driver not supported");
+    default:
+      throw new InvalidArgumentException("Driver not supported");
   }
   return $queries;
 }
@@ -292,7 +298,7 @@ function getDbname($dsn) {
         $pattern = '~dbname=([^;]*)(?:;|$)~';
         $result = preg_match($pattern, $dsnWithoutScheme, $matches);
         if ($result === 1 && !empty($matches[1])) {
-            return $matches[1];
+          return $matches[1];
         }
         break;
     }
@@ -303,72 +309,76 @@ function getDbname($dsn) {
 ?>
 
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><?= $lang["title"] ?></title>
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <style>
-      #message {
-        font-family: 'Open Sans', Verdana, sans-serif;
-        font-size: 1.2em;
-        color: #f8f5f7;
-        padding: 10%;
-      }
-      #message img {
-        vertical-align: bottom;
-      }
-      #message input[type=text], #message input[type=password] {
-        width: 40em;
-        padding: 0.4em;
-        margin: 0.8em 0;
-        display: block;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-      }
-      .warn {
-        color: #ffc747;
-      }
-      .ok {
-        color: #00e700;
-      }
-    </style>
-    <script type="text/javascript">
-      var lang = <?= json_encode($lang) ?>;
-      var pass_regex = <?= uConfig::passRegex() ?>;
+<html lang="<?= uConfig::$lang ?>">
+<head>
+  <title><?= $lang["title"] ?></title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
+  <link href="../css/main.css" type="text/css" rel="stylesheet">
+  <style>
+    #message {
+      font-family: 'Open Sans', Verdana, sans-serif;
+      font-size: 1.2em;
+      color: #f8f5f7;
+      padding: 10%;
+    }
 
-      function validateForm() {
-        var form = document.getElementById('userForm');
-        var login = form.elements['login'].value.trim();
-        var pass = form.elements['pass'].value;
-        var pass2 = form.elements['pass2'].value;
-        if (!login || !pass || !pass2) {
-          alert(lang['allrequired']);
-          return false;
-        }
-        if (pass != pass2) {
-          alert(lang['passnotmatch']);
-          return false;
-        }
-        if (!pass_regex.test(pass)) {
-          alert(lang['passlenmin'] + '\n' + lang['passrules']);
-          return false;
-        }
-        return true;
-      }
-    </script>
-  </head>
+    #message img {
+      vertical-align: bottom;
+    }
 
-  <body>
-    <div id="message">
-      <?php foreach ($messages as $message): ?>
-      <p><?= $message ?></p>
-      <?php endforeach; ?>
-    </div>
-  </body>
+    #message input[type=text], #message input[type=password] {
+      width: 40em;
+      padding: 0.4em;
+      margin: 0.8em 0;
+      display: block;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      border-radius: 5px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+    }
+
+    .warn {
+      color: #ffc747;
+    }
+
+    .ok {
+      color: #00e700;
+    }
+  </style>
+  <script>
+    var lang = <?= json_encode($lang) ?>;
+    var pass_regex = <?= uConfig::passRegex() ?>;
+
+    function validateForm() {
+      var form = document.getElementById('userForm');
+      var login = form.elements['login'].value.trim();
+      var pass = form.elements['pass'].value;
+      var pass2 = form.elements['pass2'].value;
+      if (!login || !pass || !pass2) {
+        alert(lang['allrequired']);
+        return false;
+      }
+      if (pass !== pass2) {
+        alert(lang['passnotmatch']);
+        return false;
+      }
+      if (!pass_regex.test(pass)) {
+        alert(lang['passlenmin'] + '\n' + lang['passrules']);
+        return false;
+      }
+      return true;
+    }
+  </script>
+</head>
+
+<body>
+<div id="message">
+  <?php foreach ($messages as $message): ?>
+    <p><?= $message ?></p>
+  <?php endforeach; ?>
+</div>
+</body>
 </html>

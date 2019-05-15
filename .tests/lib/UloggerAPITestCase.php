@@ -5,6 +5,9 @@ require_once("BaseDatabaseTestCase.php");
 
 class UloggerAPITestCase extends BaseDatabaseTestCase {
 
+  /**
+   * @var null|GuzzleHttp\Client $http
+   */
   protected $http = null;
 
   public function setUp() {

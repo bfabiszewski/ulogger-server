@@ -1,6 +1,9 @@
 {
     "require": {
-        "ulrichsg/getopt-php": "^3.2"
+        "ulrichsg/getopt-php": "^3.2",
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "ext-xmlwriter": "*"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit"
