@@ -26,7 +26,7 @@
     /**
      * Singleton instance
      *
-     * @var mysqli Object instance
+     * @var uDb Object instance
      */
     protected static $instance;
 
@@ -40,7 +40,7 @@
     /**
      * Database driver name
      *
-     * @var String Driver
+     * @var string Driver
      */
     protected static $driver;
 
@@ -82,7 +82,7 @@
    /**
     * Returns singleton instance
     *
-    * @return object Singleton instance
+    * @return uDb Singleton instance
     */
     public static function getInstance() {
       if (!self::$instance) {

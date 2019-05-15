@@ -89,10 +89,7 @@
      * @return uDb instance
      */
     private static function db() {
-      if (is_null(self::$db)) {
-        self::$db = uDb::getInstance();
-      }
-      return self::$db;
+      return uDb::getInstance();
     }
 
    /**

@@ -31,6 +31,9 @@
 
     public $isValid = false;
 
+    /**
+     * @var uDb $db
+     */
     private static $db = null;
 
    /**
@@ -66,10 +69,7 @@
      * @return uDb instance
      */
     private static function db() {
-      if (is_null(self::$db)) {
-        self::$db = uDb::getInstance();
-      }
-      return self::$db;
+      return uDb::getInstance();
     }
 
    /**
@@ -102,7 +102,7 @@
      * Add new position to track
      *
      * @param int $userId
-     * @param int $time Unix time stamp
+     * @param int $timestamp Unix time stamp
      * @param double $lat
      * @param double $lon
      * @param double $altitude Optional
