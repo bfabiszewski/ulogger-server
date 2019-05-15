@@ -426,7 +426,11 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "form_params" => [
+        "login" => $this->testUser,
+        "pass" => $this->testPass,
+        "oldpass" => $this->testPass
+      ],
     ];
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(401, $response->getStatusCode(), "Unexpected status code");
@@ -453,7 +457,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals((string) $xml->message, "Empty password", "Wrong error message");
   }
 
-  public function testChangePassNoUser() {
+  public function testChangePassUserUnknown() {
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -472,12 +476,31 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals((string) $xml->message, "User unknown", "Wrong error message");
   }
 
+  public function testChangePassEmptyLogin() {
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+
+    $options = [
+      "http_errors" => false,
+      "form_params" => [
+        "pass" => $this->testPass,
+      ],
+    ];
+    $response = $this->http->post("/utils/changepass.php", $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+
+    $xml = $this->getXMLfromResponse($response);
+    $this->assertTrue($xml !== false, "XML object is not false");
+    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
+    $this->assertEquals((string) $xml->message, "Empty login", "Wrong error message");
+  }
+
   public function testChangePassWrongOldpass() {
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "oldpass" => "badpass",
         "pass" => "newpass",
       ],
@@ -497,6 +520,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "pass" => "newpass",
       ],
     ];
@@ -517,6 +541,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "oldpass" => $this->testAdminPass,
         "pass" => $newPass,
       ],
@@ -539,6 +564,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testUser,
         "oldpass" => $this->testPass,
         "pass" => $newPass,
       ],

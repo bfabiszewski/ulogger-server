@@ -25,6 +25,7 @@ $auth = new uAuth();
 
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
+$afterId = uUtils::getInt('afterid');
 $last = uUtils::getInt('last');
 
 $positionsArr = [];
@@ -33,7 +34,7 @@ if ($userId) {
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     if ($trackId) {
       // get all track data
-      $positionsArr = uPosition::getAll($userId, $trackId);
+      $positionsArr = uPosition::getAll($userId, $trackId, $afterId);
     } else if ($last) {
       // get data only for latest point
       $position = uPosition::getLast($userId);

@@ -290,6 +290,10 @@ button {
   margin-right: 5px;
 }
 
+button > * {
+  pointer-events: none;
+}
+
 #cancel {
   margin-top: 0.5em;
 }

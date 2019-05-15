@@ -230,20 +230,24 @@
       return $positionsArr;
     }
 
-   /**
-    * Get array of all positions
-    *
-    * @param int $userId Optional limit to given user id
-    * @param int $trackId Optional limit to given track id
-    * @return array|bool Array of uPosition positions, false on error
-    */
-    public static function getAll($userId = NULL, $trackId = NULL) {
+    /**
+     * Get array of all positions
+     *
+     * @param int $userId Optional limit to given user id
+     * @param int $trackId Optional limit to given track id
+     * @param int $afterId Optional limit to positions with id greater then given id
+     * @return array|bool Array of uPosition positions, false on error
+     */
+    public static function getAll($userId = NULL, $trackId = NULL, $afterId = NULL) {
       $rules = [];
       if (!empty($userId)) {
         $rules[] = "p.user_id = " . self::db()->quote($userId);
       }
       if (!empty($trackId)) {
         $rules[] = "p.track_id = " . self::db()->quote($trackId);
+      }
+      if (!empty($trackId)) {
+        $rules[] = "p.id > " . self::db()->quote($afterId);
       }
       if (!empty($rules)) {
         $where = "WHERE " . implode(" AND ", $rules);

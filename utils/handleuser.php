@@ -35,14 +35,17 @@
   }
 
   $aUser = new uUser($login);
+  $data = NULL;
 
   switch ($action) {
     case 'add':
       if ($aUser->isValid) {
         uUtils::exitWithError($lang["userexists"]);
       }
-      if (empty($pass) || uUser::add($login, $pass) === false) {
+      if (empty($pass) || ($userId = uUser::add($login, $pass)) === false) {
         uUtils::exitWithError($lang["servererror"]);
+      } else {
+        $data = [ 'userid' => $userId ];
       }
       break;
 
@@ -64,6 +67,6 @@
       break;
   }
 
-  uUtils::exitWithSuccess();
+  uUtils::exitWithSuccess($data);
 
 ?>

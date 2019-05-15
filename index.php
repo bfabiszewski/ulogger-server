@@ -44,7 +44,6 @@
     $auth->exitWithRedirect("login.php");
   }
 
-
   $displayUserId = NULL;
   $usersArr = [];
   if ($auth->isAdmin() || uConfig::$public_tracks) {
@@ -77,64 +76,8 @@
   <head>
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
-    <script>
-      /** @namespace uLogger */
-      var uLogger = window.uLogger || {};
-      /** @type {number} userId */
-      uLogger.userId = <?= json_encode($displayUserId ? $displayUserId : -1) ?>;
-      /** @type {number} trackId */
-      uLogger.trackId = <?= json_encode($displayTrackId ? $displayTrackId : -1) ?>;
-
-      /** @type {uLogger.config} */
-      uLogger.config = {
-        /** @type {number} */
-        interval: <?= json_encode(uConfig::$interval) ?>,
-        /** @type {string} */
-        units: <?= json_encode(uConfig::$units) ?>,
-        /** @type {string} */
-        mapapi: <?= json_encode(uConfig::$mapapi) ?>,
-        /** @type {?string} */
-        gkey: <?= json_encode(uConfig::$gkey) ?>,
-        /** @type {Object.<string, string>} */
-        ol_layers: <?= json_encode(uConfig::$ol_layers) ?>,
-        /** @type {number} */
-        init_latitude: <?= json_encode(uConfig::$init_latitude) ?>,
-        /** @type {number} */
-        init_longitude: <?= json_encode(uConfig::$init_longitude) ?>,
-        /** @type {boolean} */
-        admin: <?= json_encode($auth->isAdmin()) ?>,
-        /** @type {?string} */
-        auth: <?= json_encode($auth->isAuthenticated() ? $auth->user->login : NULL) ?>,
-        /** @type {RegExp} */
-        pass_regex: <?= uConfig::passRegex() ?>,
-        /** @type {number} */
-        strokeWeight: <?= json_encode(uConfig::$strokeWeight) ?>,
-        /** @type {string} */
-        strokeColor: <?= json_encode(uConfig::$strokeColor) ?>,
-        /** @type {number} */
-        strokeOpacity: <?= json_encode(uConfig::$strokeOpacity) ?>
-      };
-
-      /** @type {uLogger.lang} */
-      uLogger.lang = {
-        /** @type {Object.<string, string>} */
-        strings: <?= json_encode($lang) ?>
-      };
-    </script>
-    <script src="js/main.js"></script>
-    <?php if ($auth->isAdmin()): ?>
-      <script src="js/admin.js"></script>
-    <?php endif; ?>
-    <?php if ($auth->isAuthenticated()): ?>
-      <script src="js/track.js"></script>
-    <?php endif; ?>
-    <script src="js/pass.js"></script>
-    <script src="js/api_gmaps.js"></script>
-    <script src="js/api_openlayers.js"></script>
-    <script src="//www.google.com/jsapi"></script>
-    <script>
-      google.load('visualization', '1', { packages:['corechart'] });
-    </script>
+    <script type="module" src="js/ulogger.js"></script>
+      <!--    <script src="dist/ulogger.js"></script>-->
   </head>
 
   <body>

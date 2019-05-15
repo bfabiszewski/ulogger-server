@@ -27,7 +27,7 @@
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?= uConfig::$lang ?>">
   <head>
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
@@ -42,18 +42,20 @@
       <div id="title"><?=  $lang["title"] ?></div>
       <div id="subtitle"><?=  $lang["private"] ?></div>
       <form action="<?= BASE_URL ?>" method="post">
-      <?= $lang["username"] ?>:<br>
-      <input type="text" name="user"><br>
-      <?=  $lang["password"] ?>:<br>
-      <input type="password" name="pass"><br>
-      <br>
-      <input type="submit" value="<?= $lang["login"] ?>">
-      <input type="hidden" name="action" value="auth">
-      <?php if (!uConfig::$require_authentication): ?>
-        <div id="cancel"><a href="<?= BASE_URL ?>"><?= $lang["cancel"] ?></a></div>
-      <?php endif; ?>
+        <label for="login-user"><?= $lang["username"] ?></label><br>
+        <input id="login-user" type="text" name="user" required><br>
+        <label for="login-pass"><?=  $lang["password"] ?></label><br>
+        <input id="login-pass" type="password" name="pass" required><br>
+        <br>
+        <input type="submit" value="<?= $lang["login"] ?>">
+        <input type="hidden" name="action" value="auth">
+        <?php if (!uConfig::$require_authentication): ?>
+          <div id="cancel"><a href="<?= BASE_URL ?>"><?= $lang["cancel"] ?></a></div>
+        <?php endif; ?>
       </form>
-      <div id="error"><?= (($auth_error) ? $lang["authfail"] : "") ?></div>
+      <?php if ($auth_error): ?>
+        <div id="error"><?= $lang["authfail"] ?></div>
+      <?php endif; ?>
     </div>
   </body>
 </html>

@@ -33,20 +33,23 @@
   if (empty($pass)) {
     uUtils::exitWithError("Empty password");
   }
-  if ($auth->isAdmin() && !empty($login)) {
-    // different user, only admin
-    $passUser = new uUser($login);
-    if (!$passUser->isValid) {
-      uUtils::exitWithError("User unknown");
-    }
-  } else if (!empty($login)) {
-    uUtils::exitWithError("Unauthorized");
-  } else {
+  if (empty($login)) {
+    uUtils::exitWithError("Empty login");
+  }
+  if ($auth->user->login === $login) {
     // current user
     $passUser = $auth->user;
     if (!$passUser->validPassword($oldpass)) {
       uUtils::exitWithError("Wrong old password");
     }
+  } else if ($auth->isAdmin()) {
+    // different user, only admin
+    $passUser = new uUser($login);
+    if (!$passUser->isValid) {
+      uUtils::exitWithError("User unknown");
+    }
+  } else {
+    uUtils::exitWithError("Unauthorized");
   }
   if ($passUser->setPass($pass) === false) {
     uUtils::exitWithError("Server error");
