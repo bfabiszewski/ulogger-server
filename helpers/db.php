@@ -101,6 +101,11 @@
       return self::$tables[$name];
     }
 
+    /**
+     * Returns function name for getting date-time column value as unix timestamp
+     * @param string $column
+     * @return string
+     */
     public function unix_timestamp($column) {
       switch (self::$driver) {
         default:
@@ -116,6 +121,11 @@
       }
     }
 
+    /**
+     * Returns function name for getting date-time column value as 'YYYY-MM-DD hh:mm:ss'
+     * @param string $column
+     * @return string
+     */
     public function from_unixtime($column) {
       switch (self::$driver) {
         default:
@@ -131,10 +141,44 @@
       }
     }
 
+    /**
+     * Set character set
+     * @param string $charset
+     */
     private function setCharset($charset) {
       if (self::$driver == "pgsql" || self::$driver == "mysql") {
         $this->query("SET NAMES '$charset'");
       }
+    }
+
+    /**
+     * Extract database name from DSN
+     * @param string $dsn
+     * @return string Empty string if not found
+     */
+    static public function getDbName($dsn) {
+      $name = "";
+      if (strpos($dsn, ":") !== false) {
+        list($scheme, $dsnWithoutScheme) = explode(":", $dsn, 2);
+        switch ($scheme) {
+          case "sqlite":
+          case "sqlite2":
+          case "sqlite3":
+            $pattern = "/(.+)/";
+            break;
+          case "pgsql":
+            $pattern = "/dbname=([^; ]+)/";
+            break;
+          default:
+            $pattern = "/dbname=([^;]+)/";
+            break;
+        }
+        $result = preg_match($pattern, $dsnWithoutScheme, $matches);
+        if ($result === 1) {
+          $name = $matches[1];
+        }
+      }
+      return $name;
     }
   }
 ?>

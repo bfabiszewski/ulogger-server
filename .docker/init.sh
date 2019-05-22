@@ -10,8 +10,13 @@ chown nginx:nginx /run/nginx
 sed -i "s/^nobody:.*$/nobody:x:1000:50::nobody:\/:\/sbin\/nologin/" /etc/passwd
 sed -i "s/^nobody:.*$/nobody:x:50:/" /etc/group
 
-sed -i "s/^\$dbuser = .*$/\$dbuser = \"ulogger\";/" /var/www/html/config.php
-sed -i "s/^\$dbpass = .*$/\$dbpass = \"${DB_USER_PASS}\";/" /var/www/html/config.php
+if [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
+  sed -i "s/^\$dbuser = .*$//" /var/www/html/config.php
+  sed -i "s/^\$dbpass = .*$//" /var/www/html/config.php
+else
+  sed -i "s/^\$dbuser = .*$/\$dbuser = \"ulogger\";/" /var/www/html/config.php
+  sed -i "s/^\$dbpass = .*$/\$dbpass = \"${DB_USER_PASS}\";/" /var/www/html/config.php
+fi
 
 if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
   export PGDATA=/data
