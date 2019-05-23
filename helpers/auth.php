@@ -28,6 +28,7 @@
   class uAuth {
 
     private $isAuthenticated = false;
+    /** @var null|uUser */
     public $user = null;
 
     public function __construct() {
@@ -105,9 +106,11 @@
     }
 
     /**
-     * Process log in request
+     * Check valid pass for given login
      *
-     * @return void
+     * @param $login
+     * @param $pass
+     * @return boolean True if valid
      */
     public function checkLogin($login, $pass) {
       if (!is_null($login) && !is_null($pass)) {

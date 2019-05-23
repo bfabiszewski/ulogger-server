@@ -57,8 +57,6 @@
 
     public $isValid = false;
 
-    private static $db;
-
    /**
     * Constructor
     * @param integer $positionId Position id
@@ -235,7 +233,7 @@
     *
     * @param int $userId Optional limit to given user id
     * @param int $trackId Optional limit to given track id
-    * @return array|bool Array of uPosition positions, false on error
+    * @return uPosition[]|bool Array of uPosition positions, false on error
     */
     public static function getAll($userId = NULL, $trackId = NULL) {
       $rules = [];

@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Http\Message\ResponseInterface;
+
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(ROOT_DIR . "/helpers/config.php");
@@ -964,7 +966,10 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
-
+  /**
+   * @param ResponseInterface $response
+   * @return bool|SimpleXMLElement
+   */
   private function getXMLfromResponse($response) {
     $xml = false;
     libxml_use_internal_errors(true);

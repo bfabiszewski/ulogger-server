@@ -34,8 +34,6 @@
     public $isAdmin = false;
     public $isValid = false;
 
-    private static $db = null;
-
    /**
     * Constructor
     *

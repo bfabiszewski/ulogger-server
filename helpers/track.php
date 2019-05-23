@@ -31,11 +31,6 @@
 
     public $isValid = false;
 
-    /**
-     * @var uDb $db
-     */
-    private static $db = null;
-
    /**
     * Constructor
     *
