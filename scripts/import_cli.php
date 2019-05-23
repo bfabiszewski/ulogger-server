@@ -47,7 +47,7 @@ $getopt->addOptions([
   Option::create('h', 'help')
     ->setDescription('Show usage/help'),
 
-  Option::create('u', 'user-id', \GetOpt\GetOpt::OPTIONAL_ARGUMENT)
+  Option::create('u', 'user-id', GetOpt::OPTIONAL_ARGUMENT)
     ->setDescription('Which user to import the track(s) for (default: 1)')
     ->setDefaultValue(1)
     ->setValidation('is_numeric', '%s has to be an integer'),
@@ -60,7 +60,7 @@ $getopt->addOptions([
 ]);
 
 $getopt->addOperand(
-  Operand::create('gpx', \GetOpt\Operand::MULTIPLE + \GetOpt\Operand::REQUIRED)
+  Operand::create('gpx', Operand::MULTIPLE + Operand::REQUIRED)
     ->setDescription('One or more GPX files to import')
     ->setValidation('is_readable', '%s: %s is not readable')
 );

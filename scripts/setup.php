@@ -24,50 +24,52 @@ $enabled = false;
 /* -------------------------------------------- */
 /* no user modifications should be needed below */
 
-if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+if (version_compare(PHP_VERSION, "5.4.0", "<")) {
   die("Sorry, ulogger will not work with PHP version lower than 5.4 (you have " . PHP_VERSION . ")");
 }
 
 define("ROOT_DIR", dirname(__DIR__));
-require_once(ROOT_DIR . "/helpers/user.php");
+require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/config.php");
-require_once(ROOT_DIR . "/helpers/utils.php");
 require_once(ROOT_DIR . "/helpers/lang.php");
+require_once(ROOT_DIR . "/helpers/user.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
 
-$command = uUtils::postString('command');
+$command = uUtils::postString("command");
 
 $lang = (new uLang(uConfig::$lang))->getStrings();
 $langSetup = (new uLang(uConfig::$lang))->getSetupStrings();
 
-$prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
+$prefix = preg_replace("/[^a-z0-9_]/i", "", uConfig::$dbprefix);
 $tPositions = $prefix . "positions";
 $tTracks = $prefix . "tracks";
 $tUsers = $prefix . "users";
-$dbDriver = null;
 
 $messages = [];
+
 switch ($command) {
   case "setup":
 
     $error = false;
     try {
-      $options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ];
-      $pdo = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
-      $dbDriver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+      $pdo = getPdo();
     } catch (PDOException $e) {
       $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
-      $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
+      $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
       $messages[] = $langSetup["checkdbsettings"];
       break;
     }
     try {
-      $queries = getQueries();
+      $queries = getQueries($pdo->getAttribute(PDO::ATTR_DRIVER_NAME));
+      $pdo->beginTransaction();
       foreach ($queries as $query) {
         $pdo->query($query);
       }
+      $pdo->commit();
     } catch (PDOException $e) {
+      $pdo->rollBack();
       $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
-      $messages[] = sprintf($langSetup["serversaid"], "<b>" . $e->getMessage() . "</b>");
+      $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
       $error = true;
     }
     $pdo = null;
@@ -85,8 +87,8 @@ switch ($command) {
     break;
 
   case "adduser":
-    $login = uUtils::postString('login');
-    $pass = uUtils::postPass('pass');
+    $login = uUtils::postString("login");
+    $pass = uUtils::postPass("pass");
 
     if (uUser::add($login, $pass) !== false) {
       $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
@@ -107,7 +109,7 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (!function_exists('password_hash')) {
+    if (!function_exists("password_hash")) {
       $messages[] = $langSetup["passfuncwarn"];
       $messages[] = $langSetup["passfunchack"];
       $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">//require_once(ROOT_DIR . \"/helpers/password.php\");</span><br>", "<br><span class=\"ok\">require_once(ROOT_DIR . \"/helpers/password.php\");</span>");
@@ -121,18 +123,7 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (empty(uConfig::$dbdsn) || ($dbDriver != "sqlite" && empty(uConfig::$dbuser))) {
-      if ($dbDriver == "sqlite") {
-        $required = "\$dbdsn";
-      } else {
-        $required = "\$dbdsn, \$dbuser, \$dbpass";
-      }
-      $messages[] = sprintf($langSetup["nodbsettings"], $required);
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
-      break;
-    }
-    if (ini_get("session.auto_start") == '1') {
+    if (ini_get("session.auto_start") == "1") {
       $messages[] = sprintf($langSetup["optionwarn"], "session.auto_start", "0 (off)");
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
@@ -144,14 +135,42 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", "<b>" . getDbname(uConfig::$dbdsn) . "</b>");
+    if (empty(uConfig::$dbdsn)) {
+      $messages[] = sprintf($langSetup["nodbsettings"], "\$dbdsn");
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      break;
+    }
+    try {
+      $pdo = getPdo();
+    } catch (PDOException $e) {
+      $isSqlite = stripos(uConfig::$dbdsn, "sqlite") === 0;
+      if (!$isSqlite && empty(uConfig::$dbuser)) {
+        $messages[] = sprintf($langSetup["nodbsettings"], "\$dbuser, \$dbpass");
+      } else {
+        $messages[] = $langSetup["dbconnectfailed"];
+        $messages[] = $langSetup["checkdbsettings"];
+        $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
+      }
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      break;
+    }
+    $pdo = null;
+    $dbName = uDb::getDbName(uConfig::$dbdsn);
+    $dbName = empty($dbName) ? '""' : "<b>" . htmlentities($dbName) . "</b>";
+    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", $dbName);
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
 }
 
-function getQueries() {
-  global $tPositions, $tUsers, $tTracks, $dbDriver;
+/**
+ * @param string $dbDriver
+ * @return array
+ */
+function getQueries($dbDriver) {
+  global $tPositions, $tUsers, $tTracks;
 
   $queries = [];
   switch ($dbDriver) {
@@ -284,26 +303,14 @@ function getQueries() {
   return $queries;
 }
 
-function getDbname($dsn) {
-  if (strpos($dsn, ':') !== false) {
-    list($scheme, $dsnWithoutScheme) = explode(':', $dsn, 2);
-    switch ($scheme) {
-      case 'sqlite':
-      case 'sqlite2':
-      case 'sqlite3':
-        return $dsnWithoutScheme;
-        break;
-
-      default:
-        $pattern = '~dbname=([^;]*)(?:;|$)~';
-        $result = preg_match($pattern, $dsnWithoutScheme, $matches);
-        if ($result === 1 && !empty($matches[1])) {
-          return $matches[1];
-        }
-        break;
-    }
-  }
-  return "noname";
+/**
+ * @return PDO
+ * @throws PDOException
+ */
+function getPdo() {
+  $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+  $pdo = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
+  return $pdo;
 }
 
 ?>

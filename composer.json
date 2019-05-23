@@ -3,7 +3,9 @@
         "ulrichsg/getopt-php": "^3.2",
         "ext-json": "*",
         "ext-pdo": "*",
-        "ext-xmlwriter": "*"
+        "ext-xmlwriter": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit"
@@ -13,6 +15,5 @@
         "vlucas/phpdotenv": "^3.3",
         "guzzlehttp/guzzle": "^6.3",
         "phpunit/dbunit": "^2.0"
-
     }
 }

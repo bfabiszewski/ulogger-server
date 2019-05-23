@@ -133,7 +133,7 @@ class PositionTest extends UloggerDatabaseTestCase {
           $this->assertEquals($trackId2, $position->trackId);
           break;
         default:
-          $this->assert("Unexpected position: {$position->id}");
+          $this->assertTrue(false, "Unexpected position: {$position->id}");
       }
     }
   }

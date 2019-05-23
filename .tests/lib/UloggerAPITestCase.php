@@ -35,8 +35,8 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
 
   /**
    * Authenticate on server
-   * @param string $user Login
-   *
+   * @param string|null $user Login (defaults to test user)
+   * @param string|null $pass Optional password (defaults to test password)
    * @return bool true on success, false otherwise
    */
   public function authenticate($user = NULL, $pass = NULL) {

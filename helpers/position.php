@@ -57,8 +57,6 @@
 
     public $isValid = false;
 
-    private static $db;
-
    /**
     * Constructor
     * @param integer $positionId Position id
