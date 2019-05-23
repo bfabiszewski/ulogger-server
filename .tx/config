@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[ulogger-android.strings-php]
+[ulogger.strings-php]
 file_filter = ./lang/<lang>.php
 minimum_perc = 0
 source_file = ./lang/en.php
