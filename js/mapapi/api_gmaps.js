@@ -1,6 +1,7 @@
-/* μlogger
+/*
+ * μlogger
  *
- * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by
@@ -17,14 +18,21 @@
  */
 
 import { config, lang } from '../constants.js';
-import { uLogger } from '../ulogger.js';
+import uEvent from '../event.js';
 import uUI from '../ui.js';
 import uUtils from '../utils.js';
 
 // google maps
+/**
+ * Google Maps API module
+ * @module gmApi
+ * @implements {uMap.api}
+ */
 
 /** @type {google.maps.Map} */
 let map = null;
+/** @type {uBinder} */
+let binder = null;
 /** @type {google.maps.Polyline[]} */
 const polies = [];
 /** @type {google.maps.Marker[]} */
@@ -32,7 +40,7 @@ const markers = [];
 /** @type {google.maps.InfoWindow[]} */
 const popups = [];
 /** @type {google.maps.InfoWindow} */
-let popup = null;
+let openPopup = null;
 /** @type {google.maps.PolylineOptions} */
 let polyOptions = null;
 /** @type {google.maps.MapOptions} */
@@ -45,9 +53,13 @@ let authError = false;
 
 /**
  * Initialize map
+ * @param {uBinder} b
  * @param {HTMLElement} el
  */
-function init(el) {
+function init(b, el) {
+
+  binder = b;
+
   const url = '//maps.googleapis.com/maps/api/js?' + ((config.gkey != null) ? ('key=' + config.gkey + '&') : '') + 'callback=gm_loaded';
   uUtils.addScript(url, 'mapapi_gmaps');
   if (!isLoaded) {
@@ -89,19 +101,21 @@ function cleanup() {
   polies.length = 0;
   markers.length = 0;
   popups.length = 0;
-  map = null;
   polyOptions = null;
   mapOptions = null;
-  popup = null;
-  // ui.clearMapCanvas();
+  openPopup = null;
+  if (map && map.getDiv()) {
+    map.getDiv().innerHTML = '';
+  }
+  map = null;
 }
 
 /**
  * Display track
+ * @param {uTrack} track
  * @param {boolean} update Should fit bounds if true
  */
-function displayTrack(update) {
-  const track = uLogger.trackList.current;
+function displayTrack(track, update) {
   if (!track) {
     return;
   }
@@ -113,10 +127,12 @@ function displayTrack(update) {
   let i = 0;
   for (const position of track.positions) {
     // set marker
-    setMarker(i++);
+    setMarker(i++, track);
     // update polyline
     const coordinates = new google.maps.LatLng(position.latitude, position.longitude);
-    path.push(coordinates);
+    if (track.continuous) {
+      path.push(coordinates);
+    }
     latlngbounds.extend(coordinates);
   }
   if (update) {
@@ -133,10 +149,6 @@ function displayTrack(update) {
     }
   }
   polies.push(poly);
-
-  /** @todo handle summary and chart in track */
-  // ns.updateSummary(p.timestamp, totalDistance, totalSeconds);
-  // ns.updateChart();
 }
 
 /**
@@ -150,7 +162,8 @@ function clearMap() {
   }
   if (markers) {
     for (let i = 0; i < markers.length; i++) {
-      google.maps.event.removeListener(popups[i].listener);
+      // google.maps.event.removeListener(popups[i].listener);
+      google.maps.event.clearInstanceListeners(popups[i]);
       popups[i].setMap(null);
       markers[i].setMap(null);
     }
@@ -162,12 +175,13 @@ function clearMap() {
 
 /**
  * Set marker
+ * @param {uTrack} track
  * @param {number} id
  */
-function setMarker(id) {
+function setMarker(id, track) {
   // marker
-  const position = uLogger.trackList.current.positions[id];
-  const posLen = uLogger.trackList.current.length;
+  const position = track.positions[id];
+  const posLen = track.length;
   // noinspection JSCheckFunctionSignatures
   const marker = new google.maps.Marker({
     position: new google.maps.LatLng(position.latitude, position.longitude),
@@ -184,37 +198,45 @@ function setMarker(id) {
     marker.setIcon('images/marker-white.png');
   }
   // popup
-  const content = uUI.getPopupHtml(id);
-  popup = new google.maps.InfoWindow();
-  // noinspection JSUndefinedPropertyAssignment
-  popup.listener = google.maps.event.addListener(marker, 'click', (function (_marker, _content) {
-    return function () {
-      popup.setContent(_content);
-      popup.open(map, _marker);
-      /** @todo handle chart */
-      // ns.chartShowPosition(id);
-    }
-  })(marker, content));
+  const popup = new google.maps.InfoWindow();
+
+  marker.addListener('click',
+    ((i) => () => {
+    popup.setContent(uUI.getPopupHtml(i));
+    popup.open(map, marker);
+    binder.dispatchEvent(uEvent.MARKER_SELECT, i);
+    openPopup = popup;
+    popup.addListener('closeclick', () => {
+      binder.dispatchEvent(uEvent.MARKER_SELECT);
+      google.maps.event.clearListeners(popup, 'closeclick');
+      openPopup = null;
+    });
+  })(id));
+  marker.addListener('mouseover',
+    ((i) => () => {
+      binder.dispatchEvent(uEvent.MARKER_OVER, i);
+    })(id));
+  marker.addListener('mouseout',
+    () => {
+      binder.dispatchEvent(uEvent.MARKER_OVER);
+    });
+
   markers.push(marker);
   popups.push(popup);
 }
 
-/**
- * Add listener on chart to show position on map
- * @param {google.visualization.LineChart} chart
- * @param {google.visualization.DataTable} data
- */
-function addChartEvent(chart, data) {
-  google.visualization.events.addListener(chart, 'select', function () {
-    if (popup) { popup.close(); clearTimeout(timeoutHandle); }
-    const selection = chart.getSelection()[0];
-    if (selection) {
-      const id = data.getValue(selection.row, 0) - 1;
-      const icon = markers[id].getIcon();
-      markers[id].setIcon('images/marker-gold.png');
-      timeoutHandle = setTimeout(function () { markers[id].setIcon(icon); }, 2000);
-    }
-  });
+function animateMarker(id) {
+  if (openPopup) {
+    openPopup.close();
+    clearTimeout(timeoutHandle);
+  }
+  const icon = markers[id].getIcon();
+  markers[id].setIcon('images/marker-gold.png');
+  markers[id].setAnimation(google.maps.Animation.BOUNCE);
+  timeoutHandle = setTimeout(() => {
+    markers[id].setIcon(icon);
+    markers[id].setAnimation(null);
+  }, 2000);
 }
 
 /**
@@ -270,14 +292,11 @@ export {
   cleanup,
   displayTrack,
   clearMap,
-  setMarker,
-  addChartEvent,
+  animateMarker,
   getBounds,
   zoomToExtent,
   zoomToBounds,
-  updateSize,
-  setAuthError,
-  setLoaded
+  updateSize
 }
 
 

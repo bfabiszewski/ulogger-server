@@ -1,3 +1,21 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
 
 export default class uUtils {
 
@@ -220,6 +238,30 @@ export default class uUtils {
       return parseInt(str);
     }
     return null;
+  }
+
+  /**
+   * Format date to date, time and time zone strings
+   * Simplify zone name, eg.
+   * date: 2017-06-14, time: 11:42:19, zone: GMT+2 CEST
+   * @param {Date} date
+   * @return {{date: string, time: string, zone: string}}
+   */
+  static getTimeString(date) {
+    let timeZone = '';
+    const dateStr = `${date.getFullYear()}-${(`0${date.getMonth() + 1}`).slice(-2)}-${(`0${date.getDate()}`).slice(-2)}`;
+    const timeStr = date.toTimeString().replace(/^\s*([^ ]+)([^(]*)(\([^)]*\))*/,
+      // eslint-disable-next-line max-params
+      (_, hours, zone, dst) => {
+        if (zone) {
+          timeZone = zone.replace(/(0(?=[1-9]00))|(00\b)/g, '');
+          if (dst && (/[A-Z]/).test(dst)) {
+            timeZone += dst.match(/\b[A-Z]+/g).join('');
+          }
+        }
+        return hours;
+      });
+    return { date: dateStr, time: timeStr, zone: timeZone };
   }
 }
 

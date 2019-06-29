@@ -85,10 +85,10 @@
       <div id="menu-content">
 
         <?php if ($auth->isAuthenticated()): ?>
-          <div id="user_menu">
-            <a id="menu_head"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
-            <div id="user_dropdown" class="dropdown">
-              <a id="menu_pass"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
+          <div>
+            <a id="user-menu"><img class="icon" alt="<?= $lang["user"] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
+            <div id="user-dropdown">
+              <a id="user-pass"><img class="icon" alt="<?= $lang["changepass"] ?>" src="images/lock.svg"> <?= $lang["changepass"] ?></a>
               <a href="utils/logout.php"><img class="icon" alt="<?= $lang["logout"] ?>" src="images/poweroff.svg"> <?= $lang["logout"] ?></a>
             </div>
           </div>
@@ -98,30 +98,26 @@
 
         <div class="section">
           <?php if (!empty($usersArr)): ?>
-            <label for="user" class="menutitle"><?= $lang["user"] ?></label>
-            <form>
-              <select id="user" name="user">
-                <option value="0" disabled><?= $lang["suser"] ?></option>
-                <?php foreach ($usersArr as $aUser): ?>
-                  <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= htmlspecialchars($aUser->login) ?></option>
-                <?php endforeach; ?>
+            <label for="user"><?= $lang["user"] ?></label>
+            <select id="user" name="user">
+              <option value="0" disabled><?= $lang["suser"] ?></option>
+              <?php foreach ($usersArr as $aUser): ?>
+                <option <?= ($aUser->id == $displayUserId) ? "selected " : "" ?>value="<?= $aUser->id ?>"><?= htmlspecialchars($aUser->login) ?></option>
+              <?php endforeach; ?>
               </select>
-            </form>
           <?php endif; ?>
         </div>
 
         <div class="section">
-          <label for="track" class="menutitle"><?= $lang["track"] ?></label>
-          <form>
-            <select id="track" name="track">
-              <?php foreach ($tracksArr as $aTrack): ?>
-                <option value="<?= $aTrack->id ?>"><?= htmlspecialchars($aTrack->name) ?></option>
-              <?php endforeach; ?>
-            </select>
-            <input id="latest" type="checkbox"> <label for="latest"><?= $lang["latest"] ?></label><br>
-            <input id="auto_reload" type="checkbox"> <label for="auto_reload"><?= $lang["autoreload"] ?></label> (<a id="set_time"><span id="auto"><?= uConfig::$interval ?></span></a> s)<br>
-          </form>
-          <a id="force_reload"> <?= $lang["reload"] ?></a><br>
+          <label for="track"><?= $lang["track"] ?></label>
+          <select id="track" name="track">
+            <?php foreach ($tracksArr as $aTrack): ?>
+              <option value="<?= $aTrack->id ?>"><?= htmlspecialchars($aTrack->name) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <input id="latest" type="checkbox"> <label for="latest"><?= $lang["latest"] ?></label><br>
+          <input id="auto-reload" type="checkbox"> <label for="auto-reload"><?= $lang["autoreload"] ?></label> (<a id="set-interval"><span id="interval"><?= uConfig::$interval ?></span></a> s)<br>
+          <a id="force-reload"> <?= $lang["reload"] ?></a><br>
         </div>
 
         <div id="summary" class="section"></div>
@@ -131,60 +127,54 @@
         </div>
 
         <div>
-          <label for="api" class="menutitle"><?= $lang["api"] ?></label>
-          <form>
-            <select id="api" name="api">
-              <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
-              <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
-            </select>
-          </form>
+          <label for="api"><?= $lang["api"] ?></label>
+          <select id="api" name="api">
+            <option value="gmaps"<?= (uConfig::$mapapi == "gmaps") ? " selected" : "" ?>>Google Maps</option>
+            <option value="openlayers"<?= (uConfig::$mapapi == "openlayers") ? " selected" : "" ?>>OpenLayers</option>
+          </select>
         </div>
 
         <div>
-          <label for="lang" class="menutitle"><?= $lang["language"] ?></label>
-          <form>
-            <select id="lang" name="lang">
-              <?php foreach ($langsArr as $langCode => $langName): ?>
-                <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
-              <?php endforeach; ?>
-            </select>
-          </form>
+          <label for="lang"><?= $lang["language"] ?></label>
+          <select id="lang" name="lang">
+            <?php foreach ($langsArr as $langCode => $langName): ?>
+              <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
 
         <div class="section">
-          <label for="units" class="menutitle"><?= $lang["units"] ?></label>
-          <form>
-            <select id="units" name="units">
-              <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
-              <option value="imperial"<?= (uConfig::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
-              <option value="nautical"<?= (uConfig::$units == "nautical") ? " selected" : "" ?>><?= $lang["nautical"] ?></option>
-            </select>
-          </form>
+          <label for="units"><?= $lang["units"] ?></label>
+          <select id="units" name="units">
+            <option value="metric"<?= (uConfig::$units == "metric") ? " selected" : "" ?>><?= $lang["metric"] ?></option>
+            <option value="imperial"<?= (uConfig::$units == "imperial") ? " selected" : "" ?>><?= $lang["imperial"] ?></option>
+            <option value="nautical"<?= (uConfig::$units == "nautical") ? " selected" : "" ?>><?= $lang["nautical"] ?></option>
+          </select>
         </div>
 
-        <div id="export" class="section">
-          <div class="menutitle u"><?= $lang["export"] ?></div>
-          <a id="export_kml" class="menulink">kml</a>
-          <a id="export_gpx" class="menulink">gpx</a>
+        <div class="section">
+          <div class="menu-title"><?= $lang["export"] ?></div>
+          <a id="export-kml" class="menu-link">kml</a>
+          <a id="export-gpx" class="menu-link">gpx</a>
         </div>
 
         <?php if ($auth->isAuthenticated()): ?>
-          <div id="import" class="section">
-            <div class="menutitle u"><?= $lang["import"] ?></div>
-            <form id="importForm" enctype="multipart/form-data" method="post">
+          <div class="section">
+            <div id="import" class="menu-title"><?= $lang["import"] ?></div>
+            <form id="import-form" enctype="multipart/form-data" method="post">
               <input type="hidden" name="MAX_FILE_SIZE" value="<?= uUtils::getUploadMaxSize() ?>" />
-              <input type="file" id="inputFile" name="gpx" />
+              <input type="file" id="input-file" name="gpx" />
             </form>
-            <a id="import_gpx" class="menulink">gpx</a>
+            <a id="import-gpx" class="menu-link">gpx</a>
           </div>
 
-          <div id="admin_menu">
-            <div class="menutitle u"><?= $lang["adminmenu"] ?></div>
+          <div id="admin-menu">
+            <div class="menu-title"><?= $lang["adminmenu"] ?></div>
             <?php if ($auth->isAdmin()): ?>
-              <a id="adduser" class="menulink"><?= $lang["adduser"] ?></a>
-              <a id="edituser" class="menulink"><?= $lang["edituser"] ?></a>
+              <a id="adduser" class="menu-link"><?= $lang["adduser"] ?></a>
+              <a id="edituser" class="menu-link"><?= $lang["edituser"] ?></a>
             <?php endif; ?>
-            <a id="edittrack" class="menulink"><?= $lang["edittrack"] ?></a>
+            <a id="edittrack" class="menu-link"><?= $lang["edittrack"] ?></a>
           </div>
         <?php endif; ?>
 
@@ -197,7 +187,7 @@
       <div id="map-canvas"></div>
       <div id="bottom">
         <div id="chart"></div>
-        <div id="chart_close"><?= $lang["close"] ?></div>
+        <div id="chart-close"><?= $lang["close"] ?></div>
       </div>
     </div>
 

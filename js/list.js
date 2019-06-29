@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import uData from './data.js';
 import uEvent from './event.js';
 import uUtils from './utils.js';
@@ -20,7 +39,7 @@ export default class uList {
     /** @type {uBinder} */
     this.binder = binder;
     /** @type {boolean} */
-    this.showAllOption = false;
+    this._showAllOption = false;
     /** @type {boolean} */
     this.hasHead = false;
     this.headValue = '';
@@ -29,11 +48,10 @@ export default class uList {
     this.T = type || uData;
     /** @type {HTMLSelectElement} */
     this.domElement = document.querySelector(selector);
-    if (this.domElement) {
-      this.domElement.addEventListener('change', this, false);
-    }
     if (this.binder) {
       this.binder.addEventListener(uEvent.ADD, this);
+      this.binder.addEventListener(uEvent.CHANGE, this);
+      this.binder.addEventListener(uEvent.CONFIG, this);
       this.binder.addEventListener(uEvent.EDIT, this);
     }
 
@@ -59,6 +77,21 @@ export default class uList {
    */
   get isSelectedAllOption() {
     return this.selectedId === 'all';
+  }
+
+  get showAllOption() {
+    return this._showAllOption;
+  }
+
+  set showAllOption(value) {
+    if (this._showAllOption !== value) {
+      this._showAllOption = value;
+      if (value === false) {
+        this.selectDefault();
+      }
+      this.render();
+      this.onChange();
+    }
   }
 
   /**
@@ -98,9 +131,6 @@ export default class uList {
     if (this.data.length) {
       this.selectedId = this.data[0].key.toString();
     }
-    /** @todo set defaults ?? */
-    // var defaultTrack = tid || getNodeAsInt(tracks[0], 'trackid');
-    // var defaultUser = uid || ns.userId;
     this.render();
     this.onChange();
   }
@@ -114,7 +144,7 @@ export default class uList {
     }
     for (const option of this.domElement) {
       if (option.value === 'all') {
-        this.showAllOption = true;
+        this._showAllOption = true;
       } else if (!option.disabled) {
         const row = new this.T(parseInt(option.value), option.innerText);
         this.updateDataRow(row);
@@ -128,17 +158,19 @@ export default class uList {
   }
 
   /**
-   * @param {(Event|uEvent)} event
+   * @param {uEvent} event
    * @param {*=} eventData
    */
   handleEvent(event, eventData) {
-    if (event.type === 'change') {
-      this.selectedId = this.domElement.options[this.domElement.selectedIndex].value;
+    if (event.type === uEvent.CHANGE && eventData.el === this.domElement) {
+      this.selectedId = eventData.id;
       this.onChange();
-    } else if (event.type === uEvent.EDIT && this.domElement === eventData) {
+    } else if (event.type === uEvent.EDIT && eventData === this.domElement) {
       this.onEdit();
-    } else if (event.type === uEvent.ADD && this.domElement === eventData) {
+    } else if (event.type === uEvent.ADD && eventData === this.domElement) {
       this.onAdd();
+    } else if (event.type === uEvent.CONFIG) {
+      this.onConfigChange(eventData);
     }
   }
 
@@ -175,14 +207,18 @@ export default class uList {
     const currentId = this.current.key;
     this.data.splice(this.data.findIndex((o) => o.key === id), 1);
     if (id === currentId) {
-      if (this.data.length) {
-        this.selectedId = this.data[0].key.toString();
-      } else {
-        this.selectedId = '';
-      }
+      this.selectDefault();
       this.onChange();
     }
     this.render();
+  }
+
+  selectDefault() {
+    if (this.data.length) {
+      this.selectedId = this.data[0].key.toString();
+    } else {
+      this.selectedId = '';
+    }
   }
 
   render() {
@@ -192,7 +228,7 @@ export default class uList {
       head.disabled = true;
       this.domElement.options.add(head);
     }
-    if (this.showAllOption) {
+    if (this._showAllOption) {
       this.domElement.options.add(new Option(this.allValue, 'all'));
     }
     for (const item of this.data) {
@@ -227,6 +263,21 @@ export default class uList {
    * @abstract
    */
   // eslint-disable-next-line no-unused-vars,no-empty-function,class-methods-use-this
+  onReload() {
+  }
+
+  /**
+   * @abstract
+   */
+  // eslint-disable-next-line no-unused-vars,no-empty-function,class-methods-use-this
   onAdd() {
+  }
+
+  /**
+   * @abstract
+   * @param {string} property
+   */
+  // eslint-disable-next-line no-unused-vars,no-empty-function,class-methods-use-this
+  onConfigChange(property) {
   }
 }

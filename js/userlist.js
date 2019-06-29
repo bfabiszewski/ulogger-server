@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { auth, config, lang } from './constants.js';
 import UserDialog from './userdialog.js';
 import uList from './list.js';
@@ -25,15 +44,28 @@ export default class UserList extends uList {
    * @override
    */
   onChange() {
-    if (this.isSelectedAllOption) {
-      // clearOptions(ui.trackSelect);
-      // loadLastPositionAllUsers();
-    } else if (config.showLatest) {
-      uLogger.trackList.fetchLatest()
-        .catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
+    if (config.showLatest) {
+      if (this.isSelectedAllOption) {
+        uLogger.trackList.fetchLatest();
+      } else {
+        uLogger.trackList.fetch()
+          .then(() => uLogger.trackList.fetchLatest());
+      }
     } else {
-      uLogger.trackList.fetch()
-        .catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
+      uLogger.trackList.fetch();
+    }
+  }
+
+  /**
+   * @override
+   */
+  onConfigChange(property) {
+    if (property === 'showLatest') {
+      if (config.showLatest && this.data.length > 1) {
+        this.showAllOption = true;
+      } else if (!config.showLatest && this.showAllOption) {
+        this.showAllOption = false;
+      }
     }
   }
 

@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { config, lang } from './constants.js';
 import uEvent from './event.js';
 import { uLogger } from './ulogger.js';
@@ -13,6 +32,8 @@ export default class uUI {
     binder.addEventListener(uEvent.CONFIG, this);
     binder.addEventListener(uEvent.CHART_READY, this);
     binder.addEventListener(uEvent.OPEN_URL, this);
+    binder.addEventListener(uEvent.LOADER, this);
+    binder.addEventListener(uEvent.TRACK_READY, this);
     document.addEventListener('DOMContentLoaded', () => { this.initUI(); });
     this.isLiveOn = false;
   }
@@ -24,11 +45,11 @@ export default class uUI {
     /** @type {HTMLElement} */
     this.menu = document.getElementById('menu');
     /** @type {?HTMLElement} */
-    this.menuHead = document.getElementById('menu_head');
+    this.userMenu = document.getElementById('user-menu');
     /** @type {?HTMLElement} */
-    this.userDropdown = document.getElementById('user_dropdown');
+    this.userDropdown = document.getElementById('user-dropdown');
     /** @type {?HTMLElement} */
-    this.menuPass = document.getElementById('menu_pass');
+    this.userPass = document.getElementById('user-pass');
     // noinspection JSValidateTypes
     /** @type {?HTMLSelectElement} */
     this.userSelect = function () {
@@ -41,17 +62,17 @@ export default class uUI {
     this.trackSelect = document.getElementsByName('track')[0];
     // noinspection JSValidateTypes
     /** @type {HTMLSelectElement} */
-    this.api = document.getElementsByName('api')[0];
+    this.apiSelect = document.getElementsByName('api')[0];
     // noinspection JSValidateTypes
     /** @type {HTMLSelectElement} */
-    this.lang = document.getElementsByName('lang')[0];
+    this.langSelect = document.getElementsByName('lang')[0];
     // noinspection JSValidateTypes
     /** @type {HTMLSelectElement} */
-    this.units = document.getElementsByName('units')[0];
+    this.unitsSelect = document.getElementsByName('units')[0];
     /** @type {HTMLElement} */
     this.chart = document.getElementById('chart');
     /** @type {HTMLElement} */
-    this.chartClose = document.getElementById('chart_close');
+    this.chartClose = document.getElementById('chart-close');
     /** @type {HTMLElement} */
     this.bottom = document.getElementById('bottom');
     /** @type {HTMLElement} */
@@ -63,31 +84,29 @@ export default class uUI {
     /** @type {HTMLElement} */
     this.track = document.getElementById('track');
     /** @type {HTMLElement} */
-    this.trackTitle = this.track ? this.track.getElementsByClassName('menutitle')[0] : null;
+    this.trackTitle = document.querySelector('label[for="track"]');
     /** @type {HTMLElement} */
-    this.import = document.getElementById('import');
-    /** @type {HTMLElement} */
-    this.importTitle = this.import ? this.import.getElementsByClassName('menutitle')[0] : null;
+    this.importTitle = document.getElementById('import') || null;
     /** @type {HTMLElement} */
     this.summary = document.getElementById('summary');
     /** @type {HTMLElement} */
     this.latest = document.getElementById('latest');
     /** @type {HTMLElement} */
-    this.autoReload = document.getElementById('auto_reload');
+    this.autoReload = document.getElementById('auto-reload');
     /** @type {HTMLElement} */
-    this.forceReload = document.getElementById('force_reload');
+    this.forceReload = document.getElementById('force-reload');
     /** @type {HTMLElement} */
-    this.auto = document.getElementById('auto');
+    this.interval = document.getElementById('interval');
     /** @type {HTMLElement} */
-    this.setTime = document.getElementById('set_time');
+    this.setInterval = document.getElementById('set-interval');
     /** @type {HTMLElement} */
-    this.exportKml = document.getElementById('export_kml');
+    this.exportKml = document.getElementById('export-kml');
     /** @type {HTMLElement} */
-    this.exportGpx = document.getElementById('export_gpx');
+    this.exportGpx = document.getElementById('export-gpx');
     /** @type {?HTMLElement} */
-    this.inputFile = document.getElementById('inputFile');
+    this.inputFile = document.getElementById('input-file');
     /** @type {HTMLElement} */
-    this.importGpx = document.getElementById('import_gpx');
+    this.importGpx = document.getElementById('import-gpx');
     /** @type {?HTMLElement} */
     this.addUser = document.getElementById('adduser');
     /** @type {?HTMLElement} */
@@ -99,29 +118,37 @@ export default class uUI {
     /** @type {HTMLElement} */
     this.head = document.getElementsByTagName('head')[0];
 
-    if (this.menuHead) {
-      this.menuHead.onclick = () => this.showUserMenu();
+    if (this.userMenu) {
+      this.userMenu.onclick = () => this.showUserMenu();
     }
-    if (this.menuPass) {
-      this.menuPass.onclick = () => {
+    if (this.userPass) {
+      this.userPass.onclick = () => {
         this.emit(uEvent.PASSWORD);
       }
     }
     this.hideUserMenu = this.hideUserMenu.bind(this);
     this.latest.onchange = () => uUI.toggleLatest();
     this.autoReload.onchange = () => this.toggleAutoReload();
-    this.setTime.onclick = () => this.setAutoReloadTime();
+    this.setInterval.onclick = () => this.setAutoReloadTime();
     this.forceReload.onclick = () => this.trackReload();
     this.chartLink.onclick = () => this.toggleChart();
-    this.api.onchange = () => {
-      const api = this.api.options[this.api.selectedIndex].value;
+    this.trackSelect.onchange = () => {
+      const trackId = this.trackSelect.options[this.trackSelect.selectedIndex].value;
+      this.emit(uEvent.CHANGE, { el: this.trackSelect, id: trackId });
+    };
+    this.userSelect.onchange = () => {
+      const userId = this.userSelect.options[this.userSelect.selectedIndex].value;
+      this.emit(uEvent.CHANGE, { el: this.userSelect, id: userId });
+    };
+    this.apiSelect.onchange = () => {
+      const api = this.apiSelect.options[this.apiSelect.selectedIndex].value;
       this.emit(uEvent.API_CHANGE, api);
     };
-    this.lang.onchange = () => {
-      uUI.setLang(this.lang.options[this.lang.selectedIndex].value);
+    this.langSelect.onchange = () => {
+      uUI.setLang(this.langSelect.options[this.langSelect.selectedIndex].value);
     };
-    this.units.onchange = () => {
-      uUI.setUnits(this.units.options[this.units.selectedIndex].value);
+    this.unitsSelect.onchange = () => {
+      uUI.setUnits(this.unitsSelect.options[this.unitsSelect.selectedIndex].value);
     };
     this.exportKml.onclick = () => {
       this.emit(uEvent.EXPORT, 'kml');
@@ -201,7 +228,7 @@ export default class uUI {
     const i = parseInt(prompt(lang.strings['newinterval']));
     if (!isNaN(i) && i !== config.interval) {
       config.interval = i;
-      this.auto.innerHTML = config.interval.toString();
+      this.interval.innerHTML = config.interval.toString();
       // if live tracking on, reload with new interval
       if (this.isLiveOn) {
         this.stopAutoReload();
@@ -313,13 +340,9 @@ export default class uUI {
     let date = '–––';
     let time = '–––';
     if (pos.timestamp > 0) {
-      const d = new Date(pos.timestamp * 1000);
-      date = `${d.getFullYear()}-${(`0${d.getMonth() + 1}`).slice(-2)}-${(`0${d.getDate()}`).slice(-2)}`;
-      time = d.toTimeString();
-      let offset;
-      if ((offset = time.indexOf(' ')) >= 0) {
-        time = `${time.substr(0, offset)} <span class="smaller">${time.substr(offset + 1)}</span>`;
-      }
+      const parts = uUtils.getTimeString(new Date(pos.timestamp * 1000));
+      date = parts.date;
+      time = `${parts.time}<span class="smaller">${parts.zone}</span>`;
     }
     let provider = '';
     if (pos.provider === 'gps') {
@@ -353,6 +376,37 @@ export default class uUI {
         </div>${stats}</div>
         <div id="pfooter">${uUtils.sprintf(lang.strings['pointof'], id + 1, count)}</div>
         </div>`;
+  }
+
+  /**
+   * Update track summary
+   * @param {number} timestamp
+   * @param {number=} totalDistance Total distance (m)
+   * @param {number=} totalTime Total time (s)
+   */
+  updateSummary(timestamp, totalDistance, totalTime) {
+    if (config.showLatest) {
+      const today = new Date();
+      const date = new Date(timestamp * 1000);
+      let dateString = '';
+      if (date.toDateString() !== today.toDateString()) {
+        dateString = `${date.getFullYear()}-${(`0${date.getMonth() + 1}`).slice(-2)}-${(`0${date.getDate()}`).slice(-2)}<br>`;
+      }
+      let timeString = date.toTimeString();
+      let offset;
+      if ((offset = timeString.indexOf(' ')) >= 0) {
+        timeString = `${timeString.substr(0, offset)} <span style="font-weight:normal">${timeString.substr(offset + 1)}</span>`;
+      }
+      this.summary.innerHTML = `
+        <div class="menu-title">${lang.strings['latest']}:</div>
+        ${dateString}
+        ${timeString}`;
+    } else {
+      this.summary.innerHTML = `
+        <div class="menu-title">${lang.strings['summary']}</div>
+        <div><img class="icon" alt="${lang.strings['tdistance']}" title="${lang.strings['tdistance']}" src="images/distance.svg"> ${(totalDistance.toKm() * config.factor_km).toFixed(2)} ${config.unit_km}</div>
+        <div><img class="icon" alt="${lang.strings['ttime']}" title="${lang.strings['ttime']}" src="images/time.svg"> ${totalTime.toHMS()}</div>`;
+    }
   }
 
   /**
@@ -412,11 +466,25 @@ export default class uUI {
       } else {
         this.chartLink.style.visibility = 'hidden';
       }
+    } else if (event.type === uEvent.TRACK_READY) {
+      /** @type {uTrack} */
+      const track = args;
+      if (track.hasPositions) {
+        const position = track.positions[track.positions.length - 1];
+        this.updateSummary(position.timestamp, position.totalDistance, position.totalSeconds);
+      }
     } else if (event.type === uEvent.OPEN_URL) {
       window.location.assign(args);
     } else if (event.type === uEvent.CONFIG) {
       if (args === 'showLatest') {
         this.latest.checked = config.showLatest;
+      }
+    } else if (event.type === uEvent.LOADER) {
+      const el = args.action === 'track' ? this.trackTitle : this.importTitle;
+      if (args.on) {
+        uUI.setLoader(el);
+      } else {
+        uUI.removeLoader(el);
       }
     }
   }

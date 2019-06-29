@@ -1,6 +1,7 @@
-/* μlogger
+/*
+ * μlogger
  *
- * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by
@@ -17,14 +18,21 @@
  */
 
 import { config } from '../constants.js';
-import { uLogger } from '../ulogger.js';
+import uEvent from '../event.js';
 import uUI from '../ui.js';
 import uUtils from '../utils.js';
 
 // openlayers 3+
+/**
+ * OpenLayers API module
+ * @module olApi
+ * @implements {uMap.api}
+ */
 
 /** @type {ol.Map} */
 let map = null;
+/** @type {uBinder} */
+let binder = null;
 /** @type {ol.layer.Vector} */
 let layerTrack = null;
 /** @type {ol.layer.Vector} */
@@ -33,12 +41,19 @@ let layerMarkers = null;
 let selectedLayer = null;
 /** @type {ol.style.Style|{}} */
 let olStyles = {};
+/** @type {string} */
 const name = 'openlayers';
+/** @type {?number} */
+let pointOver = null;
 
 /**
  * Initialize map
+ * @param {uBinder} b
+ * @param {HTMLElement} target
  */
-function init(target) {
+function init(b, target) {
+
+  binder = b;
 
   uUtils.addScript('//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList', 'mapapi_openlayers_polyfill');
   uUtils.addScript('js/lib/ol.js', 'mapapi_openlayers');
@@ -62,6 +77,41 @@ function init(target) {
     view: view
   });
 
+  map.on('pointermove', (e) => {
+    const feature = map.forEachFeatureAtPixel(e.pixel,
+      (_feature, _layer) => {
+        if (_layer.get('name') === 'Markers') {
+          return _feature;
+        }
+        return null;
+      });
+    // emit mouse over marker event
+    /** @type {?number} */
+    const id = feature ? feature.getId() : null;
+    if (id !== pointOver) {
+      binder.dispatchEvent(uEvent.MARKER_OVER);
+      pointOver = id;
+      if (id) {
+        binder.dispatchEvent(uEvent.MARKER_OVER, id);
+      }
+    }
+    // change mouse cursor when over marker
+    if (feature) {
+      map.getTargetElement().style.cursor = 'pointer';
+    } else {
+      map.getTargetElement().style.cursor = '';
+    }
+  });
+
+  initLayers();
+  initStyles();
+  initPopups();
+}
+
+/**
+ * Initialize map layers
+ */
+function initLayers() {
   // default layer: OpenStreetMap
   const osm = new ol.layer.Tile({
     name: 'OpenStreetMap',
@@ -71,7 +121,7 @@ function init(target) {
   map.addLayer(osm);
   selectedLayer = osm;
 
-  // add extra layers
+  // add extra tile layers
   for (const layerName in config.ol_layers) {
     if (config.ol_layers.hasOwnProperty(layerName)) {
       const layerUrl = config.ol_layers[layerName];
@@ -86,7 +136,7 @@ function init(target) {
     }
   }
 
-  // init layers
+  // add track and markers layers
   const lineStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: uUtils.hexToRGBA(config.strokeColor, config.strokeOpacity),
@@ -107,7 +157,11 @@ function init(target) {
   map.addLayer(layerTrack);
   map.addLayer(layerMarkers);
 
-  // styles
+  initLayerSwitcher();
+}
+
+
+function initStyles() {
   olStyles = {};
   const iconRed = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
@@ -138,8 +192,9 @@ function init(target) {
   olStyles['gold'] = new ol.style.Style({
     image: iconGold
   });
+}
 
-  // popups
+function initPopups() {
   const popupContainer = document.createElement('div');
   popupContainer.id = 'popup';
   popupContainer.className = 'ol-popup';
@@ -183,25 +238,17 @@ function init(target) {
       popup.setPosition(coordinate);
       popupContent.innerHTML = uUI.getPopupHtml(feature.getId());
       map.addOverlay(popup);
-      // ns.chartShowPosition(id);
+      binder.dispatchEvent(uEvent.MARKER_SELECT, feature.getId());
     } else {
       // popup destroy
       // eslint-disable-next-line no-undefined
       popup.setPosition(undefined);
+      binder.dispatchEvent(uEvent.MARKER_SELECT);
     }
   });
+}
 
-  // change mouse cursor when over marker
-  map.on('pointermove', function({ pixel }) {
-    const hit = map.forEachFeatureAtPixel(pixel, (_feature, _layer) => _layer.get('name') === 'Markers');
-    if (hit) {
-      this.getTargetElement().style.cursor = 'pointer';
-    } else {
-      this.getTargetElement().style.cursor = '';
-    }
-  });
-
-  // layer switcher
+function initLayerSwitcher() {
   const switcher = document.createElement('div');
   switcher.id = 'switcher';
   switcher.className = 'ol-control';
@@ -283,43 +330,45 @@ function init(target) {
  * Clean up API
  */
 function cleanup() {
-  map = null;
   layerTrack = null;
   layerMarkers = null;
   selectedLayer = null;
   olStyles = null;
   uUI.removeElementById('popup');
   uUI.removeElementById('switcher');
-  // ui.clearMapCanvas();
+  if (map && map.getTargetElement()) {
+    map.getTargetElement().innerHTML = '';
+  }
+  map = null;
 }
 
 /**
  * Display track
+ * @param {uTrack} track Track
  * @param {boolean} update Should fit bounds if true
  */
-function displayTrack(update) {
-  const track = uLogger.trackList.current;
+function displayTrack(track, update) {
   if (!track) {
     return;
   }
-  const points = [];
   let i = 0;
+  const lineString = new ol.geom.LineString([]);
   for (const position of track.positions) {
     // set marker
-    setMarker(i++);
-    // update polyline
-    const point = ol.proj.fromLonLat([ position.longitude, position.latitude ]);
-    points.push(point);
+    setMarker(i++, track);
+    if (track.continuous) {
+      // update polyline
+      lineString.appendCoordinate(ol.proj.fromLonLat([ position.longitude, position.latitude ]));
+    }
   }
-  const lineString = new ol.geom.LineString(points);
+  if (lineString.getLength() > 0) {
+    const lineFeature = new ol.Feature({
+      geometry: lineString
+    });
+    layerTrack.getSource().addFeature(lineFeature);
+  }
 
-  const lineFeature = new ol.Feature({
-    geometry: lineString
-  });
-
-  layerTrack.getSource().addFeature(lineFeature);
-
-  let extent = layerTrack.getSource().getExtent();
+  let extent = layerMarkers.getSource().getExtent();
 
   map.getControls().forEach((el) => {
     if (el instanceof ol.control.ZoomToExtent) {
@@ -341,11 +390,6 @@ function displayTrack(update) {
     label: getExtentImg()
   });
   map.addControl(zoomToExtentControl);
-
-  /** @todo handle summary and chart in track */
-
-  // ns.updateSummary(p.timestamp, totalDistance, totalSeconds);
-  // ns.updateChart();
 }
 
 /**
@@ -363,11 +407,12 @@ function clearMap() {
 /**
  * Set marker
  * @param {number} id
+ * @param {uTrack} track
  */
-function setMarker(id) {
+function setMarker(id, track) {
   // marker
-  const position = uLogger.trackList.current.positions[id];
-  const posLen = uLogger.trackList.current.positions.length;
+  const position = track.positions[id];
+  const posLen = track.positions.length;
   const marker = new ol.Feature({
     geometry: new ol.geom.Point(ol.proj.fromLonLat([ position.longitude, position.latitude ]))
   });
@@ -384,31 +429,19 @@ function setMarker(id) {
   }
   marker.setStyle(iconStyle);
   marker.setId(id);
-  /** @todo why set position in marker? ID should be enough */
-  marker.set('p', position);
-  marker.set('posLen', posLen);
   layerMarkers.getSource().addFeature(marker);
 }
 
 /**
- * Add listener on chart to show position on map
- * @param {google.visualization.LineChart} chart
- * @param {google.visualization.DataTable} data
+ * Animate marker
+ * @param id Marker sequential id
  */
-function addChartEvent(chart, data) {
-  google.visualization.events.addListener(chart, 'select', () => {
-    const selection = chart.getSelection()[0];
-    if (selection) {
-      const id = data.getValue(selection.row, 0) - 1;
-      const marker = layerMarkers.getSource().getFeatureById(id);
-      const initStyle = marker.getStyle();
-      const iconStyle = olStyles['gold'];
-      marker.setStyle(iconStyle);
-      setTimeout(() => {
-        marker.setStyle(initStyle);
-      }, 2000);
-    }
-  });
+function animateMarker(id) {
+  const marker = layerMarkers.getSource().getFeatureById(id);
+  const initStyle = marker.getStyle();
+  const iconStyle = olStyles['gold'];
+  marker.setStyle(iconStyle);
+  setTimeout(() => marker.setStyle(initStyle), 2000);
 }
 
 /**
@@ -466,8 +499,7 @@ export {
   cleanup,
   displayTrack,
   clearMap,
-  setMarker,
-  addChartEvent,
+  animateMarker,
   getBounds,
   zoomToExtent,
   zoomToBounds,

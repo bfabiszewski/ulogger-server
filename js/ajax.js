@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import uUtils from './utils.js';
 
 export default class uAjax {
@@ -28,7 +47,6 @@ export default class uAjax {
    * @param {Object|HTMLFormElement} [data] Optional request parameters: key/value pairs or form element
    * @param {Object} [options] Optional options
    * @param {string} [options.method='GET'] Optional query method, default 'GET'
-   * @param {HTMLElement} [options.loader] Optional element to animate during loading
    * @return {Promise<Document, string>}
    */
   static ajax(url, data, options) {
@@ -36,7 +54,6 @@ export default class uAjax {
     data = data || {};
     options = options || {};
     let method = options.method || 'GET';
-    const loader = options.loader;
     const xhr = new XMLHttpRequest();
     return new Promise((resolve, reject) => {
       xhr.onreadystatechange = function () {
@@ -63,9 +80,6 @@ export default class uAjax {
         if (error && reject && typeof reject === 'function') {
           reject(message);
         }
-        if (loader) {
-         // UI.removeLoader(loader);
-        }
       };
       let body = null;
       if (data instanceof HTMLFormElement) {
@@ -90,9 +104,6 @@ export default class uAjax {
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       }
       xhr.send(body);
-      if (loader) {
-       // UI.setLoader(loader);
-      }
     });
   }
 }

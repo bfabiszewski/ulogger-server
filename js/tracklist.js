@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { auth, config, lang } from './constants.js';
 import TrackDialog from './trackdialog.js';
 import uAjax from './ajax.js';
@@ -21,7 +40,6 @@ export default class TrackList extends uList {
   constructor(selector, binder) {
     super(selector, binder, uTrack);
     if (binder) {
-      this.binder.addEventListener(uEvent.CONFIG, this);
       this.binder.addEventListener(uEvent.EXPORT, this);
       this.binder.addEventListener(uEvent.IMPORT, this);
     }
@@ -42,7 +60,7 @@ export default class TrackList extends uList {
    * @param {*=} data
    */
   handleEvent(event, data) {
-    if (event.type === 'change') {
+    if (event.type === uEvent.CHANGE) {
       config.showLatest = false;
     }
     super.handleEvent(event, data);
@@ -50,12 +68,6 @@ export default class TrackList extends uList {
       this.current.export(data);
     } else if (event.type === uEvent.IMPORT) {
       this.import(data).catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
-    } else if (event.type === uEvent.CONFIG && data === 'showLatest') {
-      if (config.showLatest) {
-        this.fetchLatest().catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
-      } else {
-        this.fetchTrack();
-      }
     }
   }
 
@@ -64,36 +76,47 @@ export default class TrackList extends uList {
    * @return {Promise<void>}
    */
   import(form) {
-    return uAjax.post('utils/import.php', form,
-      {
-        // loader: ui.importTitle
-      })
+    this.emit(true, 'import');
+    return uAjax.post('utils/import.php', form)
       .then((xml) => {
-      const root = xml.getElementsByTagName('root');
-      const trackCnt = uUtils.getNodeAsInt(root[0], 'trackcnt');
-      if (trackCnt > 1) {
-        alert(uUtils.sprintf(lang.strings['imultiple'], trackCnt));
-      }
-      const trackId = uUtils.getNodeAsInt(root[0], 'trackid');
-      return this.fetch().then(() => this.select(trackId));
-    }).catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
+        const root = xml.getElementsByTagName('root');
+        const trackCnt = uUtils.getNodeAsInt(root[0], 'trackcnt');
+        if (trackCnt > 1) {
+          alert(uUtils.sprintf(lang.strings['imultiple'], trackCnt));
+        }
+        const trackId = uUtils.getNodeAsInt(root[0], 'trackid');
+        this.emit(false, 'import');
+        return this.fetch().then(() => this.select(trackId));
+    }).catch((msg) => {
+        this.emit(false, 'import');
+        alert(`${lang.strings['actionfailure']}\n${msg}`);
+      });
+  }
+
+  emit(on, action) {
+    this.binder.dispatchEvent(uEvent.LOADER, { on: on, action: action });
   }
 
   /**
    * Fetch tracks for current user
+   * @throws
    * @return {Promise<Document, string>}
    */
   fetch() {
+    this.emit(true, 'track');
     return uAjax.get('utils/gettracks.php',
       {
         userid: uLogger.userList.current.id
-      },
-      {
-        // loader: ui.trackTitle
-      }).then((xml) => {
-      this.clear();
-      return this.fromXml(xml.getElementsByTagName('track'), 'trackid', 'trackname');
-    });
+      })
+      .then((xml) => {
+        this.clear();
+        this.fromXml(xml.getElementsByTagName('track'), 'trackid', 'trackname');
+        this.emit(false, 'track');
+        return xml;
+    }).catch((msg) => {
+        this.emit(false, 'track');
+        alert(`${lang.strings['actionfailure']}\n${msg}`);
+      });
   }
 
   /**
@@ -102,25 +125,46 @@ export default class TrackList extends uList {
    * @return {Promise<Document, string>}
    */
   fetchLatest() {
-    return uAjax.get('utils/getpositions.php', {
-      userid: uLogger.userList.current.id,
+    this.emit(true, 'track');
+    const data = {
       last: 1
-    }, {
-      // loader: ui.trackTitle
-    }).then((xml) => {
-      const xmlPos = xml.getElementsByTagName('position');
-      if (xmlPos.length === 1) {
-        const position = uPosition.fromXml(xmlPos[0]);
-        if (this.has(position.trackid)) {
-          this.select(position.trackid, true);
-          this.current.fromXml(xml, false);
-          this.current.onlyLatest = true;
-          return this.current.render();
+    };
+    const allUsers = uLogger.userList.isSelectedAllOption;
+    if (!allUsers) {
+      data.userid = uLogger.userList.current.id;
+    }
+    return uAjax.get('utils/getpositions.php', data).then((xml) => {
+      if (!allUsers) {
+        const xmlPos = xml.getElementsByTagName('position');
+        // single user
+        if (xmlPos.length === 1) {
+          const position = uPosition.fromXml(xmlPos[0]);
+          if (this.has(position.trackid)) {
+            this.select(position.trackid, true);
+            this.current.fromXml(xml, false);
+            this.current.onlyLatest = true;
+            this.current.render();
+          } else {
+            // tracklist needs update
+            return this.fetch().then(() => this.fetchLatest());
+          }
         }
-        // tracklist needs update
-        return this.fetch().fetchLatest();
+      } else {
+        // all users
+        this.clear();
+        const track = new uTrack(0, '', null);
+        track.binder = this.binder;
+        track.continuous = false;
+        track.fromXml(xml, false);
+        this.add(track);
+        this.select(0, true);
+        this.current.render();
       }
-      return false;
+      this.emit(false, 'track');
+      return xml;
+    }).catch((msg) => {
+      this.emit(false, 'track');
+      alert(`${lang.strings['actionfailure']}\n${msg}`);
     });
   }
 
@@ -128,13 +172,23 @@ export default class TrackList extends uList {
    * @override
    */
   onChange() {
-    this.fetchTrack();
+    if (!config.showLatest) {
+      this.fetchTrack();
+    }
   }
 
+  /**
+   * Fetch and render track
+   */
   fetchTrack() {
     if (this.current) {
+      this.emit(true, 'track');
       this.current.fetch()
-        .catch((msg) => alert(`${lang.strings['actionfailure']}\n${msg}`));
+        .then(() => this.emit(false, 'track'))
+        .catch((msg) => {
+          this.emit(false, 'track');
+          alert(`${lang.strings['actionfailure']}\n${msg}`);
+        });
     }
   }
 

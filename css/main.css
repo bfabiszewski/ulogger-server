@@ -53,7 +53,7 @@ select {
 #menu input[type = "checkbox"] {
   width: auto;
 }
-.menulink {
+.menu-link {
   display: block;
   margin-top: .2em;
 }
@@ -117,7 +117,7 @@ label[for=user] {
 .section:first-child {
   padding-top: 1em;
 }
-#inputFile {
+#input-file {
   display: none;
 }
 #summary div {
@@ -201,7 +201,7 @@ label[for=user] {
   background-color: white;
   opacity: 0.8;
 }
-#chart_close {
+#chart-close {
   position: fixed;
   bottom: 175px;
   right: 175px;
@@ -308,7 +308,7 @@ button > * {
   -webkit-border-radius: 10px;
 }
 
-.dropdown {
+#user-dropdown {
   display: none;
   position: absolute;
   background-color: gray;
@@ -317,7 +317,7 @@ button > * {
   border: 1px solid #888;
 }
 
-.dropdown a {
+#user-dropdown a {
   display: block;
   padding-bottom: .5em;
   padding-top: .5em;
@@ -327,7 +327,7 @@ button > * {
 
 .icon { height: 1.4em; }
 
-.u { text-decoration: underline; }
+.menu-title { text-decoration: underline; }
 
 .loader {
   animation: blink 1s linear infinite;
@@ -335,6 +335,29 @@ button > * {
 
 @keyframes blink {
   50% { opacity: 0; }
+}
+
+/* chart */
+.ct-point {
+  stroke-width: 5px !important;
+  transition: 0.3s;
+}
+.ct-point:hover {
+  stroke-width: 10px !important;
+  cursor: pointer;
+}
+
+.ct-point-hilight {
+  stroke-width: 10px !important;
+}
+
+.ct-point-selected {
+  stroke-width: 10px !important;
+  stroke: #f4c63d !important;
+}
+
+.ct-line {
+  stroke-width: 2px; !important;
 }
 
 /* openlayers 3 popup */

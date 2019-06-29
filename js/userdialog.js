@@ -1,4 +1,5 @@
-/* μlogger
+/*
+ * μlogger
  *
  * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
  *

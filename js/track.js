@@ -1,3 +1,22 @@
+/*
+ * μlogger
+ *
+ * Copyright(C) 2019 Bartek Fabiszewski (www.fabiszewski.net)
+ *
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { config } from './constants.js';
 import uAjax from './ajax.js';
 import uData from './data.js';
@@ -10,6 +29,7 @@ import uPosition from './position.js';
  * @property {number} id
  * @property {string} name
  * @property {uUser} user
+ * @property {boolean} continuous
  * @property {?uPosition[]} positions
  * @property {?Array<{x: number, y: number}>} plotData
  */
@@ -27,6 +47,7 @@ export default class uTrack extends uData {
     this._plotData = null;
     this._maxId = 0;
     this._onlyLatest = false;
+    this._continuous = true;
   }
 
   /**
@@ -53,6 +74,20 @@ export default class uTrack extends uData {
   /**
    * @param {boolean} value
    */
+  set continuous(value) {
+    this._continuous = value;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get continuous() {
+    return this._continuous;
+  }
+
+  /**
+   * @param {boolean} value
+   */
   set onlyLatest(value) {
     this._onlyLatest = value;
   }
@@ -64,8 +99,8 @@ export default class uTrack extends uData {
 
   /**
    * Get track data from xml
-   * @param {XMLDocument} xml
-   * @param {boolean} isUpdate
+   * @param {XMLDocument} xml XML with positions data
+   * @param {boolean} isUpdate If true append to old data
    */
   fromXml(xml, isUpdate) {
     let positions = [];
@@ -139,16 +174,15 @@ export default class uTrack extends uData {
     } else {
       data.afterid = this._maxId;
     }
-    return uAjax.get('utils/getpositions.php', data, {
-      // loader: ui.trackTitle
-      }).then((xml) => {
+    return uAjax.get('utils/getpositions.php', data).then((xml) => {
       this.fromXml(xml, isUpdate);
-      return this.render();
+      this.render();
+      return xml;
     });
   }
 
   /**
-   *
+   * Save track data
    * @param {string} action
    * @return {Promise<void>}
    */
@@ -161,6 +195,9 @@ export default class uTrack extends uData {
         });
   }
 
+  /**
+   * Render track
+   */
   render() {
     this.emit(uEvent.TRACK_READY);
   }
