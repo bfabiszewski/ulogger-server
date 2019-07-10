@@ -229,6 +229,18 @@ function parsePosition(p, id) {
   };
 }
 
+function filterPosition(p) {
+  if(filterProvider !== '') {
+    if(filterProvider !== p.provider) {
+      return false;
+    }
+  }
+  if(filterAccuracy <= p.accuracy) {
+    return false;
+  }
+  return true;
+}
+
 function getPopupHtml(p, i, count) {
   var date = '–––';
   var time = '–––';
@@ -654,6 +666,16 @@ function setLang(lang) {
 function setUnits(unit) {
   units = unit;
   setCookie('units', unit, 30);
+  location.reload();
+}
+
+function setFilterProvider(filterProvider) {
+  setCookie('filterProvider', filterProvider);
+  location.reload();
+}
+
+function setFilterAccuracy(filterAccuracy) {
+  setCookie('filterAccuracy', filterAccuracy);
   location.reload();
 }
 

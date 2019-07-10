@@ -82,6 +82,8 @@
       var userid = '<?= ($displayUserId) ? $displayUserId : -1 ?>';
       var trackid = '<?= ($displayTrackId) ? $displayTrackId : -1 ?>';
       var units = '<?= uConfig::$units ?>';
+      var filterAccuracy = '<?= uConfig::$filterAccuracy ?>';
+      var filterProvider = '<?= uConfig::$filterProvider ?>';
       var mapapi = '<?= uConfig::$mapapi ?>';
       var gkey = '<?= !empty(uConfig::$gkey) ? uConfig::$gkey : "null" ?>';
       var ol_layers = <?= json_encode(uConfig::$ol_layers) ?>;
@@ -176,6 +178,31 @@
               <?php foreach ($langsArr as $langCode => $langName): ?>
                 <option value="<?= $langCode ?>"<?= (uConfig::$lang == $langCode) ? " selected" : "" ?>><?= $langName ?></option>
               <?php endforeach; ?>
+            </select>
+          </form>
+        </div>
+
+        <div id="filterProvider">
+          <div class="menutitle"><?= $lang["filterProvider"] ?></div>
+          <form>
+            <select name="provider" onchange="setFilterProvider(this.options[this.selectedIndex].value);">
+              <option value=""<?= (uConfig::$filterProvider == "") ? " selected" : "" ?>><?= $lang["allProviders"] ?></option>
+              <option value="gps"<?= (uConfig::$filterProvider == "gps") ? " selected" : "" ?>><?= $lang["gps"] ?></option>
+              <option value="network"<?= (uConfig::$filterProvider == "network") ? " selected" : "" ?>><?= $lang["network"] ?></option>
+            </select>
+          </form>
+        </div>
+
+        <div id="filterAccuracy">
+          <div class="menutitle"><?= $lang["filterAccuracy"] ?></div>
+          <form>
+            <select name="filterAccuracy" onchange="setFilterAccuracy(this.options[this.selectedIndex].value);">
+              <option value="100000"<?= (uConfig::$filterAccuracy == "100000") ? " selected" : "" ?>><?= $lang["allAccuracies"] ?></option>
+              <option value="10"<?= (uConfig::$filterAccuracy == "10") ? " selected" : "" ?>>10m</option>
+              <option value="20"<?= (uConfig::$filterAccuracy == "20") ? " selected" : "" ?>>20m</option>
+              <option value="30"<?= (uConfig::$filterAccuracy == "30") ? " selected" : "" ?>>30m</option>
+              <option value="50"<?= (uConfig::$filterAccuracy == "50") ? " selected" : "" ?>>50m</option>
+              <option value="100"<?= (uConfig::$filterAccuracy == "100") ? " selected" : "" ?>>100m</option>
             </select>
           </form>
         </div>

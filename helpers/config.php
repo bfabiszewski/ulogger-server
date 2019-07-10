@@ -78,6 +78,11 @@
     // units
     static $units = "metric";
 
+    // filters
+    static $filterAccuracy = 10000;
+    static $filterProvider = '';
+
+
     static $strokeWeight = 2;
     static $strokeColor = '#ff0000';
     static $strokeOpacity = 1;
@@ -125,6 +130,8 @@
       if (isset($interval)) { self::$interval = (int) $interval; }
       if (isset($lang)) { self::$lang = $lang; }
       if (isset($units)) { self::$units = $units; }
+      if (isset($filterAccuracy)) { self::$filterAccuracy = $filterAccuracy; }
+      if (isset($filterProvider)) { self::$filterProvider = $filterProvider; }
       if (isset($strokeWeight)) { self::$strokeWeight = $strokeWeight; }
       if (isset($strokeColor)) { self::$strokeColor = $strokeColor; }
       if (isset($strokeOpacity)) { self::$strokeOpacity = $strokeOpacity; }
@@ -142,6 +149,8 @@
       if (isset($_COOKIE["ulogger_api"])) { self::$mapapi = $_COOKIE["ulogger_api"]; }
       if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
       if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
+      if (isset($_COOKIE["ulogger_filterAccuracy"])) { self::$filterAccuracy = $_COOKIE["ulogger_filterAccuracy"]; }
+      if (isset($_COOKIE["ulogger_filterProvider"])) { self::$filterProvider = $_COOKIE["ulogger_filterProvider"]; }
       if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
     }
 
