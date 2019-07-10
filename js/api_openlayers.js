@@ -301,7 +301,6 @@ function displayTrack(xml, update) {
   for (var i = 0; i < posLen; i++) {
     var p = parsePosition(positions[i], i);
     if (!filterPosition(p)) continue;
-    console.log(p)
     totalMeters += p.distance;
     totalSeconds += p.seconds;
     p.totalMeters = totalMeters;
