@@ -55,7 +55,7 @@ CREATE TABLE `positions` (
   `accuracy` int(11) DEFAULT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
-  `image_id` int(11) DEFAULT NULL,
+  `image` varchar(100) DEFAULT NULL,
   INDEX `idx_ptrack_id` (`track_id`),
   INDEX `index_puser_id` (`user_id`),
   FOREIGN KEY(`user_id`) REFERENCES `users`(`id`),

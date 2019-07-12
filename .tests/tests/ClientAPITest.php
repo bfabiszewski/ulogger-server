@@ -225,7 +225,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
@@ -246,11 +246,11 @@ class ClientAPITest extends UloggerAPITestCase {
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
       "comment" => $this->testComment,
-      "image_id" => $this->testImageId
+      "image" => $this->testImage
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
-      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -275,7 +275,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
@@ -306,7 +306,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
 
@@ -343,7 +343,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
 

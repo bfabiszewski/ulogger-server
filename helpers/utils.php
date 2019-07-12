@@ -165,6 +165,27 @@
       return self::requestInt($name, $default, INPUT_GET);
     }
 
+    public static function requestFile($name, $default = NULL) {
+      if (isset($_FILES[$name])) {
+        $files = $_FILES[$name];
+        if (isset($files["name"]) && isset($files["type"]) && isset($files["size"]) && isset($files["tmp_name"])) {
+          return $_FILES[$name];
+        }
+      }
+      return $default;
+    }
+
+    /**
+     * @param string $name Input name
+     * @param boolean $checkMime Optionally check mime with known types
+     * @return array File metadata array
+     * @throws Exception Upload exception
+     * @throws ErrorException Internal server exception
+     */
+    public static function requireFile($name, $checkMime = false) {
+      return uUpload::sanitizeUpload($_FILES[$name], $checkMime);
+    }
+
     private static function requestString($name, $default, $type) {
       if (is_string(($val = self::requestValue($name, $default, $type)))) {
         return trim($val);

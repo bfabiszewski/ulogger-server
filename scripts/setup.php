@@ -208,7 +208,7 @@ function getQueries($dbDriver) {
                       `accuracy` int(11) DEFAULT NULL,
                       `provider` varchar(100) DEFAULT NULL,
                       `comment` varchar(255) DEFAULT NULL,
-                      `image_id` int(11) DEFAULT NULL,
+                      `image` varchar(100) DEFAULT NULL,
                       INDEX `idx_track_id` (`track_id`),
                       INDEX `idx_user_id` (`user_id`),
                       FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
@@ -249,7 +249,7 @@ function getQueries($dbDriver) {
                       accuracy INT DEFAULT NULL,
                       provider VARCHAR(100) DEFAULT NULL,
                       comment VARCHAR(255) DEFAULT NULL,
-                      image_id INT DEFAULT NULL,
+                      image VARCHAR(100) DEFAULT NULL,
                       FOREIGN KEY(user_id) REFERENCES $tUsers(id),
                       FOREIGN KEY(track_id) REFERENCES $tTracks(id)
                     )";
@@ -289,7 +289,7 @@ function getQueries($dbDriver) {
                     `accuracy` integer DEFAULT NULL,
                     `provider` varchar(100) DEFAULT NULL,
                     `comment` varchar(255) DEFAULT NULL,
-                    `image_id` integer DEFAULT NULL,
+                    `image` varchar(100) DEFAULT NULL,
                     FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
                     FOREIGN KEY(`track_id`) REFERENCES `$tTracks`(`id`)
                   )";

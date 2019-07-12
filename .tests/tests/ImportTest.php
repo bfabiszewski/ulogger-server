@@ -88,12 +88,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id  FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image  FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 
@@ -110,7 +110,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -204,12 +204,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -304,12 +304,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -385,12 +385,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -472,12 +472,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $expected = [
@@ -493,7 +493,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -584,12 +584,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $expected = [
@@ -605,7 +605,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }

@@ -36,7 +36,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   protected $testAccuracy = 10;
   protected $testProvider = "gps";
   protected $testComment = "test comment";
-  protected $testImageId = 1;
+  protected $testImage = "1234_1502974402_5d1a1960335cf.jpg";
 
   // Fixes PostgreSQL: "cannot truncate a table referenced in a foreign key constraint"
   protected function getSetUpOperation() {
