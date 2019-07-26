@@ -43,6 +43,8 @@ $langSetup["scriptdesc"] = "Ten skrypt utworzy tablice niezbędne do działania 
 $langSetup["scriptdesc2"] = "Następnie skrypt poprosi o utworzenie konta do logowania w aplikacji µlogger.";
 $langSetup["startbutton"] = "Naciśnij, aby rozpocząć";
 $langSetup["restartbutton"] = "Uruchom ponownie";
+$langSetup["optionwarn"] = "Opcja %s w ustawieniach PHP musi mieć wartość %s."; // substitutes option name and value
+$langSetup["extensionwarn"] = "Wymagane rozszerzenie PHP %s jest niedostępne."; // substitutes extension name
 
 
 // application strings

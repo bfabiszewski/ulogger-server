@@ -30,14 +30,16 @@
      * @var array
      */
     private static $languages = [
-      "en" => "English",
-      "pl" => "Polski",
+      "cs" => "Čeština",
       "de" => "Deutsch",
-      "hu" => "Magyar",
+      "en" => "English",
+      "es" => "Español",
       "fr" => "Français",
       "it" => "Italiano",
-      "es" => "Español",
+      "hu" => "Magyar",
       "nl" => "Nederlands",
+      "pl" => "Polski",
+      "ru" => "Русский",
       "zh" => "中文"
     ];
 

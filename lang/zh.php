@@ -43,6 +43,8 @@ $langSetup["scriptdesc"] = "這個腳本將會為ulogger建起其所需的數據
 $langSetup["scriptdesc2"] = "執行完成後腳本會請您新建一個µlogger的賬戶，您需要為其設置用戶名和密碼。";
 $langSetup["startbutton"] = "開始執行";
 $langSetup["restartbutton"] = "重新啟動";
+$langSetup["optionwarn"] = "PHP configuration option %s must be set to %s."; // substitutes option name and value
+$langSetup["extensionwarn"] = "Required PHP extension %s is not available."; // substitutes extension name
 
 
 // application strings

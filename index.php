@@ -30,7 +30,6 @@
 
   $lang = (new uLang(uConfig::$lang))->getStrings();
   $langsArr = uLang::getLanguages();
-  asort($langsArr);
 
   $auth = new uAuth();
   if ($action == "auth") {

@@ -43,6 +43,8 @@ $langSetup["scriptdesc"] = "This script will set up tables needed for µlogger (
 $langSetup["scriptdesc2"] = "When done the script will ask you to provide user name and password for your µlogger user.";
 $langSetup["startbutton"] = "Press to start";
 $langSetup["restartbutton"] = "Restart";
+$langSetup["optionwarn"] = "PHP configuration option %s must be set to %s."; // substitutes option name and value
+$langSetup["extensionwarn"] = "Required PHP extension %s is not available."; // substitutes extension name
 
 
 // application strings
