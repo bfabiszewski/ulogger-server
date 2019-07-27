@@ -366,7 +366,8 @@ export default class uUI {
         <div><img alt="${lang.strings['track']}" title="${lang.strings['track']}" src="images/route_dark.svg"> ${uUtils.htmlEncode(pos.trackname)}</div>
         </div>
         <div id="pbody">
-        ${(pos.comment != null) ? `<div id="pcomments">${uUtils.htmlEncode(pos.comment)}</div>` : ''}
+        ${(pos.hasComment()) ? `<div id="pcomments">${uUtils.htmlEncode(pos.comment)}</div>` : ''}
+        ${(pos.hasImage()) ? `<div id="pimage"><img src="uploads/${pos.image}" alt="image"></div>` : ''}
         <div id="pleft">
         <img class="icon" alt="${lang.strings['time']}" title="${lang.strings['time']}" src="images/calendar_dark.svg"> ${date}<br>
         <img class="icon" alt="${lang.strings['time']}" title="${lang.strings['time']}" src="images/clock_dark.svg"> ${time}<br>

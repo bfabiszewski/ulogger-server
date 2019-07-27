@@ -69,7 +69,8 @@ if (!empty($positionsArr)) {
       $xml->writeElement("timestamp", $position->timestamp);
       $xml->writeElement("accuracy", $position->accuracy);
       $xml->writeElement("provider", $position->provider);
-      $xml->writeElement("comments", $position->comment);
+      $xml->writeElement("comment", $position->comment);
+      $xml->writeElement("image", $position->image);
       $xml->writeElement("username", $position->userLogin);
       $xml->writeElement("trackid", $position->trackId);
       $xml->writeElement("trackname", $position->trackName);

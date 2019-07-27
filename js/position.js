@@ -30,6 +30,7 @@ import uUtils from './utils.js';
  * @property {?number} accuracy
  * @property {?string} provider
  * @property {?string} comment
+ * @property {?string} image
  * @property {string} username
  * @property {string} trackname
  * @property {number} trackid
@@ -55,7 +56,8 @@ export default class uPosition {
     position.bearing = uUtils.getNodeAsInt(xml, 'bearing'); // may be null
     position.accuracy = uUtils.getNodeAsInt(xml, 'accuracy'); // may be null
     position.provider = uUtils.getNode(xml, 'provider'); // may be null
-    position.comments = uUtils.getNode(xml, 'comments'); // may be null
+    position.comment = uUtils.getNode(xml, 'comment'); // may be null
+    position.image = uUtils.getNode(xml, 'image'); // may be null
     position.username = uUtils.getNode(xml, 'username');
     position.trackname = uUtils.getNode(xml, 'trackname');
     position.trackid = uUtils.getNodeAsInt(xml, 'trackid');
@@ -65,5 +67,19 @@ export default class uPosition {
     position.totalDistance = 0;
     position.totalSeconds = 0;
     return position;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  hasComment() {
+    return (this.comment != null && this.comment.length);
+  }
+
+  /**
+   * @return {boolean}
+   */
+  hasImage() {
+    return (this.image != null && this.image.length);
   }
 }

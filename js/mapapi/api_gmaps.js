@@ -194,6 +194,8 @@ function setMarker(id, track) {
     marker.setIcon('images/marker-green.png');
   } else if (id === posLen - 1) {
     marker.setIcon('images/marker-red.png');
+  } else if (position.hasComment() || position.hasImage()) {
+    marker.setIcon('images/marker-gray.png');
   } else {
     marker.setIcon('images/marker-white.png');
   }

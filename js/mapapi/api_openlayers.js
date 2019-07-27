@@ -176,6 +176,10 @@ function initStyles() {
     opacity: 0.7,
     src: 'images/marker-white.png'
   });
+  const iconGray = new ol.style.Icon({
+    anchor: [ 0.5, 1 ],
+    src: 'images/marker-gray.png'
+  });
   const iconGold = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
     src: 'images/marker-gold.png'
@@ -188,6 +192,9 @@ function initStyles() {
   });
   olStyles['white'] = new ol.style.Style({
     image: iconWhite
+  });
+  olStyles['gray'] = new ol.style.Style({
+    image: iconGray
   });
   olStyles['gold'] = new ol.style.Style({
     image: iconGold
@@ -424,6 +431,8 @@ function setMarker(id, track) {
     iconStyle = olStyles['green'];
   } else if (id === posLen - 1) {
     iconStyle = olStyles['red'];
+  } else if (position.hasComment() || position.hasImage()) {
+    iconStyle = olStyles['gray'];
   } else {
     iconStyle = olStyles['white'];
   }

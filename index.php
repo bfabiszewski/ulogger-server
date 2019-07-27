@@ -75,8 +75,8 @@
   <head>
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
-    <script type="module" src="js/ulogger.js"></script>
-      <!--    <script src="dist/ulogger.js"></script>-->
+    <script src="js/ulogger.js" type="module"></script>
+    <script src="js/bundle.js" defer nomodule></script>
   </head>
 
   <body>
