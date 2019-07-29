@@ -331,8 +331,6 @@ button > * {
   padding-top: .5em;
 }
 
-.show { display: block; }
-
 .icon { height: 1.4em; }
 
 .menu-title { text-decoration: underline; }

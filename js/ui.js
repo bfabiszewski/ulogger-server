@@ -421,10 +421,10 @@ export default class uUI {
    * Toggle user menu visibility
    */
   showUserMenu() {
-    if (this.userDropdown.classList.contains('show')) {
-      this.userDropdown.classList.remove('show');
+    if (this.userDropdown.style.display === 'block') {
+      this.userDropdown.style.display = 'none';
     } else {
-      this.userDropdown.classList.add('show');
+      this.userDropdown.style.display = 'block';
       window.addEventListener('click', this.hideUserMenu, true);
     }
   }
@@ -435,7 +435,7 @@ export default class uUI {
    */
   hideUserMenu(e) {
     const parent = e.target.parentElement;
-    this.userDropdown.classList.remove('show');
+    this.userDropdown.style.display = 'none';
     window.removeEventListener('click', this.hideUserMenu, true);
     if (!parent.classList.contains('dropdown')) {
       e.stopPropagation();
