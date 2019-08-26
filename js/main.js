@@ -229,6 +229,27 @@ function parsePosition(p, id) {
   };
 }
 
+function coordStr(pos, islon)
+{
+   var ipos = Math.floor(pos);
+   var dec = ((pos - Math.floor(pos)) * 60).toFixed(1);
+   var dir;
+   var pad;
+
+   if (islon)
+   {
+      dir = pos < 0 ? 'W' : 'E';
+      pad = pos < 10 ? '00' : (pos < 100 ? '0' : '');
+   }
+   else
+   {
+      dir = pos < 0 ? 'S' : 'N';
+      pad = pos < 10 ? '0' : '';
+   }
+
+   return sprintf("%s%d° %s%d %s", pad, ipos, dec < 10 ? '0' : '', dec, dir);
+}
+
 function getPopupHtml(p, i, count) {
   var date = '–––';
   var time = '–––';
@@ -271,11 +292,12 @@ function getPopupHtml(p, i, count) {
     '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/calendar_dark.svg"> ' + date + '<br>' +
     '<img class="icon" alt="' + lang['time'] + '" title="' + lang['time'] + '" src="images/clock_dark.svg"> ' + time + '<br>' +
     ((p.speed != null) ? '<img class="icon" alt="' + lang['speed'] + '" title="' + lang['speed'] + '" src="images/speed_dark.svg"> ' +
-    (p.speed.toKmH() * factor_kmh) + ' ' + unit_kmh + '<br>' : '') +
+    (p.speed.toKmH() * factor_kmh).toFixed(1) + ' ' + unit_kmh + '<br>' : '') +
     ((p.altitude != null) ? '<img class="icon" alt="' + lang['altitude'] + '" title="' + lang['altitude'] + '" src="images/altitude_dark.svg"> ' +
     (p.altitude * factor_m).toFixed() + ' ' + unit_m + '<br>' : '') +
     ((p.accuracy != null) ? '<img class="icon" alt="' + lang['accuracy'] + '" title="' + lang['accuracy'] + '" src="images/accuracy_dark.svg"> ' +
     (p.accuracy * factor_m).toFixed() + ' ' + unit_m + provider + '<br>' : '') +
+    '<img class="icon" alt="' + lang['position'] + '" title="' + lang['position'] + '" src="images/position.svg"> ' + coordStr(p.latitude, 0) + ' ' + coordStr(p.longitude, 1) + '<br>' +
     '</div>' +
     stats +
     '</div><div id="pfooter">' + sprintf(lang['pointof'], i + 1, count) + '</div>' +

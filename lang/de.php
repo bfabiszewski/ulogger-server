@@ -62,6 +62,7 @@ $lang["close"] = "Schließen";
 $lang["time"] = "Zeit";
 $lang["speed"] = "Geschwindigkeit";
 $lang["accuracy"] = "Genauigkeit";
+$lang["position"] = "Position";
 $lang["altitude"] = "Höhe";
 $lang["ttime"] = "Gesamte Zeit";
 $lang["aspeed"] = "Durchschnittstempo";
