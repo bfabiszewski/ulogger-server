@@ -515,4 +515,45 @@ export default class uUI {
   static toggleLatest() {
     config.showLatest = !config.showLatest;
   }
+
+  /**
+   * Get SVG marker path
+   * @param {boolean} isLarge Large marker with hole if true
+   * @return {string}
+   */
+  static getMarkerPath(isLarge) {
+    const markerHole = 'M15,34.911c0,0,0.359-3.922,1.807-8.588c0.414-1.337,1.011-2.587,2.495-4.159' +
+      'c1.152-1.223,3.073-2.393,3.909-4.447c1.681-6.306-3.676-9.258-8.211-9.258c-4.536,0-9.893,2.952-8.211,9.258' +
+      'c0.836,2.055,2.756,3.225,3.91,4.447c1.484,1.572,2.08,2.822,2.495,4.159C14.64,30.989,15,34.911,15,34.911z M18,15.922' +
+      'c0,1.705-1.342,3.087-2.999,3.087c-1.657,0-3-1.382-3-3.087c0-1.704,1.343-3.086,3-3.086C16.658,12.836,18,14.218,18,15.922z';
+    const marker = 'M14.999,34.911c0,0,0.232-1.275,1.162-4.848c0.268-1.023,0.652-1.98,1.605-3.184' +
+      'c0.742-0.937,1.975-1.832,2.514-3.404c1.082-4.828-2.363-7.088-5.281-7.088c-2.915,0-6.361,2.26-5.278,7.088' +
+      'c0.538,1.572,1.771,2.468,2.514,3.404c0.953,1.203,1.337,2.16,1.604,3.184C14.77,33.635,14.999,34.911,14.999,34.911z';
+    return isLarge ? markerHole : marker;
+  }
+
+  /**
+   * Get marker extra mark
+   * @param {boolean} isLarge
+   * @return {string}
+   */
+  static getMarkerExtra(isLarge) {
+    const offset1 = isLarge ? 'M26.074,13.517' : 'M23.328,20.715';
+    const offset2 = isLarge ? 'M28.232,10.942' : 'M25.486,18.141';
+    return `<path fill="none" stroke="red" stroke-width="2" d="${offset1}c0-3.961-3.243-7.167-7.251-7.167"/>
+            <path fill="none" stroke="red" stroke-width="2" d="${offset2}c-0.5-4.028-3.642-7.083-7.724-7.542"/>`;
+  }
+
+  /**
+   * Get inline SVG source
+   * @param {string} fill
+   * @param {boolean=} isLarge
+   * @param {boolean=} isExtra
+   * @return {string}
+   */
+  static getSvgSrc(fill, isLarge, isExtra) {
+    const svg = `<svg viewBox="0 0 30 35" width="30px" height="35px" xmlns="http://www.w3.org/2000/svg">
+      <g><path stroke="black" fill="${fill}" d="${uUI.getMarkerPath(isLarge)}"/>${isExtra ? uUI.getMarkerExtra(isLarge) : ''}</g></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
 }

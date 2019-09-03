@@ -174,6 +174,19 @@ function clearMap() {
 }
 
 /**
+ * @param {string} fill Fill color
+ * @param {boolean} isLarge Is large icon
+ * @param {boolean} isExtra Is styled with extra mark
+ * @return {google.maps.Icon}
+ */
+function getMarkerIcon(fill, isLarge, isExtra) {
+  return {
+    anchor: new google.maps.Point(15, 35),
+    url: uUI.getSvgSrc(fill, isLarge, isExtra)
+  };
+}
+
+/**
  * Set marker
  * @param {uTrack} track
  * @param {number} id
@@ -188,17 +201,14 @@ function setMarker(id, track) {
     title: (new Date(position.timestamp * 1000)).toLocaleString(),
     map: map
   });
-  if (config.showLatest) {
-    marker.setIcon('images/marker-red.png');
+  const isExtra = position.hasComment() || position.hasImage();
+  let icon = getMarkerIcon(isExtra ? config.colorExtra : config.colorNormal, false, isExtra);
+  if (id === posLen - 1) {
+    icon = getMarkerIcon(config.colorStop, true, isExtra);
   } else if (id === 0) {
-    marker.setIcon('images/marker-green.png');
-  } else if (id === posLen - 1) {
-    marker.setIcon('images/marker-red.png');
-  } else if (position.hasComment() || position.hasImage()) {
-    marker.setIcon('images/marker-gray.png');
-  } else {
-    marker.setIcon('images/marker-white.png');
+    icon = getMarkerIcon(config.colorStart, true, isExtra);
   }
+  marker.setIcon(icon);
   // popup
   const popup = new google.maps.InfoWindow();
 
@@ -233,7 +243,7 @@ function animateMarker(id) {
     clearTimeout(timeoutHandle);
   }
   const icon = markers[id].getIcon();
-  markers[id].setIcon('images/marker-gold.png');
+  markers[id].setIcon(getMarkerIcon(config.colorHilite, false, false));
   markers[id].setAnimation(google.maps.Animation.BOUNCE);
   timeoutHandle = setTimeout(() => {
     markers[id].setIcon(icon);

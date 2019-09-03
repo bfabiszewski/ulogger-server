@@ -126,6 +126,12 @@ class uConstants {
         this.config.unit_km = 'nm';
       }
       this.config.showLatest = false;
+      // marker colors
+      this.config.colorNormal = '#fff';
+      this.config.colorStart = '#55b500';
+      this.config.colorStop = '#ff6a00';
+      this.config.colorExtra = '#ccc';
+      this.config.colorHilite = '#feff6a';
     }
   }
 }

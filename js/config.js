@@ -293,4 +293,74 @@ export default class uConfig {
       this.notify('showLatest');
     }
   }
+
+  /**
+   * @return {string}
+   */
+  get colorNormal() {
+    return this._colorNormal;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set colorNormal(value) {
+    this._colorNormal = value;
+  }
+
+  /**
+   * @return {string}
+   */
+  get colorStart() {
+    return this._colorStart;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set colorStart(value) {
+    this._colorStart = value;
+  }
+
+  /**
+   * @return {string}
+   */
+  get colorStop() {
+    return this._colorStop;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set colorStop(value) {
+    this._colorStop = value;
+  }
+
+  /**
+   * @return {string}
+   */
+  get colorExtra() {
+    return this._colorExtra;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set colorExtra(value) {
+    this._colorExtra = value;
+  }
+
+  /**
+   * @return {string}
+   */
+  get colorHilite() {
+    return this._colorHilite;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set colorHilite(value) {
+    this._colorHilite = value;
+  }
 }

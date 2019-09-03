@@ -160,44 +160,57 @@ function initLayers() {
   initLayerSwitcher();
 }
 
-
 function initStyles() {
   olStyles = {};
-  const iconRed = new ol.style.Icon({
+  const iconStart = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
-    src: 'images/marker-red.png'
+    src: uUI.getSvgSrc(config.colorStart, true)
   });
-  const iconGreen = new ol.style.Icon({
+  const iconStop = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
-    src: 'images/marker-green.png'
+    src: uUI.getSvgSrc(config.colorStop, true)
   });
-  const iconWhite = new ol.style.Icon({
+  const iconStartExtra = new ol.style.Icon({
+    anchor: [ 0.5, 1 ],
+    src: uUI.getSvgSrc(config.colorStart, true, true)
+  });
+  const iconStopExtra = new ol.style.Icon({
+    anchor: [ 0.5, 1 ],
+    src: uUI.getSvgSrc(config.colorStop, true, true)
+  });
+  const iconNormal = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
     opacity: 0.7,
-    src: 'images/marker-white.png'
+    src: uUI.getSvgSrc(config.colorNormal, false)
   });
-  const iconGray = new ol.style.Icon({
+  const iconExtra = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
-    src: 'images/marker-gray.png'
+    src: uUI.getSvgSrc(config.colorExtra, false, true)
   });
-  const iconGold = new ol.style.Icon({
+  const iconHilite = new ol.style.Icon({
     anchor: [ 0.5, 1 ],
-    src: 'images/marker-gold.png'
+    src: uUI.getSvgSrc(config.colorHilite, false)
   });
-  olStyles['red'] = new ol.style.Style({
-    image: iconRed
+  olStyles['start'] = new ol.style.Style({
+    image: iconStart
   });
-  olStyles['green'] = new ol.style.Style({
-    image: iconGreen
+  olStyles['stop'] = new ol.style.Style({
+    image: iconStop
   });
-  olStyles['white'] = new ol.style.Style({
-    image: iconWhite
+  olStyles['startExtra'] = new ol.style.Style({
+    image: iconStartExtra
   });
-  olStyles['gray'] = new ol.style.Style({
-    image: iconGray
+  olStyles['stopExtra'] = new ol.style.Style({
+    image: iconStopExtra
   });
-  olStyles['gold'] = new ol.style.Style({
-    image: iconGold
+  olStyles['normal'] = new ol.style.Style({
+    image: iconNormal
+  });
+  olStyles['extra'] = new ol.style.Style({
+    image: iconExtra
+  });
+  olStyles['hilite'] = new ol.style.Style({
+    image: iconHilite
   });
 }
 
@@ -411,6 +424,24 @@ function clearMap() {
   }
 }
 
+function getMarkerStyle(position, id, posLen) {
+  let iconStyle = olStyles['normal'];
+  if (position.hasComment() || position.hasImage()) {
+    if (id === posLen - 1) {
+      iconStyle = olStyles['stopExtra'];
+    } else if (id === 0) {
+      iconStyle = olStyles['startExtra'];
+    } else {
+      iconStyle = olStyles['extra'];
+    }
+  } else if (id === posLen - 1) {
+    iconStyle = olStyles['stop'];
+  } else if (id === 0) {
+    iconStyle = olStyles['start'];
+  }
+  return iconStyle;
+}
+
 /**
  * Set marker
  * @param {number} id
@@ -424,18 +455,7 @@ function setMarker(id, track) {
     geometry: new ol.geom.Point(ol.proj.fromLonLat([ position.longitude, position.latitude ]))
   });
 
-  let iconStyle;
-  if (config.showLatest) {
-    iconStyle = olStyles['red'];
-  } else if (id === 0) {
-    iconStyle = olStyles['green'];
-  } else if (id === posLen - 1) {
-    iconStyle = olStyles['red'];
-  } else if (position.hasComment() || position.hasImage()) {
-    iconStyle = olStyles['gray'];
-  } else {
-    iconStyle = olStyles['white'];
-  }
+  const iconStyle = getMarkerStyle(position, id, posLen);
   marker.setStyle(iconStyle);
   marker.setId(id);
   layerMarkers.getSource().addFeature(marker);
@@ -448,7 +468,7 @@ function setMarker(id, track) {
 function animateMarker(id) {
   const marker = layerMarkers.getSource().getFeatureById(id);
   const initStyle = marker.getStyle();
-  const iconStyle = olStyles['gold'];
+  const iconStyle = olStyles['hilite'];
   marker.setStyle(iconStyle);
   setTimeout(() => marker.setStyle(initStyle), 2000);
 }
