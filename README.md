@@ -8,6 +8,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 
 ## Requirements:
 - PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/04b2b771398d8511bfa6fe8a85d58162bd32fc46/helpers/user.php#L24))
+- PHP extensions: ctype, json, pdo (with respective drivers), session, simplexml, xmlwriter, xdebug (only for tests)
 - MySQL, PostgreSQL or SQLite (over PDO driver)
 - browser with javascript enabled, cookies for authentication and saving preferences
 
@@ -29,7 +30,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Install
 - Download zipped archive or clone the repository on your computer
 - Move it to your web server directory (unzip if needed)
-- Create database and database user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script)
+- Create database and database user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script, SEQUENCES for postgreSQL)
 - Create a copy of `config.default.php` and rename it to `config.php`. Customize it and add database credentials
 - Edit `scripts/setup.php` script, enable it by setting [$enabled](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/setup.php#L21) value to `true`
 - Make sure you have a web server running with PHP and chosen database
@@ -52,7 +53,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - `composer install`
 - Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup.
   - `docker build -t ulogger .`
-  - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 ulogger`
+  - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 -e ULOGGER_ENABLE_SETUP=1 ulogger`
 - Use environment variables (or create `.env` file in `.tests/` folder) to set up connection details (below database credentials are docker defaults)
   - `DB_DSN="mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8"`
   - `DB_USER=ulogger`
