@@ -104,34 +104,6 @@ class uConstants {
       this.config.strokeWeight = uUtils.getNodeAsInt(configNode[0], 'strokeWeight');
       this.config.strokeColor = uUtils.getNode(configNode[0], 'strokeColor');
       this.config.strokeOpacity = uUtils.getNodeAsInt(configNode[0], 'strokeOpacity');
-      this.config.factor_kmh = 1;
-      this.config.unit_kmh = 'km/h';
-      this.config.factor_m = 1;
-      this.config.unit_m = 'm';
-      this.config.factor_km = 1;
-      this.config.unit_km = 'km';
-      if (this.config.units === 'imperial') {
-        this.config.factor_kmh = 0.62; // to mph
-        this.config.unit_kmh = 'mph';
-        this.config.factor_m = 3.28; // to feet
-        this.config.unit_m = 'ft';
-        this.config.factor_km = 0.62; // to miles
-        this.config.unit_km = 'mi';
-      } else if (this.config.units === 'nautical') {
-        this.config.factor_kmh = 0.54; // to knots
-        this.config.unit_kmh = 'kt';
-        this.config.factor_m = 1; // meters
-        this.config.unit_m = 'm';
-        this.config.factor_km = 0.54; // to nautical miles
-        this.config.unit_km = 'nm';
-      }
-      this.config.showLatest = false;
-      // marker colors
-      this.config.colorNormal = '#fff';
-      this.config.colorStart = '#55b500';
-      this.config.colorStop = '#ff6a00';
-      this.config.colorExtra = '#ccc';
-      this.config.colorHilite = '#feff6a';
     }
   }
 }

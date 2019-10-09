@@ -21,6 +21,31 @@ import uEvent from './event.js';
 
 export default class uConfig {
 
+  constructor() {
+    this.inititialize();
+  }
+
+  inititialize() {
+    this.interval = 10;
+    this.units = 'metric';
+    this.mapapi = 'openlayers';
+    this.gkey = null;
+    this.ol_layers = {};
+    this.init_latitude = 52.23;
+    this.init_longitude = 21.01;
+    this.pass_regex = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{12,})');
+    this.strokeWeight = 2;
+    this.strokeColor = '#ff0000';
+    this.strokeOpacity = 1;
+    this.showLatest = false;
+    // marker colors
+    this.colorNormal = '#fff';
+    this.colorStart = '#55b500';
+    this.colorStop = '#ff6a00';
+    this.colorExtra = '#ccc';
+    this.colorHilite = '#feff6a';
+  }
+
   /**
    *
    * @param {uBinder} binder
@@ -65,6 +90,28 @@ export default class uConfig {
    */
   set units(value) {
     this._units = value;
+    if (this._units === 'imperial') {
+      this._factor_kmh = 0.62; // to mph
+      this._unit_kmh = 'mph';
+      this._factor_m = 3.28; // to feet
+      this._unit_m = 'ft';
+      this._factor_km = 0.62; // to miles
+      this._unit_km = 'mi';
+    } else if (this._units === 'nautical') {
+      this._factor_kmh = 0.54; // to knots
+      this._unit_kmh = 'kt';
+      this._factor_m = 1; // meters
+      this._unit_m = 'm';
+      this._factor_km = 0.54; // to nautical miles
+      this._unit_km = 'nm';
+    } else {
+      this._factor_kmh = 1;
+      this._unit_kmh = 'km/h';
+      this._factor_m = 1;
+      this._unit_m = 'm';
+      this._factor_km = 1;
+      this._unit_km = 'km';
+    }
   }
 
   /**
@@ -201,24 +248,10 @@ export default class uConfig {
   }
 
   /**
-   * @param {number} value
-   */
-  set factor_kmh(value) {
-    this._factor_kmh = value;
-  }
-
-  /**
    * @return {string}
    */
   get unit_kmh() {
     return this._unit_kmh;
-  }
-
-  /**
-   * @param {string} value
-   */
-  set unit_kmh(value) {
-    this._unit_kmh = value;
   }
 
   /**
@@ -229,24 +262,10 @@ export default class uConfig {
   }
 
   /**
-   * @param {number} value
-   */
-  set factor_m(value) {
-    this._factor_m = value;
-  }
-
-  /**
    * @return {string}
    */
   get unit_m() {
     return this._unit_m;
-  }
-
-  /**
-   * @param {string} value
-   */
-  set unit_m(value) {
-    this._unit_m = value;
   }
 
   /**
@@ -257,24 +276,10 @@ export default class uConfig {
   }
 
   /**
-   * @param {number} value
-   */
-  set factor_km(value) {
-    this._factor_km = value;
-  }
-
-  /**
    * @return {string}
    */
   get unit_km() {
     return this._unit_km;
-  }
-
-  /**
-   * @param {string} value
-   */
-  set unit_km(value) {
-    this._unit_km = value;
   }
 
   /**
