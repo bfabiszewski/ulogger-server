@@ -194,6 +194,7 @@
           <div class="menutitle u"><?= $lang["export"] ?></div>
           <a class="menulink" href="javascript:void(0);" onclick="exportFile('kml', userid, trackid);">kml</a>
           <a class="menulink" href="javascript:void(0);" onclick="exportFile('gpx', userid, trackid);">gpx</a>
+		  <a class="menulink" href="javascript:void(0);" onclick="exportFile('csv', userid, trackid);">csv</a>
         </div>
 
         <?php if ($auth->isAuthenticated()): ?>

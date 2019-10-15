@@ -246,6 +246,35 @@ if ($trackId && $userId) {
       $xml->flush();
 
       break;
+
+	case "csv":
+	    header('Content-Type: application/csv');
+	    header("Content-Disposition: attachment; filename=\"track" . $positionsArr[0]->trackId . ".csv\"");
+
+		$output = fopen('php://output', 'w');
+		fwrite($output, 'user,track name,time,lat,lon,altitude(' . $unit_m . '),accuracy(' . $unit_m . '),speed(' . $unit_kmh . '),total time,total distance(' . $unit_km . '),provider'. "\n");
+		$i = 0;
+	    foreach ($positionsArr as $position) {
+			$distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+			$seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+			$prevPosition = $position;
+			$totalMeters += $distance;
+			$totalSeconds += $seconds;
+			fwrite($output, $position->userLogin . "," .
+				   $positionsArr[0]->trackName. ",".
+				   date("Y-m-d H:i:s (e)", $position->timestamp) . "," .
+				   $position->latitude. ",". $position->longitude . "," .
+				   (!is_null($position->altitude) ? round($position->altitude * $factor_m)  : "") . "," .
+				   $position->accuracy. "," .
+				   (!is_null($position->speed) ? round($position->speed * 3.6 * $factor_kmh, 2)  : "") . "," .
+				   toHMS($totalSeconds) . "," .
+				   round($totalMeters / 1000 * $factor_km, 2) . "," .
+				   $position->provider .
+				   "\n");
+	    }
+		fflush($output);
+		fclose($output);
+	    break;
   }
 
 }
