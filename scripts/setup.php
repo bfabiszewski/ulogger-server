@@ -24,8 +24,8 @@ $enabled = false;
 /* -------------------------------------------- */
 /* no user modifications should be needed below */
 
-if (version_compare(PHP_VERSION, "5.4.0", "<")) {
-  die("Sorry, ulogger will not work with PHP version lower than 5.4 (you have " . PHP_VERSION . ")");
+if (version_compare(PHP_VERSION, "7.0.0", "<")) {
+  die("Sorry, ulogger will not work with PHP version lower than 7.0 (you have " . PHP_VERSION . ")");
 }
 
 define("ROOT_DIR", dirname(__DIR__));
