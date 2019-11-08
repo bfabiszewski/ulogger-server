@@ -109,14 +109,6 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (!function_exists("password_hash")) {
-      $messages[] = $langSetup["passfuncwarn"];
-      $messages[] = $langSetup["passfunchack"];
-      $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">//require_once(ROOT_DIR . \"/helpers/password.php\");</span><br>", "<br><span class=\"ok\">require_once(ROOT_DIR . \"/helpers/password.php\");</span>");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
-      break;
-    }
     if (!uConfig::isFileLoaded()) {
       $messages[] = $langSetup["createconfig"];
       $messages[] = $langSetup["dorestart"];
