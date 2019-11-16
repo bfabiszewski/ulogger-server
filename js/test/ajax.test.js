@@ -41,7 +41,7 @@ describe('Ajax tests', () => {
 
   it('should make POST request', () => {
     // when
-    uAjax.post(url);
+    uAjax.post(url).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.setRequestHeader).toHaveBeenCalledWith('Content-type', 'application/x-www-form-urlencoded');
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
@@ -49,7 +49,7 @@ describe('Ajax tests', () => {
 
   it('should make GET request', () => {
     // when
-    uAjax.get(url);
+    uAjax.get(url).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', url, true);
@@ -57,7 +57,7 @@ describe('Ajax tests', () => {
 
   it('should make GET request with parameters', () => {
     // when
-    uAjax.get(url, { p1: 1, p2: 'test' });
+    uAjax.get(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `${url}?p1=1&p2=test`, true);
     expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(null);
@@ -65,7 +65,7 @@ describe('Ajax tests', () => {
 
   it('should make POST request with parameters', () => {
     // when
-    uAjax.post(url, { p1: 1, p2: 'test' });
+    uAjax.post(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
     expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith('p1=1&p2=test');
@@ -73,7 +73,7 @@ describe('Ajax tests', () => {
 
   it('should make POST request with form data', () => {
     // when
-    uAjax.post(url, form);
+    uAjax.post(url, form).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
@@ -82,7 +82,7 @@ describe('Ajax tests', () => {
 
   it('should make GET request with form data', () => {
     // when
-    uAjax.get(url, form);
+    uAjax.get(url, form).catch(() => { /* ignore */ });
     // then
     expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
     expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `${url}?p1=test`, true);
