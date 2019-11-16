@@ -194,7 +194,7 @@
    /**
     * Get all users
     *
-    * @return array|bool Array of uUser users, false on error
+    * @return uUser[]|bool Array of uUser users, false on error
     */
     public static function getAll() {
       try {
