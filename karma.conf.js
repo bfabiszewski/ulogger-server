@@ -1,7 +1,15 @@
-/* eslint-disable no-undef,no-process-env */
+/* eslint-disable no-undef,no-process-env,no-underscore-dangle */
 // noinspection NpmUsedModulesInstalled
 process = require('process');
 process.env.CHROME_BIN = require('puppeteer').executablePath();
+
+const preprocessors = {};
+const reporters = [ 'progress' ];
+// don't preprocess files on debug run
+if (!process.env._INTELLIJ_KARMA_INTERNAL_PARAMETER_debug && !process.argv.includes('--debug')) {
+  preprocessors['src/*.js'] = 'karma-coverage-istanbul-instrumenter';
+  reporters.push('coverage-istanbul');
+}
 
 module.exports = function(config) {
   config.set({
@@ -16,15 +24,13 @@ module.exports = function(config) {
     // list of files / patterns to exclude
     exclude: [],
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'src/*.js': [ 'karma-coverage-istanbul-instrumenter' ]
-    },
+    preprocessors: preprocessors,
     coverageIstanbulInstrumenter: {
       esModules: true
     },
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'coverage-istanbul' ],
+    reporters: reporters,
     // web server port
     port: 9876,
     // enable / disable colors in the output (reporters and logs)
