@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(ROOT_DIR . "/helpers/db.php");
+require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 require_once(ROOT_DIR . "/helpers/upload.php");
 
@@ -332,7 +332,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
       $lon2 = deg2rad($target->longitude);
       $latD = $lat2 - $lat1;
       $lonD = $lon2 - $lon1;
-      $bearing = 2 * asin(sqrt(pow(sin($latD / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($lonD / 2), 2)));
+      $bearing = 2 * asin(sqrt((sin($latD / 2) ** 2) + cos($lat1) * cos($lat2) * (sin($lonD / 2) ** 2)));
       return $bearing * 6371000;
     }
 

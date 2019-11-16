@@ -49,42 +49,35 @@ if ($userId) {
   }
 }
 
-header("Content-type: text/xml");
-$xml = new XMLWriter();
-$xml->openURI("php://output");
-$xml->startDocument("1.0");
-$xml->setIndent(true);
-$xml->startElement('root');
-
-if (!empty($positionsArr)) {
+$result = [];
+if ($positionsArr === false) {
+  $result = [ "error" => true ];
+} else if (!empty($positionsArr)) {
   foreach ($positionsArr as $position) {
-    /** @var uPosition $prevPosition */
-    $xml->startElement("position");
-    $xml->writeAttribute("id", $position->id);
-      $xml->writeElement("latitude", $position->latitude);
-      $xml->writeElement("longitude", $position->longitude);
-      $xml->writeElement("altitude", ($position->altitude) ? round($position->altitude) : $position->altitude);
-      $xml->writeElement("speed", $position->speed);
-      $xml->writeElement("bearing", $position->bearing);
-      $xml->writeElement("timestamp", $position->timestamp);
-      $xml->writeElement("accuracy", $position->accuracy);
-      $xml->writeElement("provider", $position->provider);
-      $xml->writeElement("comment", $position->comment);
-      $xml->writeElement("image", $position->image);
-      $xml->writeElement("username", $position->userLogin);
-      $xml->writeElement("trackid", $position->trackId);
-      $xml->writeElement("trackname", $position->trackName);
-      $distance = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
-      $xml->writeElement("distance", round($distance));
-      $seconds = !$last && isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
-      $xml->writeElement("seconds", $seconds);
-    $xml->endElement();
+    $distance = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+    $seconds = !$last && isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+    $result[] = [
+      "id" => $position->id,
+      "latitude" => $position->latitude,
+      "longitude" => $position->longitude,
+      "altitude" => ($position->altitude) ? round($position->altitude) : $position->altitude,
+      "speed" => $position->speed,
+      "bearing" => $position->bearing,
+      "timestamp" => $position->timestamp,
+      "accuracy" => $position->accuracy,
+      "provider" => $position->provider,
+      "comment" => $position->comment,
+      "image" => $position->image,
+      "username" => $position->userLogin,
+      "trackid" => $position->trackId,
+      "trackname" => $position->trackName,
+      "distance" => round($distance),
+      "seconds" => $seconds
+    ];
     $prevPosition = $position;
   }
 }
-
-$xml->endElement();
-$xml->endDocument();
-$xml->flush();
+header("Content-type: application/json");
+echo json_encode($result);
 
 ?>
