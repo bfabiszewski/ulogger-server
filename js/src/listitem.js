@@ -17,37 +17,18 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import uAjax from './ajax.js';
-import uListItem from './listitem.js';
-
 /**
- * @class uUser
- * @property {number} id
- * @property {string} login
- * @property {string} [password]
+ * @interface
+ * @member {string} listId
+ * @member {string} listValue
  */
-export default class uUser extends uListItem {
+export default class uListItem {
   /**
-   * @param {number} id
-   * @param {string} login
+   * @param {string|number} id
+   * @param {string|number} value
    */
-  constructor(id, login) {
-    super(id, login);
-    this.id = id;
-    this.login = login;
-  }
-
-  /**
-   * @throws
-   * @return {Promise<uUser[], string>}
-   */
-  static fetchList() {
-    return uAjax.get('utils/getusers.php').then((_users) => {
-      const users = [];
-      for (const user of _users) {
-        users.push(new uUser(user.id, user.login));
-      }
-      return users;
-    });
+  constructor(id, value) {
+    this.listValue = String(id);
+    this.listText = String(value);
   }
 }

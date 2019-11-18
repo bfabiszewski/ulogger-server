@@ -46,7 +46,7 @@ describe('User tests', () => {
       spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
     });
 
-    it('should make successful request and user array', (done) => {
+    it('should make successful request and return user array', (done) => {
       // when
       spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validResponse));
       // then
