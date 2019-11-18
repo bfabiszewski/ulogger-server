@@ -18,9 +18,8 @@
  */
 
 /**
- * @interface
- * @member {string} listId
- * @member {string} listValue
+ * @property {string} listId
+ * @property {string} listValue
  */
 export default class uListItem {
   /**
