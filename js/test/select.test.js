@@ -67,7 +67,7 @@ describe('Select tests', () => {
     expect(select.element.options[0].defaultSelected).toBe(true);
     expect(select.element.options[0].selected).toBe(true);
     expect(select.element.options[0].text).toBe(head);
-    expect(select.element.options[0].value).toBe('0');
+    expect(select.element.options[0].value).toBe(uSelect.headValue);
   });
 
   it('should construct class instance and set options', () => {
@@ -119,7 +119,7 @@ describe('Select tests', () => {
     expect(select.element.options[0].defaultSelected).toBe(true);
     expect(select.element.options[0].selected).toBe(true);
     expect(select.element.options[0].text).toBe(head);
-    expect(select.element.options[0].value).toBe('0');
+    expect(select.element.options[0].value).toBe(uSelect.headValue);
     expect(select.element.options[1].disabled).toBe(false);
     expect(select.element.options[1].defaultSelected).toBe(false);
     expect(select.element.options[1].selected).toBe(false);
@@ -143,7 +143,7 @@ describe('Select tests', () => {
     expect(select.element.options[0].defaultSelected).toBe(true);
     expect(select.element.options[0].selected).toBe(false);
     expect(select.element.options[0].text).toBe(head);
-    expect(select.element.options[0].value).toBe('0');
+    expect(select.element.options[0].value).toBe(uSelect.headValue);
     expect(select.element.options[1].disabled).toBe(false);
     expect(select.element.options[1].defaultSelected).toBe(false);
     expect(select.element.options[1].selected).toBe(false);
@@ -179,7 +179,7 @@ describe('Select tests', () => {
     select.setOptions(options, options[1].listValue);
     // then
     expect(select.element.options.length).toBe(3);
-    expect(select.element.options[0].value).toBe('all');
+    expect(select.element.options[0].value).toBe(uSelect.allValue);
     expect(select.element.options[0].text).toBe(allText);
     expect(select.element.options[2].selected).toBe(true);
   });
@@ -195,7 +195,7 @@ describe('Select tests', () => {
     select.showAllOption(allText);
     // then
     expect(select.element.options.length).toBe(3);
-    expect(select.element.options[0].value).toBe('all');
+    expect(select.element.options[0].value).toBe(uSelect.allValue);
     expect(select.element.options[0].text).toBe(allText);
     expect(select.element.options[2].selected).toBe(true);
     // when
@@ -219,9 +219,9 @@ describe('Select tests', () => {
     select.setOptions(options, options[1].listValue);
     // then
     expect(select.element.options.length).toBe(4);
-    expect(select.element.options[0].value).toBe('0');
+    expect(select.element.options[0].value).toBe(uSelect.headValue);
     expect(select.element.options[0].text).toBe(head);
-    expect(select.element.options[1].value).toBe('all');
+    expect(select.element.options[1].value).toBe(uSelect.allValue);
     expect(select.element.options[1].text).toBe(allText);
     expect(select.element.options[3].selected).toBe(true);
   });
@@ -237,7 +237,7 @@ describe('Select tests', () => {
     select.showAllOption(allText);
     // then
     expect(select.element.options.length).toBe(4);
-    expect(select.element.options[1].value).toBe('all');
+    expect(select.element.options[1].value).toBe(uSelect.allValue);
     expect(select.element.options[1].text).toBe(allText);
     expect(select.element.options[3].selected).toBe(true);
     // when

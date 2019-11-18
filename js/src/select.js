@@ -64,16 +64,16 @@ export default class uSelect {
     }
     this.hasAllOption = true;
     const index = this.hasHead ? 1 : 0;
-    this.element.add(new Option(this.allText, 'all'), index);
+    this.element.add(new Option(this.allText, uSelect.allValue), index);
   }
 
   hideAllOption() {
     this.hasAllOption = false;
-    this.remove('all');
+    this.remove(uSelect.allValue);
   }
 
   addHead() {
-    const head = new Option(this.headText, '0', true, true);
+    const head = new Option(this.headText, uSelect.headValue, true, true);
     head.disabled = true;
     this.element.options.add(head, 0);
   }
@@ -115,10 +115,18 @@ export default class uSelect {
       this.addHead();
     }
     if (this.hasAllOption) {
-      this.element.add(new Option(this.allText, 'all', false, selected === 'all'));
+      this.element.add(new Option(this.allText, uSelect.allValue, false, selected === uSelect.allValue));
     }
     for (const option of options) {
       this.element.add(new Option(option.listText, option.listValue, false, selected === option.listValue));
     }
+  }
+
+  static get allValue() {
+    return 'all';
+  }
+
+  static get headValue() {
+    return '0';
   }
 }
