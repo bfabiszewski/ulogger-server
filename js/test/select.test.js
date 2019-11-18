@@ -251,4 +251,22 @@ describe('Select tests', () => {
     expect(select.element.options[2].selected).toBe(true);
   });
 
+  it('should remove option from select elements', () => {
+    // given
+    const select = new uSelect(element);
+    select.setOptions(options, options[1].listValue);
+
+    expect(select.element.options.length).toBe(options.length);
+    // when
+    select.remove(options[0].listValue);
+    // then
+    expect(select.element).toBe(element);
+    expect(select.element.options.length).toBe(options.length - 1);
+    expect(select.element.options[0].disabled).toBe(false);
+    expect(select.element.options[0].defaultSelected).toBe(false);
+    expect(select.element.options[0].selected).toBe(true);
+    expect(select.element.options[0].text).toBe(options[1].listText);
+    expect(select.element.options[0].value).toBe(options[1].listValue);
+  });
+
 });
