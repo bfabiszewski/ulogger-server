@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uTrack from '../src/track.js';
 import uUser from '../src/user.js';
 
 describe('User tests', () => {
@@ -32,6 +33,28 @@ describe('User tests', () => {
       // then
       expect(user.id).toBe(id);
       expect(user.login).toBe(login);
+    });
+
+    it('should call uTrack.fetchLatest method', () => {
+      // given
+      const id = 1;
+      const login = 'test';
+      const user = new uUser(id, login);
+      spyOn(uTrack, 'fetchLatest');
+      // when
+      user.fetchLastPosition();
+      // then
+      expect(uTrack.fetchLatest).toHaveBeenCalledWith(user);
+    });
+
+    it('should get class string representation', () => {
+      // given
+      const id = 1;
+      const login = 'test';
+      // when
+      const user = new uUser(id, login);
+      // then
+      expect(user.toString()).toBe(`[${id}, ${login}]`);
     });
   });
 
@@ -58,5 +81,6 @@ describe('User tests', () => {
         })
         .catch(() => done.fail('reject callback called'));
     });
+
   });
 });

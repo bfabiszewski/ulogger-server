@@ -26,8 +26,8 @@ export default class uObserve {
    * observe(obj, prop, observer) observes given property prop;
    * observe(obj, observer) observes all properties of object obj.
    * @param {Object} obj
-   * @param {(string|function)} p1
-   * @param {function=} p2
+   * @param {(string|ObserveCallback)} p1
+   * @param {ObserveCallback=} p2
    */
   static observe(obj, p1, p2) {
     if (typeof p2 === 'function') {
@@ -47,7 +47,7 @@ export default class uObserve {
    * Observe object's proporty. On change call observer
    * @param {Object} obj
    * @param {?string} property
-   * @param {function} observer
+   * @param {ObserveCallback} observer
    */
   static observeProperty(obj, property, observer) {
     this.addObserver(obj, observer, property);
@@ -60,6 +60,7 @@ export default class uObserve {
       set: (newValue) => {
         if (obj._values[property] !== newValue) {
           obj._values[property] = newValue;
+          console.log(`${property} = ` + (Array.isArray(newValue) && newValue.length ? `[${newValue[0]}, …](${newValue.length})` : newValue));
           uObserve.notify(obj._observers[property], newValue);
         }
         if (Array.isArray(obj[property])) {
@@ -75,7 +76,7 @@ export default class uObserve {
   /**
    * Recursively add observer to all properties
    * @param {Object} obj
-   * @param {function} observer
+   * @param {ObserveCallback} observer
    */
   static observeRecursive(obj, observer) {
     for (const prop in obj) {
@@ -88,7 +89,7 @@ export default class uObserve {
   /**
    * Observe array
    * @param {Object} arr
-   * @param {function} observer
+   * @param {ObserveCallback} observer
    */
   static observeArray(arr, observer) {
     this.addObserver(arr, observer);
@@ -97,6 +98,7 @@ export default class uObserve {
         const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
         descriptor.value = function () {
           const result = Array.prototype[operation].apply(arr, arguments);
+          console.log(`[${operation}] ` + arr.length ? `[${arr[0]}, …](${arr.length})` : arr);
           uObserve.notify(arr._observers, arr);
           return result;
         };
@@ -107,7 +109,7 @@ export default class uObserve {
   /**
    * Store observer in object
    * @param {Object} obj Object
-   * @param {function} observer Observer
+   * @param {ObserveCallback} observer Observer
    * @param {string=} property Optional property
    */
   static addObserver(obj, observer, property) {
@@ -130,7 +132,7 @@ export default class uObserve {
 
   /**
    * Notify observers
-   * @param {Set<function>} observers
+   * @param {Set<ObserveCallback>} observers
    * @param {*} value
    */
   static notify(observers, value) {
@@ -140,4 +142,10 @@ export default class uObserve {
       })();
     }
   }
+
+  /**
+   * Notify callback
+   * @callback ObserveCallback
+   * @param {*} value
+   */
 }

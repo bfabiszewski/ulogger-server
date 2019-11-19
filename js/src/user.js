@@ -19,6 +19,7 @@
 
 import uAjax from './ajax.js';
 import uListItem from './listitem.js';
+import uTrack from './track.js';
 
 /**
  * @class uUser
@@ -35,6 +36,13 @@ export default class uUser extends uListItem {
     super(id, login);
     this.id = id;
     this.login = login;
+  }
+
+  /**
+   * @return {Promise<uTrack, string>}
+   */
+  fetchLastPosition() {
+    return uTrack.fetchLatest(this);
   }
 
   /**

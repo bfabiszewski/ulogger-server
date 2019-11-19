@@ -18,8 +18,9 @@
  */
 
 /**
- * @property {string} listId
+ * @class uListItem
  * @property {string} listValue
+ * @property {string} listText
  */
 export default class uListItem {
   /**
@@ -29,5 +30,12 @@ export default class uListItem {
   constructor(id, value) {
     this.listValue = String(id);
     this.listText = String(value);
+  }
+
+  /**
+   * @return {string}
+   */
+  toString() {
+    return `[${this.listValue}, ${this.listText}]`;
   }
 }
