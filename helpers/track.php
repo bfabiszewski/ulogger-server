@@ -19,6 +19,7 @@
 
   require_once(ROOT_DIR . "/helpers/db.php");
   require_once(ROOT_DIR . "/helpers/position.php");
+  require_once(ROOT_DIR . "/helpers/config.php");
 
  /**
   * Track handling
@@ -215,7 +216,11 @@
       } else {
         $where = "";
       }
-      $query = "SELECT id, user_id, name, comment FROM " . self::db()->table('tracks') . " $where ORDER BY id DESC";
+
+      uConfig::$tracks_sort_by_name == 1 ? $order = 'name ' : $order = 'id ';
+      uConfig::$tracks_sort_ascending == 1 ? $order .= ' ASC' : $order .= ' DESC';
+      
+      $query = "SELECT id, user_id, name, comment FROM " . self::db()->table('tracks') . " $where ORDER BY $order";
       try {
         $result = self::db()->query($query);
         $trackArr = [];

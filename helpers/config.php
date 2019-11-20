@@ -55,6 +55,9 @@
     // all users tracks are visible to authenticated user
     static $public_tracks = false;
 
+	static $tracks_sort_by_name = 0;
+	static $tracks_sort_ascending = 0;
+
     // admin user who has access to all users locations
     // none if empty
     static $admin_user = "";
@@ -119,6 +122,8 @@
       if (isset($dbprefix)) { self::$dbprefix = $dbprefix; }
       if (isset($require_authentication)) { self::$require_authentication = (bool) $require_authentication; }
       if (isset($public_tracks)) { self::$public_tracks = (bool) $public_tracks; }
+      if (isset($tracks_sort_by_name)) { self::$tracks_sort_by_name = (bool) $tracks_sort_by_name; }
+      if (isset($tracks_sort_ascending)) { self::$tracks_sort_ascending = (bool) $tracks_sort_ascending; }
       if (isset($admin_user)) { self::$admin_user = $admin_user; }
       if (isset($pass_lenmin)) { self::$pass_lenmin = (int) $pass_lenmin; }
       if (isset($pass_strength)) { self::$pass_strength = (int) $pass_strength; }
