@@ -57,9 +57,9 @@ $public_tracks = 0;
 
 // sort the track dropdown by name instead the default 'id' (which means time added)
 // (0 = no, 1 = yes)
-$tracks_sort_by_name = 1;
+$tracks_sort_by_name = 0;
 // revert sort direction for tracks to ascending, default is a descending order
-$tracks_sort_ascending = 1;
+$tracks_sort_ascending = 0;
 
 // admin user, who
 // - can add new users
