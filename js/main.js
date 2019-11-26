@@ -419,14 +419,16 @@ Number.prototype.toKmH = function() {
 function toggleLatest() {
   var usersSelect = document.getElementsByName('user')[0];
   if (latest == 0) {
-    if (!hasAllUsers() && usersSelect.length > 2) {
+    if (!hasAllUsers() && usersSelect && usersSelect.length > 2) {
       usersSelect.options.add(new Option('- ' + lang['allusers'] + ' -', 'all'), usersSelect.options[1]);
     }
     latest = 1;
     loadTrack(userid, 0, 1);
   } else {
-    if (hasAllUsers()) {
-      usersSelect.selectedIndex = 0;
+    if (usersSelect && hasAllUsers()) {
+      if (isSelectedAllUsers()) {
+        usersSelect.selectedIndex = 0;
+      }
       usersSelect.remove(1);
     }
     latest = 0;
@@ -445,9 +447,11 @@ function selectTrack(f) {
     trackid = 0;
   }
   document.getElementById('latest').checked = false;
-  var usersSelect = document.getElementsByName('user')[0];
-  if (latest == 1) { toggleLatest(); }
-  loadTrack(userid, trackid, 1);
+  if (latest == 1) {
+    toggleLatest();
+  } else {
+    loadTrack(userid, trackid, 1);
+  }
 }
 
 function selectUser(f) {
@@ -534,12 +538,12 @@ function autoReload() {
 
 function isSelectedAllUsers() {
   var usersSelect = document.getElementsByName('user')[0];
-  return usersSelect[usersSelect.selectedIndex].value == 'all';
+  return usersSelect && usersSelect[usersSelect.selectedIndex].value == 'all';
 }
 
 function hasAllUsers() {
   var usersSelect = document.getElementsByName('user')[0];
-  if (usersSelect.length > 2 && usersSelect.options[1].value == 'all') {
+  if (usersSelect && usersSelect.length > 2 && usersSelect.options[1].value == 'all') {
     return true;
   }
   return false;
