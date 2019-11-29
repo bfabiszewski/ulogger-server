@@ -109,8 +109,8 @@ describe('Ajax tests', () => {
     // then
     uAjax.get(url)
       .then(() => done.fail('resolve callback called'))
-      .catch((message) => {
-        expect(message).toBe(errorResponse.message);
+      .catch((e) => {
+        expect(e.message).toBe(errorResponse.message);
         done();
       });
   });
@@ -122,8 +122,8 @@ describe('Ajax tests', () => {
     // then
     uAjax.get(url)
       .then(() => done.fail('resolve callback called'))
-      .catch((message) => {
-        expect(message).toBe('');
+      .catch((e) => {
+        expect(e.message).toBe('');
         done();
       });
   });
@@ -135,8 +135,8 @@ describe('Ajax tests', () => {
     // then
     uAjax.get(url)
       .then(() => done.fail('resolve callback called'))
-      .catch((message) => {
-        expect(message).toBe(`HTTP error ${status}`);
+      .catch((e) => {
+        expect(e.message).toBe(`HTTP error ${status}`);
         done();
       });
   });
@@ -148,8 +148,8 @@ describe('Ajax tests', () => {
     // then
     uAjax.get(url)
       .then(() => done.fail('resolve callback called'))
-      .catch((message) => {
-        expect(message).toContain('JSON');
+      .catch((e) => {
+        expect(e.message).toContain('JSON');
         done();
       });
   });

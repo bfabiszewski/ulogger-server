@@ -45,7 +45,7 @@ export default class uAjax {
    * @param {Object|HTMLFormElement} [data] Optional request parameters: key/value pairs or form element
    * @param {Object} [options] Optional options
    * @param {string} [options.method='GET'] Optional query method, default 'GET'
-   * @return {Promise<Object, string>}
+   * @return {Promise<Object, Error>}
    */
   static ajax(url, data, options) {
     const params = [];
@@ -78,10 +78,10 @@ export default class uAjax {
           message = `HTTP error ${xhr.status}`;
         }
         if (error && reject && typeof reject === 'function') {
-          reject(message);
+          reject(new Error(message));
         }
       };
-      let body = null;
+      let body;
       if (data instanceof HTMLFormElement) {
         if (method === 'POST') {
           body = new FormData(data);
