@@ -2,11 +2,11 @@
   "name": "ulogger-server",
   "version": "1.0.0",
   "description": "This is a web application for real-time collection of geolocation data, tracks viewing and management. Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.",
-  "main": "js/ulogger.js",
+  "main": "js/src/ulogger.js",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "start": "parcel index.html",
-    "build": "parcel build --public-url . js/ulogger.js"
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
   },
   "repository": {
     "type": "git",
@@ -15,30 +15,34 @@
   "author": "Bartek Fabiszewski",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.2",
-    "@babel/preset-env": "^7.7.1",
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
-    "babel-minify-webpack-plugin": "^0.3.1",
     "browserlist": "^1.0.1",
-    "core-js": "^3.4.1",
-    "eslint": "^6.6.0",
-    "eslint-plugin-jasmine": "^4.0.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "core-js": "^3.4.2",
+    "eslint": "^6.7.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jasmine": "^4.1.0",
     "jasmine": "^3.5.0",
     "karma": "^4.4.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage-istanbul-instrumenter": "^1.0.1",
-    "karma-coverage-istanbul-reporter": "^2.1.0",
+    "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-jasmine": "^2.0.1",
-    "parcel-bundler": "^1.12.4",
     "puppeteer": "^2.0.0",
     "regenerator-runtime": "^0.13.3",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "ol": "^5.3.3"
+    "@babel/runtime": "^7.7.4",
+    "babel-runtime": "^6.26.0",
+    "ol": "^6.1.1"
   },
   "browserslist": [
     "defaults"

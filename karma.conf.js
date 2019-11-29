@@ -7,7 +7,7 @@ const preprocessors = {};
 const reporters = [ 'progress' ];
 // don't preprocess files on debug run
 if (!process.env._INTELLIJ_KARMA_INTERNAL_PARAMETER_debug && !process.argv.includes('--debug')) {
-  preprocessors['src/*.js'] = 'karma-coverage-istanbul-instrumenter';
+  preprocessors['src/**/*.js'] = 'karma-coverage-istanbul-instrumenter';
   reporters.push('coverage-istanbul');
 }
 
@@ -19,7 +19,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: 'test/*.test.js', type: 'module' },
-      { pattern: 'src/*.js', type: 'module', included: false }
+      { pattern: 'test/*.stub.js', type: 'module', included: false },
+      { pattern: 'src/**/*.js', type: 'module', included: false },
+      { pattern: 'test/openlayers.bundle.js', type: 'js', included: true }
     ],
     // list of files / patterns to exclude
     exclude: [],
