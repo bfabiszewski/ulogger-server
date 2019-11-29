@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-/* eslint-disable no-undef */
+
+/* global ol */
 
 import OpenlayersApi from '../src/mapapi/api_openlayers.js';
 import { config } from '../src/initializer.js'
