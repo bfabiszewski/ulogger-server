@@ -189,11 +189,13 @@ if ($trackId && $userId) {
       $xml->writeAttribute("creator", "μlogger-server " . uConfig::$version);
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
-      $xml->writeElement("name", $track->comment);
+      $xml->writeElement("name", $track->name);
+      $xml->writeElement("desc", $track->comment);
       $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", $positionsArr[0]->timestamp));
       $xml->endElement();
       $xml->startElement("trk");
       $xml->writeElement("name", $track->name);
+      $xml->writeElement("desc", $track->comment);
       $xml->startElement("trkseg");
       $i = 0;
       $totalMeters = 0;
