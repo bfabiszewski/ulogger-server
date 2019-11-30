@@ -44,7 +44,26 @@ export default class uObserve {
   }
 
   /**
-   * Observe object's proporty. On change call observer
+   * Notify callback
+   * @callback ObserveCallback
+   * @param {*} value
+   */
+
+  /**
+   * Notify observers
+   * @param {Set<ObserveCallback>} observers
+   * @param {*} value
+   */
+  static notify(observers, value) {
+    for (const observer of observers) {
+      (async () => {
+        await observer(value);
+      })();
+    }
+  }
+
+  /**
+   * Observe object's property. On change call observer
    * @param {Object} obj
    * @param {?string} property
    * @param {ObserveCallback} observer
@@ -52,7 +71,7 @@ export default class uObserve {
   static observeProperty(obj, property, observer) {
     this.addObserver(obj, observer, property);
     if (!obj.hasOwnProperty('_values')) {
-      Object.defineProperty(obj, '_values', { enumerable: false, configurable: false, value: [] });
+      Object.defineProperty(obj, '_values', { enumerable: false, configurable: false, value: {} });
     }
     obj._values[property] = obj[property];
     Object.defineProperty(obj, property, {
@@ -131,21 +150,100 @@ export default class uObserve {
   }
 
   /**
-   * Notify observers
-   * @param {Set<ObserveCallback>} observers
-   * @param {*} value
+   * Remove observer from object's property or all it's properties
+   * unobserve(obj, prop, observer) observes given property prop;
+   * unobserve(obj, observer) observes all properties of object obj.
+   * @param {Object} obj
+   * @param {(string|ObserveCallback)} p1
+   * @param {ObserveCallback=} p2
    */
-  static notify(observers, value) {
-    for (const observer of observers) {
-      (async () => {
-        await observer(value);
-      })();
+  static unobserve(obj, p1, p2) {
+    if (typeof p2 === 'function') {
+      this.unobserveProperty(obj, p1, p2);
+    } else if (typeof p1 === 'function') {
+      if (Array.isArray(obj)) {
+        this.unobserveArray(obj, p1);
+      } else {
+        this.unobserveRecursive(obj, p1);
+      }
+    } else {
+      throw new Error('Invalid arguments');
     }
   }
 
   /**
-   * Notify callback
-   * @callback ObserveCallback
-   * @param {*} value
+   * Remove observer from object's property
+   * @param {Object} obj
+   * @param {?string} property
+   * @param {ObserveCallback} observer
    */
+  static unobserveProperty(obj, property, observer) {
+    if (Array.isArray(obj[property])) {
+      this.unobserveArray(obj[property], observer);
+    }
+    this.removeObserver(obj, observer, property);
+    if (!obj._observers[property].size) {
+      delete obj[property];
+      obj[property] = obj._values[property];
+      delete obj._values[property];
+    }
+  }
+
+  /**
+   * Recursively remove observers from all properties
+   * @param {Object} obj
+   * @param {ObserveCallback} observer
+   */
+  static unobserveRecursive(obj, observer) {
+    for (const prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        uObserve.unobserveProperty(obj, prop, observer);
+      }
+    }
+  }
+
+  /**
+   * Remove observer from array
+   * @param {Object} arr
+   * @param {ObserveCallback} observer
+   */
+  static unobserveArray(arr, observer) {
+    this.removeObserver(arr, observer);
+    if (!arr._observers.size) {
+      [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
+        (operation) => {
+          const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
+          Object.defineProperty(arr, operation, descriptor);
+        });
+    }
+  }
+
+  /**
+   * Remove observer from object's property
+   * @param {Object} obj Object
+   * @param {string} property Optional property
+   * @param {ObserveCallback} observer Observer
+   */
+  static removeObserver(obj, observer, property) {
+    if (!obj.hasOwnProperty('_observers')) {
+      return;
+    }
+    let observers;
+    if (arguments.length === 3) {
+      if (!obj._observers[property]) {
+        return;
+      }
+      observers = obj._observers[property];
+      console.log(`Removing observer for ${property}…`)
+    } else {
+      observers = obj._observers;
+      console.log('Removing observer for object…')
+    }
+    observers.forEach((obs) => {
+      if (obs === observer) {
+        console.log('Removed');
+        observers.delete(obs);
+      }
+    });
+  }
 }

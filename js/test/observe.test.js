@@ -27,6 +27,8 @@ describe('Observe tests', () => {
   beforeEach(() => {
     object = { observed: 1, nonObserved: 1 };
     result = false;
+    // eslint-disable-next-line no-undefined
+    resultValue = undefined;
   });
 
   describe('when object is observed', () => {
@@ -47,6 +49,30 @@ describe('Observe tests', () => {
       // then
       expect(result).toBe(true);
       expect(resultValue).toBe(2);
+    });
+
+    it('should notify multiple observers when observed property is modified', () => {
+      // given
+      let result2 = false;
+      let resultValue2;
+      uObserve.observe(object, 'observed', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      uObserve.observe(object, 'observed', (value) => {
+        result2 = true;
+        resultValue2 = value;
+      });
+      // when
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+      object.observed = 2;
+      // then
+      expect(result).toBe(true);
+      expect(resultValue).toBe(2);
+      expect(result2).toBe(true);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toBe(2);
     });
 
     it('should not notify observers when non-observed property is modified', () => {
@@ -114,7 +140,7 @@ describe('Observe tests', () => {
       expect(resultValue).toEqual(array);
     });
 
-    it('should notify observers when observed array object is modified', () => {
+    it('should notify observers when observed array is modified', () => {
       // given
       const array = [ 1, 2 ];
       uObserve.observe(array, (value) => {
@@ -147,6 +173,166 @@ describe('Observe tests', () => {
       // then
       expect(result).toBe(true);
       expect(resultValue).toEqual(newArray);
+    });
+  });
+
+  describe('when object is unobserved', () => {
+
+    it('should throw error if removed observer is missing', () => {
+      expect(() => {
+        uObserve.unobserve(object, 'unobserved');
+      }).toThrow(new Error('Invalid arguments'));
+    });
+
+    it('should not notify observers when unobserved property is modified', () => {
+      // given
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      uObserve.observe(object, 'observed', observer);
+      // when
+      uObserve.unobserve(object, 'observed', observer);
+
+      expect(result).toBe(false);
+      object.observed = 2;
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toBe(undefined);
+      expect(object.observed).toBe(2);
+    });
+
+    it('should not notify observers when any unobserved object property is modified', () => {
+      // given
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      uObserve.observe(object, observer);
+      // when
+      uObserve.unobserve(object, observer);
+
+      expect(result).toBe(false);
+      object.observed = 2;
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toBe(undefined);
+      expect(object.observed).toBe(2);
+
+      // given
+      result = false;
+      // eslint-disable-next-line no-undefined
+      resultValue = undefined;
+
+      // when
+      expect(result).toBe(false);
+      object.nonObserved = 2;
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toBe(undefined);
+      expect(object.nonObserved).toBe(2);
+    });
+
+    it('should not notify observers when unobserved array property is modified', () => {
+      // given
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const array = [ 1, 2 ];
+      object = { array: array };
+      uObserve.observe(object, 'array', observer);
+      // when
+      uObserve.unobserve(object, 'array', observer);
+
+      expect(result).toBe(false);
+      array.push(3);
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toEqual(undefined);
+      expect(array).toEqual([ 1, 2, 3 ]);
+    });
+
+    it('should not notify observers when unobserved array is modified', () => {
+      // given
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const array = [ 1, 2 ];
+      uObserve.observe(array, observer);
+      // when
+      uObserve.unobserve(array, observer);
+
+      expect(result).toBe(false);
+      array.push(3);
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toEqual(undefined);
+      expect(array).toEqual([ 1, 2, 3 ]);
+    });
+
+    it('should remove one of two observers of object property', () => {
+      // given
+      let result2 = false;
+      let resultValue2;
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const observer2 = (value) => {
+        result2 = true;
+        resultValue2 = value;
+      };
+      uObserve.observe(object, 'observed', observer);
+      uObserve.observe(object, 'observed', observer2);
+      // when
+      uObserve.unobserve(object, 'observed', observer2);
+
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+      object.observed = 2;
+      // then
+      expect(result).toBe(true);
+      expect(resultValue).toBe(2);
+      expect(result2).toBe(false);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toBe(undefined);// eslint-disable-line no-undefined
+    });
+
+    it('should remove one of two observers from array', () => {
+      // given
+      let result2 = false;
+      let resultValue2;
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const observer2 = (value) => {
+        result2 = true;
+        resultValue2 = value;
+      };
+      const array = [ 1, 2 ];
+      uObserve.observe(array, observer);
+      uObserve.observe(array, observer2);
+      // when
+      uObserve.unobserve(array, observer2);
+
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+      array.push(3);
+      // then
+      expect(result).toBe(true);
+      expect(result2).toBe(false);
+      expect(resultValue).toEqual(array);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toEqual(undefined);// eslint-disable-line no-undefined
+      expect(array).toEqual([ 1, 2, 3 ]);
     });
   });
 
