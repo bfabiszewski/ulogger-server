@@ -334,6 +334,65 @@ describe('Observe tests', () => {
       expect(resultValue2).toEqual(undefined);// eslint-disable-line no-undefined
       expect(array).toEqual([ 1, 2, 3 ]);
     });
+
+    it('should throw error when observing non-existing property', () => {
+      // given
+      const nonExisting = '___non-existing___';
+
+      expect(object.hasOwnProperty(nonExisting)).toBe(false);
+      // then
+      expect(() => uObserve.observe(object, nonExisting, (value) => {
+        result = true;
+        resultValue = value;
+      })).toThrow();
+
+      expect(object.hasOwnProperty(nonExisting)).toBe(false);
+    });
+
+    it('should throw error when observing non-object', () => {
+      // given
+      const nonExisting = '___non-existing___';
+      // then
+      expect(() => uObserve.observe(nonExisting, (value) => {
+        result = true;
+        resultValue = value;
+      })).toThrow();
+    });
+
+    it('should throw error when observing null object', () => {
+      // given
+      const nullObject = null;
+      // then
+      expect(() => uObserve.observe(nullObject, (value) => {
+        result = true;
+        resultValue = value;
+      })).toThrow();
+    });
+
+    it('should not notify observers when observed property is silently changed', () => {
+      // given
+      uObserve.observe(object, 'observed', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      // when
+      expect(result).toBe(false);
+      uObserve.setSilently(object, 'observed', 2);
+      // then
+      expect(result).toBe(false);
+      // eslint-disable-next-line no-undefined
+      expect(resultValue).toBe(undefined);
+    });
+
+    it('should return true if property is observed', () => {
+      // when
+      uObserve.observe(object, 'observed', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      // then
+      expect(uObserve.isObserved(object, 'observed')).toBe(true);
+    });
   });
 
   describe('when notify is called directly', () => {
@@ -351,5 +410,6 @@ describe('Observe tests', () => {
       expect(result).toBe(true);
       expect(result2).toBe(true);
     });
+
   });
 });

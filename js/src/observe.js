@@ -30,6 +30,9 @@ export default class uObserve {
    * @param {ObserveCallback=} p2
    */
   static observe(obj, p1, p2) {
+    if (typeof obj !== 'object' || obj === null) {
+      throw new Error('Invalid argument: invalid object');
+    }
     if (typeof p2 === 'function') {
       this.observeProperty(obj, p1, p2);
     } else if (typeof p1 === 'function') {
@@ -62,6 +65,31 @@ export default class uObserve {
     }
   }
 
+  static isObserved(obj, property) {
+    if (typeof obj !== 'object' || obj === null) {
+      return false;
+    }
+    return obj.hasOwnProperty(property) && obj.hasOwnProperty('_values') &&
+      obj._values.hasOwnProperty(property) && !!Object.getOwnPropertyDescriptor(obj, property)['set'];
+  }
+
+  /**
+   * Set observed property value without notifying observers
+   * @param {Object} obj
+   * @param {string} property
+   * @param {*} value
+   */
+  static setSilently(obj, property, value) {
+    if (!obj.hasOwnProperty(property)) {
+      throw new Error(`Invalid argument: object does not have property "${property}"`);
+    }
+    if (this.isObserved(obj, property)) {
+      obj._values[property] = value;
+    } else {
+      obj[property] = value;
+    }
+  }
+
   /**
    * Observe object's property. On change call observer
    * @param {Object} obj
@@ -69,6 +97,9 @@ export default class uObserve {
    * @param {ObserveCallback} observer
    */
   static observeProperty(obj, property, observer) {
+    if (!obj.hasOwnProperty(property)) {
+      throw new Error(`Invalid argument: object does not have property "${property}"`);
+    }
     this.addObserver(obj, observer, property);
     if (!obj.hasOwnProperty('_values')) {
       Object.defineProperty(obj, '_values', { enumerable: false, configurable: false, value: {} });
