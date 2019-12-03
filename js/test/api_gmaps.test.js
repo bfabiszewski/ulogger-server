@@ -215,17 +215,17 @@ describe('Google Maps map API tests', () => {
     api.displayTrack(track, false);
     // then
     expect(api.polies.length).toBe(1);
-    expect(api.polies[0].path.length).toBe(track.positions.length);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.polies[0].path.length).toBe(track.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(api.setMarker).toHaveBeenCalledWith(0, track);
     expect(api.setMarker).toHaveBeenCalledWith(1, track);
     expect(google.maps.Polyline).toHaveBeenCalledTimes(1);
     expect(google.maps.Polyline).toHaveBeenCalledWith(expectedPolyOptions);
-    expect(google.maps.LatLng.calls.mostRecent().args[0]).toEqual(track.positions[track.positions.length - 1].latitude);
-    expect(google.maps.LatLng.calls.mostRecent().args[1]).toEqual(track.positions[track.positions.length - 1].longitude);
-    expect(google.maps.LatLngBounds.prototype.extend).toHaveBeenCalledTimes(track.positions.length);
-    expect(google.maps.LatLngBounds.prototype.extend.calls.mostRecent().args[0].latitude).toEqual(track.positions[track.positions.length - 1].latitude);
-    expect(google.maps.LatLngBounds.prototype.extend.calls.mostRecent().args[0].longitude).toEqual(track.positions[track.positions.length - 1].longitude);
+    expect(google.maps.LatLng.calls.mostRecent().args[0]).toEqual(track.positions[track.length - 1].latitude);
+    expect(google.maps.LatLng.calls.mostRecent().args[1]).toEqual(track.positions[track.length - 1].longitude);
+    expect(google.maps.LatLngBounds.prototype.extend).toHaveBeenCalledTimes(track.length);
+    expect(google.maps.LatLngBounds.prototype.extend.calls.mostRecent().args[0].latitude).toEqual(track.positions[track.length - 1].latitude);
+    expect(google.maps.LatLngBounds.prototype.extend.calls.mostRecent().args[0].longitude).toEqual(track.positions[track.length - 1].longitude);
   });
 
   it('should construct non-continuous track markers without polyline', () => {
@@ -238,7 +238,7 @@ describe('Google Maps map API tests', () => {
     // then
     expect(api.polies.length).toBe(1);
     expect(api.polies[0].path.length).toBe(0);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
   });
 
   it('should fit bounds if update without zoom (should not add listener for "bounds_changed")', () => {
@@ -253,8 +253,8 @@ describe('Google Maps map API tests', () => {
     api.displayTrack(track, true);
     // then
     expect(api.polies.length).toBe(1);
-    expect(api.polies[0].path.length).toBe(track.positions.length);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.polies[0].path.length).toBe(track.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(google.maps.Map.prototype.fitBounds).toHaveBeenCalledTimes(1);
     expect(google.maps.event.addListenerOnce).not.toHaveBeenCalled();
     expect(setTimeout).not.toHaveBeenCalled();
@@ -272,8 +272,8 @@ describe('Google Maps map API tests', () => {
     api.displayTrack(track, true);
     // then
     expect(api.polies.length).toBe(1);
-    expect(api.polies[0].path.length).toBe(track.positions.length);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.polies[0].path.length).toBe(track.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(google.maps.Map.prototype.fitBounds).toHaveBeenCalledTimes(1);
     expect(google.maps.event.addListenerOnce.calls.mostRecent().args[1]).toBe('bounds_changed');
     expect(setTimeout).toHaveBeenCalledTimes(1);

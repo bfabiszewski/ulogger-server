@@ -129,7 +129,7 @@ export default class GoogleMapsApi {
    * @param {boolean} update Should fit bounds if true
    */
   displayTrack(track, update) {
-    if (!track) {
+    if (!track || !track.hasPositions) {
       return;
     }
     // init polyline
@@ -139,15 +139,25 @@ export default class GoogleMapsApi {
       strokeWeight: config.strokeWeight
     };
     // noinspection JSCheckFunctionSignatures
-    const poly = new google.maps.Polyline(polyOptions);
-    poly.setMap(this.map);
-    const path = poly.getPath();
+    let poly;
     const latlngbounds = new google.maps.LatLngBounds();
-    let i = 0;
-    for (const position of track.positions) {
+    if (this.polies.length) {
+      poly = this.polies[0];
+      for (let i = 0; i < this.markers.length; i++) {
+        latlngbounds.extend(this.markers[i].getPosition());
+      }
+    } else {
+      poly = new google.maps.Polyline(polyOptions);
+      poly.setMap(this.map);
+      this.polies.push(poly);
+    }
+    const path = poly.getPath();
+    const start = this.markers.length;
+    for (let i = start; i < track.length; i++) {
       // set marker
-      this.setMarker(i++, track);
+      this.setMarker(i, track);
       // update polyline
+      const position = track.positions[i];
       const coordinates = new google.maps.LatLng(position.latitude, position.longitude);
       if (track.continuous) {
         path.push(coordinates);
@@ -156,7 +166,7 @@ export default class GoogleMapsApi {
     }
     if (update) {
       this.map.fitBounds(latlngbounds);
-      if (i === 1) {
+      if (track.length === 1) {
         // only one point, zoom out
         const zListener =
           google.maps.event.addListenerOnce(this.map, 'bounds_changed', function () {
@@ -169,7 +179,6 @@ export default class GoogleMapsApi {
         }, 2000);
       }
     }
-    this.polies.push(poly);
   }
 
   /**

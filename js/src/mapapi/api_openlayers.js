@@ -416,24 +416,26 @@ export default class OpenLayersApi {
    * @param {boolean} update Should fit bounds if true
    */
   displayTrack(track, update) {
-    if (!track) {
+    if (!track || !track.hasPositions) {
       return;
     }
-    let i = 0;
-    const lineString = new ol.geom.LineString([]);
-    for (const position of track.positions) {
-      // set marker
-      this.setMarker(i++, track);
-      if (track.continuous) {
-        // update polyline
+    const start = this.layerMarkers ? this.layerMarkers.getSource().getFeatures().length : 0;
+    for (let i = start; i < track.length; i++) {
+      this.setMarker(i, track);
+    }
+    if (track.continuous) {
+      let lineString;
+      if (this.layerTrack && this.layerTrack.getSource().getFeatures().length) {
+        lineString = this.layerTrack.getSource().getFeatures()[0].getGeometry();
+      } else {
+        lineString = new ol.geom.LineString([]);
+        const lineFeature = new ol.Feature({ geometry: lineString });
+        this.layerTrack.getSource().addFeature(lineFeature);
+      }
+      for (let i = start; i < track.length; i++) {
+        const position = track.positions[i];
         lineString.appendCoordinate(ol.proj.fromLonLat([ position.longitude, position.latitude ]));
       }
-    }
-    if (lineString.getLength() > 0) {
-      const lineFeature = new ol.Feature({
-        geometry: lineString
-      });
-      this.layerTrack.getSource().addFeature(lineFeature);
     }
 
     let extent = this.layerMarkers.getSource().getExtent();
@@ -497,14 +499,14 @@ export default class OpenLayersApi {
     const position = track.positions[id];
     let iconStyle = this.markerStyles.normal;
     if (position.hasComment() || position.hasImage()) {
-      if (id === track.positions.length - 1) {
+      if (id === track.length - 1) {
         iconStyle = this.markerStyles.stopExtra;
       } else if (id === 0) {
         iconStyle = this.markerStyles.startExtra;
       } else {
         iconStyle = this.markerStyles.extra;
       }
-    } else if (id === track.positions.length - 1) {
+    } else if (id === track.length - 1) {
       iconStyle = this.markerStyles.stop;
     } else if (id === 0) {
       iconStyle = this.markerStyles.start;

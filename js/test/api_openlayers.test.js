@@ -261,13 +261,13 @@ describe('Openlayers map API tests', () => {
     });
     // then
     expect(api.layerTrack.getSource().getFeatures().length).toBe(1);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(api.setMarker).toHaveBeenCalledWith(0, track);
     expect(api.setMarker).toHaveBeenCalledWith(1, track);
     expect(api.fitToExtent).not.toHaveBeenCalled();
     // noinspection JSUnusedAssignment
     expect(zoomControl.extent).toEqual(api.layerMarkers.getSource().getExtent());
-    expect(api.layerTrack.getSource().getFeatures()[0].getGeometry().getCoordinates().length).toEqual(track.positions.length);
+    expect(api.layerTrack.getSource().getFeatures()[0].getGeometry().getCoordinates().length).toEqual(track.length);
   });
 
   it('should construct non-continuous track markers without track layer', () => {
@@ -290,7 +290,7 @@ describe('Openlayers map API tests', () => {
     });
     // then
     expect(api.layerTrack.getSource().getFeatures().length).toBe(0);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(api.setMarker).toHaveBeenCalledWith(0, track);
     expect(api.setMarker).toHaveBeenCalledWith(1, track);
     expect(api.fitToExtent).not.toHaveBeenCalled();
@@ -318,7 +318,7 @@ describe('Openlayers map API tests', () => {
     });
     // then
     expect(api.layerTrack.getSource().getFeatures().length).toBe(1);
-    expect(api.setMarker).toHaveBeenCalledTimes(track.positions.length);
+    expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(api.setMarker).toHaveBeenCalledWith(0, track);
     expect(api.setMarker).toHaveBeenCalledWith(1, track);
     expect(api.fitToExtent).toHaveBeenCalledWith(markersExtent);
