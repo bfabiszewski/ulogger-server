@@ -36,11 +36,7 @@ export default class uObserve {
     if (typeof p2 === 'function') {
       this.observeProperty(obj, p1, p2);
     } else if (typeof p1 === 'function') {
-        if (Array.isArray(obj)) {
-          this.observeArray(obj, p1);
-        } else {
-          this.observeRecursive(obj, p1);
-        }
+      this.observeRecursive(obj, p1);
     } else {
       throw new Error('Invalid arguments');
     }
@@ -66,11 +62,11 @@ export default class uObserve {
   }
 
   static isObserved(obj, property) {
-    if (typeof obj !== 'object' || obj === null) {
+    if (typeof obj !== 'object' || obj === null || !obj.hasOwnProperty(property)) {
       return false;
     }
-    return obj.hasOwnProperty(property) && obj.hasOwnProperty('_values') &&
-      obj._values.hasOwnProperty(property) && !!Object.getOwnPropertyDescriptor(obj, property)['set'];
+    return obj.hasOwnProperty('_values') && obj._values.hasOwnProperty(property) &&
+      !!Object.getOwnPropertyDescriptor(obj, property)['set'];
   }
 
   /**
@@ -129,9 +125,13 @@ export default class uObserve {
    * @param {ObserveCallback} observer
    */
   static observeRecursive(obj, observer) {
-    for (const prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        uObserve.observeProperty(obj, prop, observer);
+    if (Array.isArray(obj)) {
+      this.observeArray(obj, observer);
+    } else {
+      for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          uObserve.observeProperty(obj, prop, observer);
+        }
       }
     }
   }
@@ -148,7 +148,7 @@ export default class uObserve {
         const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
         descriptor.value = function () {
           const result = Array.prototype[operation].apply(arr, arguments);
-          console.log(`[${operation}] ` + arr.length ? `[${arr[0]}, …](${arr.length})` : arr);
+          console.log(`[${operation}] ` + (arr.length ? `[${arr[0]}, …](${arr.length})` : arr));
           uObserve.notify(arr._observers, arr);
           return result;
         };
@@ -182,8 +182,8 @@ export default class uObserve {
 
   /**
    * Remove observer from object's property or all it's properties
-   * unobserve(obj, prop, observer) observes given property prop;
-   * unobserve(obj, observer) observes all properties of object obj.
+   * unobserve(obj, prop, observer) unobserves given property prop;
+   * unobserve(obj, observer) unobserves all properties of object obj.
    * @param {Object} obj
    * @param {(string|ObserveCallback)} p1
    * @param {ObserveCallback=} p2
@@ -199,6 +199,32 @@ export default class uObserve {
       }
     } else {
       throw new Error('Invalid arguments');
+    }
+  }
+
+  /**
+   * Remove all observers from object's property or all it's properties
+   * unobserve(obj, prop) removes all observes from given property prop;
+   * unobserve(obj) removes all observers from all properties of object obj.
+   * @param {Object} obj
+   * @param {string} property
+   */
+  static unobserveAll(obj, property) {
+    if (this.isObserved(obj, property)) {
+      console.log(`Removing all observers for ${property}…`);
+      if (Array.isArray(obj[property])) {
+        this.restoreArrayPrototypes(obj[property]);
+      } else if (typeof obj[property] === 'object' && obj[property] !== null) {
+        for (const prop in obj[property]) {
+          if (obj[property].hasOwnProperty(prop)) {
+            this.unobserveAll(obj[property], prop);
+          }
+        }
+      }
+      delete obj._observers[property];
+      delete obj[property];
+      obj[property] = obj._values[property];
+      delete obj._values[property];
     }
   }
 
@@ -241,12 +267,16 @@ export default class uObserve {
   static unobserveArray(arr, observer) {
     this.removeObserver(arr, observer);
     if (!arr._observers.size) {
-      [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
-        (operation) => {
-          const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
-          Object.defineProperty(arr, operation, descriptor);
-        });
+      this.restoreArrayPrototypes(arr);
     }
+  }
+
+  static restoreArrayPrototypes(arr) {
+    [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
+      (operation) => {
+        const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
+        Object.defineProperty(arr, operation, descriptor);
+      });
   }
 
   /**
