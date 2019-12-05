@@ -33,9 +33,13 @@ export default class uUser extends uListItem {
    * @param {string} login
    */
   constructor(id, login) {
-    super(id, login);
+    super();
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      throw new Error('Invalid argument for user constructor');
+    }
     this.id = id;
     this.login = login;
+    this.listItem(id, login);
   }
 
   /**

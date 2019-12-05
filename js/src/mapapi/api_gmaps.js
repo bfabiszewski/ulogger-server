@@ -19,6 +19,7 @@
 
 import { config, lang } from '../initializer.js';
 import MapViewModel from '../mapviewmodel.js';
+import uTrack from '../track.js';
 import uUtils from '../utils.js';
 
 // google maps
@@ -52,7 +53,7 @@ export default class GoogleMapsApi {
    * @return {Promise<void, Error>}
    */
   init() {
-    const params = `?${(config.gkey != null) ? `key=${config.gkey}&` : ''}callback=gm_loaded`;
+    const params = `?${(config.gkey) ? `key=${config.gkey}&` : ''}callback=gm_loaded`;
     const gmReady = Promise.all([
       GoogleMapsApi.onScriptLoaded(),
       uUtils.loadScript(`https://maps.googleapis.com/maps/api/js${params}`, 'mapapi_gmaps', GoogleMapsApi.loadTimeoutMs)
@@ -125,7 +126,7 @@ export default class GoogleMapsApi {
 
   /**
    * Display track
-   * @param {uTrack} track
+   * @param {uPositionSet} track
    * @param {boolean} update Should fit bounds if true
    */
   displayTrack(track, update) {
@@ -159,7 +160,7 @@ export default class GoogleMapsApi {
       // update polyline
       const position = track.positions[i];
       const coordinates = new google.maps.LatLng(position.latitude, position.longitude);
-      if (track.continuous) {
+      if (track instanceof uTrack) {
         path.push(coordinates);
       }
       latlngbounds.extend(coordinates);
@@ -175,7 +176,7 @@ export default class GoogleMapsApi {
             }
           });
         setTimeout(function () {
-          google.maps.event.removeListener(zListener)
+          google.maps.event.removeListener(zListener);
         }, 2000);
       }
     }
@@ -219,13 +220,12 @@ export default class GoogleMapsApi {
 
   /**
    * Set marker
-   * @param {uTrack} track
+   * @param {uPositionSet} track
    * @param {number} id
    */
   setMarker(id, track) {
     // marker
     const position = track.positions[id];
-    const posLen = track.length;
     // noinspection JSCheckFunctionSignatures
     const marker = new google.maps.Marker({
       position: new google.maps.LatLng(position.latitude, position.longitude),
@@ -234,9 +234,9 @@ export default class GoogleMapsApi {
     });
     const isExtra = position.hasComment() || position.hasImage();
     let icon;
-    if (id === posLen - 1) {
+    if (track.isLastPosition(id)) {
       icon = GoogleMapsApi.getMarkerIcon(config.colorStop, true, isExtra);
-    } else if (id === 0) {
+    } else if (track.isFirstPosition(id)) {
       icon = GoogleMapsApi.getMarkerIcon(config.colorStart, true, isExtra);
     } else {
       icon = GoogleMapsApi.getMarkerIcon(isExtra ? config.colorExtra : config.colorNormal, false, isExtra);
@@ -295,7 +295,6 @@ export default class GoogleMapsApi {
 
   /**
    * Get map bounds
-   * eg. ((52.20105108685229, 20.789387865580238), (52.292069558807135, 21.172192736185707))
    * @returns {number[]} Bounds [ lon_sw, lat_sw, lon_ne, lat_ne ]
    */
   getBounds() {

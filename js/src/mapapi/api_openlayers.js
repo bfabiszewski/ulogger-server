@@ -19,6 +19,7 @@
 
 import MapViewModel from '../mapviewmodel.js';
 import { config } from '../initializer.js';
+import uTrack from '../track.js';
 import uUtils from '../utils.js';
 
 /**
@@ -89,7 +90,7 @@ export default class OpenLayersApi {
    */
   init() {
     uUtils.addCss('css/ol.css', 'ol_css');
-    const olReady = ol ? Promise.resolve() : import(/* webpackChunkName : "ol" */'../lib/ol.js').then((m) => { ol = m });
+    const olReady = ol ? Promise.resolve() : import(/* webpackChunkName : "ol" */'../lib/ol.js').then((m) => { ol = m; });
     return olReady.then(() => {
       this.initMap();
       this.initLayers();
@@ -412,7 +413,7 @@ export default class OpenLayersApi {
 
   /**
    * Display track
-   * @param {uTrack} track Track
+   * @param {uPositionSet} track Track
    * @param {boolean} update Should fit bounds if true
    */
   displayTrack(track, update) {
@@ -423,7 +424,7 @@ export default class OpenLayersApi {
     for (let i = start; i < track.length; i++) {
       this.setMarker(i, track);
     }
-    if (track.continuous) {
+    if (track instanceof uTrack) {
       let lineString;
       if (this.layerTrack && this.layerTrack.getSource().getFeatures().length) {
         lineString = this.layerTrack.getSource().getFeatures()[0].getGeometry();
@@ -492,23 +493,23 @@ export default class OpenLayersApi {
   /**
    * Get marker style
    * @param {number} id
-   * @param {uTrack} track
+   * @param {uPositionSet} track
    * @return {Style}
    */
   getMarkerStyle(id, track) {
     const position = track.positions[id];
     let iconStyle = this.markerStyles.normal;
     if (position.hasComment() || position.hasImage()) {
-      if (id === track.length - 1) {
+      if (track.isLastPosition(id)) {
         iconStyle = this.markerStyles.stopExtra;
-      } else if (id === 0) {
+      } else if (track.isFirstPosition(id)) {
         iconStyle = this.markerStyles.startExtra;
       } else {
         iconStyle = this.markerStyles.extra;
       }
-    } else if (id === track.length - 1) {
+    } else if (track.isLastPosition(id)) {
       iconStyle = this.markerStyles.stop;
-    } else if (id === 0) {
+    } else if (track.isFirstPosition(id)) {
       iconStyle = this.markerStyles.start;
     }
     return iconStyle;
@@ -517,7 +518,7 @@ export default class OpenLayersApi {
   /**
    * Set marker
    * @param {number} id
-   * @param {uTrack} track
+   * @param {uPositionSet} track
    */
   setMarker(id, track) {
     // marker

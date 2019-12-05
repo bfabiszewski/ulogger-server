@@ -21,6 +21,7 @@ import * as gmStub from './googlemaps.stub.js';
 import { config, lang } from '../src/initializer.js'
 import GoogleMapsApi from '../src/mapapi/api_gmaps.js';
 import uPosition from '../src/position.js';
+import uPositionSet from '../src/positionset.js';
 import uTrack from '../src/track.js';
 import uUser from '../src/user.js';
 import uUtils from '../src/utils.js';
@@ -230,10 +231,9 @@ describe('Google Maps map API tests', () => {
 
   it('should construct non-continuous track markers without polyline', () => {
     // given
-    const track = getTrack();
+    const track = getPositionSet();
     spyOn(api, 'setMarker');
     // when
-    track.continuous = false;
     api.displayTrack(track, false);
     // then
     expect(api.polies.length).toBe(1);
@@ -473,13 +473,30 @@ describe('Google Maps map API tests', () => {
     expect(GoogleMapsApi.loadTimeoutMs).toEqual(jasmine.any(Number));
   });
 
-  function getTrack(length = 2) {
-    const track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
+  function getSet(length = 2, type) {
+    let track;
+    if (type === uTrack) {
+      track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
+    } else {
+      track = new uPositionSet();
+    }
     track.positions = [];
+    let lat = 21.01;
+    let lon = 52.23;
     for (let i = 0; i < length; i++) {
-      track.positions.push(getPosition());
+      track.positions.push(getPosition(lat, lon));
+      lat += 0.5;
+      lon += 0.5;
     }
     return track;
+  }
+
+  function getTrack(length = 2) {
+    return getSet(length, uTrack);
+  }
+
+  function getPositionSet(length = 2) {
+    return getSet(length, uPositionSet);
   }
 
   function getPosition(latitude = 52.23, longitude = 21.01) {

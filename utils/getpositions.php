@@ -26,7 +26,7 @@ $auth = new uAuth();
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
 $afterId = uUtils::getInt('afterid');
-$last = uUtils::getInt('last');
+$last = uUtils::getBool('last');
 
 $positionsArr = [];
 if ($userId) {
@@ -54,7 +54,7 @@ if ($positionsArr === false) {
   $result = [ "error" => true ];
 } else if (!empty($positionsArr)) {
   foreach ($positionsArr as $position) {
-    $distance = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+    $meters = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
     $seconds = !$last && isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
     $result[] = [
       "id" => $position->id,
@@ -71,7 +71,7 @@ if ($positionsArr === false) {
       "username" => $position->userLogin,
       "trackid" => $position->trackId,
       "trackname" => $position->trackName,
-      "distance" => round($distance),
+      "meters" => round($meters),
       "seconds" => $seconds
     ];
     $prevPosition = $position;

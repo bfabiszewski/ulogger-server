@@ -22,6 +22,7 @@
 import OpenlayersApi from '../src/mapapi/api_openlayers.js';
 import { config } from '../src/initializer.js'
 import uPosition from '../src/position.js';
+import uPositionSet from '../src/positionset.js';
 import uTrack from '../src/track.js';
 import uUser from '../src/user.js';
 import uUtils from '../src/utils.js';
@@ -276,8 +277,7 @@ describe('Openlayers map API tests', () => {
     api.map.addControl(new ol.control.ZoomToExtent());
     api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
     api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
-    const track = getTrack();
-    track.continuous = false;
+    const track = getPositionSet();
     spyOn(api, 'setMarker');
     spyOn(api, 'fitToExtent');
     // when
@@ -549,8 +549,13 @@ describe('Openlayers map API tests', () => {
     expect(mockViewModel.model.markerSelect).toBe(null);
   });
 
-  function getTrack(length = 2) {
-    const track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
+  function getSet(length = 2, type) {
+    let track;
+    if (type === uTrack) {
+      track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
+    } else {
+      track = new uPositionSet();
+    }
     track.positions = [];
     let lat = 21.01;
     let lon = 52.23;
@@ -560,6 +565,14 @@ describe('Openlayers map API tests', () => {
       lon += 0.5;
     }
     return track;
+  }
+
+  function getTrack(length = 2) {
+    return getSet(length, uTrack);
+  }
+
+  function getPositionSet(length = 2) {
+    return getSet(length, uPositionSet);
   }
 
   function getPosition(latitude = 52.23, longitude = 21.01) {

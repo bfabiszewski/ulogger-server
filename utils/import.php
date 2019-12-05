@@ -71,14 +71,14 @@ if ($gpx === false) {
   }
   uUtils::exitWithError($message);
 }
-else if ($gpx->getName() != "gpx") {
+else if ($gpx->getName() !== "gpx") {
     uUtils::exitWithError($lang["iparsefailure"]);
 }
 else if (empty($gpx->trk)) {
   uUtils::exitWithError($lang["idatafailure"]);
 }
 
-$trackCnt = 0;
+$trackList = [];
 foreach ($gpx->trk as $trk) {
   $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
   $metaName = empty($gpx->metadata->name) ? NULL : (string) $gpx->metadata->name;
@@ -92,7 +92,7 @@ foreach ($gpx->trk as $trk) {
 
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
-      if (!isset($point["lat"]) || !isset($point["lon"])) {
+      if (!isset($point["lat"], $point["lon"])) {
         $track->delete();
         uUtils::exitWithError($lang["iparsefailure"]);
       }
@@ -105,7 +105,7 @@ foreach ($gpx->trk as $trk) {
       $provider = "gps";
       if (!empty($point->extensions)) {
         // parse ulogger extensions
-        $ext = $point->extensions->children('ulogger', TRUE);
+        $ext = $point->extensions->children('ulogger', true);
         if (count($ext->speed)) { $speed = (double) $ext->speed; }
         if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
         if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
@@ -122,13 +122,12 @@ foreach ($gpx->trk as $trk) {
     }
   }
   if ($posCnt) {
-    $trackCnt++;
+    array_unshift($trackList, [ "id" => $track->id, "name" => $track->name ]);
   } else {
     $track->delete();
   }
 }
 
-// return last track id and tracks count
-uUtils::exitWithSuccess([ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
-
+header("Content-type: application/json");
+echo json_encode($trackList);
 ?>

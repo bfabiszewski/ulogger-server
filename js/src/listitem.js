@@ -17,6 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uSelect from './select.js';
+
 /**
  * @class uListItem
  * @property {string} listValue
@@ -27,7 +29,12 @@ export default class uListItem {
    * @param {string|number} id
    * @param {string|number} value
    */
-  constructor(id, value) {
+  constructor() {
+    this.listValue = uSelect.allValue;
+    this.listText = '-';
+  }
+
+  listItem(id, value) {
     this.listValue = String(id);
     this.listText = String(value);
   }
