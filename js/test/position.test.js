@@ -38,7 +38,7 @@ describe('Position tests', () => {
     'username',
     'trackid',
     'trackname',
-    'distance',
+    'meters',
     'seconds'
   ];
   const properties = nullableProperties.concat(nonNullableProperties);
@@ -57,7 +57,7 @@ describe('Position tests', () => {
   let username;
   let trackid;
   let trackname;
-  let distance;
+  let meters;
   let seconds;
 
   let jsonPosition;
@@ -77,7 +77,7 @@ describe('Position tests', () => {
     username = 'test';
     trackid = 134;
     trackname = 'Test name';
-    distance = 0;
+    meters = 0;
     seconds = 0;
 
     jsonPosition = {
@@ -95,7 +95,7 @@ describe('Position tests', () => {
       'username': username,
       'trackid': trackid,
       'trackname': trackname,
-      'distance': distance,
+      'meters': meters,
       'seconds': seconds
     };
   });
@@ -117,7 +117,7 @@ describe('Position tests', () => {
     expect(position.username).toBe(username);
     expect(position.trackid).toBe(trackid);
     expect(position.trackname).toBe(trackname);
-    expect(position.distance).toBe(distance);
+    expect(position.meters).toBe(meters);
     expect(position.seconds).toBe(seconds);
   });
 
@@ -129,7 +129,7 @@ describe('Position tests', () => {
         // when
         delete posCopy[prop];
         // then
-        expect(() => { uPosition.fromJson(posCopy); }).toThrow(new Error('Illegal value'));
+        expect(() => { uPosition.fromJson(posCopy); }).toThrow(new Error('Invalid value'));
       });
     });
   });
@@ -142,7 +142,7 @@ describe('Position tests', () => {
         // when
         posCopy[prop] = null;
         // then
-        expect(() => { uPosition.fromJson(posCopy); }).toThrow(new Error('Illegal value'));
+        expect(() => { uPosition.fromJson(posCopy); }).toThrow(new Error('Invalid value'));
       });
     });
   });
@@ -156,7 +156,7 @@ describe('Position tests', () => {
         posCopy[prop] = null;
         let pos = {};
         // then
-        expect(() => { pos = uPosition.fromJson(posCopy); }).not.toThrow(new Error('Illegal value'));
+        expect(() => { pos = uPosition.fromJson(posCopy); }).not.toThrow(new Error('Invalid value'));
         expect(pos[prop]).toBeNull();
       });
     });

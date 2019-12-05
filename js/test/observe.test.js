@@ -34,7 +34,7 @@ describe('Observe tests', () => {
   describe('when object is observed', () => {
 
     it('should throw error if observer is missing', () => {
-      expect(() => { uObserve.observe(object, 'observed'); }).toThrow(new Error('Invalid arguments'));
+      expect(() => { uObserve.observe(object, 'observed'); }).toThrow(new Error('Invalid argument for observe'));
     });
 
     it('should notify observers when observed property is modified', () => {
@@ -181,7 +181,7 @@ describe('Observe tests', () => {
     it('should throw error if removed observer is missing', () => {
       expect(() => {
         uObserve.unobserve(object, 'unobserved');
-      }).toThrow(new Error('Invalid arguments'));
+      }).toThrow(new Error('Invalid argument for unobserve'));
     });
 
     it('should not notify observers when unobserved property is modified', () => {

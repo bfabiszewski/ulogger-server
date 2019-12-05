@@ -38,7 +38,7 @@ export default class uObserve {
     } else if (typeof p1 === 'function') {
       this.observeRecursive(obj, p1);
     } else {
-      throw new Error('Invalid arguments');
+      throw new Error('Invalid argument for observe');
     }
   }
 
@@ -198,7 +198,7 @@ export default class uObserve {
         this.unobserveRecursive(obj, p1);
       }
     } else {
-      throw new Error('Invalid arguments');
+      throw new Error('Invalid argument for unobserve');
     }
   }
 
@@ -295,10 +295,10 @@ export default class uObserve {
         return;
       }
       observers = obj._observers[property];
-      console.log(`Removing observer for ${property}…`)
+      console.log(`Removing observer for ${property}…`);
     } else {
       observers = obj._observers;
-      console.log('Removing observer for object…')
+      console.log('Removing observer for object…');
     }
     observers.forEach((obs) => {
       if (obs === observer) {

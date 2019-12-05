@@ -35,10 +35,10 @@ import uUtils from './utils.js';
  * @property {string} trackname
  * @property {number} trackid
  * @property {number} timestamp
- * @property {number} distance
- * @property {number} seconds
- * @property {number} totalDistance
- * @property {number} totalSeconds
+ * @property {number} meters Distance to previous position
+ * @property {number} seconds Time difference to previous position
+ * @property {number} totalMeters Distance to first position
+ * @property {number} totalSeconds Time difference to first position
  */
 export default class uPosition {
 
@@ -63,9 +63,9 @@ export default class uPosition {
     position.trackname = uUtils.getString(pos.trackname);
     position.trackid = uUtils.getInteger(pos.trackid);
     position.timestamp = uUtils.getInteger(pos.timestamp);
-    position.distance = uUtils.getInteger(pos.distance);
+    position.meters = uUtils.getInteger(pos.meters);
     position.seconds = uUtils.getInteger(pos.seconds);
-    position.totalDistance = 0;
+    position.totalMeters = 0;
     position.totalSeconds = 0;
     return position;
   }

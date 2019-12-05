@@ -99,7 +99,7 @@ describe('Ajax tests', () => {
       expect(result).toEqual(validResponse);
       done();
     })
-      .catch(() => done.fail('reject callback called'));
+      .catch((e) => done.fail(`reject callback called (${e})`));
   });
 
   it('should make successful request and return error with message', (done) => {

@@ -60,6 +60,7 @@ describe('User tests', () => {
 
   describe('ajax tests', () => {
     const validResponse = [ { 'id': 1, 'login': 'test' }, { 'id': 2, 'login': 'test2' }, { 'id': 18, 'login': 'demo' } ];
+    const invalidResponse = [ { 'login': 'test' }, { 'id': 2, 'login': 'test2' }, { 'id': 18, 'login': 'demo' } ];
 
     beforeEach(() => {
       spyOn(XMLHttpRequest.prototype, 'open').and.callThrough();
@@ -75,11 +76,26 @@ describe('User tests', () => {
       // then
       uUser.fetchList()
         .then((result) => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/getusers.php', true);
           expect(result).toEqual(jasmine.arrayContaining([ new uUser(1, 'test') ]));
           expect(result.length).toBe(3);
           done();
         })
-        .catch(() => done.fail('reject callback called'));
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should throw error on invalid data in JSON', (done) => {
+      // when
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(invalidResponse));
+      // then
+      uUser.fetchList()
+        .then(() => {
+          done.fail('resolve callback called');
+        })
+        .catch((e) => {
+          expect(e).toEqual(jasmine.any(Error));
+          done();
+        });
     });
 
   });
