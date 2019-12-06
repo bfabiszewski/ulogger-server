@@ -362,7 +362,11 @@ export default class OpenLayersApi {
       }
       layerRadio.name = 'layer';
       layerRadio.value = _layer.get('name');
-      layerRadio.onclick = (e) => this.switchLayer(e.value);
+      layerRadio.onclick = (e) => {
+        /** @type {HTMLInputElement} */
+        const el = e.target;
+        this.switchLayer(el.value);
+      };
       if (_layer.getVisible()) {
         layerRadio.checked = true;
       }
