@@ -22,11 +22,15 @@ export default class uSelect {
   /**
    * @param {HTMLSelectElement} element Select element
    * @param {string=} head Optional header text
+   * @param {string=} all Optional all option text
    */
-  constructor(element, head) {
+  constructor(element, head, all) {
     this.element = element;
     this.hasAllOption = false;
     this.allText = '';
+    if (all && all.length) {
+      this.allText = all;
+    }
     if (head && head.length) {
       this.head = head;
     } else {
@@ -42,6 +46,10 @@ export default class uSelect {
     if (this.hasValue(value)) {
       this.element.value = value;
     }
+  }
+
+  get selected() {
+    return this.element.value;
   }
 
   /**
@@ -68,8 +76,13 @@ export default class uSelect {
   }
 
   hideAllOption() {
+    const isSelectedAll = this.selected === uSelect.allValue;
     this.hasAllOption = false;
     this.remove(uSelect.allValue);
+    if (isSelectedAll) {
+      this.selected = this.hasHead ? uSelect.headValue : '';
+      this.element.dispatchEvent(new Event('change'));
+    }
   }
 
   addHead() {

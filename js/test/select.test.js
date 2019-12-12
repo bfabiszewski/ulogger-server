@@ -248,7 +248,7 @@ describe('Select tests', () => {
     expect(select.element.options[1].text).toBe(options[0].listText);
     expect(select.element.options[2].value).toBe(options[1].listValue);
     expect(select.element.options[2].text).toBe(options[1].listText);
-    expect(select.element.options[2].selected).toBe(true);
+    expect(select.element.options[0].selected).toBe(true);
   });
 
   it('should remove option from select elements', () => {
