@@ -57,6 +57,12 @@ describe('Select tests', () => {
     expect(select.headText).toBe('');
   });
 
+  it('should should throw error on wrong obligatory parameter type', () => {
+    // when
+    // then
+    expect(() => new uSelect(null)).toThrowError(/Invalid argument/);
+  });
+
   it('should construct class instance with header', () => {
     // when
     const select = new uSelect(element, head);

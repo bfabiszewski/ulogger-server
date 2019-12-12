@@ -25,6 +25,9 @@ export default class uSelect {
    * @param {string=} all Optional all option text
    */
   constructor(element, head, all) {
+    if (!(element instanceof HTMLSelectElement)) {
+      throw new Error('Invalid argument for select');
+    }
     this.element = element;
     this.hasAllOption = false;
     this.allText = '';
