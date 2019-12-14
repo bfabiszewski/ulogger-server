@@ -83,4 +83,12 @@ export default class uPosition {
   hasImage() {
     return (this.image != null && this.image.length > 0);
   }
+
+  get calculatedSpeed() {
+    return this.seconds ? this.meters / this.seconds : 0;
+  }
+
+  get totalSpeed() {
+    return this.totalSeconds ? this.totalMeters / this.totalSeconds : 0;
+  }
 }

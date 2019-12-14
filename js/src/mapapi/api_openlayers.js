@@ -253,11 +253,8 @@ export default class OpenLayersApi {
     popupContent.id = 'popup-content';
     popupContainer.appendChild(popupContent);
     const popupCloser = document.createElement('a');
-    popupCloser.id = 'popup-closer';
     popupCloser.className = 'ol-popup-closer';
-    popupCloser.href = '#';
     popupContainer.appendChild(popupCloser);
-
 
     this.popup = new ol.Overlay({
       element: popupContainer,
@@ -347,6 +344,9 @@ export default class OpenLayersApi {
     switcherContent.id = 'switcher-content';
     switcherContent.className = 'ol-layerswitcher';
     switcher.appendChild(switcherContent);
+    const switcherCloser = document.createElement('a');
+    switcherCloser.className = 'ol-popup-closer';
+    switcher.appendChild(switcherCloser);
 
     this.map.getLayers().forEach(/** @param {Layer} _layer */(_layer) => {
       const layerLabel = document.createElement('label');
@@ -387,6 +387,7 @@ export default class OpenLayersApi {
       }
     };
 
+    switcherCloser.addEventListener('click', switcherHandle, false);
     switcherButton.addEventListener('click', switcherHandle, false);
     switcherButton.addEventListener('touchstart', switcherHandle, false);
 

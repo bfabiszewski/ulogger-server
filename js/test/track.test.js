@@ -70,22 +70,22 @@ describe('Track tests', () => {
     seconds = 0;
 
     jsonPosition = {
-      'id': posId,
-      'latitude': latitude,
-      'longitude': longitude,
-      'altitude': altitude,
-      'speed': speed,
-      'bearing': bearing,
-      'timestamp': timestamp,
-      'accuracy': accuracy,
-      'provider': provider,
-      'comment': comment,
-      'image': image,
-      'username': username,
-      'trackid': trackid,
-      'trackname': trackname,
-      'meters': meters,
-      'seconds': seconds
+      id: posId,
+      latitude: latitude,
+      longitude: longitude,
+      altitude: altitude,
+      speed: speed,
+      bearing: bearing,
+      timestamp: timestamp,
+      accuracy: accuracy,
+      provider: provider,
+      comment: comment,
+      image: image,
+      username: username,
+      trackid: trackid,
+      trackname: trackname,
+      meters: meters,
+      seconds: seconds
     };
   });
 

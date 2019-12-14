@@ -43,7 +43,7 @@ export default class uUser extends uListItem {
   }
 
   /**
-   * @return {Promise<uTrack, string>}
+   * @return {Promise<uTrack, Error>}
    */
   fetchLastPosition() {
     return uTrack.fetchLatest(this);
@@ -51,7 +51,7 @@ export default class uUser extends uListItem {
 
   /**
    * @throws
-   * @return {Promise<uUser[], string>}
+   * @return {Promise<uUser[], Error>}
    */
   static fetchList() {
     return uAjax.get('utils/getusers.php').then((_users) => {

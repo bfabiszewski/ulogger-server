@@ -294,24 +294,13 @@ export default class uUtils {
   static openUrl(url) {
     window.location.assign(url);
   }
+
+  /**
+   * @param {Error} e
+   * @param {string} message
+   */
+  static error(e, message) {
+    console.error(`${e.name}: ${e.message} (${e.stack})`);
+    alert(message);
+  }
 }
-
-// seconds to (d) H:M:S
-Number.prototype.toHMS = function () {
-  let s = this;
-  const d = Math.floor(s / 86400);
-  const h = Math.floor((s % 86400) / 3600);
-  const m = Math.floor(((s % 86400) % 3600) / 60);
-  s = ((s % 86400) % 3600) % 60;
-  return ((d > 0) ? (d + ' d ') : '') + (('00' + h).slice(-2)) + ':' + (('00' + m).slice(-2)) + ':' + (('00' + s).slice(-2)) + '';
-};
-
-// meters to km
-Number.prototype.toKm = function () {
-  return Math.round(this / 10) / 100;
-};
-
-// m/s to km/h
-Number.prototype.toKmH = function () {
-  return Math.round(this * 3600 / 10) / 100;
-};

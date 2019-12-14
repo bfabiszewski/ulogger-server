@@ -82,19 +82,33 @@ export default class uPositionSet extends uListItem {
 
   /**
    * Fetch latest position of each user.
-   * @return {Promise<uPositionSet, Error>}
+   * @return {Promise<void, Error>}
+   */
+  fetchLatest() {
+    this.clear();
+    return uPositionSet.fetch({ last: true }).then((_positions) => {
+      this.fromJson(_positions);
+    });
+  }
+
+  /**
+   * Fetch latest position of each user.
+   * @return {Promise<?uPositionSet, Error>}
    */
   static fetchLatest() {
-    return this.fetch({ last: true }).then((_positions) => {
-      if (_positions.length) {
-        const set = new uPositionSet();
-        set.fromJson(_positions);
+    const set = new uPositionSet();
+    return set.fetchLatest().then(() => {
+      if (set.length) {
         return set;
       }
       return null;
     });
   }
 
+  /**
+   * @param params
+   * @return {Promise<Object[], Error>}
+   */
   static fetch(params) {
     return uAjax.get('utils/getpositions.php', params);
   }
