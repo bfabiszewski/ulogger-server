@@ -81,6 +81,11 @@ export default class uObserve {
     }
     if (this.isObserved(obj, property)) {
       obj._values[property] = value;
+      if (Array.isArray(obj[property])) {
+        for (const obs of obj._observers[property]) {
+          this.observeArray(obj[property], obs);
+        }
+      }
     } else {
       obj[property] = value;
     }
@@ -110,7 +115,7 @@ export default class uObserve {
           uObserve.notify(obj._observers[property], newValue);
         }
         if (Array.isArray(obj[property])) {
-          this.observeArray(obj[property], observer);
+          this.observeArray(obj[property], obj._observers[property]);
         }
       }
     });
@@ -139,21 +144,17 @@ export default class uObserve {
   /**
    * Observe array
    * @param {Object} arr
-   * @param {ObserveCallback} observer
+   * @param {(ObserveCallback|Set<ObserveCallback>)} observer
    */
   static observeArray(arr, observer) {
-    this.addObserver(arr, observer);
-    [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
-      (operation) => {
-        const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
-        descriptor.value = function () {
-          const result = Array.prototype[operation].apply(arr, arguments);
-          console.log(`[${operation}] ` + (arr.length ? `[${arr[0]}, …](${arr.length})` : arr));
-          uObserve.notify(arr._observers, arr);
-          return result;
-        };
-        Object.defineProperty(arr, operation, descriptor);
-      });
+    if (observer instanceof Set) {
+      for (const obs of observer) {
+        this.addObserver(arr, obs);
+      }
+    } else {
+      this.addObserver(arr, observer);
+    }
+    this.overrideArrayPrototypes(arr, arguments);
   }
 
   /**
@@ -271,11 +272,32 @@ export default class uObserve {
     }
   }
 
-  static restoreArrayPrototypes(arr) {
+  /**
+   * @param {Object} arr
+   */
+  static overrideArrayPrototypes(arr) {
     [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
       (operation) => {
         const descriptor = Object.getOwnPropertyDescriptor(Array.prototype, operation);
-        Object.defineProperty(arr, operation, descriptor);
+        if (!arr.hasOwnProperty(operation)) {
+          descriptor.value = function () {
+            const result = Array.prototype[operation].apply(arr, arguments);
+            console.log(`[${operation}] ` + (arr.length ? `[${arr[0]}, …](${arr.length})` : arr));
+            uObserve.notify(arr._observers, arr);
+            return result;
+          };
+          Object.defineProperty(arr, operation, descriptor);
+        }
+      });
+  }
+
+  /**
+   * @param {Object} arr
+   */
+  static restoreArrayPrototypes(arr) {
+    [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ].forEach(
+      (operation) => {
+        delete arr[operation];
       });
   }
 

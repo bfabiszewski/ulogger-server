@@ -157,6 +157,8 @@ describe('Observe tests', () => {
 
     it('should retain observers after array is reassigned', () => {
       // given
+      let result2 = false;
+      let resultValue2;
       const array = [ 1, 2 ];
       const newArray = [ 3, 4 ];
       object = { array: array };
@@ -164,15 +166,56 @@ describe('Observe tests', () => {
         result = true;
         resultValue = value;
       });
+      uObserve.observe(object, 'array', (value) => {
+        result2 = true;
+        resultValue2 = value;
+      });
       // when
       object.array = newArray;
       result = false;
+      result2 = false;
 
       expect(result).toBe(false);
+      expect(result2).toBe(false);
       object.array.push(5);
       // then
       expect(result).toBe(true);
+      expect(result2).toBe(true);
       expect(resultValue).toEqual(newArray);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toEqual(newArray);
+    });
+
+    it('should retain observers after array property is silently set', () => {
+      // given
+      let result2 = false;
+      let resultValue2;
+      const array = [ 1, 2 ];
+      const newArray = [ 3, 4 ];
+      object = { array: [] };
+      uObserve.observe(object, 'array', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      uObserve.observe(object, 'array', (value) => {
+        result2 = true;
+        resultValue2 = value;
+      });
+      // when
+      uObserve.setSilently(object, 'array', array);
+      object.array = newArray;
+      result = false;
+      result2 = false;
+
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+      object.array.push(5);
+      // then
+      expect(result).toBe(true);
+      expect(result2).toBe(true);
+      expect(resultValue).toEqual(newArray);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toEqual(newArray);
     });
   });
 
