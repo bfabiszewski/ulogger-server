@@ -20,11 +20,8 @@
 /* global ol */
 
 import OpenlayersApi from '../src/mapapi/api_openlayers.js';
+import TrackFactory from './helpers/trackfactory.js';
 import { config } from '../src/initializer.js'
-import uPosition from '../src/position.js';
-import uPositionSet from '../src/positionset.js';
-import uTrack from '../src/track.js';
-import uUser from '../src/user.js';
 import uUtils from '../src/utils.js';
 
 describe('Openlayers map API tests', () => {
@@ -249,7 +246,7 @@ describe('Openlayers map API tests', () => {
     api.map = mockMap;
     api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
     api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
-    const track = getTrack();
+    const track = TrackFactory.getTrack();
     spyOn(api, 'setMarker');
     spyOn(api, 'fitToExtent');
     // when
@@ -277,7 +274,7 @@ describe('Openlayers map API tests', () => {
     api.map.addControl(new ol.control.ZoomToExtent());
     api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
     api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
-    const track = getPositionSet();
+    const track = TrackFactory.getPositionSet();
     spyOn(api, 'setMarker');
     spyOn(api, 'fitToExtent');
     // when
@@ -303,7 +300,7 @@ describe('Openlayers map API tests', () => {
     api.map = mockMap;
     api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
     api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
-    const track = getTrack();
+    const track = TrackFactory.getTrack();
     spyOn(api, 'setMarker');
     const markersExtent = [ 3, 2, 1, 0 ];
     spyOn(api, 'fitToExtent').and.callFake((_extent) => _extent);
@@ -358,7 +355,7 @@ describe('Openlayers map API tests', () => {
 
   it('should create marker from track position and add it to markers layer', () => {
     // given
-    const track = getTrack(1);
+    const track = TrackFactory.getTrack(1);
     track.positions[0].timestamp = 1;
     const id = 0;
     api.map = mockMap;
@@ -374,7 +371,7 @@ describe('Openlayers map API tests', () => {
 
   it('should get different marker style for start, end and normal position', () => {
     // given
-    const track = getTrack(3);
+    const track = TrackFactory.getTrack(3);
     api.markerStyles = {
       normal: 'normal',
       stop: 'stop',
@@ -396,7 +393,7 @@ describe('Openlayers map API tests', () => {
 
   it('should create different marker for position with comment', () => {
     // given
-    const track = getTrack(3);
+    const track = TrackFactory.getTrack(3);
     track.positions[0].comment = 'comment';
     track.positions[1].comment = 'comment';
     track.positions[2].comment = 'comment';
@@ -421,7 +418,7 @@ describe('Openlayers map API tests', () => {
 
   it('should create different marker for position with image', () => {
     // given
-    const track = getTrack(3);
+    const track = TrackFactory.getTrack(3);
     track.positions[0].image = 'image';
     track.positions[1].image = 'image';
     track.positions[2].image = 'image';
@@ -548,37 +545,4 @@ describe('Openlayers map API tests', () => {
     expect(api.popup.getElement().firstElementChild.innerHTML).toBe('content 1');
     expect(mockViewModel.model.markerSelect).toBe(null);
   });
-
-  function getSet(length = 2, type) {
-    let track;
-    if (type === uTrack) {
-      track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
-    } else {
-      track = new uPositionSet();
-    }
-    track.positions = [];
-    let lat = 21.01;
-    let lon = 52.23;
-    for (let i = 0; i < length; i++) {
-      track.positions.push(getPosition(lat, lon));
-      lat += 0.5;
-      lon += 0.5;
-    }
-    return track;
-  }
-
-  function getTrack(length = 2) {
-    return getSet(length, uTrack);
-  }
-
-  function getPositionSet(length = 2) {
-    return getSet(length, uPositionSet);
-  }
-
-  function getPosition(latitude = 52.23, longitude = 21.01) {
-    const position = new uPosition();
-    position.latitude = latitude;
-    position.longitude = longitude;
-    return position;
-  }
 });

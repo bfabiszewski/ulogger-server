@@ -20,10 +20,7 @@
 import * as gmStub from './googlemaps.stub.js';
 import { config, lang } from '../src/initializer.js'
 import GoogleMapsApi from '../src/mapapi/api_gmaps.js';
-import uPosition from '../src/position.js';
-import uPositionSet from '../src/positionset.js';
-import uTrack from '../src/track.js';
-import uUser from '../src/user.js';
+import TrackFactory from './helpers/trackfactory.js';
 import uUtils from '../src/utils.js';
 
 describe('Google Maps map API tests', () => {
@@ -203,7 +200,7 @@ describe('Google Maps map API tests', () => {
 
   it('should construct track polyline and markers', () => {
     // given
-    const track = getTrack();
+    const track = TrackFactory.getTrack();
     spyOn(api, 'setMarker');
     spyOn(google.maps, 'LatLng').and.callThrough();
     spyOn(google.maps.LatLngBounds.prototype, 'extend').and.callThrough();
@@ -231,7 +228,7 @@ describe('Google Maps map API tests', () => {
 
   it('should construct non-continuous track markers without polyline', () => {
     // given
-    const track = getPositionSet();
+    const track = TrackFactory.getPositionSet();
     spyOn(api, 'setMarker');
     // when
     api.displayTrack(track, false);
@@ -243,7 +240,7 @@ describe('Google Maps map API tests', () => {
 
   it('should fit bounds if update without zoom (should not add listener for "bounds_changed")', () => {
     // given
-    const track = getTrack();
+    const track = TrackFactory.getTrack();
     spyOn(google.maps.event, 'addListenerOnce');
     spyOn(google.maps.Map.prototype, 'fitBounds');
     spyOn(api, 'setMarker');
@@ -262,7 +259,7 @@ describe('Google Maps map API tests', () => {
 
   it('should fit bounds and zoom (add listener for "bounds_changed") if update with single position', () => {
     // given
-    const track = getTrack(1);
+    const track = TrackFactory.getTrack(1);
     spyOn(google.maps.event, 'addListenerOnce');
     spyOn(google.maps.Map.prototype, 'fitBounds');
     spyOn(api, 'setMarker');
@@ -281,7 +278,7 @@ describe('Google Maps map API tests', () => {
 
   it('should create marker from track position and add it to markers array', () => {
     // given
-    const track = getTrack(1);
+    const track = TrackFactory.getTrack(1);
     track.positions[0].timestamp = 1;
     spyOn(google.maps.Marker.prototype, 'addListener');
     spyOn(google.maps.Marker.prototype, 'setIcon');
@@ -307,7 +304,7 @@ describe('Google Maps map API tests', () => {
 
   it('should create marker different marker icon for start, end and normal position', () => {
     // given
-    const track = getTrack(3);
+    const track = TrackFactory.getTrack(3);
     spyOn(google.maps.Marker.prototype, 'setIcon');
     spyOn(GoogleMapsApi, 'getMarkerIcon');
     api.map = new google.maps.Map(container);
@@ -330,7 +327,7 @@ describe('Google Maps map API tests', () => {
 
   it('should create different marker for position with comment or image', () => {
     // given
-    const track = getTrack(4);
+    const track = TrackFactory.getTrack(4);
     const positionWithComment = 0;
     const positionWithImage = 1;
     const positionWithImageAndComment = 2;
@@ -473,36 +470,4 @@ describe('Google Maps map API tests', () => {
     expect(GoogleMapsApi.loadTimeoutMs).toEqual(jasmine.any(Number));
   });
 
-  function getSet(length = 2, type) {
-    let track;
-    if (type === uTrack) {
-      track = new uTrack(1, 'test track', new uUser(1, 'testUser'));
-    } else {
-      track = new uPositionSet();
-    }
-    track.positions = [];
-    let lat = 21.01;
-    let lon = 52.23;
-    for (let i = 0; i < length; i++) {
-      track.positions.push(getPosition(lat, lon));
-      lat += 0.5;
-      lon += 0.5;
-    }
-    return track;
-  }
-
-  function getTrack(length = 2) {
-    return getSet(length, uTrack);
-  }
-
-  function getPositionSet(length = 2) {
-    return getSet(length, uPositionSet);
-  }
-
-  function getPosition(latitude = 52.23, longitude = 21.01) {
-    const position = new uPosition();
-    position.latitude = latitude;
-    position.longitude = longitude;
-    return position;
-  }
 });
