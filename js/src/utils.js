@@ -296,11 +296,18 @@ export default class uUtils {
   }
 
   /**
-   * @param {Error} e
-   * @param {string} message
+   * @param {(Error|string)} e
+   * @param {string=} message
    */
   static error(e, message) {
-    console.error(`${e.name}: ${e.message} (${e.stack})`);
+    let details;
+    if (e instanceof Error) {
+      details = `${e.name}: ${e.message} (${e.stack})`;
+    } else {
+      details = e;
+      message = e;
+    }
+    console.error(details);
     alert(message);
   }
 }

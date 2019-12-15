@@ -40,14 +40,15 @@ export default class TrackFactory {
       track = new uPositionSet();
     }
     if (length) {
-      track.positions = [];
+      const positions = [];
       let lat = 21.01;
       let lon = 52.23;
       for (let i = 0; i < length; i++) {
-        track.positions.push(this.getPosition(i + 1, lat, lon));
+        positions.push(this.getPosition(i + 1, lat, lon));
         lat += 0.5;
         lon += 0.5;
       }
+      track.fromJson(positions, true);
     }
     return track;
   }
