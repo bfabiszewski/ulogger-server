@@ -204,8 +204,12 @@ label[for=user] {
   z-index: 10000;
 }
 #chart {
+  font-family: 'Open Sans', Verdana, sans-serif;
   position: fixed;
-  bottom: 0; left:0; right: 0;
+  padding: 0 10px;
+  bottom: -15px;
+  left:0;
+  right: 0;
   height: 200px;
   margin-right: 165px;
   background-color: white;
@@ -213,7 +217,7 @@ label[for=user] {
 }
 #chart-close {
   position: fixed;
-  bottom: 175px;
+  bottom: 160px;
   right: 175px;
   z-index: 10001;
   font-size: 0.8em;
@@ -366,6 +370,10 @@ button > * {
 
 .ct-line {
   stroke-width: 2px; !important;
+}
+
+.ct-axis-title {
+  font-size: 0.8em;
 }
 
 /* openlayers 3 popup */

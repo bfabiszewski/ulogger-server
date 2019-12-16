@@ -34,6 +34,7 @@ describe('Google Maps map API tests', () => {
     GoogleMapsApi.authError = false;
     GoogleMapsApi.gmInitialized = false;
     config.initialize();
+    lang.init(config);
     container = document.createElement('div');
     mockViewModel = { mapElement: container, model: {} };
     api = new GoogleMapsApi(mockViewModel);
