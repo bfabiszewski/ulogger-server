@@ -438,6 +438,38 @@ describe('Observe tests', () => {
       expect(object.arr).toEqual([ 1, 2, 3 ]);
     });
 
+    it('should remove all observers of all object properties', () => {
+      // given
+      let result2 = false;
+      let resultValue2;
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const observer2 = (value) => {
+        result2 = true;
+        resultValue2 = value;
+      };
+      object.observed2 = null;
+      uObserve.observe(object, 'observed', observer);
+      uObserve.observe(object, 'observed2', observer2);
+      // when
+      uObserve.unobserveAll(object);
+
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+      object.observed = 2;
+      object.observed2 = 2;
+      // then
+      expect(result).toBe(false);
+      expect(resultValue).toBe(undefined);// eslint-disable-line no-undefined
+      expect(result2).toBe(false);
+      // noinspection JSUnusedAssignment
+      expect(resultValue2).toBe(undefined);// eslint-disable-line no-undefined
+      expect(object.observed).toBe(2);
+      expect(object.observed2).toBe(2);
+    });
+
     it('should throw error when observing non-existing property', () => {
       // given
       const nonExisting = '___non-existing___';

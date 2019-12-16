@@ -205,13 +205,19 @@ export default class uObserve {
 
   /**
    * Remove all observers from object's property or all it's properties
-   * unobserve(obj, prop) removes all observes from given property prop;
-   * unobserve(obj) removes all observers from all properties of object obj.
+   * unobserveAll(obj, prop) removes all observes from given property prop;
+   * unobserveAll(obj) removes all observers from all properties of object obj.
    * @param {Object} obj
-   * @param {string} property
+   * @param {string=} property
    */
   static unobserveAll(obj, property) {
-    if (this.isObserved(obj, property)) {
+    if (arguments.length === 1) {
+      for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          this.unobserveAll(obj, prop);
+        }
+      }
+    } else if (this.isObserved(obj, property)) {
       console.log(`Removing all observers for ${property}…`);
       if (Array.isArray(obj[property])) {
         this.restoreArrayPrototypes(obj[property]);
