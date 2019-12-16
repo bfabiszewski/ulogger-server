@@ -50,16 +50,11 @@ describe('TrackViewModel tests', () => {
   let autoReloadEl;
   /** @type {HTMLInputElement} */
   let inputFileEl;
-  /** @type {HTMLSpanElement} */
-  let intervalEl;
-  /** @type {HTMLAnchorElement} */
-  let setIntervalEl;
   let tracks;
   let track1;
   let track2;
   let positions;
   let user;
-  const interval = 10;
   const MAX_FILE_SIZE = 10;
 
   beforeEach(() => {
@@ -68,8 +63,6 @@ describe('TrackViewModel tests', () => {
                         <select id="track" data-bind="currentTrackId" name="track"></select>
                         <input id="latest" type="checkbox" data-bind="showLatest">
                         <input id="auto-reload" type="checkbox" data-bind="autoReload">
-                        (<a id="set-interval" data-bind="onSetInterval"><span id="interval">${interval}</span></a> s)
-                        <a id="set-interval">setInterval</a>
                         <a id="force-reload" data-bind="onReload">reload</a>
                       </div>
                       <div id="summary" class="section"></div>
@@ -88,6 +81,7 @@ describe('TrackViewModel tests', () => {
 
     document.body.insertAdjacentHTML('afterbegin', fixture);
     config.initialize();
+    config.interval = 10;
     lang.init(config);
     trackEl = document.querySelector('#track');
     summaryEl = document.querySelector('#summary');
@@ -97,8 +91,6 @@ describe('TrackViewModel tests', () => {
     importGpxEl = document.querySelector('#import-gpx');
     forceReloadEl = document.querySelector('#force-reload');
     inputFileEl = document.querySelector('#input-file');
-    intervalEl = document.querySelector('#interval');
-    setIntervalEl = document.querySelector('#set-interval');
     autoReloadEl = document.querySelector('#auto-reload');
     state = new uState();
     vm = new TrackViewModel(state);
@@ -529,40 +521,17 @@ describe('TrackViewModel tests', () => {
     }, 100);
   });
 
-  it('should get interval value from user prompt on interval click', (done) => {
+  it('should restart running auto-reload on config interval change', (done) => {
     // given
     const newInterval = 99;
     spyOn(window, 'prompt').and.returnValue(newInterval);
     spyOn(vm, 'stopAutoReload');
     spyOn(vm, 'startAutoReload');
-    config.interval = interval;
-    vm.timerId = 0;
-    // when
-    setIntervalEl.click();
-    // then
-    setTimeout(() => {
-      expect(intervalEl.innerHTML).toBe(newInterval.toString());
-      expect(config.interval).toBe(newInterval);
-      expect(vm.stopAutoReload).not.toHaveBeenCalled();
-      expect(vm.startAutoReload).not.toHaveBeenCalled();
-      done();
-    }, 100);
-  });
-
-  it('should get interval value from user prompt on interval click and restart running auto-reload', (done) => {
-    // given
-    const newInterval = 99;
-    spyOn(window, 'prompt').and.returnValue(newInterval);
-    spyOn(vm, 'stopAutoReload');
-    spyOn(vm, 'startAutoReload');
-    config.interval = interval;
     vm.timerId = 1;
     // when
-    setIntervalEl.click();
+    config.interval = newInterval;
     // then
     setTimeout(() => {
-      expect(intervalEl.innerHTML).toBe(newInterval.toString());
-      expect(config.interval).toBe(newInterval);
       expect(vm.stopAutoReload).toHaveBeenCalledTimes(1);
       expect(vm.startAutoReload).toHaveBeenCalledTimes(1);
       done();
@@ -578,7 +547,7 @@ describe('TrackViewModel tests', () => {
       autoReloadEl.dispatchEvent(new Event('change'));
     });
     autoReloadEl.checked = false;
-    config.interval = 0.001;
+    uObserve.setSilently(config, 'interval', 0.001);
     vm.timerId = 0;
     // when
     autoReloadEl.checked = true;

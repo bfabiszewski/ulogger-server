@@ -53,16 +53,13 @@ export default class TrackViewModel extends ViewModel {
       /** @type {function} */
       onExportKml: null,
       /** @type {function} */
-      onImportGpx: null,
-      /** @type {function} */
-      onSetInterval: null
+      onImportGpx: null
     });
     this.setClickHandlers();
     /** @type HTMLSelectElement */
     const listEl = document.querySelector('#track');
     this.summaryEl = document.querySelector('#summary');
     this.importEl = document.querySelector('#input-file');
-    this.intervalEl = document.querySelector('#interval');
     this.select = new uSelect(listEl);
     this.state = state;
     this.timerId = 0;
@@ -80,7 +77,6 @@ export default class TrackViewModel extends ViewModel {
     this.model.onExportGpx = exportCb('gpx');
     this.model.onExportKml = exportCb('kml');
     this.model.onImportGpx = () => this.importEl.click();
-    this.model.onSetInterval = () => this.setAutoReloadInterval();
   }
 
   setObservers() {
@@ -117,6 +113,12 @@ export default class TrackViewModel extends ViewModel {
     this.state.onChanged('showAllUsers', (showAll) => {
       if (showAll) {
         this.loadAllUsersPosition();
+      }
+    });
+    config.onChanged('interval', () => {
+      if (this.timerId) {
+        this.stopAutoReload();
+        this.startAutoReload();
       }
     });
   }
@@ -273,19 +275,6 @@ export default class TrackViewModel extends ViewModel {
     clearInterval(this.timerId);
     this.timerId = 0;
     this.model.autoReload = false;
-  }
-
-  setAutoReloadInterval() {
-    const interval = parseInt(prompt(lang.strings['newinterval']));
-    if (!isNaN(interval) && interval !== config.interval) {
-      config.interval = interval;
-      this.intervalEl.innerHTML = config.interval.toString();
-      // if live tracking on, reload with new interval
-      if (this.timerId) {
-        this.stopAutoReload();
-        this.startAutoReload();
-      }
-    }
   }
 
   renderSummary() {
