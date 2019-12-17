@@ -45,6 +45,8 @@ export default class TrackViewModel extends ViewModel {
       autoReload: false,
       /** @type {string} */
       inputFile: false,
+      /** @type {string} */
+      summary: false,
       // click handlers
       /** @type {function} */
       onReload: null,
@@ -58,7 +60,6 @@ export default class TrackViewModel extends ViewModel {
     this.setClickHandlers();
     /** @type HTMLSelectElement */
     const listEl = document.querySelector('#track');
-    this.summaryEl = document.querySelector('#summary');
     this.importEl = document.querySelector('#input-file');
     this.select = new uSelect(listEl);
     this.state = state;
@@ -279,7 +280,7 @@ export default class TrackViewModel extends ViewModel {
 
   renderSummary() {
     if (!this.state.currentTrack || !this.state.currentTrack.hasPositions) {
-      this.summaryEl.innerHTML = '';
+      this.model.summary = '';
       return;
     }
     const last = this.state.currentTrack.positions[this.state.currentTrack.length - 1];
@@ -290,12 +291,12 @@ export default class TrackViewModel extends ViewModel {
       const dateTime = uUtils.getTimeString(date);
       const dateString = (date.toDateString() !== today.toDateString()) ? `${dateTime.date}<br>` : '';
       const timeString = `${dateTime.time}<span style="font-weight:normal">${dateTime.zone}</span>`;
-      this.summaryEl.innerHTML = `
+      this.model.summary = `
         <div class="menu-title">${lang.strings['latest']}:</div>
         ${dateString}
         ${timeString}`;
     } else {
-      this.summaryEl.innerHTML = `
+      this.model.summary = `
         <div class="menu-title">${lang.strings['summary']}</div>
         <div><img class="icon" alt="${lang.strings['tdistance']}" title="${lang.strings['tdistance']}" src="images/distance.svg"> ${lang.getLocaleDistanceMajor(last.totalMeters, true)}</div>
         <div><img class="icon" alt="${lang.strings['ttime']}" title="${lang.strings['ttime']}" src="images/time.svg"> ${lang.getLocaleDuration(last.totalSeconds)}</div>`;

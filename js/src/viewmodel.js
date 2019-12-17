@@ -54,7 +54,7 @@ export default class ViewModel {
    * Creates bidirectional binding between model property and DOM element.
    * For input elements model property value change triggers change in DOM element and vice versa.
    * In case of anchor element binding is one way. Model property is callback that will receive click event.
-   * @param key
+   * @param {string} key
    */
   bind(key) {
     const dataProp = 'bind';
@@ -63,30 +63,63 @@ export default class ViewModel {
       const name = element.dataset[dataProp];
       if (name === key) {
         if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement) {
-          let prop = 'value';
-          let getVal = (val) => val;
-          if (element.type === 'checkbox') {
-            prop = 'checked';
-            getVal = (val) => !!val;
-          }
-          element.addEventListener('change', () => {
-            this._model[key] = element[prop];
-          });
-          uObserve.observe(this.model, key, (val) => {
-            val = getVal(val);
-            if (element[prop] !== val) {
-              element[prop] = val;
-            }
-          });
+          this.onChangeBind(element, key);
         } else if (element instanceof HTMLAnchorElement) {
-          element.addEventListener('click', (event) => {
-            if (typeof this._model[key] !== 'function') {
-              throw new Error(`Property ${key} is not a callback`);
-            }
-            this._model[key](event);
-            event.preventDefault();
-          });
+          this.onClickBind(element, key);
+        } else {
+          this.viewUpdateBind(element, key);
         }
+      }
+    });
+  }
+
+  /**
+   * One way bind: view element click event to view model event handler
+   * @param {HTMLAnchorElement} element
+   * @param {string} key
+   */
+  onClickBind(element, key) {
+    element.addEventListener('click', (event) => {
+      if (typeof this._model[key] !== 'function') {
+        throw new Error(`Property ${key} is not a callback`);
+      }
+      this._model[key](event);
+      event.preventDefault();
+    });
+  }
+
+  /**
+   * Two way bind: view element change event to view model property
+   * @param {(HTMLInputElement|HTMLSelectElement)} element
+   * @param {string} key
+   */
+  onChangeBind(element, key) {
+    let prop = 'value';
+    let getVal = (val) => val;
+    if (element.type === 'checkbox') {
+      prop = 'checked';
+      getVal = (val) => !!val;
+    }
+    element.addEventListener('change', () => {
+      this._model[key] = element[prop];
+    });
+    uObserve.observe(this.model, key, (val) => {
+      val = getVal(val);
+      if (element[prop] !== val) {
+        element[prop] = val;
+      }
+    });
+  }
+
+  /**
+   * One way bind: view model property to view element content
+   * @param {HTMLElement} element
+   * @param {string} key
+   */
+  viewUpdateBind(element, key) {
+    uObserve.observe(this.model, key, (content) => {
+      if (element.innerHTML !== content) {
+        element.innerHTML = content;
       }
     });
   }
@@ -106,5 +139,4 @@ export default class ViewModel {
   unsubscribe(property, callback) {
     uObserve.unobserve(this.model, property, callback);
   }
-
 }

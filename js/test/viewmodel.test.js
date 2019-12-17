@@ -152,6 +152,22 @@ describe('ViewModel tests', () => {
     expect(model[propertyFunction].calls.mostRecent().args[0].target).toBe(anchorElement);
   });
 
+  it('should bind DOM div element to model property', () => {
+    // given
+    /** @type {HTMLDivElement} */
+    const divElement = uUtils.nodeFromHtml(`<div data-bind="${propertyString}"></div>`);
+    document.body.appendChild(divElement);
+    const newContent = '<span>new value</span>';
+    // when
+    vm.bind(propertyString);
+    // then
+    expect(uObserve.isObserved(vm.model, propertyString)).toBe(true);
+    // when
+    model[propertyString] = newContent;
+    // then
+    expect(divElement.innerHTML).toBe(newContent);
+  });
+
   it('should start observing model property', () => {
     // given
     // eslint-disable-next-line no-empty-function

@@ -52,7 +52,7 @@ describe('ConfigViewModel tests', () => {
 
     const fixture = `<div id="fixture">
                        <div class="section">
-                         <a id="set-interval" data-bind="onSetInterval"><span id="interval">${config.interval}</span></a>
+                         <a id="set-interval" data-bind="onSetInterval"><span id="interval" data-bind="interval">${config.interval}</span></a>
                       </div>
                       <div>
                         <label for="api">api</label>

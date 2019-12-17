@@ -31,7 +31,6 @@ export default class ConfigViewModel extends ViewModel {
   constructor(state) {
     super(config);
     this.state = state;
-    this.intervalEl = document.querySelector('#interval');
     this.model.onSetInterval = () => this.setAutoReloadInterval();
     this.bindAll();
     this.onChanged('mapApi', (api) => {
@@ -46,7 +45,6 @@ export default class ConfigViewModel extends ViewModel {
       ConfigViewModel.reload();
     });
     this.onChanged('interval', (interval) => {
-      this.intervalEl.innerHTML = interval.toString();
       uUtils.setCookie('interval', interval);
     });
   }

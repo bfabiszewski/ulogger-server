@@ -65,7 +65,7 @@ describe('TrackViewModel tests', () => {
                         <input id="auto-reload" type="checkbox" data-bind="autoReload">
                         <a id="force-reload" data-bind="onReload">reload</a>
                       </div>
-                      <div id="summary" class="section"></div>
+                      <div id="summary" class="section" data-bind="summary"></div>
                       <div class="section">
                         <a id="export-kml" class="menu-link" data-bind="onExportKml">kml</a>
                         <a id="export-gpx" class="menu-link" data-bind="onExportGpx">gpx</a>
@@ -113,7 +113,6 @@ describe('TrackViewModel tests', () => {
     const trackViewModel = new TrackViewModel(state);
     // then
     expect(trackViewModel).toBeInstanceOf(ViewModel);
-    expect(trackViewModel.summaryEl).toBeInstanceOf(HTMLDivElement);
     expect(trackViewModel.importEl).toBeInstanceOf(HTMLInputElement);
     expect(trackViewModel.select.element).toBeInstanceOf(HTMLSelectElement);
     expect(trackViewModel.state).toBe(state);
