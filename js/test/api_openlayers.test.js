@@ -31,7 +31,7 @@ describe('Openlayers map API tests', () => {
   let mockMap;
 
   beforeEach(() => {
-    config.initialize();
+    config.reinitialize();
     document.body.innerHTML = '';
     container = document.createElement('div');
     document.body.appendChild(container);

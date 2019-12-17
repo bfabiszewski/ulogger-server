@@ -43,7 +43,7 @@ describe('UserViewModel tests', () => {
                     </div>`;
     document.body.insertAdjacentHTML('afterbegin', fixture);
     userEl = document.querySelector('#user');
-    config.initialize();
+    config.reinitialize();
     lang.init(config);
     lang.strings['suser'] = 'select user';
     lang.strings['allusers'] = 'all users';

@@ -33,7 +33,7 @@ describe('Google Maps map API tests', () => {
     gmStub.setupGmapsStub();
     GoogleMapsApi.authError = false;
     GoogleMapsApi.gmInitialized = false;
-    config.initialize();
+    config.reinitialize();
     lang.init(config);
     container = document.createElement('div');
     mockViewModel = { mapElement: container, model: {} };

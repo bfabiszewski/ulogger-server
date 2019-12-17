@@ -80,7 +80,7 @@ describe('TrackViewModel tests', () => {
                     </div>`;
 
     document.body.insertAdjacentHTML('afterbegin', fixture);
-    config.initialize();
+    config.reinitialize();
     config.interval = 10;
     lang.init(config);
     trackEl = document.querySelector('#track');

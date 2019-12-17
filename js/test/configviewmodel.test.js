@@ -44,7 +44,7 @@ describe('ConfigViewModel tests', () => {
   const newUnits = 'imperial';
 
   beforeEach(() => {
-    config.initialize();
+    config.reinitialize();
     uObserve.setSilently(config, 'interval', 10);
     uObserve.setSilently(config, 'lang', 'en');
     uObserve.setSilently(config, 'units', 'metric');
@@ -91,7 +91,6 @@ describe('ConfigViewModel tests', () => {
 
   afterEach(() => {
     document.body.removeChild(document.querySelector('#fixture'));
-    uObserve.unobserveAll(config);
   });
 
   it('should create instance with state as parameter', () => {
