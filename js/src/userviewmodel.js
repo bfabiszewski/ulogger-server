@@ -42,22 +42,10 @@ export default class UserViewModel extends ViewModel {
     const listEl = document.querySelector('#user');
     this.select = new uSelect(listEl, lang.strings['suser'], `- ${lang.strings['allusers']} -`);
     this.state = state;
-    this.onChanged('userList', (list) => { this.select.setOptions(list); });
-    this.onChanged('currentUserId', (listValue) => {
-      this.state.showAllUsers = listValue === uSelect.allValue;
-      this.state.currentUser = this.model.userList.find((_user) => _user.listValue === listValue) || null;
-    });
-    state.onChanged('showLatest', (showLatest) => {
-      if (showLatest) {
-        this.select.showAllOption();
-      } else {
-        this.select.hideAllOption();
-      }
-    });
-    this.init();
   }
 
   init() {
+    this.setObservers(this.state);
     this.bindAll();
     uUser.fetchList()
       .then((_users) => {
@@ -74,6 +62,26 @@ export default class UserViewModel extends ViewModel {
       }
     })
       .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+  }
+
+  /**
+   * @param {uState} state
+   */
+  setObservers(state) {
+    this.onChanged('userList', (list) => {
+      this.select.setOptions(list);
+    });
+    this.onChanged('currentUserId', (listValue) => {
+      this.state.showAllUsers = listValue === uSelect.allValue;
+      this.state.currentUser = this.model.userList.find((_user) => _user.listValue === listValue) || null;
+    });
+    state.onChanged('showLatest', (showLatest) => {
+      if (showLatest) {
+        this.select.showAllOption();
+      } else {
+        this.select.hideAllOption();
+      }
+    });
   }
 
 }

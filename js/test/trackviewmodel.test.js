@@ -109,19 +109,17 @@ describe('TrackViewModel tests', () => {
   });
 
   it('should create instance with state as parameter', () => {
-    // when
-    const trackViewModel = new TrackViewModel(state);
-    // then
-    expect(trackViewModel).toBeInstanceOf(ViewModel);
-    expect(trackViewModel.importEl).toBeInstanceOf(HTMLInputElement);
-    expect(trackViewModel.select.element).toBeInstanceOf(HTMLSelectElement);
-    expect(trackViewModel.state).toBe(state);
+    expect(vm).toBeInstanceOf(ViewModel);
+    expect(vm.importEl).toBeInstanceOf(HTMLInputElement);
+    expect(vm.select.element).toBeInstanceOf(HTMLSelectElement);
+    expect(vm.state).toBe(state);
   });
 
   it('should load track list and fetch first track on current user change', (done) => {
     // given
     spyOn(uTrack, 'fetchList').and.returnValue(Promise.resolve(tracks));
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
+    vm.init();
     // when
     state.currentUser = user;
     // then
@@ -144,6 +142,7 @@ describe('TrackViewModel tests', () => {
     // given
     spyOn(uTrack, 'fetchList').and.returnValue(Promise.resolve([]));
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
+    vm.init();
     // when
     state.currentUser = user;
     // then
@@ -164,8 +163,9 @@ describe('TrackViewModel tests', () => {
     positions[0].trackname = track2.name;
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
     spyOn(uTrack, 'fetchList').and.returnValue(Promise.resolve(tracks));
-    uObserve.setSilently(vm.model, 'showLatest', true);
-    uObserve.setSilently(state, 'showLatest', true);
+    vm.model.showLatest = true;
+    state.showLatest = true;
+    vm.init();
     // when
     state.currentUser = user;
     // then
@@ -188,10 +188,11 @@ describe('TrackViewModel tests', () => {
     // given
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    vm.init();
     // when
     state.currentUser = null;
     // then
@@ -209,10 +210,11 @@ describe('TrackViewModel tests', () => {
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    vm.init();
     // when
     trackEl.value = track2.listValue;
     trackEl.dispatchEvent(new Event('change'));
@@ -239,10 +241,11 @@ describe('TrackViewModel tests', () => {
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    vm.init();
     // when
     latestEl.checked = true;
     latestEl.dispatchEvent(new Event('change'));
@@ -273,10 +276,11 @@ describe('TrackViewModel tests', () => {
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    vm.init();
     // when
     latestEl.checked = true;
     latestEl.dispatchEvent(new Event('change'));
@@ -306,11 +310,12 @@ describe('TrackViewModel tests', () => {
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(vm.model, 'showLatest', true);
-    uObserve.setSilently(state, 'currentUser', user);
-    uObserve.setSilently(state, 'showLatest', true);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    vm.model.showLatest = true;
+    state.currentUser = user;
+    state.showLatest = true;
+    vm.init();
     state.currentTrack = track1;
     latestEl.checked = true;
     // when
@@ -339,12 +344,13 @@ describe('TrackViewModel tests', () => {
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
-    uObserve.setSilently(state, 'showLatest', true);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    state.showLatest = true;
     latestEl.checked = true;
+    vm.init();
     // when
     state.showAllUsers = true;
     // then
@@ -366,14 +372,15 @@ describe('TrackViewModel tests', () => {
   it('should clear current track if "show latest" is unchecked when "all users" is set', (done) => {
     // given
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    uObserve.setSilently(vm.model, 'trackList', []);
-    uObserve.setSilently(vm.model, 'currentTrackId', '');
-    uObserve.setSilently(vm.model, 'showLatest', true);
-    uObserve.setSilently(state, 'currentUser', null);
-    uObserve.setSilently(state, 'showLatest', true);
-    uObserve.setSilently(state, 'showAllUsers', true);
+    vm.model.trackList = [];
+    vm.model.currentTrackId = '';
+    vm.model.showLatest = true;
+    state.currentUser = null;
+    state.showLatest = true;
+    state.showAllUsers = true;
     state.currentTrack = TrackFactory.getPositionSet(1);
     latestEl.checked = true;
+    vm.init();
     // when
     latestEl.checked = false;
     latestEl.dispatchEvent(new Event('change'));
@@ -394,13 +401,14 @@ describe('TrackViewModel tests', () => {
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(vm.model, 'showLatest', true);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
-    uObserve.setSilently(state, 'showLatest', true);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    vm.model.showLatest = true;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    state.showLatest = true;
     latestEl.checked = true;
+    vm.init();
     // when
     trackEl.value = track2.listValue;
     trackEl.dispatchEvent(new Event('change'));
@@ -416,7 +424,8 @@ describe('TrackViewModel tests', () => {
   it('should export track to KML on link click', (done) => {
     // given
     spyOn(track1, 'export');
-    uObserve.setSilently(state, 'currentTrack', track1);
+    state.currentTrack = track1;
+    vm.init();
     // when
     exportKmlEl.click();
     // then
@@ -429,7 +438,8 @@ describe('TrackViewModel tests', () => {
   it('should export track to GPX on link click', (done) => {
     // given
     spyOn(track1, 'export');
-    uObserve.setSilently(state, 'currentTrack', track1);
+    state.currentTrack = track1;
+    vm.init();
     // when
     exportGpxEl.click();
     // then
@@ -455,16 +465,17 @@ describe('TrackViewModel tests', () => {
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
     inputFileEl.onclick = () => {
       const dt = new DataTransfer();
       dt.items.add(file);
       inputFileEl.files = dt.files;
       inputFileEl.dispatchEvent(new Event('change'));
     };
+    vm.init();
     // when
     importGpxEl.click();
     // then
@@ -496,16 +507,17 @@ describe('TrackViewModel tests', () => {
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
-    uObserve.setSilently(vm.model, 'trackList', tracks);
-    uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-    uObserve.setSilently(state, 'currentTrack', track1);
-    uObserve.setSilently(state, 'currentUser', user);
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
     inputFileEl.onclick = () => {
       const dt = new DataTransfer();
       dt.items.add(new File([ '12345678901' ], 'filepath.gpx'));
       inputFileEl.files = dt.files;
       inputFileEl.dispatchEvent(new Event('change'));
     };
+    vm.init();
     // when
     importGpxEl.click();
     // then
@@ -527,6 +539,7 @@ describe('TrackViewModel tests', () => {
     spyOn(vm, 'stopAutoReload');
     spyOn(vm, 'startAutoReload');
     vm.timerId = 1;
+    vm.init();
     // when
     config.interval = newInterval;
     // then
@@ -546,8 +559,9 @@ describe('TrackViewModel tests', () => {
       autoReloadEl.dispatchEvent(new Event('change'));
     });
     autoReloadEl.checked = false;
-    uObserve.setSilently(config, 'interval', 0.001);
+    config.interval = 0.001;
     vm.timerId = 0;
+    vm.init();
     // when
     autoReloadEl.checked = true;
     autoReloadEl.dispatchEvent(new Event('change'));
@@ -570,10 +584,11 @@ describe('TrackViewModel tests', () => {
       trackEl.insertAdjacentHTML('afterbegin', options);
       const optLength = trackEl.options.length;
       const posLength = track1.length;
-      uObserve.setSilently(vm.model, 'trackList', [ track1, track2 ]);
-      uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-      uObserve.setSilently(state, 'currentTrack', track1);
-      uObserve.setSilently(state, 'currentUser', user);
+      vm.model.trackList = [ track1, track2 ];
+      vm.model.currentTrackId = track1.listValue;
+      state.currentTrack = track1;
+      state.currentUser = user;
+      vm.init();
       // when
       forceReloadEl.click();
       // then
@@ -595,13 +610,14 @@ describe('TrackViewModel tests', () => {
       const options = '<option selected value="1">track1</option><option value="2">track2</option>';
       trackEl.insertAdjacentHTML('afterbegin', options);
       const optLength = trackEl.options.length;
-      uObserve.setSilently(vm.model, 'trackList', [ track1, track2 ]);
-      uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-      uObserve.setSilently(vm.model, 'showLatest', true);
-      uObserve.setSilently(state, 'currentTrack', track1);
-      uObserve.setSilently(state, 'currentUser', user);
-      uObserve.setSilently(state, 'showLatest', true);
+      vm.model.trackList = [ track1, track2 ];
+      vm.model.currentTrackId = track1.listValue;
+      vm.model.showLatest = true;
+      state.currentTrack = track1;
+      state.currentUser = user;
+      state.showLatest = true;
       latestEl.checked = true;
+      vm.init();
       // when
       forceReloadEl.click();
       // then
@@ -625,13 +641,14 @@ describe('TrackViewModel tests', () => {
       const options = '<option selected value="1">track1</option><option value="2">track2</option>';
       trackEl.insertAdjacentHTML('afterbegin', options);
       const optLength = trackEl.options.length;
-      uObserve.setSilently(vm.model, 'trackList', [ track1, track2 ]);
-      uObserve.setSilently(vm.model, 'currentTrackId', track1.listValue);
-      uObserve.setSilently(vm.model, 'showLatest', true);
-      uObserve.setSilently(state, 'currentTrack', track1);
-      uObserve.setSilently(state, 'currentUser', user);
-      uObserve.setSilently(state, 'showLatest', true);
+      vm.model.trackList = [ track1, track2 ];
+      vm.model.currentTrackId = track1.listValue;
+      vm.model.showLatest = true;
+      state.currentTrack = track1;
+      state.currentUser = user;
+      state.showLatest = true;
       latestEl.checked = true;
+      vm.init();
       // when
       forceReloadEl.click();
       // then
@@ -654,14 +671,15 @@ describe('TrackViewModel tests', () => {
       set.positions[1].trackid = track2.id;
       set.positions[1].trackname = track2.name;
       spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(set.positions));
-      uObserve.setSilently(vm.model, 'trackList', []);
-      uObserve.setSilently(vm.model, 'currentTrackId', '');
-      uObserve.setSilently(vm.model, 'showLatest', true);
-      uObserve.setSilently(state, 'currentTrack', null);
-      uObserve.setSilently(state, 'currentUser', null);
-      uObserve.setSilently(state, 'showLatest', true);
-      uObserve.setSilently(state, 'showAllUsers', true);
+      vm.model.trackList = [];
+      vm.model.currentTrackId = '';
+      vm.model.showLatest = true;
+      state.currentTrack = null;
+      state.currentUser = null;
+      state.showLatest = true;
+      state.showAllUsers = true;
       latestEl.checked = true;
+      vm.init();
       // when
       forceReloadEl.click();
       // then
@@ -679,10 +697,11 @@ describe('TrackViewModel tests', () => {
     it('should fetch track list if user is selected and no track is selected', (done) => {
       // given
       spyOn(uTrack, 'fetchList').and.returnValue(Promise.resolve([]));
-      uObserve.setSilently(vm.model, 'trackList', []);
-      uObserve.setSilently(vm.model, 'currentTrackId', '');
-      uObserve.setSilently(state, 'currentTrack', null);
-      uObserve.setSilently(state, 'currentUser', user);
+      vm.model.trackList = [];
+      vm.model.currentTrackId = '';
+      state.currentTrack = null;
+      state.currentUser = user;
+      vm.init();
       // when
       forceReloadEl.click();
       // then
@@ -699,10 +718,11 @@ describe('TrackViewModel tests', () => {
       // given
       spyOn(uTrack, 'fetchList');
       spyOn(uPositionSet, 'fetch');
-      uObserve.setSilently(vm.model, 'trackList', []);
-      uObserve.setSilently(vm.model, 'currentTrackId', '');
-      uObserve.setSilently(state, 'currentTrack', null);
-      uObserve.setSilently(state, 'currentUser', null);
+      vm.model.trackList = [];
+      vm.model.currentTrackId = '';
+      state.currentTrack = null;
+      state.currentUser = null;
+      vm.init();
       // when
       forceReloadEl.click();
       // then

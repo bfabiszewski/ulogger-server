@@ -32,7 +32,14 @@ export default class ConfigViewModel extends ViewModel {
     super(config);
     this.state = state;
     this.model.onSetInterval = () => this.setAutoReloadInterval();
+  }
+
+  init() {
+    this.setObservers();
     this.bindAll();
+  }
+
+  setObservers() {
     this.onChanged('mapApi', (api) => {
       uUtils.setCookie('api', api);
     });

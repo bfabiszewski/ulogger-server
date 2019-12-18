@@ -64,20 +64,11 @@ export default class TrackViewModel extends ViewModel {
     this.select = new uSelect(listEl);
     this.state = state;
     this.timerId = 0;
-    this.setObservers();
-    this.init();
   }
 
-  setClickHandlers() {
-    this.model.onReload = () => this.onReload();
-    const exportCb = (type) => () => {
-      if (this.state.currentTrack) {
-        this.state.currentTrack.export(type);
-      }
-    };
-    this.model.onExportGpx = exportCb('gpx');
-    this.model.onExportKml = exportCb('kml');
-    this.model.onImportGpx = () => this.importEl.click();
+  init() {
+    this.setObservers();
+    this.bindAll();
   }
 
   setObservers() {
@@ -122,6 +113,18 @@ export default class TrackViewModel extends ViewModel {
         this.startAutoReload();
       }
     });
+  }
+
+  setClickHandlers() {
+    this.model.onReload = () => this.onReload();
+    const exportCb = (type) => () => {
+      if (this.state.currentTrack) {
+        this.state.currentTrack.export(type);
+      }
+    };
+    this.model.onExportGpx = exportCb('gpx');
+    this.model.onExportKml = exportCb('kml');
+    this.model.onImportGpx = () => this.importEl.click();
   }
 
   /**
@@ -251,10 +254,6 @@ export default class TrackViewModel extends ViewModel {
         }
       })
       .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
-  }
-
-  init() {
-    this.bindAll();
   }
 
   /**

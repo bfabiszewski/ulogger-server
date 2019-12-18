@@ -20,7 +20,6 @@
 import { auth, config, lang } from '../src/initializer.js';
 import UserViewModel from '../src/userviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
-import uObserve from '../src/observe.js';
 import uSelect from '../src/select.js';
 import uState from '../src/state.js';
 import uUser from '../src/user.js';
@@ -33,6 +32,7 @@ describe('UserViewModel tests', () => {
   let users;
   /** @type {HTMLSelectElement} */
   let userEl;
+  let vm;
 
   beforeEach(() => {
     const fixture = `<div id="fixture">
@@ -51,6 +51,7 @@ describe('UserViewModel tests', () => {
     user1 = new uUser(1, 'user1');
     user2 = new uUser(2, 'user2');
     users = [ user1, user2 ];
+    vm = new UserViewModel(state);
   });
 
   afterEach(() => {
@@ -58,16 +59,27 @@ describe('UserViewModel tests', () => {
     auth.user = null;
   });
 
-  it('should create instance with state as parameter and load user list and select first user on list', (done) => {
+  it('should create instance with state as parameter', () => {
     // given
     spyOn(uUser, 'fetchList').and.returnValue(Promise.resolve(users));
     // when
-    const vm = new UserViewModel(state);
+    // then
+    expect(vm).toBeInstanceOf(ViewModel);
+    expect(vm.select.element).toBeInstanceOf(HTMLSelectElement);
+    expect(vm.state).toBe(state);
+    expect(userEl.value).toBe('0');
+    expect(userEl.options.length).toBe(1);
+    expect(userEl.options[0].selected).toBe(true);
+    expect(userEl.options[0].value).toBe('0');
+  });
+
+  it('should load user list and select first user on list', (done) => {
+    // given
+    spyOn(uUser, 'fetchList').and.returnValue(Promise.resolve(users));
+    // when
+    vm.init();
     // then
     setTimeout(() => {
-      expect(vm).toBeInstanceOf(ViewModel);
-      expect(vm.select.element).toBeInstanceOf(HTMLSelectElement);
-      expect(vm.state).toBe(state);
       expect(vm.model.userList.length).toBe(users.length);
       expect(userEl.value).toBe(user1.listValue);
       expect(userEl.options.length).toBe(users.length + 1);
@@ -77,17 +89,14 @@ describe('UserViewModel tests', () => {
     }, 100);
   });
 
-  it('should create instance with state as parameter and load user list and select authorized user on list', (done) => {
+  it('should load user list and select authorized user on list', (done) => {
     // given
     spyOn(uUser, 'fetchList').and.returnValue(Promise.resolve(users));
     // when
     auth.user = user2;
-    const vm = new UserViewModel(state);
+    vm.init();
     // then
     setTimeout(() => {
-      expect(vm).toBeInstanceOf(ViewModel);
-      expect(vm.select.element).toBeInstanceOf(HTMLSelectElement);
-      expect(vm.state).toBe(state);
       expect(vm.model.userList.length).toBe(users.length);
       expect(userEl.value).toBe(user2.listValue);
       expect(userEl.options.length).toBe(users.length + 1);
@@ -99,14 +108,13 @@ describe('UserViewModel tests', () => {
 
   it('should change current user on user list option selected', (done) => {
     // given
-    spyOn(UserViewModel.prototype, 'init');
-    const vm = new UserViewModel(state);
-    uObserve.setSilently(state, 'currentUser', user1);
-    uObserve.setSilently(vm.model, 'userList', users);
-    uObserve.setSilently(vm.model, 'currentUserId', user1.listValue);
+    state.currentUser = user1;
+    vm.model.userList = users;
+    vm.model.currentUserId = user1.listValue;
     const options = '<option selected value="1">user1</option><option value="2">user2</option>';
     userEl.insertAdjacentHTML('beforeend', options);
     const optLength = userEl.options.length;
+    vm.setObservers(state);
     vm.bindAll();
     // when
     userEl.value = user2.listValue;
@@ -124,15 +132,14 @@ describe('UserViewModel tests', () => {
 
   it('should set showAllUsers state on "all users" option selected', (done) => {
     // given
-    spyOn(UserViewModel.prototype, 'init');
-    const vm = new UserViewModel(state);
-    uObserve.setSilently(state, 'currentUser', user1);
-    uObserve.setSilently(state, 'showAllUsers', false);
-    uObserve.setSilently(vm.model, 'userList', users);
-    uObserve.setSilently(vm.model, 'currentUserId', user1.listValue);
+    state.currentUser = user1;
+    state.showAllUsers = false;
+    vm.model.userList = users;
+    vm.model.currentUserId = user1.listValue;
     const options = `<option value="${uSelect.allValue}">all users</option><option selected value="1">user1</option><option value="2">user2</option>`;
     userEl.insertAdjacentHTML('beforeend', options);
     const optLength = userEl.options.length;
+    vm.setObservers(state);
     vm.bindAll();
     // when
     userEl.value = uSelect.allValue;
@@ -151,16 +158,15 @@ describe('UserViewModel tests', () => {
 
   it('should add "all users" option when "showLatest" state is set', (done) => {
     // given
-    spyOn(UserViewModel.prototype, 'init');
-    const vm = new UserViewModel(state);
-    uObserve.setSilently(state, 'currentUser', user1);
-    uObserve.setSilently(state, 'showAllUsers', false);
-    uObserve.setSilently(vm.model, 'userList', users);
-    uObserve.setSilently(vm.model, 'currentUserId', user1.listValue);
+    state.currentUser = user1;
+    state.showAllUsers = false;
+    vm.model.userList = users;
+    vm.model.currentUserId = user1.listValue;
     const options = '<option selected value="1">user1</option><option value="2">user2</option>';
     userEl.insertAdjacentHTML('beforeend', options);
     const optLength = userEl.options.length;
     const listLength = vm.model.userList.length;
+    vm.setObservers(state);
     vm.bindAll();
     // when
     state.showLatest = true;
@@ -182,17 +188,16 @@ describe('UserViewModel tests', () => {
 
   it('should remove "all users" option when "showLatest" state is unset', (done) => {
     // given
-    spyOn(UserViewModel.prototype, 'init');
-    const vm = new UserViewModel(state);
-    uObserve.setSilently(state, 'currentUser', user1);
-    uObserve.setSilently(state, 'showAllUsers', false);
-    uObserve.setSilently(state, 'showLatest', true);
-    uObserve.setSilently(vm.model, 'userList', users);
-    uObserve.setSilently(vm.model, 'currentUserId', user1.listValue);
+    state.currentUser = user1;
+    state.showAllUsers = false;
+    state.showLatest = true;
+    vm.model.userList = users;
+    vm.model.currentUserId = user1.listValue;
     const options = `<option value="${uSelect.allValue}">all users</option><option selected value="1">user1</option><option value="2">user2</option>`;
     userEl.insertAdjacentHTML('beforeend', options);
     const optLength = userEl.options.length;
     const listLength = vm.model.userList.length;
+    vm.setObservers(state);
     vm.bindAll();
     // when
     state.showLatest = false;

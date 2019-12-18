@@ -20,7 +20,6 @@
 import ConfigViewModel from '../src/configviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
 import { config } from '../src/initializer.js';
-import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
 import uUtils from '../src/utils.js';
 
@@ -45,10 +44,10 @@ describe('ConfigViewModel tests', () => {
 
   beforeEach(() => {
     config.reinitialize();
-    uObserve.setSilently(config, 'interval', 10);
-    uObserve.setSilently(config, 'lang', 'en');
-    uObserve.setSilently(config, 'units', 'metric');
-    uObserve.setSilently(config, 'mapApi', 'gmaps');
+    config.interval = 10;
+    config.lang = 'en';
+    config.units = 'metric';
+    config.mapApi = 'gmaps';
 
     const fixture = `<div id="fixture">
                        <div class="section">
@@ -85,6 +84,7 @@ describe('ConfigViewModel tests', () => {
     setIntervalEl = document.querySelector('#set-interval');
     state = new uState();
     vm = new ConfigViewModel(state);
+    vm.init();
     spyOn(uUtils, 'setCookie').and.returnValue(newInterval);
     spyOn(ConfigViewModel, 'reload');
   });
