@@ -60,10 +60,6 @@ describe('UserViewModel tests', () => {
   });
 
   it('should create instance with state as parameter', () => {
-    // given
-    spyOn(uUser, 'fetchList').and.returnValue(Promise.resolve(users));
-    // when
-    // then
     expect(vm).toBeInstanceOf(ViewModel);
     expect(vm.select.element).toBeInstanceOf(HTMLSelectElement);
     expect(vm.state).toBe(state);
