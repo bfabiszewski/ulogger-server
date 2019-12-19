@@ -17,10 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import { lang as $ } from './initializer.js';
 import Chartist from 'chartist'
 import ViewModel from './viewmodel.js';
 import ctAxisTitle from 'chartist-plugin-axistitle';
-import { lang } from './initializer.js';
 import uUtils from './utils.js';
 
 /**
@@ -81,7 +81,7 @@ export default class ChartViewModel extends ViewModel {
       plugins: [
         ctAxisTitle({
           axisY: {
-            axisTitle: `${lang.strings['altitude']} (${lang.unit('unitDistance')})`,
+            axisTitle: `${$._('altitude')} (${$.unit('unitDistance')})`,
             axisClass: 'ct-axis-title',
             offset: {
               x: 0,

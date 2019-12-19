@@ -21,6 +21,7 @@ import * as gmStub from './googlemaps.stub.js';
 import { config, lang } from '../src/initializer.js'
 import GoogleMapsApi from '../src/mapapi/api_gmaps.js';
 import TrackFactory from './helpers/trackfactory.js';
+import uObserve from '../src/observe.js';
 import uUtils from '../src/utils.js';
 
 describe('Google Maps map API tests', () => {
@@ -45,10 +46,14 @@ describe('Google Maps map API tests', () => {
     spyOn(google.maps, 'Polyline').and.callThrough();
     spyOnProperty(GoogleMapsApi, 'loadTimeoutMs', 'get').and.returnValue(loadTimeout);
     spyOn(window, 'alert');
+    spyOn(lang, '_').and.returnValue('{placeholder}');
     gmStub.applyPrototypes();
   });
 
-  afterEach(() => gmStub.clear());
+  afterEach(() => {
+    gmStub.clear();
+    uObserve.unobserveAll(lang);
+  });
 
   it('should timeout initialization of map engine', (done) => {
     // given
@@ -124,13 +129,13 @@ describe('Google Maps map API tests', () => {
   it('should fail with authorization error', (done) => {
     // given
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
-    lang.strings['apifailure'] = 'authfailure';
+    lang._.and.returnValue('authfailure');
     // when
     api.init()
       .then(() => done.fail('resolve callback called'))
       .catch((e) => {
         // then
-        expect(e.message).toContain(lang.strings['apifailure']);
+        expect(e.message).toContain('authfailure');
         done();
       });
     window.gm_authFailure();
@@ -139,7 +144,7 @@ describe('Google Maps map API tests', () => {
   it('should show alert if authorization error occurs after initialization', (done) => {
     // given
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
-    lang.strings['apifailure'] = 'authfailure';
+    lang._.and.returnValue('authfailure');
     // when
     api.init()
       .then(() => {
@@ -151,7 +156,7 @@ describe('Google Maps map API tests', () => {
     window.gm_authFailure();
 
     expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert.calls.mostRecent().args[0]).toContain(lang.strings['apifailure']);
+    expect(window.alert.calls.mostRecent().args[0]).toContain('authfailure');
   });
 
   it('should clean up class fields', () => {

@@ -83,6 +83,7 @@ describe('TrackViewModel tests', () => {
     config.reinitialize();
     config.interval = 10;
     lang.init(config);
+    spyOn(lang, '_').and.returnValue('{placeholder}');
     trackEl = document.querySelector('#track');
     summaryEl = document.querySelector('#summary');
     latestEl = document.querySelector('#latest');
@@ -106,6 +107,7 @@ describe('TrackViewModel tests', () => {
 
   afterEach(() => {
     document.body.removeChild(document.querySelector('#fixture'));
+    uObserve.unobserveAll(lang);
   });
 
   it('should create instance with state as parameter', () => {

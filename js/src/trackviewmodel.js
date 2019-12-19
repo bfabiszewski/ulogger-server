@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { config, lang } from './initializer.js';
+import { lang as $, config } from './initializer.js';
 import ViewModel from './viewmodel.js';
 import uObserve from './observe.js';
 import uPositionSet from './positionset.js';
@@ -154,20 +154,20 @@ export default class TrackViewModel extends ViewModel {
     const form = this.importEl.parentElement;
     const sizeMax = form.elements['MAX_FILE_SIZE'].value;
     if (this.importEl.files && this.importEl.files.length === 1 && this.importEl.files[0].size > sizeMax) {
-      uUtils.error(uUtils.sprintf(lang.strings['isizefailure'], sizeMax));
+      uUtils.error(uUtils.sprintf($._('isizefailure'), sizeMax));
       return;
     }
     uTrack.import(form)
       .then((trackList) => {
         if (trackList.length) {
           if (trackList.length > 1) {
-            alert(uUtils.sprintf(lang.strings['imultiple'], trackList.length));
+            alert(uUtils.sprintf($._('imultiple'), trackList.length));
           }
           this.model.trackList = trackList.concat(this.model.trackList);
           this.model.currentTrackId = trackList[0].listValue;
         }
       })
-      .catch((e) => uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`))
+      .catch((e) => uUtils.error(e, `${$._('actionfailure')}\n${e.message}`))
       .finally(() => {
         this.model.inputFile = '';
       });
@@ -190,7 +190,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.showLatest = false;
         }
       })
-        .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
     }
   }
 
@@ -203,7 +203,7 @@ export default class TrackViewModel extends ViewModel {
       this.state.currentTrack.clear();
     }
     this.state.currentTrack.fetchPositions()
-      .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
   /**
@@ -220,7 +220,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.currentTrackId = _track.listValue;
         }
       })
-      .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
   /**
@@ -235,7 +235,7 @@ export default class TrackViewModel extends ViewModel {
           this.state.currentTrack = _track;
         }
       })
-      .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
   loadTrackList() {
@@ -253,7 +253,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.currentTrackId = '';
         }
       })
-      .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
   /**
@@ -291,14 +291,14 @@ export default class TrackViewModel extends ViewModel {
       const dateString = (date.toDateString() !== today.toDateString()) ? `${dateTime.date}<br>` : '';
       const timeString = `${dateTime.time}<span style="font-weight:normal">${dateTime.zone}</span>`;
       this.model.summary = `
-        <div class="menu-title">${lang.strings['latest']}:</div>
+        <div class="menu-title">${$._('latest')}:</div>
         ${dateString}
         ${timeString}`;
     } else {
       this.model.summary = `
-        <div class="menu-title">${lang.strings['summary']}</div>
-        <div><img class="icon" alt="${lang.strings['tdistance']}" title="${lang.strings['tdistance']}" src="images/distance.svg"> ${lang.getLocaleDistanceMajor(last.totalMeters, true)}</div>
-        <div><img class="icon" alt="${lang.strings['ttime']}" title="${lang.strings['ttime']}" src="images/time.svg"> ${lang.getLocaleDuration(last.totalSeconds)}</div>`;
+        <div class="menu-title">${$._('summary')}</div>
+        <div><img class="icon" alt="${$._('tdistance')}" title="${$._('tdistance')}" src="images/distance.svg"> ${$.getLocaleDistanceMajor(last.totalMeters, true)}</div>
+        <div><img class="icon" alt="${$._('ttime')}" title="${$._('ttime')}" src="images/time.svg"> ${$.getLocaleDuration(last.totalSeconds)}</div>`;
     }
   }
 

@@ -17,9 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import { config, lang } from '../src/initializer.js';
 import ConfigViewModel from '../src/configviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
-import { config } from '../src/initializer.js';
+import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
 import uUtils from '../src/utils.js';
 
@@ -87,10 +88,12 @@ describe('ConfigViewModel tests', () => {
     vm.init();
     spyOn(uUtils, 'setCookie').and.returnValue(newInterval);
     spyOn(ConfigViewModel, 'reload');
+    spyOn(lang, '_').and.returnValue('{placeholder}');
   });
 
   afterEach(() => {
     document.body.removeChild(document.querySelector('#fixture'));
+    uObserve.unobserveAll(lang);
   });
 
   it('should create instance with state as parameter', () => {

@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { config, lang } from './initializer.js';
+import { lang as $, config } from './initializer.js';
 import GoogleMapsApi from './mapapi/api_gmaps.js';
 import OpenLayersApi from './mapapi/api_openlayers.js';
 import ViewModel from './viewmodel.js';
@@ -78,7 +78,7 @@ export default class MapViewModel extends ViewModel {
     this.api.init()
       .then(() => this.onReady())
       .catch((e) => {
-        let txt = uUtils.sprintf(lang.strings['apifailure'], apiName);
+        let txt = uUtils.sprintf($._('apifailure'), apiName);
         if (e && e.message) {
           txt += ` (${e.message})`;
         }
@@ -134,36 +134,36 @@ export default class MapViewModel extends ViewModel {
     }
     let provider = '';
     if (pos.provider === 'gps') {
-      provider = ` (<img class="icon" alt="${lang.strings['gps']}" title="${lang.strings['gps']}"  src="images/gps_dark.svg">)`;
+      provider = ` (<img class="icon" alt="${$._('gps')}" title="${$._('gps')}"  src="images/gps_dark.svg">)`;
     } else if (pos.provider === 'network') {
-      provider = ` (<img class="icon" alt="${lang.strings['network']}" title="${lang.strings['network']}"  src="images/network_dark.svg">)`;
+      provider = ` (<img class="icon" alt="${$._('network')}" title="${$._('network')}"  src="images/network_dark.svg">)`;
     }
     let stats = '';
     if (!this.state.showLatest) {
       stats =
         `<div id="pright">
-        <img class="icon" alt="${lang.strings['track']}" src="images/stats_blue.svg" style="padding-left: 3em;"><br>
-        <img class="icon" alt="${lang.strings['ttime']}" title="${lang.strings['ttime']}" src="images/time_blue.svg"> ${lang.getLocaleDuration(pos.totalSeconds)}<br>
-        <img class="icon" alt="${lang.strings['aspeed']}" title="${lang.strings['aspeed']}" src="images/speed_blue.svg"> ${lang.getLocaleSpeed(pos.totalSpeed, true)}<br>
-        <img class="icon" alt="${lang.strings['tdistance']}" title="${lang.strings['tdistance']}" src="images/distance_blue.svg"> ${lang.getLocaleDistanceMajor(pos.totalMeters, true)}<br>
+        <img class="icon" alt="${$._('track')}" src="images/stats_blue.svg" style="padding-left: 3em;"><br>
+        <img class="icon" alt="${$._('ttime')}" title="${$._('ttime')}" src="images/time_blue.svg"> ${$.getLocaleDuration(pos.totalSeconds)}<br>
+        <img class="icon" alt="${$._('aspeed')}" title="${$._('aspeed')}" src="images/speed_blue.svg"> ${$.getLocaleSpeed(pos.totalSpeed, true)}<br>
+        <img class="icon" alt="${$._('tdistance')}" title="${$._('tdistance')}" src="images/distance_blue.svg"> ${$.getLocaleDistanceMajor(pos.totalMeters, true)}<br>
         </div>`;
     }
     return `<div id="popup">
         <div id="pheader">
-        <div><img alt="${lang.strings['user']}" title="${lang.strings['user']}" src="images/user_dark.svg"> ${uUtils.htmlEncode(pos.username)}</div>
-        <div><img alt="${lang.strings['track']}" title="${lang.strings['track']}" src="images/route_dark.svg"> ${uUtils.htmlEncode(pos.trackname)}</div>
+        <div><img alt="${$._('user')}" title="${$._('user')}" src="images/user_dark.svg"> ${uUtils.htmlEncode(pos.username)}</div>
+        <div><img alt="${$._('track')}" title="${$._('track')}" src="images/route_dark.svg"> ${uUtils.htmlEncode(pos.trackname)}</div>
         </div>
         <div id="pbody">
         ${(pos.hasComment()) ? `<div id="pcomments">${uUtils.htmlEncode(pos.comment)}</div>` : ''}
         ${(pos.hasImage()) ? `<div id="pimage"><img src="uploads/${pos.image}" alt="image"></div>` : ''}
         <div id="pleft">
-        <img class="icon" alt="${lang.strings['time']}" title="${lang.strings['time']}" src="images/calendar_dark.svg"> ${date}<br>
-        <img class="icon" alt="${lang.strings['time']}" title="${lang.strings['time']}" src="images/clock_dark.svg"> ${time}<br>
-        ${(pos.speed !== null) ? `<img class="icon" alt="${lang.strings['speed']}" title="${lang.strings['speed']}" src="images/speed_dark.svg">${lang.getLocaleSpeed(pos.speed, true)}<br>` : ''}
-        ${(pos.altitude !== null) ? `<img class="icon" alt="${lang.strings['altitude']}" title="${lang.strings['altitude']}" src="images/altitude_dark.svg">${lang.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
-        ${(pos.accuracy !== null) ? `<img class="icon" alt="${lang.strings['accuracy']}" title="${lang.strings['accuracy']}" src="images/accuracy_dark.svg">${lang.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
+        <img class="icon" alt="${$._('time')}" title="${$._('time')}" src="images/calendar_dark.svg"> ${date}<br>
+        <img class="icon" alt="${$._('time')}" title="${$._('time')}" src="images/clock_dark.svg"> ${time}<br>
+        ${(pos.speed !== null) ? `<img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed_dark.svg">${$.getLocaleSpeed(pos.speed, true)}<br>` : ''}
+        ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
+        ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
         </div>${stats}</div>
-        <div id="pfooter">${uUtils.sprintf(lang.strings['pointof'], id + 1, count)}</div>
+        <div id="pfooter">${uUtils.sprintf($._('pointof'), id + 1, count)}</div>
         </div>`;
   }
 

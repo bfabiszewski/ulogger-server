@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { config, lang } from '../initializer.js';
+import { lang as $, config } from '../initializer.js';
 import MapViewModel from '../mapviewmodel.js';
 import uTrack from '../track.js';
 import uUtils from '../utils.js';
@@ -74,9 +74,9 @@ export default class GoogleMapsApi {
       };
       window.gm_authFailure = () => {
         GoogleMapsApi.authError = true;
-        let message = uUtils.sprintf(lang.strings['apifailure'], 'Google Maps');
-        message += '<br><br>' + lang.strings['gmauthfailure'];
-        message += '<br><br>' + lang.strings['gmapilink'];
+        let message = uUtils.sprintf($._('apifailure'), 'Google Maps');
+        message += '<br><br>' + $._('gmauthfailure');
+        message += '<br><br>' + $._('gmapilink');
         if (GoogleMapsApi.gmInitialized) {
           alert(message);
         }

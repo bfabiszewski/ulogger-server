@@ -86,6 +86,7 @@ describe('ChartViewModel tests', () => {
     state = new uState();
     vm = new ChartViewModel(state);
     spyOn(lang, 'unit');
+    spyOn(lang, '_').and.returnValue('{placeholder}');
     mockChart = jasmine.createSpyObj('mockChart', {
       'on': { /* ignored */ },
       'update': { /* ignored */ }

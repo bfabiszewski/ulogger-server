@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { config, lang } from './initializer.js';
+import { lang as $, config } from './initializer.js';
 import ViewModel from './viewmodel.js';
 import uUtils from './utils.js';
 
@@ -61,7 +61,7 @@ export default class ConfigViewModel extends ViewModel {
   }
 
   setAutoReloadInterval() {
-    const interval = parseInt(prompt(lang.strings['newinterval']));
+    const interval = parseInt(prompt($._('newinterval')));
     if (!isNaN(interval) && interval !== this.model.interval) {
       this.model.interval = interval;
     }

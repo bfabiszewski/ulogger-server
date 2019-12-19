@@ -44,7 +44,6 @@ describe('MapViewModel tests', () => {
     config.reinitialize();
     config.mapApi = defaultApi;
     lang.init(config);
-    lang.strings['apifailure'] = 'api failure: %s';
     mockApi = jasmine.createSpyObj('mockApi', {
       'init': Promise.resolve(),
       'getBounds': { /* ignored */ },
@@ -57,12 +56,17 @@ describe('MapViewModel tests', () => {
     state = new uState();
     vm = new MapViewModel(state);
     spyOn(vm, 'getApi').and.returnValue(mockApi);
+    spyOn(lang, 'getLocaleSpeed');
+    spyOn(lang, 'getLocaleDistance');
+    spyOn(lang, 'getLocaleDistanceMajor');
+    spyOn(lang, '_').and.returnValue('{placeholder}');
     bounds = [ 1, 2, 3, 4 ];
     track = TrackFactory.getTrack(0);
   });
 
   afterEach(() => {
     document.body.removeChild(document.querySelector('#fixture'));
+    uObserve.unobserveAll(lang);
   });
 
   it('should create instance', () => {

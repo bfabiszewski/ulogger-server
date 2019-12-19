@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { auth, lang } from './initializer.js';
+import { lang as $, auth } from './initializer.js';
 import ViewModel from './viewmodel.js';
 import uSelect from './select.js';
 import uUser from './user.js';
@@ -40,7 +40,7 @@ export default class UserViewModel extends ViewModel {
     });
     /** @type HTMLSelectElement */
     const listEl = document.querySelector('#user');
-    this.select = new uSelect(listEl, lang.strings['suser'], `- ${lang.strings['allusers']} -`);
+    this.select = new uSelect(listEl, $._('suser'), `- ${$._('allusers')} -`);
     this.state = state;
   }
 
@@ -61,7 +61,7 @@ export default class UserViewModel extends ViewModel {
         this.model.currentUserId = userId;
       }
     })
-      .catch((e) => { uUtils.error(e, `${lang.strings['actionfailure']}\n${e.message}`); });
+      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
   /**
