@@ -3,36 +3,40 @@
 process = require('process');
 process.env.CHROME_BIN = require('puppeteer').executablePath();
 
-const preprocessors = {};
-const reporters = [ 'progress' ];
+const path = require('path');
+
 // don't preprocess files on debug run
-if (!process.env._INTELLIJ_KARMA_INTERNAL_PARAMETER_debug && !process.argv.includes('--debug')) {
-  preprocessors['src/**/*.js'] = 'karma-coverage-istanbul-instrumenter';
-  reporters.push('coverage-istanbul');
-}
+// if (!process.env._INTELLIJ_KARMA_INTERNAL_PARAMETER_debug && !process.argv.includes('--debug')) {
+//   reporters.push('coverage-istanbul');
+// }
 
 module.exports = function(config) {
   config.set({
     basePath: 'js/',
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: [ 'jasmine' ],
-    // list of files / patterns to load in the browser
     files: [
       { pattern: 'test/*.test.js', type: 'module' },
       { pattern: 'test/*.stub.js', type: 'module', included: false },
-      { pattern: 'src/**/*.js', type: 'module', included: false },
-      { pattern: 'test/openlayers.bundle.js', type: 'js', included: true }
+      { pattern: 'test/helpers/*.js', type: 'module', included: false },
+      { pattern: 'test/openlayers.bundle.js', type: 'js', included: true },
+      { pattern: 'src/**/*.js', type: 'module', included: false }
     ],
-    // list of files / patterns to exclude
     exclude: [],
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: preprocessors,
-    coverageIstanbulInstrumenter: {
-      esModules: true
+    preprocessors: {
+      'test/*.test.js': [ 'webpack', 'sourcemap' ],
+      'test/helpers/*.js': [ 'webpack', 'sourcemap' ],
+      'src/**/*.js': [ 'sourcemap' ]
+    },
+    coverageIstanbulReporter: {
+      reports: [ 'html', 'text-summary', 'lcovonly' ],
+      dir: path.join(__dirname, 'coverage'),
+      fixWebpackSourcePaths: true,
+      'report-config': {
+        html: { outdir: 'html' }
+      }
     },
     // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: reporters,
+    reporters: [ 'progress', 'coverage-istanbul' ],
     // web server port
     port: 9876,
     // enable / disable colors in the output (reporters and logs)
@@ -48,6 +52,27 @@ module.exports = function(config) {
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    concurrency: Infinity,
+    // webpack
+    webpack: {
+      mode: 'development',
+      devtool: 'inline-source-map',
+      watch: true,
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            include: path.resolve('js/src/'),
+            use: {
+              loader: 'istanbul-instrumenter-loader',
+              options: { esModules: true }
+            }
+          }
+        ]
+      }
+    },
+    webpackMiddleware: {
+      noInfo: true
+    }
   })
 };
