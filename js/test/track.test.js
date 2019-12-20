@@ -17,7 +17,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { auth } from '../src/initializer.js';
 import uPosition from '../src/position.js';
 import uTrack from '../src/track.js';
 import uUser from '../src/user.js';
@@ -27,7 +26,6 @@ import uUtils from '../src/utils.js';
 describe('Track tests', () => {
 
   let track;
-
   let posId;
   let latitude;
   let longitude;
@@ -376,12 +374,10 @@ describe('Track tests', () => {
     it('should make successful track import request', (done) => {
       // given
       const authUser = new uUser(1, 'admin');
-      spyOnProperty(auth, 'isAuthenticated').and.returnValue(true);
-      spyOnProperty(auth, 'user').and.returnValue(authUser);
       spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validListResponse));
       const form = document.createElement('form');
       // when
-      uTrack.import(form)
+      uTrack.import(form, authUser)
         .then((tracks) => {
           expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/import.php', true);
           expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(new FormData(form));
@@ -389,13 +385,6 @@ describe('Track tests', () => {
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));
-    });
-
-    it('should fail on import request without authorized user', () => {
-      // given
-      const form = document.createElement('form');
-      // when
-      expect(() => uTrack.import(form)).toThrowError(/auth/);
     });
 
     it('should not open export url when track has no positions', () => {

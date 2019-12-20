@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { config, lang } from '../src/initializer.js';
+import { auth, config, lang } from '../src/initializer.js';
 import TrackFactory from './helpers/trackfactory.js';
 import TrackViewModel from '../src/trackviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
@@ -108,6 +108,7 @@ describe('TrackViewModel tests', () => {
   afterEach(() => {
     document.body.removeChild(document.querySelector('#fixture'));
     uObserve.unobserveAll(lang);
+    auth.user = null;
   });
 
   it('should create instance with state as parameter', () => {
@@ -469,6 +470,7 @@ describe('TrackViewModel tests', () => {
     const optLength = trackEl.options.length;
     vm.model.trackList = tracks;
     vm.model.currentTrackId = track1.listValue;
+    auth.user = user;
     state.currentTrack = track1;
     state.currentUser = user;
     inputFileEl.onclick = () => {
@@ -483,7 +485,7 @@ describe('TrackViewModel tests', () => {
     // then
     setTimeout(() => {
       expect(uTrack.import).toHaveBeenCalledTimes(1);
-      expect(uTrack.import).toHaveBeenCalledWith(jasmine.any(HTMLFormElement));
+      expect(uTrack.import).toHaveBeenCalledWith(jasmine.any(HTMLFormElement), user);
       expect(state.currentTrack).toBe(imported[0]);
       expect(vm.model.currentTrackId).toBe(imported[0].listValue);
       expect(state.currentTrack.length).toBe(positions.length);
@@ -511,6 +513,7 @@ describe('TrackViewModel tests', () => {
     const optLength = trackEl.options.length;
     vm.model.trackList = tracks;
     vm.model.currentTrackId = track1.listValue;
+    auth.user = user;
     state.currentTrack = track1;
     state.currentUser = user;
     inputFileEl.onclick = () => {
@@ -528,6 +531,45 @@ describe('TrackViewModel tests', () => {
       expect(state.currentTrack).toBe(track1);
       expect(vm.model.currentTrackId).toBe(track1.listValue);
       expect(uUtils.sprintf.calls.mostRecent().args[1]).toBe(MAX_FILE_SIZE.toString());
+      expect(trackEl.options.length).toBe(optLength);
+      expect(vm.model.trackList.length).toBe(optLength);
+      done();
+    }, 100);
+  });
+
+  it('should raise error on non-authorized user', (done) => {
+    // given
+    const imported = [
+      TrackFactory.getTrack(0, { id: 3, name: 'track3', user: user }),
+      TrackFactory.getTrack(0, { id: 4, name: 'track4', user: user })
+    ];
+    const file = new File([ 'blob' ], '/path/filepath.gpx');
+    spyOn(uTrack, 'import').and.returnValue(Promise.resolve(imported));
+    spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
+    spyOn(uUtils, 'error');
+    const options = '<option selected value="1">track1</option><option value="2">track2</option>';
+    trackEl.insertAdjacentHTML('afterbegin', options);
+    const optLength = trackEl.options.length;
+    vm.model.trackList = tracks;
+    vm.model.currentTrackId = track1.listValue;
+    state.currentTrack = track1;
+    state.currentUser = user;
+    inputFileEl.onclick = () => {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      inputFileEl.files = dt.files;
+      inputFileEl.dispatchEvent(new Event('change'));
+    };
+    vm.init();
+    // when
+    importGpxEl.click();
+    // then
+    setTimeout(() => {
+      expect(uTrack.import).not.toHaveBeenCalled();
+      expect(state.currentTrack).toBe(track1);
+      expect(vm.model.currentTrackId).toBe(track1.listValue);
+      expect(uUtils.error).toHaveBeenCalledTimes(1);
+      expect(lang._).toHaveBeenCalledWith('notauthorized');
       expect(trackEl.options.length).toBe(optLength);
       expect(vm.model.trackList.length).toBe(optLength);
       done();

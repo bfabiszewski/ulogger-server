@@ -17,7 +17,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { auth } from './initializer.js';
 import uAjax from './ajax.js';
 import uPosition from './position.js';
 import uPositionSet from './positionset.js';
@@ -196,12 +195,10 @@ export default class uTrack extends uPositionSet {
   /**
    * Imports tracks submited with HTML form and returns last imported track id
    * @param {HTMLFormElement} form
+   * @param {uUser} user
    * @return {Promise<uTrack[], Error>}
    */
-  static import(form) {
-    if (!auth.isAuthenticated) {
-      throw new Error('User not authenticated');
-    }
+  static import(form, user) {
     return uAjax.post('utils/import.php', form)
       .then(
         /**
@@ -211,7 +208,7 @@ export default class uTrack extends uPositionSet {
         (_tracks) => {
           const tracks = [];
           for (const track of _tracks) {
-            tracks.push(new uTrack(track.id, track.name, auth.user));
+            tracks.push(new uTrack(track.id, track.name, user));
           }
           return tracks;
       });

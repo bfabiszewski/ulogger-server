@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { lang as $, config } from './initializer.js';
+import { lang as $, auth, config } from './initializer.js';
 import ViewModel from './viewmodel.js';
 import uObserve from './observe.js';
 import uPositionSet from './positionset.js';
@@ -157,7 +157,11 @@ export default class TrackViewModel extends ViewModel {
       uUtils.error(uUtils.sprintf($._('isizefailure'), sizeMax));
       return;
     }
-    uTrack.import(form)
+    if (!auth.isAuthenticated) {
+      uUtils.error($._('notauthorized'));
+      return;
+    }
+    uTrack.import(form, auth.user)
       .then((trackList) => {
         if (trackList.length) {
           if (trackList.length > 1) {
