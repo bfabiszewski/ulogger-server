@@ -528,6 +528,53 @@ describe('Observe tests', () => {
       // then
       expect(uObserve.isObserved(object, 'observed')).toBe(true);
     });
+
+    it('should return false if property is not observed', () => {
+      // when
+      uObserve.observe(object, 'observed', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      // then
+      expect(uObserve.isObserved(object, 'nonObserved')).toBe(false);
+    });
+
+    it('should return true if array property is observed', () => {
+      // when
+      const array = [ 1, 2 ];
+      object = { array: array };
+      uObserve.observe(object, 'array', (value) => {
+        result = true;
+        resultValue = value;
+      });
+      // then
+      expect(uObserve.isObserved(object, 'array')).toBe(true);
+    });
+
+    it('should return false if property is unobserved', () => {
+      // when
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      uObserve.observe(object, 'observed', observer);
+      uObserve.unobserve(object, 'observed', observer);
+      // then
+      expect(uObserve.isObserved(object, 'observed')).toBe(false);
+    });
+
+    it('should return true if property is observed by given observer', () => {
+      // when
+      const observer = (value) => {
+        result = true;
+        resultValue = value;
+      };
+      const observer2 = () => {/* ignored */};
+      uObserve.observe(object, 'observed', observer);
+      // then
+      expect(uObserve.isObserved(object, 'observed', observer)).toBe(true);
+      expect(uObserve.isObserved(object, 'observed', observer2)).toBe(false);
+    });
   });
 
   describe('when notify is called directly', () => {

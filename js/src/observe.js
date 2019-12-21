@@ -61,12 +61,23 @@ export default class uObserve {
     }
   }
 
-  static isObserved(obj, property) {
+  /**
+   * Check if object property is observed;
+   * Optionally check if it is observed by given observer
+   * @param {Object} obj
+   * @param {string} property
+   * @param {Function=} observer
+   * @return {boolean}
+   */
+  static isObserved(obj, property, observer) {
     if (typeof obj !== 'object' || obj === null || !obj.hasOwnProperty(property)) {
       return false;
     }
-    return obj.hasOwnProperty('_values') && obj._values.hasOwnProperty(property) &&
-      !!Object.getOwnPropertyDescriptor(obj, property)['set'];
+    const isObserved = !!(obj._observers && obj._observers[property] && obj._observers[property].size > 0);
+    if (isObserved && observer) {
+      return obj._observers[property].has(observer);
+    }
+    return isObserved;
   }
 
   /**
@@ -94,12 +105,15 @@ export default class uObserve {
   /**
    * Observe object's property. On change call observer
    * @param {Object} obj
-   * @param {?string} property
+   * @param {string} property
    * @param {ObserveCallback} observer
    */
   static observeProperty(obj, property, observer) {
     if (!obj.hasOwnProperty(property)) {
       throw new Error(`Invalid argument: object does not have property "${property}"`);
+    }
+    if (this.isObserved(obj, property, observer)) {
+      throw new Error(`Observer already registered for property ${property}`);
     }
     this.addObserver(obj, observer, property);
     if (!obj.hasOwnProperty('_values')) {
