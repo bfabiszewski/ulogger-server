@@ -52,13 +52,21 @@ export default class MapViewModel extends ViewModel {
       /** @type {?number} */
       markerOver: null,
       /** @type {?number} */
-      markerSelect: null
+      markerSelect: null,
+      // click handler
+      onMenuToggle: null
     });
+    this.model.onMenuToggle = () => this.onMapResize();
     this.state = state;
     /** @type HTMLElement */
     this.mapElement = document.querySelector('#map-canvas');
     this.savedBounds = null;
     this.api = null;
+  }
+
+  init() {
+    this.bindAll();
+    this.setObservers();
   }
 
   /**
@@ -102,10 +110,16 @@ export default class MapViewModel extends ViewModel {
     if (this.state.currentTrack) {
       this.api.displayTrack(this.state.currentTrack, this.savedBounds === null);
     }
+  }
+
+  setObservers() {
     config.onChanged('mapApi', (mapApi) => {
       this.loadMapAPI(mapApi);
     });
     this.state.onChanged('currentTrack', (track) => {
+      if (!this.api) {
+        return;
+      }
       this.api.clearMap();
       if (track) {
         uObserve.observe(track, 'positions', () => {
@@ -206,5 +220,11 @@ export default class MapViewModel extends ViewModel {
     const svg = `<svg viewBox="0 0 30 35" width="30px" height="35px" xmlns="http://www.w3.org/2000/svg">
       <g><path stroke="black" fill="${fill}" d="${MapViewModel.getMarkerPath(isLarge)}"/>${isExtra ? MapViewModel.getMarkerExtra(isLarge) : ''}</g></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+
+  onMapResize() {
+    if (this.api) {
+      this.api.updateSize();
+    }
   }
 }

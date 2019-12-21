@@ -171,7 +171,7 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'loadMapAPI');
     vm.api = mockApi;
-    vm.onReady();
+    vm.setObservers();
     const newApi = 'newapi';
     // when
     config.mapApi = newApi;
@@ -187,7 +187,7 @@ describe('MapViewModel tests', () => {
     // given
     vm.api = mockApi;
     state.currentTrack = null;
-    vm.onReady();
+    vm.setObservers();
     uObserve.setSilently(state, 'currentTrack', track);
     // when
     state.currentTrack = null;
@@ -203,7 +203,7 @@ describe('MapViewModel tests', () => {
     // given
     vm.api = mockApi;
     state.currentTrack = null;
-    vm.onReady();
+    vm.setObservers();
     // when
     state.currentTrack = track;
     // then
