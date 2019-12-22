@@ -64,9 +64,13 @@ export default class MapViewModel extends ViewModel {
     this.api = null;
   }
 
+  /**
+   * @return {MapViewModel}
+   */
   init() {
     this.bindAll();
     this.setObservers();
+    return this;
   }
 
   /**

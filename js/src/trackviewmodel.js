@@ -66,9 +66,13 @@ export default class TrackViewModel extends ViewModel {
     this.timerId = 0;
   }
 
+  /**
+   * @return {TrackViewModel}
+   */
   init() {
     this.setObservers();
     this.bindAll();
+    return this;
   }
 
   setObservers() {

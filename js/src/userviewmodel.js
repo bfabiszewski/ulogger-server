@@ -44,6 +44,9 @@ export default class UserViewModel extends ViewModel {
     this.state = state;
   }
 
+  /**
+   * @return {UserViewModel}
+   */
   init() {
     this.setObservers(this.state);
     this.bindAll();
@@ -62,6 +65,7 @@ export default class UserViewModel extends ViewModel {
       }
     })
       .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+    return this;
   }
 
   /**

@@ -34,9 +34,13 @@ export default class ConfigViewModel extends ViewModel {
     this.model.onSetInterval = () => this.setAutoReloadInterval();
   }
 
+  /**
+   * @return {ConfigViewModel}
+   */
   init() {
     this.setObservers();
     this.bindAll();
+    return this;
   }
 
   setObservers() {

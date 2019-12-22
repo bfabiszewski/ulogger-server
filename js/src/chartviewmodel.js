@@ -60,10 +60,14 @@ export default class ChartViewModel extends ViewModel {
     this.buttonElement = document.querySelector('#altitudes');
   }
 
+  /**
+   * @return {ChartViewModel}
+   */
   init() {
     this.chartSetup();
     this.setObservers();
     this.bindAll();
+    return this;
   }
 
   chartSetup() {

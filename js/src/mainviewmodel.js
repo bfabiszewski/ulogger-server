@@ -39,8 +39,12 @@ export default class MainViewModel extends ViewModel {
     this.userMenuEl = document.querySelector('#user-menu');
   }
 
+  /**
+   * @return {MainViewModel}
+   */
   init() {
     this.bindAll();
+    return this;
   }
 
   toggleSideMenu() {
