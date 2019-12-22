@@ -30,6 +30,7 @@ describe('MapViewModel tests', () => {
   let vm;
   let state;
   let mapEl;
+  let menuButtonEl;
   let mockApi;
   let bounds;
   let track;
@@ -38,9 +39,12 @@ describe('MapViewModel tests', () => {
   beforeEach(() => {
     const fixture = `<div id="fixture">
                        <div id="map-canvas"></div>
+                       <div id="menu-close"><a data-bind="onMenuToggle"></a></div>
                      </div>`;
     document.body.insertAdjacentHTML('afterbegin', fixture);
     mapEl = document.querySelector('#map-canvas');
+    const menuEl = document.querySelector('#menu-close');
+    menuButtonEl = menuEl.firstChild;
     config.reinitialize();
     config.mapApi = defaultApi;
     lang.init(config);
@@ -51,7 +55,8 @@ describe('MapViewModel tests', () => {
       'zoomToBounds': { /* ignored */ },
       'zoomToExtent': { /* ignored */ },
       'displayTrack': { /* ignored */ },
-      'clearMap': { /* ignored */ }
+      'clearMap': { /* ignored */ },
+      'updateSize': { /* ignored */ }
     });
     state = new uState();
     vm = new MapViewModel(state);
@@ -75,6 +80,17 @@ describe('MapViewModel tests', () => {
     expect(vm.state).toBe(state);
     expect(vm.mapElement).toBe(mapEl);
     expect(vm.api).toBe(null);
+  });
+
+  it('should initialize instance', () => {
+    // given
+    spyOn(vm, 'bindAll');
+    spyOn(vm, 'setObservers');
+    // when
+    vm.init();
+    // then
+    expect(vm.bindAll).toHaveBeenCalledTimes(1);
+    expect(vm.setObservers).toHaveBeenCalledTimes(1);
   });
 
   it('should load openlayers api and call onReady', (done) => {
@@ -179,6 +195,19 @@ describe('MapViewModel tests', () => {
     setTimeout(() => {
       expect(vm.loadMapAPI).toHaveBeenCalledTimes(1);
       expect(vm.loadMapAPI).toHaveBeenCalledWith(newApi);
+      done();
+    }, 100);
+  });
+
+  it('should resize map on menu toggle', (done) => {
+    // given
+    vm.api = mockApi;
+    vm.bindAll();
+    // when
+    menuButtonEl.click();
+    // then
+    setTimeout(() => {
+      expect(mockApi.updateSize).toHaveBeenCalledTimes(1);
       done();
     }, 100);
   });
