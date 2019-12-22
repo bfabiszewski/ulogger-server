@@ -39,12 +39,11 @@ describe('MapViewModel tests', () => {
   beforeEach(() => {
     const fixture = `<div id="fixture">
                        <div id="map-canvas"></div>
-                       <div id="menu-close"><a data-bind="onMenuToggle"></a></div>
+                       <div id="menu-button"><a data-bind="onMenuToggle"></a></div>
                      </div>`;
     document.body.insertAdjacentHTML('afterbegin', fixture);
     mapEl = document.querySelector('#map-canvas');
-    const menuEl = document.querySelector('#menu-close');
-    menuButtonEl = menuEl.firstChild;
+    menuButtonEl = document.querySelector('#menu-button a');
     config.reinitialize();
     config.mapApi = defaultApi;
     lang.init(config);

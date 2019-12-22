@@ -38,33 +38,20 @@ select {
   font-weight: normal;
   padding-top: 0.2em;
 }
-#menu input,
-#login input {
-  width: 150px;
-  text-align: center;
-  border: 1px solid black;
-}
-#menu input[type = "submit"],
-#login input[type = "submit"] {
-  background-color: black;
-  color: white;
-  border: 1px solid white;
-}
-#menu input[type = "checkbox"] {
-  width: auto;
-}
-.menu-link {
-  display: block;
-  margin-top: .2em;
+#container {
+  display: flex;
+  height: 100%;
 }
 #main {
+  flex-grow: 1;
+  order: 1;
   height: 100%;
-  margin-right: 165px;
 }
 #map-canvas {
   height: 100%;
 }
 #menu {
+  order: 2;
   font-family: 'Open Sans', Verdana, sans-serif;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -90,21 +77,59 @@ select {
   background-color:rgba(102, 102, 102, 0.9);
   color: lightgray;
 }
-#menu-close {
-  background-color: #666;
-  opacity: 0.9;
+#menu-button {
+  border-style: solid;
+  border-width: 1px 0 1px 1px;
+  border-color: #bce;
   position: absolute;
-  top: 55px;
-  right: 165px;
+  top: 5px;
+  right: 0;
   z-index: 1900;
-  width: 18px;
-  height: 20px;
-  line-height: 18px;
-  text-align: right;
-  font-size: 18px;
-  font-weight: bolder;
+  width: 30px;
+  height: 35px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: normal;
   border-radius: 11px 0 0 11px;
   cursor: pointer;
+  background-color: #666;
+}
+#menu-button a {
+  color: white;
+}
+#menu-button a:after {
+  content: "»";
+}
+#menu.menu-hidden {
+  width: 0;
+}
+#menu.menu-hidden #menu-button {
+  border-color: white;
+  font-weight: normal;
+  background-color: #003c884d;
+}
+#menu.menu-hidden #menu-button a:after {
+  content: "«";
+}
+#menu input,
+#login input {
+  width: 150px;
+  text-align: center;
+  border: 1px solid black;
+}
+#menu input[type = "submit"],
+#login input[type = "submit"] {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+}
+#menu input[type = "checkbox"] {
+  width: auto;
+}
+.menu-link {
+  display: block;
+  margin-top: .2em;
 }
 label[for=user] {
   padding-top: 1em;
@@ -322,8 +347,8 @@ button > * {
   -webkit-border-radius: 10px;
 }
 
-#user-dropdown {
-  display: none;
+#user-menu {
+  display: block;
   position: absolute;
   background-color: gray;
   padding: 1em;
@@ -331,7 +356,11 @@ button > * {
   border: 1px solid #888;
 }
 
-#user-dropdown a {
+#user-menu.menu-hidden {
+  display: none;
+}
+
+#user-menu a {
   display: block;
   padding-bottom: .5em;
   padding-top: .5em;
