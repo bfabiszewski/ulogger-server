@@ -17,8 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* global ol */
-
+import * as ol from '../src/lib/ol.js';
 import OpenlayersApi from '../src/mapapi/api_openlayers.js';
 import TrackFactory from './helpers/trackfactory.js';
 import { config } from '../src/initializer.js'

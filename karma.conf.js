@@ -18,7 +18,6 @@ module.exports = function(config) {
       { pattern: 'test/*.test.js', type: 'module' },
       { pattern: 'test/*.stub.js', type: 'module', included: false },
       { pattern: 'test/helpers/*.js', type: 'module', included: false },
-      { pattern: 'test/openlayers.bundle.js', type: 'js', included: true },
       { pattern: 'src/**/*.js', type: 'module', included: false }
     ],
     exclude: [],
