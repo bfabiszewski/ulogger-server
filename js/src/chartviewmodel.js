@@ -176,7 +176,9 @@ export default class ChartViewModel extends ViewModel {
    * @param {string} $className
    */
   pointsRemoveClass($className) {
-    this.chartPoints.forEach((el) => el.classList.remove($className));
+    if (this.model.chartVisible && this.chartPoints) {
+      this.chartPoints.forEach((el) => el.classList.remove($className));
+    }
   }
 
   /**
