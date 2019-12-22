@@ -369,7 +369,7 @@ describe('ChartViewModel tests', () => {
     expect(point.classList.contains('ct-point-selected')).toBe(false);
   });
 
-  it('should show chart on button click', () => {
+  it('should show chart on button click', (done) => {
     // given
     spyOn(vm, 'renderContainer');
     vm.model.chartVisible = false;
@@ -378,10 +378,13 @@ describe('ChartViewModel tests', () => {
     vm.setObservers();
     buttonEl.click();
     // then
-    expect(vm.model.chartVisible).toBe(true);
+    setTimeout(() => {
+      expect(vm.model.chartVisible).toBe(true);
+      done();
+    }, 100);
   });
 
-  it('should hide chart on button click', () => {
+  it('should hide chart on button click', (done) => {
     // given
     spyOn(vm, 'renderContainer');
     vm.model.chartVisible = true;
@@ -390,10 +393,13 @@ describe('ChartViewModel tests', () => {
     vm.setObservers();
     buttonEl.click();
     // then
-    expect(vm.model.chartVisible).toBe(false);
+    setTimeout(() => {
+      expect(vm.model.chartVisible).toBe(false);
+      done();
+    }, 100);
   });
 
-  it('should hide chart on close click', () => {
+  it('should hide chart on close click', (done) => {
     // given
     spyOn(vm, 'renderContainer');
     vm.model.chartVisible = true;
@@ -402,7 +408,10 @@ describe('ChartViewModel tests', () => {
     vm.setObservers();
     closeEl.click();
     // then
-    expect(vm.model.chartVisible).toBe(false);
+    setTimeout(() => {
+      expect(vm.model.chartVisible).toBe(false);
+      done();
+    }, 100);
   });
 
 });
