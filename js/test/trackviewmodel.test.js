@@ -451,7 +451,7 @@ describe('TrackViewModel tests', () => {
       return Promise.resolve(imported);
     });
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    spyOn(uUtils, 'sprintf');
+    spyOn(window, 'alert');
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
@@ -476,7 +476,7 @@ describe('TrackViewModel tests', () => {
       expect(state.currentTrack).toBe(imported[0]);
       expect(vm.model.currentTrackId).toBe(imported[0].listValue);
       expect(state.currentTrack.length).toBe(positions.length);
-      expect(uUtils.sprintf.calls.mostRecent().args[1]).toBe(imported.length);
+      expect(window.alert).toHaveBeenCalledTimes(1);
       expect(trackEl.options.length).toBe(optLength + imported.length);
       expect(vm.model.trackList.length).toBe(optLength + imported.length);
       expect(vm.model.inputFile).toBe('');
@@ -493,7 +493,6 @@ describe('TrackViewModel tests', () => {
     ];
     spyOn(uTrack, 'import').and.returnValue(Promise.resolve(imported));
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    spyOn(uUtils, 'sprintf');
     spyOn(uUtils, 'error');
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
@@ -517,7 +516,7 @@ describe('TrackViewModel tests', () => {
       expect(uTrack.import).not.toHaveBeenCalled();
       expect(state.currentTrack).toBe(track1);
       expect(vm.model.currentTrackId).toBe(track1.listValue);
-      expect(uUtils.sprintf.calls.mostRecent().args[1]).toBe(MAX_FILE_SIZE.toString());
+      expect(lang._.calls.mostRecent().args[1]).toBe(MAX_FILE_SIZE.toString());
       expect(trackEl.options.length).toBe(optLength);
       expect(vm.model.trackList.length).toBe(optLength);
       done();

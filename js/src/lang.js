@@ -17,6 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uUtils from './utils.js';
+
 export default class uLang {
   constructor() {
     this.strings = {};
@@ -35,9 +37,17 @@ export default class uLang {
     }
   }
 
-  _(name) {
+  /**
+   * @param {string} name
+   * @param {...(string|number)=} params Optional parameters
+   * @return {string}
+   */
+  _(name, ...params) {
     if (typeof this.strings[name] === 'undefined') {
       throw new Error('Unknown localized string');
+    }
+    if (params.length) {
+      return uUtils.sprintf(this.strings[name], ...params);
     }
     return this.strings[name];
   }

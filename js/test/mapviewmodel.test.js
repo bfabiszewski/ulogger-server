@@ -257,7 +257,6 @@ describe('MapViewModel tests', () => {
   it('should get popup html content', () => {
     // given
     const id = 0;
-    spyOn(uUtils, 'sprintf');
     state.currentTrack = TrackFactory.getTrack(2);
     // when
     const html = vm.getPopupHtml(id);
@@ -265,8 +264,8 @@ describe('MapViewModel tests', () => {
     // then
     expect(element).toBeInstanceOf(HTMLDivElement);
     expect(element.id).toBe('popup');
-    expect(uUtils.sprintf.calls.mostRecent().args[1]).toBe(id + 1);
-    expect(uUtils.sprintf.calls.mostRecent().args[2]).toBe(state.currentTrack.length);
+    expect(lang._.calls.mostRecent().args[1]).toBe(id + 1);
+    expect(lang._.calls.mostRecent().args[2]).toBe(state.currentTrack.length);
   });
 
   it('should get popup with stats when track does not contain only latest positions', () => {

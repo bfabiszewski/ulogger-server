@@ -90,7 +90,7 @@ export default class MapViewModel extends ViewModel {
     this.api.init()
       .then(() => this.onReady())
       .catch((e) => {
-        let txt = uUtils.sprintf($._('apifailure'), apiName);
+        let txt = $._('apifailure', apiName);
         if (e && e.message) {
           txt += ` (${e.message})`;
         }
@@ -181,7 +181,7 @@ export default class MapViewModel extends ViewModel {
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
         </div>${stats}</div>
-        <div id="pfooter">${uUtils.sprintf($._('pointof'), id + 1, count)}</div>
+        <div id="pfooter">${$._('pointof', id + 1, count)}</div>
         </div>`;
   }
 

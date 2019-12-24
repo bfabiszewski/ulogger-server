@@ -158,7 +158,7 @@ export default class TrackViewModel extends ViewModel {
     const form = this.importEl.parentElement;
     const sizeMax = form.elements['MAX_FILE_SIZE'].value;
     if (this.importEl.files && this.importEl.files.length === 1 && this.importEl.files[0].size > sizeMax) {
-      uUtils.error(uUtils.sprintf($._('isizefailure'), sizeMax));
+      uUtils.error($._('isizefailure', sizeMax));
       return;
     }
     if (!auth.isAuthenticated) {
@@ -169,7 +169,7 @@ export default class TrackViewModel extends ViewModel {
       .then((trackList) => {
         if (trackList.length) {
           if (trackList.length > 1) {
-            alert(uUtils.sprintf($._('imultiple'), trackList.length));
+            alert($._('imultiple', trackList.length));
           }
           this.model.trackList = trackList.concat(this.model.trackList);
           this.model.currentTrackId = trackList[0].listValue;

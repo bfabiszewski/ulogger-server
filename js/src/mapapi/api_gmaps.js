@@ -74,7 +74,7 @@ export default class GoogleMapsApi {
       };
       window.gm_authFailure = () => {
         GoogleMapsApi.authError = true;
-        let message = uUtils.sprintf($._('apifailure'), 'Google Maps');
+        let message = $._('apifailure', 'Google Maps');
         message += '<br><br>' + $._('gmauthfailure');
         message += '<br><br>' + $._('gmapilink');
         if (GoogleMapsApi.gmInitialized) {

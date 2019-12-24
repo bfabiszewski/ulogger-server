@@ -39,6 +39,7 @@ describe('Lang tests', () => {
     };
     mockStrings = {
       string1: 'łańcuch1',
+      placeholders: '%s : %d',
       units: 'jp',
       unitd: 'jo',
       unitdm: 'jo / 1000',
@@ -64,6 +65,15 @@ describe('Lang tests', () => {
     lang.init(mockConfig, mockStrings);
     // then
     expect(lang._('string1')).toBe(mockStrings.string1);
+  });
+
+  it('should return localized string with replaced placeholders', () => {
+    // when
+    lang.init(mockConfig, mockStrings);
+    const p1 = 'str';
+    const p2 = 4;
+    // then
+    expect(lang._('placeholders', p1, p2)).toBe(`${p1} : ${p2}`);
   });
 
   it('should throw error on unknown string', () => {

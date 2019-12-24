@@ -41,16 +41,23 @@ export default class uUtils {
    * @param {...(string|number)=} params Optional parameters
    * @returns {string}
    */
-  static sprintf(fmt, params) { // eslint-disable-line no-unused-vars
-    const args = Array.prototype.slice.call(arguments);
-    const format = args.shift();
+  static sprintf(fmt, ...params) {
     let i = 0;
-    return format.replace(/%%|%s|%d/g, (match) => {
+    const ret = fmt.replace(/%%|%s|%d/g, (match) => {
       if (match === '%%') {
         return '%';
+      } else if (match === '%d' && isNaN(params[i])) {
+        throw new Error(`Wrong format specifier ${match} for ${params[i]} argument`);
       }
-      return (typeof args[i] !== 'undefined') ? args[i++] : match;
+      if (typeof params[i] === 'undefined') {
+        throw new Error(`Missing argument for format specifier ${match}`);
+      }
+      return params[i++];
     });
+    if (i < params.length) {
+      throw new Error(`Unused argument for format specifier ${fmt}`);
+    }
+    return ret;
   }
 
   /**
