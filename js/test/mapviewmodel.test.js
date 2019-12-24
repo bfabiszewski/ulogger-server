@@ -18,6 +18,7 @@
  */
 
 import { config, lang } from '../src/initializer.js';
+import Fixture from './helpers/fixture.js';
 import MapViewModel from '../src/mapviewmodel.js';
 import TrackFactory from './helpers/trackfactory.js';
 import ViewModel from '../src/viewmodel.js';
@@ -36,12 +37,13 @@ describe('MapViewModel tests', () => {
   let track;
   const defaultApi = 'mockApi';
 
+  beforeEach((done) => {
+    Fixture.load('main.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
+
   beforeEach(() => {
-    const fixture = `<div id="fixture">
-                       <div id="map-canvas"></div>
-                       <div id="menu-button"><a data-bind="onMenuToggle"></a></div>
-                     </div>`;
-    document.body.insertAdjacentHTML('afterbegin', fixture);
     mapEl = document.querySelector('#map-canvas');
     menuButtonEl = document.querySelector('#menu-button a');
     config.reinitialize();
@@ -69,7 +71,7 @@ describe('MapViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
     uObserve.unobserveAll(lang);
   });
 

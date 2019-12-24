@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import Fixture from './helpers/fixture.js';
 import MainViewModel from '../src/mainviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
 import uState from '../src/state.js';
@@ -28,20 +29,20 @@ describe('MainViewModel tests', () => {
   let state;
   let menuEl;
   let userMenuEl;
+  let userButtonEl;
+  let menuButtonEl;
+
+  beforeEach((done) => {
+    Fixture.load('main-authorized.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
 
   beforeEach(() => {
-    const fixture = `<div id="fixture">
-                        <div>
-                          <a id="user-menu-button" data-bind="onShowUserMenu">user</a>
-                          <div id="user-menu" class="menu-hidden"></div>
-                        </div>
-                        <div id="menu">
-                          <div id="menu-button"><a data-bind="onMenuToggle"></a></div>
-                        </div>
-                     </div>`;
-    document.body.insertAdjacentHTML('afterbegin', fixture);
     menuEl = document.querySelector('#menu');
     userMenuEl = document.querySelector('#user-menu');
+    userButtonEl = document.querySelector('a[data-bind="onShowUserMenu"]');
+    menuButtonEl = document.querySelector('#menu-button a');
     spyOn(window, 'addEventListener');
     spyOn(window, 'removeEventListener').and.callThrough();
     state = new uState();
@@ -49,7 +50,7 @@ describe('MainViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
   });
 
   it('should create instance', () => {
@@ -61,10 +62,9 @@ describe('MainViewModel tests', () => {
 
   it('should hide side menu', (done) => {
     // given
-    const buttonEl = document.querySelector('#menu-button a');
     vm.init();
     // when
-    buttonEl.click();
+    menuButtonEl.click();
     // then
     setTimeout(() => {
       expect(menuEl.classList.contains(hiddenClass)).toBe(true);
@@ -74,11 +74,10 @@ describe('MainViewModel tests', () => {
 
   it('should show side menu', (done) => {
     // given
-    const buttonEl = document.querySelector('#menu-button a');
     menuEl.classList.add(hiddenClass);
     vm.init();
     // when
-    buttonEl.click();
+    menuButtonEl.click();
     // then
     setTimeout(() => {
       expect(menuEl.classList.contains(hiddenClass)).toBe(false);
@@ -88,11 +87,10 @@ describe('MainViewModel tests', () => {
 
   it('should hide user menu', (done) => {
     // given
-    const buttonEl = document.querySelector('#user-menu-button');
     userMenuEl.classList.remove(hiddenClass);
     vm.init();
     // when
-    buttonEl.click();
+    userButtonEl.click();
     // then
     setTimeout(() => {
       expect(userMenuEl.classList.contains(hiddenClass)).toBe(true);
@@ -102,10 +100,9 @@ describe('MainViewModel tests', () => {
 
   it('should show user menu', (done) => {
     // given
-    const buttonEl = document.querySelector('#user-menu-button');
     vm.init();
     // when
-    buttonEl.click();
+    userButtonEl.click();
     // then
     setTimeout(() => {
       expect(userMenuEl.classList.contains(hiddenClass)).toBe(false);

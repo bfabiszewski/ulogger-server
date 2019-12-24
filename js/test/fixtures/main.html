@@ -1,0 +1,80 @@
+<div id="container">
+  <div id="menu">
+    <div id="menu-content">
+
+      <a href="login.php"><img class="icon" alt="Log in" src="images/key.svg"> Log in</a>
+
+      <div class="section">
+        <label for="user">User</label>
+        <select id="user" data-bind="currentUserId" name="user"></select>
+      </div>
+
+      <div class="section">
+        <label for="track">Track</label>
+        <select id="track" data-bind="currentTrackId" name="track"></select>
+        <input id="latest" type="checkbox" data-bind="showLatest"> <label for="latest">latest position</label><br>
+        <input id="auto-reload" type="checkbox" data-bind="autoReload"> <label for="auto-reload">autoreload</label> (<a id="set-interval" data-bind="onSetInterval"><span id="interval" data-bind="interval">10</span></a> s)<br>
+        <a id="force-reload" data-bind="onReload"> Reload now</a><br>
+      </div>
+
+      <div id="summary" class="section" data-bind="summary"></div>
+
+      <div id="other" class="section">
+        <a id="altitudes" data-bind="onChartToggle">Altitudes chart</a>
+      </div>
+
+      <div>
+        <label for="api">Map API</label>
+        <select id="api" name="api" data-bind="mapApi">
+          <option value="gmaps">Google Maps</option>
+          <option value="openlayers" selected>OpenLayers</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="lang">Language</label>
+        <select id="lang" name="lang" data-bind="lang">
+          <option value="cs">Čeština</option>
+          <option value="de">Deutsch</option>
+          <option value="en" selected>English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="it">Italiano</option>
+          <option value="hu">Magyar</option>
+          <option value="nl">Nederlands</option>
+          <option value="pl">Polski</option>
+          <option value="ru">Русский</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <label for="units">Units</label>
+        <select id="units" name="units" data-bind="units">
+          <option value="metric" selected>Metric</option>
+          <option value="imperial">Imperial/US</option>
+          <option value="nautical">Nautical</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <div class="menu-title">Export track</div>
+        <a id="export-kml" class="menu-link" data-bind="onExportKml">kml</a>
+        <a id="export-gpx" class="menu-link" data-bind="onExportGpx">gpx</a>
+      </div>
+
+
+    </div>
+    <div id="menu-button"><a data-bind="onMenuToggle"></a></div>
+    <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> 1.0-beta</div>
+  </div>
+
+  <div id="main">
+    <div id="map-canvas"></div>
+    <div id="bottom">
+      <div id="chart"></div>
+      <a id="chart-close" data-bind="onChartToggle">close</a>
+    </div>
+  </div>
+
+</div>

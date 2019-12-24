@@ -18,6 +18,7 @@
  */
 
 import { auth, config, lang } from '../src/initializer.js';
+import Fixture from './helpers/fixture.js';
 import UserViewModel from '../src/userviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
 import uSelect from '../src/select.js';
@@ -34,14 +35,13 @@ describe('UserViewModel tests', () => {
   let userEl;
   let vm;
 
+  beforeEach((done) => {
+    Fixture.load('main.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
+
   beforeEach(() => {
-    const fixture = `<div id="fixture">
-                      <div class="section">
-                        <label for="user">user</label>
-                        <select id="user" data-bind="currentUserId" name="user"></select>
-                      </div>
-                    </div>`;
-    document.body.insertAdjacentHTML('afterbegin', fixture);
     userEl = document.querySelector('#user');
     config.reinitialize();
     lang.init(config);
@@ -55,7 +55,7 @@ describe('UserViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
     auth.user = null;
   });
 

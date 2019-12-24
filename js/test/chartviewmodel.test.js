@@ -19,6 +19,7 @@
 
 import ChartViewModel from '../src/chartviewmodel.js';
 import Chartist from 'chartist'
+import Fixture from './helpers/fixture.js';
 import TrackFactory from './helpers/trackfactory.js';
 import ViewModel from '../src/viewmodel.js';
 import { lang } from '../src/initializer.js';
@@ -43,6 +44,12 @@ describe('ChartViewModel tests', () => {
   let chartData;
   let chartPointNodes;
 
+  beforeEach((done) => {
+    Fixture.load('main.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
+
   beforeEach(() => {
     // language=XML
     chartFixture = `<svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="100%" class="ct-chart-line">
@@ -59,15 +66,6 @@ describe('ChartViewModel tests', () => {
                           </g>
                           <g class="ct-labels"/>
                         </svg>`;
-    const fixture = `<div id="fixture">
-                      <div id="other" class="section">
-                        <a id="altitudes" data-bind="onChartToggle">chart</a>
-                      </div>
-                      <div id="bottom">
-                        <div id="chart"></div>
-                        <a id="chart-close" data-bind="onChartToggle">close</a>
-                      </div>
-                    </div>`;
     chartData = [
       { x: 0, y: 130 },
       { x: 48, y: 104 },
@@ -76,7 +74,6 @@ describe('ChartViewModel tests', () => {
       { x: 236, y: 118 },
       { x: 387, y: 118 }
     ];
-    document.body.insertAdjacentHTML('afterbegin', fixture);
     chartEl = document.querySelector('#chart');
     chartContainerEl = document.querySelector('#bottom');
     buttonEl = document.querySelector('#altitudes');
@@ -95,7 +92,7 @@ describe('ChartViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
     uObserve.unobserveAll(lang);
   });
 

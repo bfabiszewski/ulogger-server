@@ -30,6 +30,7 @@ export default class ViewModel {
    */
   constructor(model) {
     this._model = model;
+    this.root = document;
   }
 
   /**
@@ -41,8 +42,10 @@ export default class ViewModel {
 
   /**
    * Apply bindings for model properties
+   * @param {HTMLElement=} root Root element
    */
-  bindAll() {
+  bindAll(root = document) {
+    this.root = root;
     for (const key in this._model) {
       if (this._model.hasOwnProperty(key)) {
         this.bind(key);
@@ -58,7 +61,7 @@ export default class ViewModel {
    */
   bind(key) {
     const dataProp = 'bind';
-    const observers = document.querySelectorAll(`[data-${dataProp}]`);
+    const observers = this.root.querySelectorAll(`[data-${dataProp}]`);
     observers.forEach(/** @param {HTMLElement} element */ (element) => {
       const name = element.dataset[dataProp];
       if (name === key) {

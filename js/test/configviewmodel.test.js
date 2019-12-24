@@ -19,6 +19,7 @@
 
 import { config, lang } from '../src/initializer.js';
 import ConfigViewModel from '../src/configviewmodel.js';
+import Fixture from './helpers/fixture.js';
 import ViewModel from '../src/viewmodel.js';
 import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
@@ -43,6 +44,12 @@ describe('ConfigViewModel tests', () => {
   const newLang = 'pl';
   const newUnits = 'imperial';
 
+  beforeEach((done) => {
+    Fixture.load('main.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
+
   beforeEach(() => {
     config.reinitialize();
     config.interval = 10;
@@ -50,34 +57,6 @@ describe('ConfigViewModel tests', () => {
     config.units = 'metric';
     config.mapApi = 'gmaps';
 
-    const fixture = `<div id="fixture">
-                       <div class="section">
-                         <a id="set-interval" data-bind="onSetInterval"><span id="interval" data-bind="interval">${config.interval}</span></a>
-                      </div>
-                      <div>
-                        <label for="api">api</label>
-                        <select id="api" name="api" data-bind="mapApi">
-                          <option value="gmaps" selected>Google Maps</option>
-                          <option value="openlayers">OpenLayers</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label for="lang">lang</label>
-                        <select id="lang" name="lang" data-bind="lang">
-                            <option value="en" selected>English</option>
-                            <option value="pl">Polish</option>
-                        </select>
-                      </div>
-                      <div class="section">
-                        <label for="units">units</label>
-                        <select id="units" name="units" data-bind="units">
-                          <option value="metric" selected>Metric</option>
-                          <option value="imperial">Imperial</option>
-                          <option value="nautical">Nautical</option>
-                        </select>
-                      </div>
-                    </div>`;
-    document.body.insertAdjacentHTML('afterbegin', fixture);
     intervalEl = document.querySelector('#interval');
     apiEl = document.querySelector('#api');
     langEl = document.querySelector('#lang');
@@ -92,7 +71,7 @@ describe('ConfigViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
     uObserve.unobserveAll(lang);
   });
 

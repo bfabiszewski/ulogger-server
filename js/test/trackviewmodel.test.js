@@ -18,6 +18,7 @@
  */
 
 import { auth, config, lang } from '../src/initializer.js';
+import Fixture from './helpers/fixture.js';
 import TrackFactory from './helpers/trackfactory.js';
 import TrackViewModel from '../src/trackviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
@@ -57,29 +58,13 @@ describe('TrackViewModel tests', () => {
   let user;
   const MAX_FILE_SIZE = 10;
 
-  beforeEach(() => {
-    const fixture = `<div id="fixture">
-                      <div class="section">
-                        <select id="track" data-bind="currentTrackId" name="track"></select>
-                        <input id="latest" type="checkbox" data-bind="showLatest">
-                        <input id="auto-reload" type="checkbox" data-bind="autoReload">
-                        <a id="force-reload" data-bind="onReload">reload</a>
-                      </div>
-                      <div id="summary" class="section" data-bind="summary"></div>
-                      <div class="section">
-                        <a id="export-kml" class="menu-link" data-bind="onExportKml">kml</a>
-                        <a id="export-gpx" class="menu-link" data-bind="onExportGpx">gpx</a>
-                      </div>
-                      <div class="section">
-                        <form id="import-form" enctype="multipart/form-data" method="post">
-                          <input type="hidden" name="MAX_FILE_SIZE" value="${MAX_FILE_SIZE}" />
-                          <input type="file" id="input-file" name="gpx" data-bind="inputFile"/>
-                        </form>
-                        <a id="import-gpx" class="menu-link" data-bind="onImportGpx">gpx</a>
-                      </div>
-                    </div>`;
+  beforeEach((done) => {
+    Fixture.load('main-authorized.html')
+      .then(() => done())
+      .catch((e) => done.fail(e));
+  });
 
-    document.body.insertAdjacentHTML('afterbegin', fixture);
+  beforeEach(() => {
     config.reinitialize();
     config.interval = 10;
     lang.init(config);
@@ -93,6 +78,8 @@ describe('TrackViewModel tests', () => {
     forceReloadEl = document.querySelector('#force-reload');
     inputFileEl = document.querySelector('#input-file');
     autoReloadEl = document.querySelector('#auto-reload');
+    const maxEl = document.querySelector('input[name="MAX_FILE_SIZE"]');
+    maxEl.value = MAX_FILE_SIZE;
     state = new uState();
     vm = new TrackViewModel(state);
     track1 = TrackFactory.getTrack(0, { id: 1, name: 'track1' });
@@ -106,7 +93,7 @@ describe('TrackViewModel tests', () => {
   });
 
   afterEach(() => {
-    document.body.removeChild(document.querySelector('#fixture'));
+    Fixture.clear();
     uObserve.unobserveAll(lang);
     auth.user = null;
   });
