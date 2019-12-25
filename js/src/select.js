@@ -17,6 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uObserve from './observe.js';
+
 export default class uSelect {
 
   /**
@@ -134,7 +136,11 @@ export default class uSelect {
       this.element.add(new Option(this.allText, uSelect.allValue, false, selected === uSelect.allValue));
     }
     for (const option of options) {
-      this.element.add(new Option(option.listText, option.listValue, false, selected === option.listValue));
+      const optEl = new Option(option.listText, option.listValue, false, selected === option.listValue);
+      this.element.add(optEl);
+      uObserve.observe(option, 'listText', (text) => {
+        optEl.text = text;
+      })
     }
   }
 

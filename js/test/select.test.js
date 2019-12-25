@@ -162,6 +162,20 @@ describe('Select tests', () => {
     expect(select.element.options[2].value).toBe(options[1].listValue);
   });
 
+  it('should bind DOM option text with model property', (done) => {
+    // given
+    const select = new uSelect(element);
+    select.setOptions(options);
+    const newValue = 'new';
+    // when
+    options[0].listText = newValue;
+    // then
+    setTimeout(() => {
+      expect(select.element.options[0].text).toBe(newValue);
+      done();
+    }, 100);
+  });
+
   it('should set selected option', () => {
     // given
     const select = new uSelect(element);
