@@ -56,7 +56,7 @@ export default class ViewModel {
   /**
    * Creates bidirectional binding between model property and DOM element.
    * For input elements model property value change triggers change in DOM element and vice versa.
-   * In case of anchor element binding is one way. Model property is callback that will receive click event.
+   * In case of anchor or button element binding is one way. Model property is callback that will receive click event.
    * @param {string} key
    */
   bind(key) {
@@ -67,7 +67,7 @@ export default class ViewModel {
       if (name === key) {
         if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement) {
           this.onChangeBind(element, key);
-        } else if (element instanceof HTMLAnchorElement) {
+        } else if (element instanceof HTMLAnchorElement || element instanceof HTMLButtonElement) {
           this.onClickBind(element, key);
         } else {
           this.viewUpdateBind(element, key);
