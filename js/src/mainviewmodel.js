@@ -75,7 +75,7 @@ export default class MainViewModel extends ViewModel {
     const el = event.target;
     this.userMenuEl.classList.add(hiddenClass);
     window.removeEventListener('click', this.hideUserMenuCallback, true);
-    if (!el.parentElement.classList.contains('user-menu')) {
+    if (el.parentElement.id !== 'user-menu') {
       event.stopPropagation();
     }
   }
