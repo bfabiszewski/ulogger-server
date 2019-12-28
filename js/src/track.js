@@ -52,6 +52,11 @@ export default class uTrack extends uPositionSet {
     this.listItem(id, name);
   }
 
+  setName(name) {
+    this.name = name;
+    this.listText = name;
+  }
+
   clear() {
     super.clear();
     this.maxId = 0;
@@ -212,6 +217,30 @@ export default class uTrack extends uPositionSet {
           }
           return tracks;
       });
+  }
+
+  delete() {
+    return uTrack.update({
+      action: 'delete',
+      trackid: this.id
+    });
+  }
+
+  saveMeta() {
+    return uTrack.update({
+      action: 'update',
+      trackid: this.id,
+      trackname: this.name
+    });
+  }
+
+  /**
+   * Save track data
+   * @param {Object} data
+   * @return {Promise<void, Error>}
+   */
+  static update(data) {
+    return uAjax.post('utils/handletrack.php', data);
   }
 
 }

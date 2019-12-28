@@ -116,6 +116,16 @@ describe('Track tests', () => {
       expect(track.listText).toBe(name);
     });
 
+    it('should set track name', () => {
+      // given
+      const newName = 'newName';
+      // when
+      track.setName(newName);
+      // then
+      expect(track.name).toBe(newName);
+      expect(track.listText).toBe(newName);
+    });
+
     it('should clear positions data', () => {
       // given
       track.positions.push(new uPosition());
@@ -406,6 +416,32 @@ describe('Track tests', () => {
       track.export(type);
       // then
       expect(uUtils.openUrl).toHaveBeenCalledWith(`utils/export.php?type=${type}&userid=${track.user.id}&trackid=${track.id}`);
+    });
+
+    it('should delete track', (done) => {
+      // given
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      // when
+      track.delete()
+        .then(() => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handletrack.php', true);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=delete&trackid=${track.id}`);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should save track meta', (done) => {
+      // given
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      // when
+      track.saveMeta()
+        .then(() => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handletrack.php', true);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=update&trackid=${track.id}&trackname=${track.name}`);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
     });
 
   });
