@@ -127,7 +127,7 @@ export default class uSelect {
    * @param {string=} selected
    */
   setOptions(options, selected) {
-    selected = selected || '';
+    selected = selected || this.element.value;
     this.element.options.length = 0;
     if (this.hasHead) {
       this.addHead();
