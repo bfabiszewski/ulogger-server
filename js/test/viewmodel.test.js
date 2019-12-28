@@ -58,6 +58,16 @@ describe('ViewModel tests', () => {
     expect(ViewModel.prototype.bind).toHaveBeenCalledWith(propertyBool);
   });
 
+  it('should set root element', () => {
+    // given
+    spyOn(ViewModel.prototype, 'bind');
+    const rootEl = document.querySelector('body');
+    // when
+    vm.bindAll(rootEl);
+    // then
+    expect(vm.root).toEqual(rootEl);
+  });
+
   it('should set up binding between model property and DOM input element', () => {
     // given
     /** @type {HTMLInputElement} */
@@ -190,6 +200,16 @@ describe('ViewModel tests', () => {
     // then
     expect(uObserve.unobserve).toHaveBeenCalledTimes(1);
     expect(uObserve.unobserve).toHaveBeenCalledWith(vm.model, propertyString, callback);
+  });
+
+  it('should get bound element by property name', () => {
+    // given
+    const property = 'property';
+    spyOn(vm.root, 'querySelector');
+    // when
+    vm.getBoundElement(property);
+    // then
+    expect(vm.root.querySelector).toHaveBeenCalledWith(`[data-bind='${property}']`);
   });
 
 });

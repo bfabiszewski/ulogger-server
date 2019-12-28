@@ -142,4 +142,8 @@ export default class ViewModel {
   unsubscribe(property, callback) {
     uObserve.unobserve(this.model, property, callback);
   }
+
+  getBoundElement(property) {
+    return this.root.querySelector(`[data-bind='${property}']`);
+  }
 }
