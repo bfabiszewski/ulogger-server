@@ -114,7 +114,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
       $positionId = false;
       if (is_numeric($lat) && is_numeric($lon) && is_numeric($timestamp) && is_numeric($userId) && is_numeric($trackId)) {
         $track = new uTrack($trackId);
-        if ($track->isValid && $track->userId == $userId) {
+        if ($track->isValid && $track->userId === $userId) {
           try {
             $table = self::db()->table('positions');
             $query = "INSERT INTO $table
@@ -125,7 +125,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
             $params = [ $userId, $trackId,
                     $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $image ];
             $stmt->execute($params);
-            $positionId = self::db()->lastInsertId("${table}_id_seq");
+            $positionId = (int) self::db()->lastInsertId("${table}_id_seq");
           } catch (PDOException $e) {
             // TODO: handle error
             syslog(LOG_ERR, $e->getMessage());
@@ -299,7 +299,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
      * @return bool True if success, false otherwise
      */
     public static function removeImages($userId, $trackId = NULL) {
-      if (($positions = uPosition::getAllWithImage($userId, $trackId)) !== false) {
+      if (($positions = self::getAllWithImage($userId, $trackId)) !== false) {
         /** @var uUpload $position */
         foreach ($positions as $position) {
           try {

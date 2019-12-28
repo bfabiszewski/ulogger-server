@@ -84,7 +84,7 @@
           $query = "INSERT INTO $table (login, password) VALUES (?, ?)";
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $login, $hash ]);
-          $userid = self::db()->lastInsertId("${table}_id_seq");
+          $userid = (int) self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
           syslog(LOG_ERR, $e->getMessage());
