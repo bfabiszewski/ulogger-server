@@ -140,6 +140,7 @@
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $hash, $this->login ]);
           $ret = true;
+          $this->hash = $hash;
         } catch (PDOException $e) {
           // TODO: handle exception
           syslog(LOG_ERR, $e->getMessage());

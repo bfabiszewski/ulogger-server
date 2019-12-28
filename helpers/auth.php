@@ -42,6 +42,15 @@
     }
 
     /**
+     * Update user instance stored in session
+     */
+    public function updateSession() {
+      if ($this->isAuthenticated()) {
+        $this->user->storeInSession();
+      }
+    }
+
+    /**
      * Is user authenticated
      *
      * @return boolean True if authenticated, false otherwise

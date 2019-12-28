@@ -54,7 +54,7 @@
   if ($passUser->setPass($pass) === false) {
     uUtils::exitWithError("Server error");
   }
-
+  $auth->updateSession();
   uUtils::exitWithSuccess();
 
 ?>
