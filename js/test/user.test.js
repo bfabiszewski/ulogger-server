@@ -56,6 +56,36 @@ describe('User tests', () => {
       // then
       expect(user.toString()).toBe(`[${id}, ${login}]`);
     });
+
+    it('should be equal to other user with same id', () => {
+      // given
+      const user = new uUser(1, 'testUser');
+      const otherUser = new uUser(1, 'other');
+      // when
+      const result = user.isEqualTo(otherUser);
+      // then
+      expect(result).toBe(true);
+    });
+
+    it('should not be equal to other track with other id', () => {
+      // given
+      const user = new uUser(1, 'testUser');
+      const otherUser = new uUser(2, 'other');
+      // when
+      const result = user.isEqualTo(otherUser);
+      // then
+      expect(result).toBe(false);
+    });
+
+    it('should not be equal to null track', () => {
+      // given
+      const user = new uUser(1, 'testUser');
+      const otherUser = null;
+      // when
+      const result = user.isEqualTo(otherUser);
+      // then
+      expect(result).toBe(false);
+    });
   });
 
   describe('ajax tests', () => {
@@ -96,6 +126,54 @@ describe('User tests', () => {
           expect(e).toEqual(jasmine.any(Error));
           done();
         });
+    });
+
+    it('should delete user', (done) => {
+      // when
+      const user = new uUser(1, 'testUser');
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      // then
+      user.delete()
+        .then(() => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handleuser.php', true);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=delete&login=${user.login}`);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should add user', (done) => {
+      // when
+      const id = 1;
+      const login = 'testUser';
+      const password = 'password';
+      const newUser = new uUser(id, login);
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ id: id }));
+      // then
+      uUser.add(login, password)
+        .then((user) => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handleuser.php', true);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=add&login=${login}&pass=${password}`);
+          expect(user).toEqual(newUser);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should change user password', (done) => {
+      // when
+      const user = new uUser(1, 'testUser');
+      const password = 'password';
+      const oldPassword = 'oldPassword';
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      // then
+      user.setPassword(password, oldPassword)
+        .then(() => {
+          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/changepass.php', true);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`login=${user.login}&pass=${password}&oldpass=${oldPassword}`);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
     });
 
   });

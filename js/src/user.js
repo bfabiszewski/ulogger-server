@@ -43,6 +43,14 @@ export default class uUser extends uListItem {
   }
 
   /**
+   * @param {uUser} user
+   * @return {boolean}
+   */
+  isEqualTo(user) {
+    return !!user && user.id === this.id;
+  }
+
+  /**
    * @return {Promise<uTrack, Error>}
    */
   fetchLastPosition() {
@@ -61,5 +69,48 @@ export default class uUser extends uListItem {
       }
       return users;
     });
+  }
+
+  delete() {
+    return uUser.update({
+      action: 'delete',
+      login: this.login
+    });
+  }
+
+  /**
+   *
+   * @param {string} login
+   * @param {string} password
+   * @return {Promise<uUser>}
+   */
+  static add(login, password) {
+    return uUser.update({
+      action: 'add',
+      login: login,
+      pass: password
+    }).then((user) => new uUser(user.id, login));
+  }
+
+  /**
+   * @param {Object} data
+   * @return {Promise<*, Error>}
+   */
+  static update(data) {
+    return uAjax.post('utils/handleuser.php', data);
+  }
+
+  /**
+   * @param {string} password
+   * @param {string} oldPassword
+   * @return {Promise<void, Error>}
+   */
+  setPassword(password, oldPassword) {
+    return uAjax.post('utils/changepass.php',
+      {
+        login: this.login,
+        pass: password,
+        oldpass: oldPassword
+      });
   }
 }
