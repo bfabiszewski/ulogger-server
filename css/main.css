@@ -356,7 +356,7 @@ button > * {
   border: 1px solid #888;
 }
 
-#user-menu.menu-hidden {
+#user-menu.menu-hidden, a.menu-hidden {
   display: none;
 }
 

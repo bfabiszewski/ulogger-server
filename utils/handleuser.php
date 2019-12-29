@@ -30,7 +30,7 @@
 
   $lang = (new uLang(uConfig::$lang))->getStrings();
 
-  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login == $login || empty($action) || empty($login)) {
+  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login === $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }
 
@@ -45,7 +45,7 @@
       if (empty($pass) || ($userId = uUser::add($login, $pass)) === false) {
         uUtils::exitWithError($lang["servererror"]);
       } else {
-        $data = [ 'userid' => $userId ];
+        $data = [ 'id' => $userId ];
       }
       break;
 

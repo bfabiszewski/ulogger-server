@@ -5,7 +5,7 @@
       <div>
         <a data-bind="onShowUserMenu"><img class="icon" alt="User" src="images/user.svg"> testUser</a>
         <div id="user-menu" class="menu-hidden">
-          <a id="user-pass"><img class="icon" alt="Change password" src="images/lock.svg"> Change password</a>
+          <a id="user-pass" data-bind="onPasswordChange"><img class="icon" alt="Change password" src="images/lock.svg"> Change password</a>
           <a href="utils/logout.php"><img class="icon" alt="Log out" src="images/poweroff.svg"> Log out</a>
         </div>
       </div>
@@ -80,9 +80,9 @@
 
       <div id="admin-menu">
         <div class="menu-title">Administration</div>
-        <a id="adduser" class="menu-link">Add user</a>
-        <a id="edituser" class="menu-link">Edit user</a>
-        <a id="edittrack" class="menu-link">Edit track</a>
+        <a id="adduser" class="menu-link" data-bind="onUserAdd">Add user</a>
+        <a id="edituser" class="menu-link" data-bind="onUserEdit">Edit user</a>
+        <a id="edittrack" class="menu-link" data-bind="onTrackEdit">Edit track</a>
       </div>
 
     </div>

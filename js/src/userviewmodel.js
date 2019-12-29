@@ -18,6 +18,7 @@
  */
 
 import { lang as $, auth } from './initializer.js';
+import UserDialogModel from './userdialogmodel.js';
 import ViewModel from './viewmodel.js';
 import uSelect from './select.js';
 import uUser from './user.js';
@@ -36,12 +37,27 @@ export default class UserViewModel extends ViewModel {
       /** @type {uUser[]} */
       userList: [],
       /** @type {string} */
-      currentUserId: '0'
+      currentUserId: '0',
+      // click handlers
+      /** @type {function} */
+      onUserEdit: null,
+      /** @type {function} */
+      onUserAdd: null,
+      /** @type {function} */
+      onPasswordChange: null
     });
+    this.setClickHandlers();
     /** @type HTMLSelectElement */
     const listEl = document.querySelector('#user');
+    this.editEl = this.getBoundElement('onUserEdit');
     this.select = new uSelect(listEl, $._('suser'), `- ${$._('allusers')} -`);
     this.state = state;
+  }
+
+  setClickHandlers() {
+    this.model.onUserEdit = () => this.showDialog('edit');
+    this.model.onUserAdd = () => this.showDialog('add');
+    this.model.onPasswordChange = () => this.showDialog('pass');
   }
 
   /**
@@ -78,6 +94,7 @@ export default class UserViewModel extends ViewModel {
     this.onChanged('currentUserId', (listValue) => {
       this.state.showAllUsers = listValue === uSelect.allValue;
       this.state.currentUser = this.model.userList.find((_user) => _user.listValue === listValue) || null;
+      UserViewModel.setMenuVisible(this.editEl, this.state.currentUser !== null && !this.state.currentUser.isEqualTo(auth.user));
     });
     state.onChanged('showLatest', (showLatest) => {
       if (showLatest) {
@@ -86,6 +103,40 @@ export default class UserViewModel extends ViewModel {
         this.select.hideAllOption();
       }
     });
+  }
+
+  showDialog(action) {
+    const vm = new UserDialogModel(this, action);
+    vm.init();
+  }
+
+  /**
+   * @param {uUser} newUser
+   */
+  onUserAdded(newUser) {
+    this.model.userList.push(newUser);
+    this.model.userList.sort((a, b) => ((a.login > b.login) ? 1 : -1));
+  }
+
+  onUserDeleted() {
+    const index = this.model.userList.indexOf(this.state.currentUser);
+    this.state.currentUser = null;
+    if (index !== -1) {
+      this.model.userList.splice(index, 1);
+      if (this.model.userList.length) {
+        this.model.currentUserId = this.model.userList[index].listValue;
+      } else {
+        this.model.currentUserId = '0';
+      }
+    }
+  }
+
+  static setMenuVisible(el, visible) {
+    if (visible) {
+      el.classList.remove('menu-hidden');
+    } else {
+      el.classList.add('menu-hidden');
+    }
   }
 
 }

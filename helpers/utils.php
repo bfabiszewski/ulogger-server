@@ -91,7 +91,9 @@
      */
     private static function exitWithStatus($isError, $extra = NULL) {
       $output = [];
-      $output["error"] = $isError;
+      if ($isError) {
+        $output["error"] = true;
+      }
       if (!empty($extra)) {
         foreach ($extra as $key => $value) {
           $output[$key] = $value;

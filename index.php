@@ -61,7 +61,7 @@
             <div>
               <a data-bind="onShowUserMenu"><img class="icon" alt="<?= $lang['user'] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
               <div id="user-menu" class="menu-hidden">
-                <a id="user-pass"><img class="icon" alt="<?= $lang['changepass'] ?>" src="images/lock.svg"> <?= $lang['changepass'] ?></a>
+                <a id="user-pass" data-bind="onPasswordChange"><img class="icon" alt="<?= $lang['changepass'] ?>" src="images/lock.svg"> <?= $lang['changepass'] ?></a>
                 <a href="utils/logout.php"><img class="icon" alt="<?= $lang['logout'] ?>" src="images/poweroff.svg"> <?= $lang['logout'] ?></a>
               </div>
             </div>
@@ -133,10 +133,10 @@
             <div id="admin-menu">
               <div class="menu-title"><?= $lang['adminmenu'] ?></div>
               <?php if ($auth->isAdmin()): ?>
-                <a id="adduser" class="menu-link"><?= $lang['adduser'] ?></a>
-                <a id="edituser" class="menu-link"><?= $lang['edituser'] ?></a>
+                <a id="adduser" class="menu-link" data-bind="onUserAdd"><?= $lang['adduser'] ?></a>
+                <a id="edituser" class="menu-link" data-bind="onUserEdit"><?= $lang['edituser'] ?></a>
               <?php endif; ?>
-              <a id="edittrack" class="menu-link"><?= $lang['edittrack'] ?></a>
+              <a id="edittrack" class="menu-link" data-bind="onTrackEdit"><?= $lang['edittrack'] ?></a>
             </div>
           <?php endif; ?>
 

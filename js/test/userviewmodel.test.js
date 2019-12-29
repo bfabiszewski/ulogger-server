@@ -33,16 +33,22 @@ describe('UserViewModel tests', () => {
   let users;
   /** @type {HTMLSelectElement} */
   let userEl;
+  let userEditEl;
+  let userAddEl;
+  let userPassEl;
   let vm;
 
   beforeEach((done) => {
-    Fixture.load('main.html')
+    Fixture.load('main-authorized.html')
       .then(() => done())
       .catch((e) => done.fail(e));
   });
 
   beforeEach(() => {
     userEl = document.querySelector('#user');
+    userEditEl = document.querySelector('#edituser');
+    userAddEl = document.querySelector('#adduser');
+    userPassEl = document.querySelector('#user-pass');
     config.reinitialize();
     lang.init(config);
     lang.strings['suser'] = 'select user';
@@ -209,6 +215,102 @@ describe('UserViewModel tests', () => {
       expect(userEl.options[1].value).toBe(user1.listValue);
       done();
     }, 100);
+  });
+
+  it('should show user edit dialog on button click', (done) => {
+    // given
+    spyOn(vm, 'showDialog');
+    // when
+    vm.bindAll();
+    userEditEl.click();
+    // then
+    setTimeout(() => {
+      expect(vm.showDialog).toHaveBeenCalledWith('edit');
+      done();
+    }, 100);
+  });
+
+  it('should show user add dialog on button click', (done) => {
+    // given
+    spyOn(vm, 'showDialog');
+    // when
+    vm.bindAll();
+    userAddEl.click();
+    // then
+    setTimeout(() => {
+      expect(vm.showDialog).toHaveBeenCalledWith('add');
+      done();
+    }, 100);
+  });
+
+  it('should show password change dialog on button click', (done) => {
+    // given
+    spyOn(vm, 'showDialog');
+    // when
+    vm.bindAll();
+    userPassEl.click();
+    // then
+    setTimeout(() => {
+      expect(vm.showDialog).toHaveBeenCalledWith('pass');
+      done();
+    }, 100);
+  });
+
+  it('should add new user to user list in alphabetic order', () => {
+    // given
+    user1 = new uUser(1, 'b');
+    user2 = new uUser(2, 'a');
+    vm.model.userList = [ user1 ];
+    // when
+    vm.onUserAdded(user2);
+    // then
+    expect(vm.model.userList.length).toBe(2);
+    expect(vm.model.userList[0]).toBe(user2);
+  });
+
+  it('should remove current user from user list and set new current user id', () => {
+    // given
+    vm.model.userList = [ user1, user2 ];
+    vm.state.currentUser = user1;
+    vm.model.currentUserId = user1.listValue;
+    // when
+    vm.onUserDeleted();
+    // then
+    expect(vm.model.userList.length).toBe(1);
+    expect(vm.model.currentUserId).toBe(user2.listValue);
+    expect(vm.state.currentUser).toBe(null);
+  });
+
+  it('should remove last remaining element from user list and set empty user id', () => {
+    // given
+    vm.model.userList = [ user1 ];
+    vm.state.currentUser = user1;
+    vm.model.currentUserId = user1.listValue;
+    // when
+    vm.onUserDeleted();
+    // then
+    expect(vm.model.userList.length).toBe(0);
+    expect(vm.model.currentUserId).toBe('0');
+    expect(vm.state.currentUser).toBe(null);
+  });
+
+  it('show hide element', () => {
+    // given
+    const element = document.createElement('div');
+    // when
+    UserViewModel.setMenuVisible(element, false);
+    // then
+    expect(element.classList.contains('menu-hidden')).toBe(true);
+  });
+
+  it('show shown hidden element', () => {
+    // given
+    const element = document.createElement('div');
+    element.classList.add('menu-hidden');
+    // when
+    UserViewModel.setMenuVisible(element, true);
+    // then
+    expect(element.classList.contains('menu-hidden')).toBe(false);
   });
 
 });
