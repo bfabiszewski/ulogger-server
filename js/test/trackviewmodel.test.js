@@ -51,6 +51,8 @@ describe('TrackViewModel tests', () => {
   let autoReloadEl;
   /** @type {HTMLInputElement} */
   let inputFileEl;
+  /** @type {HTMLAnchorElement} */
+  let trackEditEl;
   let tracks;
   let track1;
   let track2;
@@ -78,6 +80,7 @@ describe('TrackViewModel tests', () => {
     forceReloadEl = document.querySelector('#force-reload');
     inputFileEl = document.querySelector('#input-file');
     autoReloadEl = document.querySelector('#auto-reload');
+    trackEditEl = document.querySelector('#edittrack');
     const maxEl = document.querySelector('input[name="MAX_FILE_SIZE"]');
     maxEl.value = MAX_FILE_SIZE;
     state = new uState();
@@ -256,7 +259,6 @@ describe('TrackViewModel tests', () => {
       done();
     }, 100);
   });
-
 
   it('should load user latest position when "show latest" is checked and select respective track in list', (done) => {
     // given
@@ -602,6 +604,64 @@ describe('TrackViewModel tests', () => {
       expect(autoReloadEl.checked).toBe(false);
       done();
     }, 100);
+  });
+
+  it('should show user edit dialog on button click', (done) => {
+    // given
+    spyOn(vm, 'showDialog');
+    // when
+    vm.bindAll();
+    trackEditEl.click();
+    // then
+    setTimeout(() => {
+      expect(vm.showDialog).toHaveBeenCalledTimes(1);
+      done();
+    }, 100);
+  });
+
+  it('should remove current track from track list and set new current track id', () => {
+    // given
+    vm.model.trackList = [ track1, track2 ];
+    vm.state.currentTrack = track1;
+    vm.model.currentTrackId = track1.listValue;
+    // when
+    vm.onTrackDeleted();
+    // then
+    expect(vm.model.trackList.length).toBe(1);
+    expect(vm.model.currentTrackId).toBe(track2.listValue);
+    expect(vm.state.currentTrack).toBe(null);
+  });
+
+  it('should remove last remaining element from track list and set empty track id', () => {
+    // given
+    vm.model.trackList = [ track1 ];
+    vm.state.currentTrack = track1;
+    vm.model.currentTrackId = track1.listValue;
+    // when
+    vm.onTrackDeleted();
+    // then
+    expect(vm.model.trackList.length).toBe(0);
+    expect(vm.model.currentTrackId).toBe('');
+    expect(vm.state.currentTrack).toBe(null);
+  });
+
+  it('show hide element', () => {
+    // given
+    const element = document.createElement('div');
+    // when
+    TrackViewModel.setMenuVisible(element, false);
+    // then
+    expect(element.classList.contains('menu-hidden')).toBe(true);
+  });
+
+  it('show shown hidden element', () => {
+    // given
+    const element = document.createElement('div');
+    element.classList.add('menu-hidden');
+    // when
+    TrackViewModel.setMenuVisible(element, true);
+    // then
+    expect(element.classList.contains('menu-hidden')).toBe(false);
   });
 
   describe('on reload clicked', () => {

@@ -18,6 +18,7 @@
  */
 
 import { lang as $, auth, config } from './initializer.js';
+import TrackDialogModel from './trackdialogmodel.js';
 import ViewModel from './viewmodel.js';
 import uObserve from './observe.js';
 import uPositionSet from './positionset.js';
@@ -55,12 +56,15 @@ export default class TrackViewModel extends ViewModel {
       /** @type {function} */
       onExportKml: null,
       /** @type {function} */
-      onImportGpx: null
+      onImportGpx: null,
+      /** @type {function} */
+      onTrackEdit: null
     });
     this.setClickHandlers();
     /** @type HTMLSelectElement */
     const listEl = document.querySelector('#track');
     this.importEl = document.querySelector('#input-file');
+    this.editEl = this.getBoundElement('onTrackEdit');
     this.select = new uSelect(listEl);
     this.state = state;
     this.timerId = 0;
@@ -93,9 +97,11 @@ export default class TrackViewModel extends ViewModel {
     this.state.onChanged('currentUser', (user) => {
       if (user) {
         this.loadTrackList();
+        TrackViewModel.setMenuVisible(this.editEl, true);
       } else {
         this.model.currentTrackId = '';
         this.model.trackList = [];
+        TrackViewModel.setMenuVisible(this.editEl, false);
       }
     });
     this.state.onChanged('currentTrack', (track) => {
@@ -129,6 +135,7 @@ export default class TrackViewModel extends ViewModel {
     this.model.onExportGpx = exportCb('gpx');
     this.model.onExportKml = exportCb('kml');
     this.model.onImportGpx = () => this.importEl.click();
+    this.model.onTrackEdit = () => this.showDialog();
   }
 
   /**
@@ -264,6 +271,24 @@ export default class TrackViewModel extends ViewModel {
       .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
   }
 
+  showDialog() {
+    const vm = new TrackDialogModel(this);
+    vm.init();
+  }
+
+  onTrackDeleted() {
+    const index = this.model.trackList.indexOf(this.state.currentTrack);
+    this.state.currentTrack = null;
+    if (index !== -1) {
+      this.model.trackList.splice(index, 1);
+      if (this.model.trackList.length) {
+        this.model.currentTrackId = this.model.trackList[index].listValue;
+      } else {
+        this.model.currentTrackId = '';
+      }
+    }
+  }
+
   /**
    * @param {boolean} start
    */
@@ -283,6 +308,14 @@ export default class TrackViewModel extends ViewModel {
     clearInterval(this.timerId);
     this.timerId = 0;
     this.model.autoReload = false;
+  }
+
+  static setMenuVisible(el, visible) {
+    if (visible) {
+      el.classList.remove('menu-hidden');
+    } else {
+      el.classList.add('menu-hidden');
+    }
   }
 
   renderSummary() {
