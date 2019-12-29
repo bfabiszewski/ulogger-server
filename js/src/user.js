@@ -102,7 +102,7 @@ export default class uUser extends uListItem {
 
   /**
    * @param {string} password
-   * @param {string} oldPassword
+   * @param {string=} oldPassword Needed when changing own password
    * @return {Promise<void, Error>}
    */
   setPassword(password, oldPassword) {
