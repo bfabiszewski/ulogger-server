@@ -8,7 +8,11 @@ module.exports = {
     path: path.resolve(__dirname, 'js/dist'),
     publicPath: 'js/dist/'
   },
-  plugins: [ new CleanWebpackPlugin() ],
+  plugins: [
+   new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: [ '**/*', '!.*' ]
+    })
+  ],
   optimization: {
     splitChunks: {
       cacheGroups: {
