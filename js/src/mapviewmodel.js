@@ -21,6 +21,7 @@ import { lang as $, config } from './initializer.js';
 import GoogleMapsApi from './mapapi/api_gmaps.js';
 import OpenLayersApi from './mapapi/api_openlayers.js';
 import ViewModel from './viewmodel.js';
+import uDialog from './dialog.js';
 import uObserve from './observe.js';
 import uUtils from './utils.js';
 
@@ -138,9 +139,9 @@ export default class MapViewModel extends ViewModel {
   /**
    * Get popup html
    * @param {number} id Position ID
-   * @returns {string}
+   * @returns {HTMLDivElement}
    */
-   getPopupHtml(id) {
+   getPopupElement(id) {
     const pos = this.state.currentTrack.positions[id];
     const count = this.state.currentTrack.length;
     let date = '–––';
@@ -152,22 +153,22 @@ export default class MapViewModel extends ViewModel {
     }
     let provider = '';
     if (pos.provider === 'gps') {
-      provider = ` (<img class="icon" alt="${$._('gps')}" title="${$._('gps')}"  src="images/gps_dark.svg">)`;
+      provider = ` <img class="icon" alt="${$._('gps')}" title="${$._('gps')}"  src="images/gps_dark.svg">`;
     } else if (pos.provider === 'network') {
-      provider = ` (<img class="icon" alt="${$._('network')}" title="${$._('network')}"  src="images/network_dark.svg">)`;
+      provider = ` <img class="icon" alt="${$._('network')}" title="${$._('network')}"  src="images/network_dark.svg">`;
     }
     let stats = '';
     if (!this.state.showLatest) {
       stats =
         `<div id="pright">
-        <img class="icon" alt="${$._('track')}" src="images/stats_blue.svg" style="padding-left: 3em;"><br>
+        <img class="icon" alt="${$._('track')}" src="images/stats_blue.svg" style="margin-left: 3em;"><br>
         <img class="icon" alt="${$._('ttime')}" title="${$._('ttime')}" src="images/time_blue.svg"> ${$.getLocaleDuration(pos.totalSeconds)}<br>
         <img class="icon" alt="${$._('aspeed')}" title="${$._('aspeed')}" src="images/speed_blue.svg"> ${$.getLocaleSpeed(pos.totalSpeed, true)}<br>
         <img class="icon" alt="${$._('tdistance')}" title="${$._('tdistance')}" src="images/distance_blue.svg"> ${$.getLocaleDistanceMajor(pos.totalMeters, true)}<br>
         </div>`;
     }
-    return `<div id="popup">
-        <div id="pheader">
+    const html =
+       `<div id="pheader">
         <div><img alt="${$._('user')}" title="${$._('user')}" src="images/user_dark.svg"> ${uUtils.htmlEncode(pos.username)}</div>
         <div><img alt="${$._('track')}" title="${$._('track')}" src="images/route_dark.svg"> ${uUtils.htmlEncode(pos.trackname)}</div>
         </div>
@@ -181,8 +182,21 @@ export default class MapViewModel extends ViewModel {
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
         </div>${stats}</div>
-        <div id="pfooter">${$._('pointof', id + 1, count)}</div>
-        </div>`;
+        <div id="pfooter">${$._('pointof', id + 1, count)}</div>`;
+    const node = document.createElement('div');
+    node.setAttribute('id', 'popup');
+    node.innerHTML = html;
+    if (pos.hasImage()) {
+      const image = node.querySelector('#pimage img');
+      image.onclick = () => {
+        const modal = new uDialog(`<img src="uploads/${pos.image}" alt="image">`);
+        const closeEl = modal.element.querySelector('#modal-close');
+        closeEl.onclick = () => modal.destroy();
+        modal.element.classList.add('image');
+        modal.show();
+      }
+    }
+    return node;
   }
 
   /**

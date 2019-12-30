@@ -374,15 +374,16 @@ describe('Google Maps map API tests', () => {
     const id = 1;
     spyOn(popup, 'setContent').and.callThrough();
     spyOn(popup, 'open');
-    mockViewModel.getPopupHtml = (i) => `content ${i}`;
-    spyOn(mockViewModel, 'getPopupHtml').and.callThrough();
+    const popupEl = document.createElement('div');
+    mockViewModel.getPopupElement = () => popupEl;
+    spyOn(mockViewModel, 'getPopupElement').and.callThrough();
     api.map = new google.maps.Map(container);
     // when
     api.popup = popup;
     api.popupOpen(id, marker);
     // then
-    expect(mockViewModel.getPopupHtml).toHaveBeenCalledWith(id);
-    expect(popup.setContent).toHaveBeenCalledWith(`content ${id}`);
+    expect(mockViewModel.getPopupElement).toHaveBeenCalledWith(id);
+    expect(popup.setContent).toHaveBeenCalledWith(popupEl);
     expect(popup.open).toHaveBeenCalledWith(api.map, marker);
     expect(api.viewModel.model.markerSelect).toBe(id);
   });

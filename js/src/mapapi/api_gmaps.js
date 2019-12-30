@@ -262,7 +262,7 @@ export default class GoogleMapsApi {
    * @param {google.maps.Marker} marker
    */
   popupOpen(id, marker) {
-    this.popup.setContent(this.viewModel.getPopupHtml(id));
+    this.popup.setContent(this.viewModel.getPopupElement(id));
     this.popup.open(this.map, marker);
     this.viewModel.model.markerSelect = id;
   }

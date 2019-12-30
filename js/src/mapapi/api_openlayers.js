@@ -299,7 +299,8 @@ export default class OpenLayersApi {
    * @param {Coordinate} coordinate
    */
   popupOpen(id, coordinate) {
-    this.popup.getElement().firstElementChild.innerHTML = this.viewModel.getPopupHtml(id);
+    this.popup.getElement().firstElementChild.innerHTML = '';
+    this.popup.getElement().firstElementChild.appendChild(this.viewModel.getPopupElement(id));
     this.popup.setPosition(coordinate);
     this.viewModel.model.markerSelect = id;
   }
@@ -310,6 +311,7 @@ export default class OpenLayersApi {
   popupClose() {
     // eslint-disable-next-line no-undefined
     this.popup.setPosition(undefined);
+    this.popup.getElement().firstElementChild.innerHTML = '';
     this.viewModel.model.markerSelect = null;
   }
 

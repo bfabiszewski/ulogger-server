@@ -521,9 +521,10 @@ describe('Openlayers map API tests', () => {
     // given
     const id = 1;
     const coordinate = [ 1, 2 ];
-    mockViewModel.getPopupHtml = (i) => `content ${i}`;
+    const popupEl = document.createElement('div');
+    mockViewModel.getPopupElement = () => popupEl;
     mockViewModel.model.markerSelect = null;
-    spyOn(mockViewModel, 'getPopupHtml').and.callThrough();
+    spyOn(mockViewModel, 'getPopupElement').and.callThrough();
     api.map = mockMap;
     const popupContainer = document.createElement('div');
     const popupContent = document.createElement('div');
@@ -534,14 +535,15 @@ describe('Openlayers map API tests', () => {
     api.popupOpen(id, coordinate);
     // then
     expect(api.popup.getPosition()).toEqual(coordinate);
-    expect(api.popup.getElement().firstElementChild.innerHTML).toBe(`content ${id}`);
+    expect(mockViewModel.getPopupElement).toHaveBeenCalledWith(id);
+    expect(api.popup.getElement().firstElementChild.firstChild).toBe(popupEl);
     expect(mockViewModel.model.markerSelect).toBe(id);
     // when
     api.popupClose();
     // then
     // eslint-disable-next-line no-undefined
     expect(api.popup.getPosition()).toBe(undefined);
-    expect(api.popup.getElement().firstElementChild.innerHTML).toBe('content 1');
+    expect(api.popup.getElement().firstElementChild.innerHTML).toBe('');
     expect(mockViewModel.model.markerSelect).toBe(null);
   });
 });

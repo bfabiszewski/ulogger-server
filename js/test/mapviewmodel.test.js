@@ -259,8 +259,7 @@ describe('MapViewModel tests', () => {
     const id = 0;
     state.currentTrack = TrackFactory.getTrack(2);
     // when
-    const html = vm.getPopupHtml(id);
-    const element = uUtils.nodeFromHtml(html);
+    const element = vm.getPopupElement(id);
     // then
     expect(element).toBeInstanceOf(HTMLDivElement);
     expect(element.id).toBe('popup');
@@ -275,9 +274,9 @@ describe('MapViewModel tests', () => {
     state.currentTrack = TrackFactory.getTrack(2);
     state.showLatest = false;
     // when
-    const html = vm.getPopupHtml(id);
+    const popupEl = vm.getPopupElement(id);
     // then
-    expect(html).toContain('id="pright"');
+    expect(popupEl.querySelector('#pright')).toBeInstanceOf(HTMLDivElement);
   });
 
   it('should get popup without stats when track contains only latest positions', () => {
@@ -287,9 +286,9 @@ describe('MapViewModel tests', () => {
     state.currentTrack = TrackFactory.getTrack(2);
     state.showLatest = true;
     // when
-    const html = vm.getPopupHtml(id);
+    const popupEl = vm.getPopupElement(id);
     // then
-    expect(html).not.toContain('id="pright"');
+    expect(popupEl.querySelector('#pright')).toBeInstanceOf(HTMLDivElement);
   });
 
   it('should get marker svg source with given size and without extra border', () => {
