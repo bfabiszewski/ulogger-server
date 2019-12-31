@@ -19,307 +19,354 @@
 html {
   height: 100%;
 }
+
 body {
   height: 100%;
   margin: 0;
   padding: 0;
   background-color: #666;
 }
+
 a {
-  color: #bce;
-  text-decoration: none;
   cursor: pointer;
+  text-decoration: none;
+  color: #bce;
 }
+
 :link, :visited {
   color: #bce;
 }
+
 select {
-  width: 150px;
   font-weight: normal;
+  width: 150px;
   padding-top: 0.2em;
 }
+
 #container {
   display: flex;
   height: 100%;
 }
+
 #main {
   flex-grow: 1;
   order: 1;
   height: 100%;
 }
+
 #map-canvas {
   height: 100%;
 }
+
 #menu {
-  order: 2;
-  font-family: 'Open Sans', Verdana, sans-serif;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+  font-family: "Open Sans", Verdana, sans-serif;
   font-size: 0.7em;
   font-weight: bold;
-  color: white;
   float: right;
-  width: 165px;
-  height: 100%;
-  background-color: #666;
   overflow-x: hidden;
   overflow-y: auto;
+  order: 2;
+  width: 165px;
+  height: 100%;
+  color: white;
+  background-color: #666;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
+
 #menu-content {
   padding: 10px 0 3em 10px;
 }
+
 #footer {
-  position: fixed;
-  bottom:0;
-  width: 165px;
   line-height: 3em;
+  position: fixed;
+  bottom: 0;
+  width: 165px;
   padding-left: 10px;
-  background-color:rgba(102, 102, 102, 0.9);
   color: lightgray;
+  background-color: rgba(102, 102, 102, 0.9);
 }
+
 #menu-button {
-  border-style: solid;
-  border-width: 1px 0 1px 1px;
-  border-color: #bce;
-  position: absolute;
-  top: 5px;
-  right: 0;
-  z-index: 1900;
-  width: 30px;
-  height: 35px;
-  line-height: 28px;
-  text-align: center;
   font-size: 28px;
   font-weight: normal;
-  border-radius: 11px 0 0 11px;
+  line-height: 28px;
+  position: absolute;
+  z-index: 1900;
+  top: 5px;
+  right: 0;
+  width: 30px;
+  height: 35px;
   cursor: pointer;
+  text-align: center;
+  border-width: 1px 0 1px 1px;
+  border-style: solid;
+  border-color: #bce;
+  border-radius: 11px 0 0 11px;
   background-color: #666;
 }
+
 #menu-button a {
   color: white;
 }
-#menu-button a:after {
+
+#menu-button a::after {
   content: "»";
 }
+
 #menu.menu-hidden {
   width: 0;
 }
+
 #menu.menu-hidden #menu-button {
-  border-color: white;
   font-weight: normal;
-  background-color: #003c884d;
+  border-color: white;
+  background-color: rgba(0, 60, 136, 0.3);
 }
-#menu.menu-hidden #menu-button a:after {
+
+#menu.menu-hidden #menu-button a::after {
   content: "«";
 }
+
 #menu input,
 #login input {
   width: 150px;
   text-align: center;
   border: 1px solid black;
 }
-#menu input[type = "submit"],
-#login input[type = "submit"] {
-  background-color: black;
+
+#menu input[type="submit"],
+#login input[type="submit"] {
   color: white;
   border: 1px solid white;
+  background-color: black;
 }
-#menu input[type = "checkbox"] {
+
+#menu input[type="checkbox"] {
   width: auto;
 }
+
 .menu-link {
   display: block;
-  margin-top: .2em;
+  margin-top: 0.2em;
 }
+
 label[for=user] {
+  display: block;
   padding-top: 1em;
-  display: block;
 }
+
 .section {
-  padding-bottom: 10px;
   display: block;
+  padding-bottom: 10px;
 }
+
 .section:first-child {
   padding-top: 1em;
 }
+
 #input-file {
   display: none;
 }
+
 #summary div {
-  padding-top: .3em;
+  padding-top: 0.3em;
 }
+
 #summary div img {
   margin-bottom: -2px;
 }
+
 #login {
-  font-family: 'Open Sans', Verdana, sans-serif;
+  font-family: "Open Sans", Verdana, sans-serif;
+  font-size: 0.8em;
   position: relative;
   top: 10%;
-  background-color: #444;
   width: 30%;
   min-width: 200px;
   margin: auto;
   padding: 30px;
-  font-size: 0.8em;
   text-align: center;
   color: white;
+  background-color: #444;
 }
+
 #title {
   font-size: 1.3em;
-  padding-bottom: 0.5em;
   padding-top: 0.6em;
+  padding-bottom: 0.5em;
 }
+
 #subtitle {
   padding-bottom: 2em;
 }
+
 #error {
   padding-top: 1.2em;
   color: yellow;
 }
+
 #popup {
-  background-color: #666;
+  font-family: "Open Sans", Verdana, sans-serif;
   max-width: 25em;
-  font-family: 'Open Sans', Verdana, sans-serif;
+  background-color: #666;
 }
+
 #pheader {
+  font-size: 0.9rem;
   float: left;
-  font-size: .9rem;
+  padding-bottom: 0.5rem;
   color: #bce;
-  padding-bottom: .5rem;
 }
+
 #pheader div {
   float: left;
   padding-right: 2em;
 }
+
 #pheader div img {
   background-image: radial-gradient(circle closest-side, #bfbfbc, #666);
 }
+
 #pbody {
-  clear: both;
-  padding-top: .2rem;
-  border-top: 1px solid #bce;
-  color: #e6e2e2;
-  font-size: .8rem;
-  white-space: nowrap;
+  font-size: 0.8rem;
   line-height: 1.3rem;
+  clear: both;
+  padding-top: 0.2rem;
+  white-space: nowrap;
+  color: #e6e2e2;
+  border-top: 1px solid #bce;
 }
+
 #pcomments {
   clear: both;
-  color: #e6e6e6;
-  white-space: normal;
   padding: 1em;
   text-align: center;
-  background-color: #777676;
+  white-space: normal;
+  color: #e6e6e6;
   border-radius: 10px;
+  background-color: #777676;
 }
+
 #pimage {
   text-align: center;
 }
+
 #pimage img {
   max-width: 100%;
   max-height: 25em;
-  border-radius: 10px;
   cursor: pointer;
+  border-radius: 10px;
 }
+
 #pimage img:hover {
   opacity: 0.7;
 }
+
 #pleft, #pright {
   display: inline-block;
   padding-top: 5px;
   padding-right: 20px;
 }
+
 #pleft img {
   background-image: radial-gradient(circle closest-side, #bfbfbc, #666);
 }
+
 #pright img {
   background-image: radial-gradient(circle closest-side, #000, #666);
 }
+
 #pbody .smaller {
+  font-size: 0.9em;
   color: #cacaca;
-  font-size: .9em;
 }
+
 #pfooter {
-  font-size: .6rem;
+  font-size: 0.6rem;
   padding-top: 20px;
   color: #f0f8ff;
 }
+
 #bottom {
-  display: none;
   position: absolute;
   z-index: 10000;
+  display: none;
 }
+
 #chart {
-  font-family: 'Open Sans', Verdana, sans-serif;
+  font-family: "Open Sans", Verdana, sans-serif;
   position: fixed;
-  padding: 0 10px;
-  bottom: -15px;
-  left:0;
   right: 0;
+  bottom: -15px;
+  left: 0;
   height: 200px;
   margin-right: 165px;
-  background-color: white;
+  padding: 0 10px;
   opacity: 0.8;
+  background-color: white;
 }
+
 #chart-close {
-  position: fixed;
-  bottom: 160px;
-  right: 175px;
-  z-index: 10001;
   font-size: 0.8em;
-  color: #5070af;
+  position: fixed;
+  z-index: 10001;
+  right: 175px;
+  bottom: 160px;
   cursor: pointer;
+  color: #5070af;
 }
 
 .mi {
-  color:white;
-  padding-right:0.1em;
-  font-style:italic;
+  font-style: italic;
+  padding-right: 0.1em;
+  color: white;
 }
 
 #modal {
-  font-family: 'Open Sans', Verdana, sans-serif;
-  display: block;
+  font-family: "Open Sans", Verdana, sans-serif;
   position: fixed;
   z-index: 10010;
-  left: 0;
   top: 0;
+  left: 0;
+  display: block;
+  overflow: auto;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: black; /* fallback */
-  background-color: rgba(0,0,0,0.4);
   padding-top: 10%;
+  background-color: black; /* fallback */
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 #modal-header {
-  top: 20px;
   position: relative;
-  text-align: right;
-  margin: 0 auto;
+  top: 20px;
   width: 40%;
   min-width: 300px;
+  margin: 0 auto;
+  text-align: right;
 }
 
 #modal-header button {
-  background-color: rgba(0, 0, 0, 0);
   border: none;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 #modal-body {
   font-size: 0.9em;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  color: white;
-  background-color: rgba(102, 102, 102, 0.9);
-  margin: 0 auto 15% auto;
-  border: 1px solid #888;
   width: 40%;
   min-width: 300px;
+  margin: 0 auto 15% auto;
   padding: 1em;
-  border-radius: 10px;
+  color: white;
+  border: 1px solid #888;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color: rgba(102, 102, 102, 0.9);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
 #modal-body .buttons {
@@ -327,32 +374,33 @@ label[for=user] {
 }
 
 #modal input[type=text], #modal input[type=password] {
-  width: 100%;
-  padding: 0.4em;
-  margin: 0.8em 0;
   display: inline-block;
-  border: 1px solid #ccc;
   box-sizing: border-box;
-  border-radius: 5px;
+  width: 100%;
+  margin: 0.8em 0;
+  padding: 0.4em;
+  border: 1px solid #ccc;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
+
 #modal.image {
+  overflow: hidden;
   padding-top: 0;
   background-color: rgba(45, 45, 45, 0.95);
-  overflow: hidden;
 }
 
 #modal.image #modal-body img {
   max-width: 100%;
-  max-height: 87vh;
   height: auto;
+  max-height: 87vh;
 }
 
 #modal.image #modal-body {
   width: 90%;
-  background-color: rgb(45, 45, 45);
   text-align: center;
+  background-color: rgb(45, 45, 45);
 }
 
 #modal.image #modal-header {
@@ -360,15 +408,15 @@ label[for=user] {
 }
 
 button {
-  color: white;
-  background-color: #434343;
-  cursor: pointer;
-  border: 1px solid white;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
   font-weight: bold;
   margin-right: 5px;
+  cursor: pointer;
+  color: white;
+  border: 1px solid white;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #434343;
 }
 
 button > * {
@@ -380,22 +428,22 @@ button > * {
 }
 
 .red-button {
-  color: white;
   float: right;
-  background-color: red;
-  padding: .1em .4em;
-  border-radius: 10px;
+  padding: 0.1em 0.4em;
+  color: white;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color: red;
 }
 
 #user-menu {
-  display: block;
   position: absolute;
-  background-color: gray;
-  padding: 1em;
+  display: block;
   width: 130px;
+  padding: 1em;
   border: 1px solid #888;
+  background-color: gray;
 }
 
 #user-menu.menu-hidden, a.menu-hidden {
@@ -404,34 +452,39 @@ button > * {
 
 #user-menu a {
   display: block;
-  padding-bottom: .5em;
-  padding-top: .5em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 .icon {
+  height: 1.4em;
   margin-right: 4px;
   vertical-align: text-top;
-  height: 1.4em;
 }
 
-.menu-title { text-decoration: underline; }
+.menu-title {
+  text-decoration: underline;
+}
 
 .loader {
   animation: blink 1s linear infinite;
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* chart */
 .ct-point {
-  stroke-width: 5px !important;
   transition: 0.3s;
+  stroke-width: 5px !important;
 }
+
 .ct-point:hover {
-  stroke-width: 10px !important;
   cursor: pointer;
+  stroke-width: 10px !important;
 }
 
 .ct-point-hilight {
@@ -444,7 +497,7 @@ button > * {
 }
 
 .ct-line {
-  stroke-width: 2px; !important;
+  stroke-width: 2px !important;
 }
 
 .ct-axis-title {
@@ -454,37 +507,41 @@ button > * {
 /* openlayers 3 popup */
 .ol-popup {
   position: absolute;
-  background-color: #666;
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
   min-width: 280px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #666;
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 }
-.ol-popup:after, .ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
+
+.ol-popup::after, .ol-popup::before {
   position: absolute;
+  top: 100%;
+  width: 0;
+  height: 0;
+  content: " ";
   pointer-events: none;
+  border: solid transparent;
 }
-.ol-popup:after {
-  border-top-color: #666;
-  border-width: 10px;
+
+.ol-popup::after {
   left: 48px;
   margin-left: -10px;
+  border-width: 10px;
+  border-top-color: #666;
 }
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
+
+.ol-popup::before {
   left: 48px;
   margin-left: -11px;
+  border-width: 11px;
+  border-top-color: #ccc;
 }
+
 .ol-popup-closer {
   position: absolute;
   top: -5px;
@@ -494,6 +551,7 @@ button > * {
   background-image: url(../images/close.svg) !important;
   background-repeat: no-repeat !important;
 }
+
 .ol-overlay-container {
   background-color: #666;
 }
@@ -501,65 +559,74 @@ button > * {
 /* Google Maps InfoWindow */
 .gm-style .gm-style-iw-c {
   background-color: #666 !important;
+  overflow: visible !important;
 }
+
 .gm-style .gm-style-iw-t::after {
-  background: linear-gradient(45deg, rgb(102, 102, 102) 50%, rgba(255,255,255,0) 51%, rgba(255,255,255,0) 100%) !important;
+  background: linear-gradient(45deg, rgb(102, 102, 102) 50%, rgba(255, 255, 255, 0) 51%, rgba(255, 255, 255, 0) 100%) !important;
 }
+
 .gm-style-iw button {
   background-image: url(../images/close.svg) !important;
   background-repeat: no-repeat !important;
 }
+
 .gm-style-iw button img {
   visibility: hidden;
 }
-.gm-style .gm-style-iw-c {
-  overflow: initial !important;
-}
-
 
 #switcher {
-  display: none;
   position: absolute;
   bottom: 12px;
   left: 10px;
+  display: none;
   min-width: 200px;
 }
+
 .ol-layerswitcher {
+  font-family: sans-serif;
+  font-size: 0.9em;
+  font-weight: bold;
   margin: 1px;
+  padding: 0.5em;
   color: #fff;
-  background-color: rgba(0, 60, 136, .5);
   border: none;
   border-radius: 2px;
-  font-family: sans-serif;
-  font-weight: bold;
-  font-size: .9em;
-  padding: 0.5em;
+  background-color: rgba(0, 60, 136, 0.5);
 }
+
 .ol-layerswitcher:hover {
-  background-color: rgba(0, 60, 136, .7)
+  background-color: rgba(0, 60, 136, 0.7);
 }
+
 .ol-layerswitcher label {
   display: block;
   clear: both;
-  margin: .5em 0;
+  margin: 0.5em 0;
   cursor: pointer;
 }
+
 .ol-layerswitcher label:hover {
   color: #c8dcf2;
 }
+
 .ol-layerswitcher input {
   margin-right: 1em;
 }
+
 label.ol-datalayer {
   margin-top: 1.5em;
 }
+
 .ol-datalayer ~ .ol-datalayer {
-  margin-top: .5em;
+  margin-top: 0.5em;
 }
+
 .ol-switcher-button {
   top: 6.6em;
-  left: .5em;
+  left: 0.5em;
 }
+
 .ol-touch .ol-switcher-button {
   top: 10em;
 }
