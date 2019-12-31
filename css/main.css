@@ -177,37 +177,47 @@ label[for=user] {
   color: yellow;
 }
 #popup {
+  background-color: #666;
+  max-width: 25em;
   font-family: 'Open Sans', Verdana, sans-serif;
 }
 #pheader {
   float: left;
   font-size: .9rem;
-  color: #297b9a;
+  color: #bce;
   padding-bottom: .5rem;
 }
 #pheader div {
   float: left;
   padding-right: 2em;
 }
+#pheader div img {
+  background-image: radial-gradient(circle closest-side, #bfbfbc, #666);
+}
 #pbody {
   clear: both;
   padding-top: .2rem;
-  border-top: 1px solid #6cdae7;;
+  border-top: 1px solid #bce;
+  color: #e6e2e2;
   font-size: .8rem;
   white-space: nowrap;
+  line-height: 1.3rem;
 }
 #pcomments {
   clear: both;
-  color: #903;
+  color: #e6e6e6;
   white-space: normal;
-  padding-bottom: 1em;
+  padding: 1em;
+  text-align: center;
+  background-color: #777676;
+  border-radius: 10px;
 }
 #pimage {
   text-align: center;
 }
 #pimage img {
   max-width: 100%;
-  max-height: 300px;
+  max-height: 25em;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -219,13 +229,20 @@ label[for=user] {
   padding-top: 5px;
   padding-right: 20px;
 }
+#pleft img {
+  background-image: radial-gradient(circle closest-side, #bfbfbc, #666);
+}
+#pright img {
+  background-image: radial-gradient(circle closest-side, #000, #666);
+}
 #pbody .smaller {
-  color: gray;
+  color: #cacaca;
   font-size: .9em;
 }
 #pfooter {
   font-size: .6rem;
   padding-top: 20px;
+  color: #f0f8ff;
 }
 #bottom {
   display: none;
@@ -391,7 +408,11 @@ button > * {
   padding-top: .5em;
 }
 
-.icon { height: 1.4em; }
+.icon {
+  margin-right: 4px;
+  vertical-align: text-top;
+  height: 1.4em;
+}
 
 .menu-title { text-decoration: underline; }
 
@@ -433,7 +454,7 @@ button > * {
 /* openlayers 3 popup */
 .ol-popup {
   position: absolute;
-  background-color: white;
+  background-color: #666;
   -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
   padding: 15px;
@@ -453,7 +474,7 @@ button > * {
   pointer-events: none;
 }
 .ol-popup:after {
-  border-top-color: white;
+  border-top-color: #666;
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
@@ -465,14 +486,36 @@ button > * {
   margin-left: -11px;
 }
 .ol-popup-closer {
-  text-decoration: none;
   position: absolute;
-  top: 2px;
-  right: 8px;
+  top: -5px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background-image: url(../images/close.svg) !important;
+  background-repeat: no-repeat !important;
 }
-.ol-popup-closer:after {
-  content: "×";
+.ol-overlay-container {
+  background-color: #666;
 }
+
+/* Google Maps InfoWindow */
+.gm-style .gm-style-iw-c {
+  background-color: #666 !important;
+}
+.gm-style .gm-style-iw-t::after {
+  background: linear-gradient(45deg, rgb(102, 102, 102) 50%, rgba(255,255,255,0) 51%, rgba(255,255,255,0) 100%) !important;
+}
+.gm-style-iw button {
+  background-image: url(../images/close.svg) !important;
+  background-repeat: no-repeat !important;
+}
+.gm-style-iw button img {
+  visibility: hidden;
+}
+.gm-style .gm-style-iw-c {
+  overflow: initial !important;
+}
+
 
 #switcher {
   display: none;
