@@ -173,7 +173,7 @@ export default class MapViewModel extends ViewModel {
         <div><img alt="${$._('track')}" title="${$._('track')}" src="images/route_dark.svg"> ${uUtils.htmlEncode(pos.trackname)}</div>
         </div>
         <div id="pbody">
-        ${(pos.hasComment()) ? `<div id="pcomments">${uUtils.htmlEncode(pos.comment)}</div>` : ''}
+        ${(pos.hasComment()) ? `<div id="pcomments">${uUtils.htmlEncode(pos.comment).replace(/\n/, '<br>')}</div>` : ''}
         ${(pos.hasImage()) ? `<div id="pimage"><img src="uploads/${pos.image}" alt="image"></div>` : ''}
         <div id="pleft">
         <img class="icon" alt="${$._('time')}" title="${$._('time')}" src="images/calendar_dark.svg"> ${date}<br>
