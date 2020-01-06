@@ -288,7 +288,7 @@ describe('MapViewModel tests', () => {
     // when
     const popupEl = vm.getPopupElement(id);
     // then
-    expect(popupEl.querySelector('#pright')).toBeInstanceOf(HTMLDivElement);
+    expect(popupEl.querySelector('#pright')).toBe(null);
   });
 
   it('should get marker svg source with given size and without extra border', () => {
