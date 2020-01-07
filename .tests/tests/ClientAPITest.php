@@ -333,8 +333,7 @@ class ClientAPITest extends UloggerAPITestCase {
       "bearing" => $this->testBearing,
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
-      "comment" => $this->testComment,
-      "image" => null
+      "comment" => $this->testComment
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",

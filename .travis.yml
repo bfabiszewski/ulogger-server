@@ -43,6 +43,7 @@ before_install:
         ;;
     esac
   - composer install
+  - npm install
   - until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
 
 after_success:
@@ -58,7 +59,8 @@ after_success:
 
 
 script:
-  - ./vendor/bin/phpunit  -c .tests/phpunit.xml
+  - ./vendor/bin/phpunit  -c .tests/phpunit.xml || docker logs ulogger
+  - npm test
 
 addons:
   coverity_scan:
