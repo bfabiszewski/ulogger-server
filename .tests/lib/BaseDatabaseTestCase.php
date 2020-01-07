@@ -180,7 +180,11 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   protected function addTestUser($user = NULL, $pass = NULL) {
     if (is_null($user)) { $user = $this->testUser; }
     if (is_null($pass)) { $pass = $this->testPass; }
-    return $this->pdoInsert('users', [ 'login' => $user, 'password' => $pass ]);
+    $id = $this->pdoInsert('users', [ 'login' => $user, 'password' => $pass ]);
+    if ($id !== false) {
+      return (int) $id;
+    }
+    return false;
   }
 
   /**
@@ -196,7 +200,11 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
     if (is_null($userId)) { $userId = $this->testUserId; }
     if (is_null($trackName)) { $trackName = $this->testTrackName; }
     if (is_null($comment)) { $comment = $this->testTrackComment; }
-    return $this->pdoInsert('tracks', [ 'user_id' => $userId, 'name' => $trackName, 'comment' => $comment ]);
+    $id = $this->pdoInsert('tracks', [ 'user_id' => $userId, 'name' => $trackName, 'comment' => $comment ]);
+    if ($id !== false) {
+      return (int) $id;
+    }
+    return false;
   }
 
   /**
