@@ -10,6 +10,11 @@ chown nginx:nginx /run/nginx
 sed -i "s/^nobody:.*$/nobody:x:1000:50::nobody:\/:\/sbin\/nologin/" /etc/passwd
 sed -i "s/^nobody:.*$/nobody:x:50:/" /etc/group
 
+# Prepare ulogger filesystem
+grep '^[$<?]' /var/www/html/config.default.php > /var/www/html/config.php
+chown nobody:nobody /var/www/html/uploads
+chmod 775 /var/www/html/uploads
+
 if [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   sed -i "s/^\$dbuser = .*$//" /var/www/html/config.php
   sed -i "s/^\$dbpass = .*$//" /var/www/html/config.php
