@@ -16,7 +16,6 @@ module.exports = function(config) {
     frameworks: [ 'jasmine' ],
     files: [
       { pattern: 'test/*.test.js', type: 'module' },
-      { pattern: 'test/*.stub.js', type: 'module', included: false },
       { pattern: 'test/helpers/*.js', type: 'module', included: false },
       { pattern: 'test/fixtures/*.html', included: false },
       { pattern: 'src/**/*.js', type: 'module', included: false }

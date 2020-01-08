@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as gmStub from './googlemaps.stub.js';
+import * as gmStub from './helpers/googlemaps.stub.js';
 import { config, lang } from '../src/initializer.js'
 import GoogleMapsApi from '../src/mapapi/api_gmaps.js';
 import TrackFactory from './helpers/trackfactory.js';
