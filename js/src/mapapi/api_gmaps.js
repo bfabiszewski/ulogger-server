@@ -153,7 +153,10 @@ export default class GoogleMapsApi {
       this.polies.push(poly);
     }
     const path = poly.getPath();
-    const start = this.markers.length;
+    let start = this.markers.length;
+    if (start > 0) {
+      this.removePoint(--start);
+    }
     for (let i = start; i < track.length; i++) {
       // set marker
       this.setMarker(i, track);
@@ -254,6 +257,22 @@ export default class GoogleMapsApi {
     });
 
     this.markers.push(marker);
+  }
+
+  /**
+   * @param {number} id
+   */
+  removePoint(id) {
+    if (this.markers.length > id) {
+      this.markers[id].setMap(null);
+      this.markers.splice(id, 1);
+      if (this.polies.length) {
+        this.polies[0].getPath().removeAt(id);
+      }
+      if (this.viewModel.model.markerSelect === id) {
+        this.popupClose();
+      }
+    }
   }
 
   /**

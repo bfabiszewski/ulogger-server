@@ -427,7 +427,10 @@ export default class OpenLayersApi {
     if (!track || !track.hasPositions) {
       return;
     }
-    const start = this.layerMarkers ? this.layerMarkers.getSource().getFeatures().length : 0;
+    let start = this.layerMarkers ? this.layerMarkers.getSource().getFeatures().length : 0;
+    if (start > 0) {
+      this.removePoint(--start);
+    }
     for (let i = start; i < track.length; i++) {
       this.setMarker(i, track);
     }
@@ -538,6 +541,25 @@ export default class OpenLayersApi {
     marker.setStyle(iconStyle);
     marker.setId(id);
     this.layerMarkers.getSource().addFeature(marker);
+  }
+
+  /**
+   * @param {number} id
+   */
+  removePoint(id) {
+    const marker = this.layerMarkers.getSource().getFeatureById(id);
+    if (marker) {
+      this.layerMarkers.getSource().removeFeature(marker);
+      if (this.layerTrack) {
+        const lineString = this.layerTrack.getSource().getFeatures()[0].getGeometry();
+        const coordinates = lineString.getCoordinates();
+        coordinates.splice(id, 1);
+        lineString.setCoordinates(coordinates);
+      }
+      if (this.viewModel.model.markerSelect === id) {
+        this.popupClose();
+      }
+    }
   }
 
   /**

@@ -177,6 +177,27 @@ describe('Google Maps map API tests', () => {
     expect(api.map).toBe(null);
   });
 
+  it('should remove features by id', () => {
+    // given
+    const poly = new google.maps.Polyline();
+    const marker = new google.maps.Marker();
+    api.polies.push(poly);
+    api.markers.push(marker);
+    const path = {};
+    path.removeAt = () => {/* ignore */};
+    poly.getPath = () => path;
+    marker.setMap = () => {/* ignore */};
+    spyOn(marker, 'setMap');
+    spyOn(path, 'removeAt');
+    const id = 0;
+    // when
+    api.removePoint(id);
+    // then
+    expect(marker.setMap).toHaveBeenCalledWith(null);
+    expect(api.markers.length).toBe(0);
+    expect(path.removeAt).toHaveBeenCalledWith(id);
+  });
+
   it('should clear map features', () => {
     // given
     const poly = new google.maps.Polyline();

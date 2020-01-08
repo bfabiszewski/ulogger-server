@@ -224,6 +224,28 @@ describe('Openlayers map API tests', () => {
     expect(api.map).toBe(null);
   });
 
+  it('should remove features with given index', () => {
+    // given
+    const id = 0;
+    const marker = new ol.Feature();
+    const lineString = new ol.geom.LineString([]);
+    lineString.appendCoordinate(ol.proj.fromLonLat([ 0, 0 ]));
+    const lineFeature = new ol.Feature({ geometry: lineString });
+    marker.setId(id);
+    api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
+    api.layerTrack.getSource().addFeature(lineFeature);
+    api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
+    api.layerMarkers.getSource().addFeature(marker);
+
+    expect(lineString.getCoordinates().length).toBe(1);
+    expect(api.layerMarkers.getSource().getFeatures().length).toBe(1);
+    // when
+    api.removePoint(id);
+    // then
+    expect(lineString.getCoordinates().length).toBe(0);
+    expect(api.layerMarkers.getSource().getFeatures().length).toBe(0);
+  });
+
   it('should clear marker and track layers features', () => {
     // given
     api.layerTrack = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
