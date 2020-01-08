@@ -21,7 +21,6 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - user authentication
 - Google Maps
 - OpenLayers (OpenStreet and other layers)
-- ajax
 - user preferences stored in cookies
 - simple admin menu
 - export tracks to gpx and kml
@@ -30,6 +29,8 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Install
 - Download zipped archive or clone the repository on your computer
 - Move it to your web server directory (unzip if needed)
+- Fix folder permissions: `uploads` folder (for uploaded images) should be writeable by PHP scripts
+- In case of development version it is necessary to build javascript bundle from source files. You will need to install `npm` and run `npm install` and `npm run build` in root folder
 - Create database and database user (at least SELECT, INSERT, UPDATE, DELETE privileges, CREATE, DROP for setup script, SEQUENCES for postgreSQL)
 - Create a copy of `config.default.php` and rename it to `config.php`. Customize it and add database credentials
 - Edit `scripts/setup.php` script, enable it by setting [$enabled](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/setup.php#L21) value to `true`
@@ -51,6 +52,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Tests
 - Install tests dependecies.
   - `composer install`
+  - `npm install`
 - Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup.
   - `docker build -t ulogger .`
   - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 -e ULOGGER_ENABLE_SETUP=1 ulogger`
@@ -59,13 +61,13 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - `DB_USER=ulogger`
   - `DB_PASS=secret2`
   - `ULOGGER_URL="http://127.0.0.1:8080"`
-- Run tests
+- PHP tests
   - `./vendor/bin/phpunit -c .tests/phpunit.xml`
-
-## Todo
-- improve track editing
-- track display filters (accurracy, provider)
-- improve interface on mobile devices
+- JS tests
+  - `npm test`  
+- Other tests
+  - `npm run lint:js`
+  - `npm run lint:css`
 
 ## Translations
 - translations may be contributed via [Transifex](https://www.transifex.com/bfabiszewski/ulogger/).
