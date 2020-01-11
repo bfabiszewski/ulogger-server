@@ -14,8 +14,12 @@ module.exports = merge(common, {
         terserOptions: {
           compress: {
             pure_funcs: [ 'console.log' ]
+          },
+          output: {
+            comments: false,
           }
-        }
+        },
+        extractComments: false
       })
     ]
   },
