@@ -309,9 +309,11 @@ export default class OpenLayersApi {
    * Close popup
    */
   popupClose() {
-    // eslint-disable-next-line no-undefined
-    this.popup.setPosition(undefined);
-    this.popup.getElement().firstElementChild.innerHTML = '';
+    if (this.popup) {
+      // eslint-disable-next-line no-undefined
+      this.popup.setPosition(undefined);
+      this.popup.getElement().firstElementChild.innerHTML = '';
+    }
     this.viewModel.model.markerSelect = null;
   }
 
@@ -492,6 +494,7 @@ export default class OpenLayersApi {
    * Clear map
    */
   clearMap() {
+    this.popupClose();
     if (this.layerTrack) {
       this.layerTrack.getSource().clear();
     }

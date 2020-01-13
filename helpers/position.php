@@ -71,7 +71,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
                   FROM " . self::db()->table('positions') . " p
                   LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
                   LEFT JOIN " . self::db()->table('tracks') . " t ON (p.track_id = t.id)
-                  WHERE id = ? LIMIT 1";
+                  WHERE p.id = ? LIMIT 1";
         $params = [ $positionId ];
         try {
           $this->loadWithQuery($query, $params);
@@ -89,6 +89,15 @@ require_once(ROOT_DIR . "/helpers/upload.php");
      */
     private static function db() {
       return uDb::getInstance();
+    }
+
+    /**
+     * Has image
+     *
+     * @return bool True if has image
+     */
+    public function hasImage() {
+      return !empty($this->image);
     }
 
    /**
@@ -133,6 +142,70 @@ require_once(ROOT_DIR . "/helpers/upload.php");
         }
       }
       return $positionId;
+    }
+
+    /**
+     * Save position to database
+     *
+     * @return bool True if success, false otherwise
+     */
+    public function update() {
+      $ret = false;
+      if ($this->isValid) {
+        try {
+          $query = "UPDATE " . self::db()->table('positions') . " SET 
+                    time = " . self::db()->from_unixtime('?') . ", user_id = ?, track_id = ?, latitude = ?, longitude = ?, altitude = ?, 
+                    speed = ?, bearing = ?, accuracy = ?, provider = ?, comment = ?, image = ? WHERE id = ?";
+          $stmt = self::db()->prepare($query);
+          $params = [
+            $this->timestamp,
+            $this->userId,
+            $this->trackId,
+            $this->latitude,
+            $this->longitude,
+            $this->altitude,
+            $this->speed,
+            $this->bearing,
+            $this->accuracy,
+            $this->provider,
+            $this->comment,
+            $this->image,
+            $this->id
+          ];
+          $stmt->execute($params);
+          $ret = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+          syslog(LOG_ERR, $e->getMessage());
+        }
+      }
+      return $ret;
+    }
+
+    /**
+     * Delete positions
+     *
+     * @return bool True if success, false otherwise
+     */
+    public function delete() {
+      $ret = false;
+      if ($this->isValid) {
+        try {
+          $query = "DELETE FROM " . self::db()->table('positions') . " WHERE id = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $this->id ]);
+          if ($this->hasImage()) {
+            uUpload::delete($this->image);
+          }
+          $ret = true;
+          $this->id = NULL;
+          $this->isValid = false;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+          syslog(LOG_ERR, $e->getMessage());
+        }
+      }
+      return $ret;
     }
 
    /**

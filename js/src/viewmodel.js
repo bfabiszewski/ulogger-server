@@ -65,9 +65,12 @@ export default class ViewModel {
     observers.forEach(/** @param {HTMLElement} element */ (element) => {
       const name = element.dataset[dataProp];
       if (name === key) {
-        if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement) {
+        if (element instanceof HTMLInputElement ||
+          element instanceof HTMLSelectElement ||
+          element instanceof HTMLTextAreaElement) {
           this.onChangeBind(element, key);
-        } else if (element instanceof HTMLAnchorElement || element instanceof HTMLButtonElement) {
+        } else if (element instanceof HTMLAnchorElement ||
+          element instanceof HTMLButtonElement) {
           this.onClickBind(element, key);
         } else {
           this.viewUpdateBind(element, key);

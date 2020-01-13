@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uAjax from './ajax.js';
 import uUtils from './utils.js';
 
 /**
@@ -91,4 +92,60 @@ export default class uPosition {
   get totalSpeed() {
     return this.totalSeconds ? this.totalMeters / this.totalSeconds : 0;
   }
+
+  /**
+   * @return {Promise<void, Error>}
+   */
+  delete() {
+    return uPosition.update({
+      action: 'delete',
+      posid: this.id
+    });
+  }
+
+  /**
+   * @return {Promise<void, Error>}
+   */
+  save() {
+    return uPosition.update({
+      action: 'update',
+      posid: this.id,
+      comment: this.comment
+    });
+  }
+
+  /**
+   * Save track data
+   * @param {Object} data
+   * @return {Promise<void, Error>}
+   */
+  static update(data) {
+    return uAjax.post('utils/handleposition.php', data);
+  }
+
+  /**
+   * Calculate distance to target point using haversine formula
+   * @param {uPosition} target
+   * @return {number} Distance in meters
+   */
+  distanceTo(target) {
+    const lat1 = uUtils.deg2rad(this.latitude);
+    const lon1 = uUtils.deg2rad(this.longitude);
+    const lat2 = uUtils.deg2rad(target.latitude);
+    const lon2 = uUtils.deg2rad(target.longitude);
+    const latD = lat2 - lat1;
+    const lonD = lon2 - lon1;
+    const bearing = 2 * Math.asin(Math.sqrt((Math.sin(latD / 2) ** 2) + Math.cos(lat1) * Math.cos(lat2) * (Math.sin(lonD / 2) ** 2)));
+    return bearing * 6371000;
+  }
+
+  /**
+   * Calculate time elapsed since target point
+   * @param {uPosition} target
+   * @return {number} Number of seconds
+   */
+  secondsTo(target) {
+    return this.timestamp - target.timestamp;
+  }
+
 }

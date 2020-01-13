@@ -317,4 +317,13 @@ export default class uUtils {
     console.error(details);
     alert(message);
   }
+
+  /**
+   * Degrees to radians
+   * @param {number} degrees
+   * @return {number}
+   */
+  static deg2rad(degrees) {
+    return degrees * Math.PI / 180;
+  }
 }

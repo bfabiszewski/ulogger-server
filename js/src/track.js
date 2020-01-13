@@ -49,6 +49,8 @@ export default class uTrack extends uPositionSet {
     this.user = user;
     this.plotData = [];
     this.maxId = 0;
+    this.totalMeters = 0;
+    this.totalSeconds = 0;
     this.listItem(id, name);
   }
 
@@ -59,8 +61,14 @@ export default class uTrack extends uPositionSet {
 
   clear() {
     super.clear();
+    this.clearTrackCounters();
+  }
+
+  clearTrackCounters() {
     this.maxId = 0;
     this.plotData.length = 0;
+    this.totalMeters = 0;
+    this.totalSeconds = 0;
   }
 
   /**
@@ -84,30 +92,16 @@ export default class uTrack extends uPositionSet {
    * @param {boolean=} isUpdate If true append to old data
    */
   fromJson(posArr, isUpdate = false) {
-    let totalMeters = 0;
-    let totalSeconds = 0;
     let positions = [];
     if (isUpdate && this.hasPositions) {
       positions = this.positions;
-      const last = positions[this.length - 1];
-      totalMeters = last.totalMeters;
-      totalSeconds = last.totalSeconds;
     } else {
       this.clear();
     }
     for (const pos of posArr) {
       const position = uPosition.fromJson(pos);
-      totalMeters += position.meters;
-      totalSeconds += position.seconds;
-      position.totalMeters = totalMeters;
-      position.totalSeconds = totalSeconds;
+      this.calculatePosition(position);
       positions.push(position);
-      if (position.altitude != null) {
-        this.plotData.push({ x: position.totalMeters, y: position.altitude });
-      }
-      if (position.id > this.maxId) {
-        this.maxId = position.id;
-      }
     }
     // update at the end to avoid observers update invidual points
     this.positions = positions;
@@ -243,4 +237,31 @@ export default class uTrack extends uPositionSet {
     return uAjax.post('utils/handletrack.php', data);
   }
 
+  recalculatePositions() {
+    this.clearTrackCounters();
+    let previous = null;
+    for (const position of this.positions) {
+      position.meters = previous ? position.distanceTo(previous) : 0;
+      position.seconds = previous ? position.secondsTo(previous) : 0;
+      this.calculatePosition(position);
+      previous = position;
+    }
+  }
+
+  /**
+   * Calculate position total counters and plot data
+   * @param {uPosition} position
+   */
+  calculatePosition(position) {
+    this.totalMeters += position.meters;
+    this.totalSeconds += position.seconds;
+    position.totalMeters = this.totalMeters;
+    position.totalSeconds = this.totalSeconds;
+    if (position.altitude != null) {
+      this.plotData.push({ x: position.totalMeters, y: position.altitude });
+    }
+    if (position.id > this.maxId) {
+      this.maxId = position.id;
+    }
+  }
 }

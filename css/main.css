@@ -289,6 +289,17 @@ label[for=user] {
   color: #f0f8ff;
 }
 
+#pfooter div:first-child {
+  width: 40%;
+  float: left;
+}
+
+#pfooter div:last-child {
+  width: 40%;
+  float: right;
+  text-align: right;
+}
+
 #bottom {
   position: absolute;
   z-index: 10000;

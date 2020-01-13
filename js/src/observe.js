@@ -62,6 +62,17 @@ export default class uObserve {
   }
 
   /**
+   * Trigger notify of property observers
+   * @param {Object} obj
+   * @param {string} property
+   */
+  static forceUpdate(obj, property) {
+    const value = obj._values[property];
+    const observers = obj._observers[property];
+    this.notify(observers, value);
+  }
+
+  /**
    * Check if object property is observed;
    * Optionally check if it is observed by given observer
    * @param {Object} obj

@@ -17,9 +17,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { lang as $, config } from './initializer.js';
+import { lang as $, auth, config } from './initializer.js';
 import GoogleMapsApi from './mapapi/api_gmaps.js';
 import OpenLayersApi from './mapapi/api_openlayers.js';
+import PositionDialogModel from './positiondialogmodel.js';
 import ViewModel from './viewmodel.js';
 import uDialog from './dialog.js';
 import uObserve from './observe.js';
@@ -138,12 +139,14 @@ export default class MapViewModel extends ViewModel {
 
   /**
    * Get popup html
-   * @param {number} id Position ID
+   * @param {number} id Position index
    * @returns {HTMLDivElement}
    */
    getPopupElement(id) {
     const pos = this.state.currentTrack.positions[id];
     const count = this.state.currentTrack.length;
+    const user = this.state.currentTrack.user;
+    const isEditable = auth.user && (auth.isAdmin || auth.user === user);
     let date = '–––';
     let time = '–––';
     if (pos.timestamp > 0) {
@@ -156,6 +159,10 @@ export default class MapViewModel extends ViewModel {
       provider = ` <img class="icon" alt="${$._('gps')}" title="${$._('gps')}"  src="images/gps_dark.svg">`;
     } else if (pos.provider === 'network') {
       provider = ` <img class="icon" alt="${$._('network')}" title="${$._('network')}"  src="images/network_dark.svg">`;
+    }
+    let editLink = '';
+    if (isEditable) {
+      editLink = `<a id="editposition" class="menu-link" data-bind="onUserAdd">${$._('editposition')}</a>`;
     }
     let stats = '';
     if (!this.state.showLatest) {
@@ -182,7 +189,7 @@ export default class MapViewModel extends ViewModel {
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
         </div>${stats}</div>
-        <div id="pfooter">${$._('pointof', id + 1, count)}</div>`;
+        <div id="pfooter"><div>${$._('pointof', id + 1, count)}</div><div>${editLink}</div></div>`;
     const node = document.createElement('div');
     node.setAttribute('id', 'popup');
     node.innerHTML = html;
@@ -194,6 +201,13 @@ export default class MapViewModel extends ViewModel {
         closeEl.onclick = () => modal.destroy();
         modal.element.classList.add('image');
         modal.show();
+      }
+    }
+    if (isEditable) {
+      const edit = node.querySelector('#editposition');
+      edit.onclick = () => {
+        const vm = new PositionDialogModel(this.state, id);
+        vm.init();
       }
     }
     return node;
