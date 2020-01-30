@@ -28,7 +28,7 @@
   */
   class uConfig {
     // version number
-    static $version = "1.0-beta";
+    static $version = "0.6";
 
     // default map drawing framework
     static $mapapi = "openlayers";
