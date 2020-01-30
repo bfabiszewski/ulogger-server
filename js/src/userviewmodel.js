@@ -131,11 +131,17 @@ export default class UserViewModel extends ViewModel {
     }
   }
 
+  /**
+   * @param {HTMLElement} el
+   * @param {boolean} visible
+   */
   static setMenuVisible(el, visible) {
-    if (visible) {
-      el.classList.remove('menu-hidden');
-    } else {
-      el.classList.add('menu-hidden');
+    if (el) {
+      if (visible) {
+        el.classList.remove('menu-hidden');
+      } else {
+        el.classList.add('menu-hidden');
+      }
     }
   }
 

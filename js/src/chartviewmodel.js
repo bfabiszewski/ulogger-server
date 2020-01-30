@@ -43,7 +43,8 @@ export default class ChartViewModel extends ViewModel {
       pointSelected: null,
       chartVisible: false,
       buttonVisible: false,
-      onChartToggle: null
+      onChartToggle: null,
+      onMenuToggle: null
     });
     this.state = state;
     /** @type {PlotData} */
@@ -122,6 +123,9 @@ export default class ChartViewModel extends ViewModel {
     this.onChanged('chartVisible', (visible) => this.renderContainer(visible));
     this.model.onChartToggle = () => {
       this.model.chartVisible = !this.model.chartVisible;
+    };
+    this.model.onMenuToggle = () => {
+      this.chart.update();
     };
   }
 

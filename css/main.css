@@ -301,19 +301,18 @@ label[for=user] {
 }
 
 #bottom {
-  position: absolute;
+  position: relative;
   z-index: 10000;
   display: none;
 }
 
 #chart {
   font-family: "Open Sans", Verdana, sans-serif;
-  position: fixed;
+  position: absolute;
   right: 0;
   bottom: -15px;
   left: 0;
   height: 200px;
-  margin-right: 165px;
   padding: 0 10px;
   opacity: 0.8;
   background-color: white;
@@ -321,9 +320,9 @@ label[for=user] {
 
 #chart-close {
   font-size: 0.8em;
-  position: fixed;
+  position: absolute;
   z-index: 10001;
-  right: 175px;
+  right: 15px;
   bottom: 160px;
   cursor: pointer;
   color: #5070af;
