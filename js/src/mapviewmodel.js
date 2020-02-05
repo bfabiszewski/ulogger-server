@@ -188,6 +188,7 @@ export default class MapViewModel extends ViewModel {
         ${(pos.speed !== null) ? `<img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed_dark.svg">${$.getLocaleSpeed(pos.speed, true)}<br>` : ''}
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
+        <img class="icon" alt="${$._('position')}" title="${$._('position')}" src="images/position.svg"> ${MapViewModel.coordStr(pos.latitude, 0)} ${MapViewModel.coordStr(pos.longitude, 1)}<br>
         </div>${stats}</div>
         <div id="pfooter"><div>${$._('pointof', id + 1, count)}</div><div>${editLink}</div></div>`;
     const node = document.createElement('div');
@@ -259,4 +260,26 @@ export default class MapViewModel extends ViewModel {
       this.api.updateSize();
     }
   }
+
+
+   static coordStr(pos, islon)
+   {
+      var ipos = Math.floor(pos);
+      var dec = ((pos - Math.floor(pos)) * 60).toFixed(1);
+      var dir;
+      var pad;
+
+      if (islon)
+      {
+         dir = pos < 0 ? 'W' : 'E';
+         pad = pos < 10 ? '00' : (pos < 100 ? '0' : '');
+      }
+      else
+      {
+         dir = pos < 0 ? 'S' : 'N';
+         pad = pos < 10 ? '0' : '';
+      }
+
+      return pad + ipos + '° ' + (dec < 10 ? '0' : '') + dec + dir;
+   }
 }
