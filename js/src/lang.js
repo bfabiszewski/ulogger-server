@@ -73,7 +73,7 @@ export default class uLang {
   getLocaleSpeed(ms, withUnit) {
     const value = Math.round(ms * this.config.factorSpeed * 100) / 100;
     if (withUnit) {
-      return `${value} ${this.unit('unitSpeed')}`;
+      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitSpeed')}`;
     }
     return value;
   }
@@ -87,7 +87,7 @@ export default class uLang {
   getLocaleDistanceMajor(m, withUnit) {
     const value = Math.round(m * this.config.factorDistanceMajor / 10) / 100;
     if (withUnit) {
-      return `${value} ${this.unit('unitDistanceMajor')}`
+      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitDistanceMajor')}`
     }
     return value;
   }
@@ -100,7 +100,7 @@ export default class uLang {
   getLocaleDistance(m, withUnit) {
     const value = Math.round(m * this.config.factorDistance * 100) / 100;
     if (withUnit) {
-      return `${value} ${this.unit('unitDistance')}`;
+      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitDistance')}`;
     }
     return value;
   }
@@ -141,7 +141,7 @@ export default class uLang {
    * @return {string}
    */
   getLocaleCoordinates(pos) {
-    return `${uLang.coordStr(pos.longitude, true)} ${uLang.coordStr(pos.latitude, false)}`;
+    return `${this.coordStr(pos.longitude, true)} ${this.coordStr(pos.latitude, false)}`;
   }
 
   /**
@@ -149,9 +149,9 @@ export default class uLang {
    * @param {boolean} isLon
    * @return {string}
    */
-  static coordStr(pos, isLon) {
-    const ipos = Math.floor(pos);
-    const dec = ((pos - ipos) * 60).toFixed(1);
+  coordStr(pos, isLon) {
+    const ipos = Math.trunc(pos);
+    const dec = Math.abs((pos - ipos) * 60);
     let dir;
 
     if (isLon) {
@@ -159,6 +159,6 @@ export default class uLang {
     } else {
       dir = pos < 0 ? 'S' : 'N';
     }
-    return `${ipos}° ${dec}'${dir}`;
+    return `${Math.abs(ipos).toLocaleString(this.config.lang)}°${dec.toLocaleString(this.config.lang, { maximumFractionDigits: 2 })}'${dir}`;
   }
 }

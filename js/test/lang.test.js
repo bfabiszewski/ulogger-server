@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import TrackFactory from './helpers/trackfactory.js';
 import uLang from '../src/lang.js';
 
 describe('Lang tests', () => {
@@ -29,6 +30,7 @@ describe('Lang tests', () => {
   beforeEach(() => {
     lang = new uLang();
     mockConfig = {
+      lang: 'en',
       factorSpeed: 0.33,
       unitSpeed: 'units',
       factorDistance: 1.3,
@@ -129,7 +131,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, true)).toBe(`1300 ${mockStrings.unitd}`);
+    expect(lang.getLocaleDistance(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
   });
 
   it('should return localized altitude value', () => {
@@ -143,7 +145,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, true)).toBe(`1300 ${mockStrings.unitd}`);
+    expect(lang.getLocaleDistance(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
   });
 
   it('should return localized accuracy value', () => {
@@ -157,7 +159,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, true)).toBe(`1300 ${mockStrings.unitd}`);
+    expect(lang.getLocaleDistance(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
   });
 
   it('should return localized time duration', () => {
@@ -174,4 +176,41 @@ describe('Lang tests', () => {
     expect(lang.getLocaleDuration(123456789)).toBe(`1428 ${mockStrings.unitday} 21:33:09`);
   });
 
+  it('should return localized coordinates', () => {
+    // when
+    lang.init(mockConfig, mockStrings);
+    const testCoord = 'coord';
+    spyOn(lang, 'coordStr').and.returnValue(testCoord);
+    // then
+    expect(lang.getLocaleCoordinates(TrackFactory.getPosition())).toBe(`${testCoord} ${testCoord}`);
+  });
+
+  it('should return localized coordinate for locale "en"', () => {
+    // when
+    lang.init(mockConfig, mockStrings);
+    // then
+    expect(lang.coordStr(1.111, true)).toBe('1°6.66\'E');
+    expect(lang.coordStr(1.111, false)).toBe('1°6.66\'N');
+
+    expect(lang.coordStr(171.11, true)).toBe('171°6.6\'E');
+    expect(lang.coordStr(81.11, false)).toBe('81°6.6\'N');
+
+    expect(lang.coordStr(-1.111, true)).toBe('1°6.66\'W');
+    expect(lang.coordStr(-1.111, false)).toBe('1°6.66\'S');
+
+    expect(lang.coordStr(0, true)).toBe('0°0\'E');
+    expect(lang.coordStr(0, false)).toBe('0°0\'N');
+
+    expect(lang.coordStr(-0.01, true)).toBe('0°0.6\'W');
+    expect(lang.coordStr(-0.01, false)).toBe('0°0.6\'S');
+  });
+
+  it('should return localized coordinate for locale "pl"', () => {
+    // when
+    mockConfig.lang = 'pl';
+    lang.init(mockConfig, mockStrings);
+    // then
+    expect(lang.coordStr(1.111, true)).toBe('1°6,66\'E');
+    expect(lang.coordStr(1.111, false)).toBe('1°6,66\'N');
+  });
 });
