@@ -64,6 +64,7 @@ $lang["speed"] = "Speed";
 $lang["accuracy"] = "Accuracy";
 $lang["position"] = "Position";
 $lang["altitude"] = "Altitude";
+$lang["bearing"] = "Bearing";
 $lang["ttime"] = "Total time";
 $lang["aspeed"] = "Average speed";
 $lang["tdistance"] = "Total distance";

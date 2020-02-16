@@ -188,6 +188,7 @@ export default class MapViewModel extends ViewModel {
         ${(pos.speed !== null) ? `<img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed_dark.svg">${$.getLocaleSpeed(pos.speed, true)}<br>` : ''}
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}
+        ${(pos.bearing !== null) ? `<img class="icon" alt="${$._('bearing')}" title="${$._('bearing')}" src="images/bearing.svg" style="transform: rotate(${pos.bearing}deg) scale(1.2);">${pos.bearing}°<br>` : ''}
         <img class="icon" alt="${$._('position')}" title="${$._('position')}" src="images/position.svg">${$.getLocaleCoordinates(pos)}<br>
         </div>${stats}</div>
         <div id="pfooter"><div>${$._('pointof', id + 1, count)}</div><div>${editLink}</div></div>`;
