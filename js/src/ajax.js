@@ -91,14 +91,14 @@ export default class uAjax {
       } else {
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
-            params.push(key + '=' + encodeURIComponent(data[key]));
+            params.push(`${key}=${encodeURIComponent(data[key])}`);
           }
         }
         body = params.join('&');
         body = body.replace(/%20/g, '+');
       }
       if (method === 'GET' && body.length) {
-        url += '?' + body;
+        url += `?${body}`;
         body = null;
       }
       xhr.open(method, url, true);

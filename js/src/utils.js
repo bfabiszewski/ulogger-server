@@ -135,10 +135,10 @@ export default class uUtils {
    * @returns {string}
    */
   static hexToRGBA(hex, opacity) {
-    return 'rgba(' + (hex = hex.replace('#', ''))
-      .match(new RegExp('(.{' + hex.length / 3 + '})', 'g'))
+    return `rgba(${(hex = hex.replace('#', ''))
+      .match(new RegExp(`(.{${hex.length / 3}})`, 'g'))
       .map((l) => parseInt(hex.length % 2 ? l + l : l, 16))
-      .concat(opacity || 1).join(',') + ')';
+      .concat(opacity || 1).join(',')})`;
   }
 
   /**
