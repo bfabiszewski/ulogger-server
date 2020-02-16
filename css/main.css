@@ -274,10 +274,6 @@ label[for=user] {
   background-image: radial-gradient(circle closest-side, #bfbfbc, #666);
 }
 
-#pright img {
-  background-image: radial-gradient(circle closest-side, #000, #666);
-}
-
 #pbody .smaller {
   font-size: 0.9em;
   color: #cacaca;
