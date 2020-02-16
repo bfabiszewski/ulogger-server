@@ -135,4 +135,30 @@ export default class uLang {
     return ((d > 0) ? (`${d} ${this.unit('unitDay')} `) : '') +
       ((`00${h}`).slice(-2)) + ':' + ((`00${m}`).slice(-2)) + ':' + ((`00${s}`).slice(-2)) + '';
   }
+
+  /**
+   * @param {uPosition} pos
+   * @return {string}
+   */
+  getLocaleCoordinates(pos) {
+    return `${uLang.coordStr(pos.longitude, true)} ${uLang.coordStr(pos.latitude, false)}`;
+  }
+
+  /**
+   * @param {number} pos
+   * @param {boolean} isLon
+   * @return {string}
+   */
+  static coordStr(pos, isLon) {
+    const ipos = Math.floor(pos);
+    const dec = ((pos - ipos) * 60).toFixed(1);
+    let dir;
+
+    if (isLon) {
+      dir = pos < 0 ? 'W' : 'E';
+    } else {
+      dir = pos < 0 ? 'S' : 'N';
+    }
+    return `${ipos}° ${dec}'${dir}`;
+  }
 }
