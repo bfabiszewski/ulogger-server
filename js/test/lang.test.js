@@ -94,14 +94,14 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleSpeed(value, false)).toBe(1188);
+    expect(lang.getLocaleSpeed(value, false)).toBe(330);
   });
 
   it('should return localized speed value with unit', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleSpeed(value, true)).toBe(`1188 ${mockStrings.units}`);
+    expect(lang.getLocaleSpeed(value, true)).toBe(`330 ${mockStrings.units}`);
   });
 
   it('should return localized distance major value', () => {

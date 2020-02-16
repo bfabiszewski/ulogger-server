@@ -256,7 +256,7 @@ export default class uUtils {
         output = parseFloat(input);
         break;
       case 'int':
-        output = parseInt(input);
+        output = Math.round(parseFloat(input));
         break;
       case 'string':
         output = String(input);

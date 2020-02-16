@@ -71,7 +71,7 @@ export default class uLang {
    * @return {(number|string)} String when with unit
    */
   getLocaleSpeed(ms, withUnit) {
-    const value = Math.round(ms * this.config.factorSpeed * 360) / 100;
+    const value = Math.round(ms * this.config.factorSpeed * 100) / 100;
     if (withUnit) {
       return `${value} ${this.unit('unitSpeed')}`;
     }

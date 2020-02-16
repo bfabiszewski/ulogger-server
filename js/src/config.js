@@ -69,21 +69,21 @@ export default class uConfig {
 
   initUnits() {
     if (this.units === 'imperial') {
-      this.factorSpeed = 0.62; // to mph
+      this.factorSpeed = 2.237; // m/s to mph
       this.unitSpeed = 'unitmph';
-      this.factorDistance = 3.28; // to feet
+      this.factorDistance = 3.28; // m to feet
       this.unitDistance = 'unitft';
-      this.factorDistanceMajor = 0.62; // to miles
+      this.factorDistanceMajor = 0.621; // km to miles
       this.unitDistanceMajor = 'unitmi';
     } else if (this.units === 'nautical') {
-      this.factorSpeed = 0.54; // to knots
+      this.factorSpeed = 1.944; // m/s to kt
       this.unitSpeed = 'unitkt';
       this.factorDistance = 1; // meters
       this.unitDistance = 'unitm';
-      this.factorDistanceMajor = 0.54; // to nautical miles
+      this.factorDistanceMajor = 0.54; // km to nautical miles
       this.unitDistanceMajor = 'unitnm';
     } else {
-      this.factorSpeed = 1;
+      this.factorSpeed = 3.6; // m/s to km/h
       this.unitSpeed = 'unitkmh';
       this.factorDistance = 1;
       this.unitDistance = 'unitm';

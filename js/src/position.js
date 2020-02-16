@@ -54,7 +54,7 @@ export default class uPosition {
     position.latitude = uUtils.getFloat(pos.latitude);
     position.longitude = uUtils.getFloat(pos.longitude);
     position.altitude = uUtils.getInteger(pos.altitude, true); // may be null
-    position.speed = uUtils.getInteger(pos.speed, true); // may be null
+    position.speed = uUtils.getFloat(pos.speed, true); // may be null
     position.bearing = uUtils.getInteger(pos.bearing, true); // may be null
     position.accuracy = uUtils.getInteger(pos.accuracy, true); // may be null
     position.provider = uUtils.getString(pos.provider, true); // may be null

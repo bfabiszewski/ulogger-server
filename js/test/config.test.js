@@ -60,11 +60,11 @@ describe('Config tests', () => {
     config.units = 'imperial';
     config.initUnits();
     // then
-    expect(config.factorSpeed).toBe(0.62); // to mph
+    expect(config.factorSpeed).toBe(2.237); // to mph
     expect(config.unitSpeed).toBe('unitmph');
     expect(config.factorDistance).toBe(3.28); // to feet
     expect(config.unitDistance).toBe('unitft');
-    expect(config.factorDistanceMajor).toBe(0.62); // to miles
+    expect(config.factorDistanceMajor).toBe(0.621); // to miles
     expect(config.unitDistanceMajor).toBe('unitmi');
   });
 
@@ -73,7 +73,7 @@ describe('Config tests', () => {
     config.units = 'nautical';
     config.initUnits();
     // then
-    expect(config.factorSpeed).toBe(0.54); // to knots
+    expect(config.factorSpeed).toBe(1.944); // to knots
     expect(config.unitSpeed).toBe('unitkt');
     expect(config.factorDistance).toBe(1); // meters
     expect(config.unitDistance).toBe('unitm');
@@ -86,7 +86,7 @@ describe('Config tests', () => {
     config.units = 'metric';
     config.initUnits();
     // then
-    expect(config.factorSpeed).toBe(1);
+    expect(config.factorSpeed).toBe(3.6);
     expect(config.unitSpeed).toBe('unitkmh');
     expect(config.factorDistance).toBe(1);
     expect(config.unitDistance).toBe('unitm');
@@ -125,7 +125,7 @@ describe('Config tests', () => {
     // when
     config.load(data);
     // then
-    expect(config.factorSpeed).toBe(0.62);
+    expect(config.factorSpeed).toBe(2.237);
   });
 
   it('should parse regex if present in data', () => {
