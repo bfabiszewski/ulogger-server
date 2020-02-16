@@ -253,7 +253,10 @@ module.exports = {
             "error",
             "always"
         ],
-        "object-shorthand": "off",
+        "object-shorthand": [
+          "error",
+          "consistent-as-needed"
+        ],
         "one-var": "off",
         "one-var-declaration-per-line": [
             "error",
@@ -266,7 +269,7 @@ module.exports = {
         "operator-linebreak": "error",
         "padded-blocks": "off",
         "padding-line-between-statements": "error",
-        "prefer-arrow-callback": "off",
+        "prefer-arrow-callback": "error",
         "prefer-const": "error",
         "prefer-destructuring": "off",
         "prefer-named-capture-group": "off",
