@@ -52,8 +52,8 @@ export default class TrackDialogModel extends ViewModel {
    * @return {string}
    */
   getHtml() {
-    return `<div style="float:left">${$._('editingtrack', `<b>${uUtils.htmlEncode(this.track.name)}</b>`)}</div>
-      <div class="red-button button-resolve"><b><a data-bind="onTrackDelete">${$._('deltrack')}</a></b></div>
+    return `<div class="red-button button-resolve"><b><a data-bind="onTrackDelete">${$._('deltrack')}</a></b></div>
+      <div>${$._('editingtrack', `<b>${uUtils.htmlEncode(this.track.name)}</b>`)}</div>
       <div style="clear: both; padding-bottom: 1em;"></div>
       <form id="trackForm">
         <label><b>${$._('trackname')}</b></label>

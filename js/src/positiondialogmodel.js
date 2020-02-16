@@ -58,8 +58,8 @@ export default class PositionDialogModel extends ViewModel {
    * @return {string}
    */
   getHtml() {
-    return `<div style="float:left;">${$._('editingposition', this.positionIndex + 1, `<b>${uUtils.htmlEncode(this.position.trackname)}</b>`)}</div>
-      <div class="red-button button-resolve"><b><a data-bind="onPositionDelete">${$._('delposition')}</a></b></div>
+    return `<div class="red-button button-resolve"><b><a data-bind="onPositionDelete">${$._('delposition')}</a></b></div>
+      <div>${$._('editingposition', this.positionIndex + 1, `<b>${uUtils.htmlEncode(this.position.trackname)}</b>`)}</div>
       <div style="clear: both; padding-bottom: 1em;"></div>
       <form id="positionForm">
         <label><b>${$._('comment')}</b></label><br>

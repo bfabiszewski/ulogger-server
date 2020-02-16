@@ -138,8 +138,8 @@ export default class UserDialogModel extends ViewModel {
         break;
       case 'edit':
         observer = 'onUserUpdate';
-        deleteButton = `<div style="float:left">${$._('editinguser', `<b>${uUtils.htmlEncode(this.user.login)}</b>`)}</div>
-        <div class="red-button button-resolve"><b><a data-bind="onUserDelete">${$._('deluser')}</a></b></div>
+        deleteButton = `<div class="red-button button-resolve"><b><a data-bind="onUserDelete">${$._('deluser')}</a></b></div>
+        <div>${$._('editinguser', `<b>${uUtils.htmlEncode(this.user.login)}</b>`)}</div>
         <div style="clear: both; padding-bottom: 1em;"></div>`;
         fields = `<label><b>${$._('password')}</b></label>
         <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
