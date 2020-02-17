@@ -16,7 +16,8 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
-  `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
+  `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `admin` boolean NOT NULL DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

@@ -42,15 +42,15 @@
     public function __construct($login = NULL) {
       if (!empty($login)) {
         try {
-          $query = "SELECT id, login, password FROM " . self::db()->table('users') . " WHERE login = ? LIMIT 1";
+          $query = "SELECT id, login, password, admin FROM " . self::db()->table('users') . " WHERE login = ? LIMIT 1";
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $login ]);
           $stmt->bindColumn('id', $this->id, PDO::PARAM_INT);
           $stmt->bindColumn('login', $this->login);
           $stmt->bindColumn('password', $this->hash);
+          $stmt->bindColumn('admin', $this->isAdmin, PDO::PARAM_BOOL);
           if ($stmt->fetch(PDO::FETCH_BOUND)) {
             $this->isValid = true;
-            $this->isAdmin = self::isAdmin($this->login);
           }
         } catch (PDOException $e) {
           // TODO: handle exception
@@ -68,22 +68,23 @@
       return uDb::getInstance();
     }
 
-   /**
-    * Add new user
-    *
-    * @param string $login Login
-    * @param string $pass Password
-    * @return int|bool New user id, false on error
-    */
-    public static function add($login, $pass) {
+    /**
+     * Add new user
+     *
+     * @param string $login Login
+     * @param string $pass Password
+     * @param bool $isAdmin Is admin
+     * @return int|bool New user id, false on error
+     */
+    public static function add($login, $pass, $isAdmin = false) {
       $userid = false;
       if (!empty($login) && !empty($pass) && self::validPassStrength($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $table = self::db()->table('users');
         try {
-          $query = "INSERT INTO $table (login, password) VALUES (?, ?)";
+          $query = "INSERT INTO $table (login, password, admin) VALUES (?, ?, ?)";
           $stmt = self::db()->prepare($query);
-          $stmt->execute([ $login, $hash ]);
+          $stmt->execute([ $login, $hash, (int) $isAdmin ]);
           $userid = (int) self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
@@ -199,7 +200,7 @@
     */
     public static function getAll() {
       try {
-        $query = "SELECT id, login, password FROM " . self::db()->table('users') . " ORDER BY login";
+        $query = "SELECT id, login, password, admin FROM " . self::db()->table('users') . " ORDER BY login";
         $result = self::db()->query($query);
         $userArr = [];
         while ($row = $result->fetch()) {
@@ -224,19 +225,9 @@
       $user->id = $row['id'];
       $user->login = $row['login'];
       $user->hash = $row['password'];
-      $user->isAdmin = self::isAdmin($row['login']);
+      $user->isAdmin = (bool) $row['admin'];
       $user->isValid = true;
       return $user;
-    }
-
-   /**
-    * Is given login admin user
-    *
-    * @param string $login Login
-    * @return bool True if admin, false otherwise
-    */
-    private static function isAdmin($login) {
-      return (!empty(uConfig::$admin_user) && uConfig::$admin_user == $login);
     }
   }
 ?>

@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 
@@ -8,11 +7,11 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   /**
    * @var PDO $pdo
    */
-  static private $pdo = null;
+  static private $pdo;
   /**
    * @var PHPUnit_Extensions_Database_DB_IDatabaseConnection $conn
    */
-  private $conn = null;
+  private $conn;
   static private $driver = "mysql";
 
   protected $testUser = "testUser";
@@ -28,7 +27,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   protected $testTrackName = "test track";
   protected $testTrackComment = "test track comment";
   protected $testTimestamp = 1502974402;
-  protected $testLat = 0;
+  protected $testLat = 0.0;
   protected $testLon = 10.604001083;
   protected $testAltitude = 10.01;
   protected $testSpeed = 10.01;
@@ -93,17 +92,17 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   }
 
   protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1) {
-    if (self::$driver == "pgsql") {
-      self::$pdo->query("ALTER SEQUENCE users_id_seq RESTART WITH $users");
-      self::$pdo->query("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
-      self::$pdo->query("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
-    } else if (self::$driver == "sqlite") {
+    if (self::$driver === "pgsql") {
+      self::$pdo->exec("ALTER SEQUENCE users_id_seq RESTART WITH $users");
+      self::$pdo->exec("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
+      self::$pdo->exec("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
+    } else if (self::$driver === "sqlite") {
       $retry = 1;
       do {
         try {
-          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
-          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
-          self::$pdo->query("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
+          self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
+          self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
+          self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
           $retry = 0;
         } catch (Exception $e) {
           // sqlite raises error when db schema changes in another connection.
@@ -175,12 +174,13 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    *
    * @param string $user User login
    * @param string $pass User password
+   * @param bool $isAdmin User is admin
    * @return int|bool User id or false on error
    */
-  protected function addTestUser($user = NULL, $pass = NULL) {
+  protected function addTestUser($user = NULL, $pass = NULL, $isAdmin = false) {
     if (is_null($user)) { $user = $this->testUser; }
     if (is_null($pass)) { $pass = $this->testPass; }
-    $id = $this->pdoInsert('users', [ 'login' => $user, 'password' => $pass ]);
+    $id = $this->pdoInsert('users', [ 'login' => $user, 'password' => $pass, 'admin' => (int) $isAdmin ]);
     if ($id !== false) {
       return (int) $id;
     }

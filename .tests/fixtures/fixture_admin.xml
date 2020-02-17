@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <dataset>
-    <users id="1" login="admin" password="$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq" />
+    <users id="1" login="admin" password="$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq" admin="1" />
     <tracks />
     <positions />
 </dataset>

@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . "/../lib/UloggerDatabaseTestCase.php");
 require_once(__DIR__ . "/../../helpers/user.php");
@@ -57,17 +56,20 @@ class UserTest extends UloggerDatabaseTestCase {
     $this->assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $userArr = uUser::getAll();
-    $this->assertEquals(2, count($userArr), "Wrong array size");
-    $this->assertTrue($userArr[0] instanceof uUser, "Wrong array member");
+    $this->assertCount(2, $userArr, "Wrong array size");
+    $this->assertInstanceOf(uUser::class, $userArr[0], "Wrong array member");
   }
 
   public function testIsAdmin() {
+    $this->addTestUser($this->testUser, NULL, true);
+    $user = new uUser($this->testUser);
+    $this->assertTrue($user->isAdmin, "User should be admin");
+  }
+
+  public function testIsNotAdmin() {
     $this->addTestUser($this->testUser);
     $user = new uUser($this->testUser);
     $this->assertFalse($user->isAdmin, "User should not be admin");
-    uConfig::$admin_user = $this->testUser;
-    $user = new uUser($this->testUser);
-    $this->assertTrue($user->isAdmin, "User should be admin");
   }
 
   public function testIsValid() {

@@ -24,6 +24,7 @@ $enabled = false;
 /* -------------------------------------------- */
 /* no user modifications should be needed below */
 
+/** @noinspection ConstantCanBeUsedInspection */
 if (version_compare(PHP_VERSION, "5.4.0", "<")) {
   die("Sorry, ulogger will not work with PHP version lower than 5.4 (you have " . PHP_VERSION . ")");
 }
@@ -63,7 +64,7 @@ switch ($command) {
       $queries = getQueries($pdo->getAttribute(PDO::ATTR_DRIVER_NAME));
       $pdo->beginTransaction();
       foreach ($queries as $query) {
-        $pdo->query($query);
+        $pdo->exec($query);
       }
       $pdo->commit();
     } catch (PDOException $e) {
@@ -90,7 +91,7 @@ switch ($command) {
     $login = uUtils::postString("login");
     $pass = uUtils::postPass("pass");
 
-    if (uUser::add($login, $pass) !== false) {
+    if (uUser::add($login, $pass, true) !== false) {
       $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
       $messages[] = $langSetup["setupcomplete"];
       $messages[] = "<span class=\"warn\">{$langSetup["disablewarn"]}</span><br>";
@@ -123,7 +124,7 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (ini_get("session.auto_start") == "1") {
+    if (ini_get("session.auto_start") === "1") {
       $messages[] = sprintf($langSetup["optionwarn"], "session.auto_start", "0 (off)");
       $messages[] = $langSetup["dorestart"];
       $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
@@ -182,7 +183,8 @@ function getQueries($dbDriver) {
       $queries[] = "CREATE TABLE `$tUsers` (
                       `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
-                      `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT ''
+                      `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+                      `admin` boolean NOT NULL DEFAULT FALSE
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
 
@@ -224,7 +226,8 @@ function getQueries($dbDriver) {
       $queries[] = "CREATE TABLE $tUsers (
                       id SERIAL PRIMARY KEY,
                       login VARCHAR(15) NOT NULL UNIQUE,
-                      password VARCHAR(255) NOT NULL DEFAULT ''
+                      password VARCHAR(255) NOT NULL DEFAULT '',
+                      admin BOOLEAN NOT NULL DEFAULT FALSE
                     )";
 
       $queries[] = "CREATE TABLE $tTracks (
@@ -265,7 +268,8 @@ function getQueries($dbDriver) {
       $queries[] = "CREATE TABLE `$tUsers` (
                     `id` integer PRIMARY KEY AUTOINCREMENT,
                     `login` varchar(15) NOT NULL UNIQUE,
-                    `password` varchar(255) NOT NULL DEFAULT ''
+                    `password` varchar(255) NOT NULL DEFAULT '',
+                    `admin` integer NOT NULL DEFAULT 0
                   )";
       $queries[] = "CREATE TABLE `$tTracks` (
                    `id` integer PRIMARY KEY AUTOINCREMENT,
@@ -309,8 +313,7 @@ function getQueries($dbDriver) {
  */
 function getPdo() {
   $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-  $pdo = new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
-  return $pdo;
+  return new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
 }
 
 ?>
@@ -355,6 +358,7 @@ function getPdo() {
       color: #00e700;
     }
   </style>
+  <!--suppress ES6ConvertVarToLetConst -->
   <script>
     var lang = <?= json_encode($lang) ?>;
     var pass_regex = <?= uConfig::passRegex() ?>;

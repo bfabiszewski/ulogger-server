@@ -42,6 +42,13 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - You may also want to set your new user as an [admin in config file](https://github.com/bfabiszewski/ulogger-server/blob/v0.2/config.default.php#L67).
 - Folders `.docker/` and `.tests/` as well as composer files are needed only for development. May be safely removed.
 
+## Upgrade to version 1.x
+- TODO: convert following notes to migration script
+- Database changes:
+  - `ALTER TABLE positions CHANGE image_id image VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL`
+  - `ALTER TABLE users ADD admin BOOLEAN NOT NULL DEFAULT FALSE AFTER password`
+  - modify admin user entry in `users` table: set `admin` to `true`
+
 ## Docker
 - Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser. Log in with `admin`:`admin` credentials and change default password.
 - Optional configuration options with ENV variables, for list see [Dockerfile](https://github.com/bfabiszewski/ulogger-server/blob/master/Dockerfile). The variables correspond to main μlogger configuration parameteres.

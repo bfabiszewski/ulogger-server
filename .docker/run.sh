@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # set config variables
-sed -i "s/^\$admin_user = .*$/\$admin_user = \"${ULOGGER_ADMIN_USER}\";/" /var/www/html/config.php
 sed -i "s/^\$pass_strength = .*$/\$pass_strength = ${ULOGGER_PASS_STRENGTH};/" /var/www/html/config.php
 sed -i "s/^\$pass_lenmin = .*$/\$pass_lenmin = ${ULOGGER_PASS_LENMIN};/" /var/www/html/config.php
 sed -i "s/^\$require_authentication = .*$/\$require_authentication = ${ULOGGER_REQUIRE_AUTHENTICATION};/" /var/www/html/config.php

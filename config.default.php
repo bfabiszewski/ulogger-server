@@ -55,13 +55,6 @@ $require_authentication = 1;
 // (0 = no, 1 = yes)
 $public_tracks = 0;
 
-// admin user, who
-// - can add new users
-// - can edit all tracks, users
-// - has access to all users locations
-// none if empty
-$admin_user = "";
-
 // miniumum required length of user password
 $pass_lenmin = 12;
 

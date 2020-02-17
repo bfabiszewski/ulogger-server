@@ -13,7 +13,8 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` integer PRIMARY KEY AUTOINCREMENT,
   `login` varchar(15) NOT NULL UNIQUE,
-  `password` varchar(255) NOT NULL DEFAULT ''
+  `password` varchar(255) NOT NULL DEFAULT '',
+  `admin` integer NOT NULL DEFAULT 0
 );
 
 -- --------------------------------------------------------

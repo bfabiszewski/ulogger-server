@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . "/../../helpers/auth.php");
 require_once(__DIR__ . "/../lib/UloggerDatabaseTestCase.php");
@@ -22,10 +21,10 @@ class AuthTest extends UloggerDatabaseTestCase {
     $auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
     $this->assertTrue($auth->isAuthenticated(), "Not authenticated");
-    $this->assertTrue($auth->user instanceof uUser, "User variable not set");
+    $this->assertInstanceOf(uUser::class, $auth->user, "User variable not set");
     $this->assertEquals($this->testUser, $auth->user->login, "Wrong login");
     $this->assertEquals($_SESSION["user"]->login, $auth->user->login, "Wrong login");
-    $this->assertTrue($_SESSION["user"] instanceof uUser, "User not set in session");
+    $this->assertInstanceOf(uUser::class, $_SESSION["user"], "User not set in session");
   }
 
   /**
@@ -38,7 +37,7 @@ class AuthTest extends UloggerDatabaseTestCase {
     $auth = new uAuth();
     $auth->checkLogin($this->testUser, "badPass");
     $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertTrue(is_null($auth->user), "User not null");
+    $this->assertInternalType('null', $auth->user, "User not null");
   }
 
   /**
@@ -51,7 +50,7 @@ class AuthTest extends UloggerDatabaseTestCase {
     $auth = new uAuth();
     $auth->checkLogin("", $this->testPass);
     $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertTrue(is_null($auth->user), "User not null");
+    $this->assertInternalType('null', $auth->user, "User not null");
   }
 
   /**
@@ -63,7 +62,7 @@ class AuthTest extends UloggerDatabaseTestCase {
 
     $auth = new uAuth();
     $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertTrue(is_null($auth->user), "User not null");
+    $this->assertInternalType('null', $auth->user, "User not null");
   }
 
   /**
@@ -109,7 +108,7 @@ class AuthTest extends UloggerDatabaseTestCase {
   /**
    * @runInSeparateProcess
    */
-  public function testNotIsAdmin() {
+  public function testIsNotAdmin() {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
@@ -123,15 +122,13 @@ class AuthTest extends UloggerDatabaseTestCase {
    * @runInSeparateProcess
    */
   public function testIsAdmin() {
-    $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
+    $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT), true);
     $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
-
-    uConfig::$admin_user = $this->testUser;
 
     @$auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
     $this->assertTrue($auth->isAuthenticated(), "Should be authenticated");
-    $this->assertTrue($auth->isAdmin(), "Should not be admin");
+    $this->assertTrue($auth->isAdmin(), "Should be admin");
   }
 
 }

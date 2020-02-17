@@ -16,7 +16,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
   id serial PRIMARY KEY,
   login varchar(15) NOT NULL UNIQUE,
-  password varchar(255) NOT NULL DEFAULT ''
+  password varchar(255) NOT NULL DEFAULT '',
+  admin boolean NOT NULL DEFAULT FALSE
 );
 
 -- --------------------------------------------------------

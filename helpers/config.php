@@ -30,69 +30,69 @@
     /**
      * @var string Version number
      */
-    static $version = "1.0-beta";
+    public static $version = "1.0-beta";
 
     /**
      * @var string Default map drawing framework
      */
-    static $mapapi = "openlayers";
+    public static $mapapi = "openlayers";
 
     /**
      * @var string|null Google maps key
      */
-    static $gkey = null;
+    public static $gkey;
 
     /**
      * @var array Openlayers additional map layers
      */
-    static $ol_layers = [];
+    public static $ol_layers = [];
 
     /**
      * @var float Default latitude for initial map
      */
-    static $init_latitude = 52.23;
+    public static $init_latitude = 52.23;
     /**
      * @var float Default longitude for initial map
      */
-    static $init_longitude = 21.01;
+    public static $init_longitude = 21.01;
 
     /**
      * @var string Database dsn
      */
-    static $dbdsn = "";
+    public static $dbdsn = "";
     /**
      * @var string Database user
      */
-    static $dbuser = "";
+    public static $dbuser = "";
     /**
      * @var string Database pass
      */
-    static $dbpass = "";
+    public static $dbpass = "";
     /**
      * @var string Optional table names prefix, eg. "ulogger_"
      */
-    static $dbprefix = "";
+    public static $dbprefix = "";
 
     /**
      * @var bool Require login/password authentication
      */
-    static $require_authentication = true;
+    public static $require_authentication = true;
 
     /**
      * @var bool All users tracks are visible to authenticated user
      */
-    static $public_tracks = false;
+    public static $public_tracks = false;
 
     /**
      * @var string Admin user who has access to all users locations
      * none if empty
      */
-    static $admin_user = "";
+    public static $admin_user = "";
 
     /**
      * @var int Miniumum required length of user password
      */
-    static $pass_lenmin = 12;
+    public static $pass_lenmin = 12;
 
     /**
      * @var int Required strength of user password
@@ -101,35 +101,35 @@
      * 2 = require mixed case and numbers
      * 3 = require mixed case, numbers and non-alphanumeric characters
      */
-    static $pass_strength = 2;
+    public static $pass_strength = 2;
 
     /**
      * @var int Default interval in seconds for live auto reload
      */
-    static $interval = 10;
+    public static $interval = 10;
 
     /**
      * @var string Default language code
      */
-    static $lang = "en";
+    public static $lang = "en";
 
     /**
      * @var string Default units
      */
-    static $units = "metric";
+    public static $units = "metric";
 
     /**
      * @var int Stroke weight
      */
-    static $strokeWeight = 2;
+    public static $strokeWeight = 2;
     /**
      * @var string Stroke color
      */
-    static $strokeColor = '#ff0000';
+    public static $strokeColor = '#ff0000';
     /**
      * @var int Stroke opacity
      */
-    static $strokeOpacity = 1;
+    public static $strokeOpacity = 1;
 
     private static $fileLoaded = false;
 
@@ -138,7 +138,7 @@
    /**
     * Static initializer
     */
-    static public function init() {
+    public static function init() {
       if (!self::$initialized) {
         self::setFromFile();
         self::setFromCookies();
