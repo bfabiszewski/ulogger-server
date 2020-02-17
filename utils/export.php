@@ -68,7 +68,7 @@ if (!uConfig::$public_tracks &&
   exit();
 }
 
-if (uConfig::$units == "imperial") {
+if (uConfig::$units === "imperial") {
   $factor_kmh = 0.62; //to mph
   $unit_kmh = "mph";
   $factor_m = 3.28; // to feet
@@ -129,7 +129,7 @@ if ($trackId && $userId) {
         $totalMeters += $distance;
         $totalSeconds += $seconds;
 
-        if(++$i == count($positionsArr)) { $style = "#greenStyle"; } // last element
+        if(++$i === count($positionsArr)) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
         $xml->writeAttribute("id", "point_{$position->id}");
           $description =
@@ -138,10 +138,11 @@ if ($trackId && $userId) {
           "</div>" .
           "<div>" .
           "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> " . date("Y-m-d H:i:s (e)", $position->timestamp) . "<br>" .
+          (!is_null($position->comment) ? "<b>{$position->comment}</b><br>" : "") .
           (!is_null($position->speed) ? "<b>{$lang["speed"]}:</b> " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}<br>" : "") .
           (!is_null($position->altitude) ? "<b>{$lang["altitude"]}:</b> " . round($position->altitude * $factor_m) . " {$unit_m}<br>" : "") .
           "<b>{$lang["ttime"]}:</b> " . toHMS($totalSeconds) . "<br>" .
-          "<b>{$lang["aspeed"]}:</b> " . (($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0) . " {$unit_kmh}<br>" .
+          "<b>{$lang["aspeed"]}:</b> " . (($totalSeconds !== 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0) . " {$unit_kmh}<br>" .
           "<b>{$lang["tdistance"]}:</b> " . round($totalMeters / 1000 * $factor_km, 2) . " " . $unit_km . "<br></div>" .
           "<div style=\"font-size: smaller; padding-top: 10px;\">" . sprintf($lang["pointof"], $i, count($positionsArr)) . "</div>" .
           "</div>";
@@ -208,17 +209,11 @@ if ($trackId && $userId) {
             if (!is_null($position->altitude)) { $xml->writeElement("ele", $position->altitude); }
             $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", $position->timestamp));
             $xml->writeElement("name", ++$i);
-            $xml->startElement("desc");
-              $description =
-              "{$lang["user"]}: {$position->userLogin} {$lang["track"]}: {$position->trackName} {$lang["time"]}: " . date("Y-m-d H:i:s (e)", $position->timestamp) .
-              (!is_null($position->speed) ? " {$lang["speed"]}: " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}" : "") .
-              (!is_null($position->altitude) ? " {$lang["altitude"]}: " . round($position->altitude * $factor_m) . " {$unit_m}" : "") .
-              " {$lang["ttime"]}: " . toHMS($totalSeconds) .
-              " {$lang["aspeed"]}: " . (($totalSeconds != 0) ? round($totalMeters / $totalSeconds * 3.6 * $factor_kmh, 2) : 0) . " {$unit_kmh}" .
-              " {$lang["tdistance"]}: " . round($totalMeters / 1000 * $factor_km, 2) . " {$unit_km}" .
-              " " . sprintf($lang["pointof"], $i, count($positionsArr));
-              $xml->writeCData($description);
-            $xml->endElement();
+            if (!is_null($position->comment)) {
+              $xml->startElement("desc");
+              $xml->writeCData($position->comment);
+              $xml->endElement();
+            }
             if (!is_null($position->speed) || !is_null($position->bearing) || !is_null($position->accuracy) || !is_null($position->provider)) {
               $xml->startElement("extensions");
 

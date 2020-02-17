@@ -55,7 +55,7 @@
     exitWithError("Unauthorized");
   }
 
-  switch ($action) {
+switch ($action) {
     // action: authorize
     case "auth":
       $login = uUtils::postString('user');
@@ -111,16 +111,21 @@
       $accuracy = uUtils::postInt('accuracy');
       $provider = uUtils::postString('provider');
       $comment = uUtils::postString('comment');
-      $imageId = uUtils::postInt('imageid');
+      $imageMeta = uUtils::requestFile('image');
       $trackId = uUtils::postInt('trackid');
 
       if (!is_float($lat) || !is_float($lon) || !is_int($timestamp) || !is_int($trackId)) {
         exitWithError("Missing required parameter");
       }
 
+      $image = null;
+      if (!empty($imageMeta)) {
+        $image = uUpload::add($imageMeta, $trackId);
+      }
+
       require_once(ROOT_DIR . "/helpers/position.php");
       $positionId = uPosition::add($auth->user->id, $trackId,
-              $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+              $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $image);
 
       if ($positionId === false) {
         exitWithError("Server error");

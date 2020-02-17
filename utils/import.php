@@ -41,40 +41,23 @@ if (!$auth->isAuthenticated()) {
   uUtils::exitWithError($lang["private"]);
 }
 
-if (!isset($_FILES["gpx"])) {
+try {
+  $fileMeta = uUtils::requireFile("gpx");
+} catch (ErrorException $ee) {
   $message = $lang["servererror"];
-  $lastErr = error_get_last();
-  if (!empty($lastErr)) {
-    $message .= ": " . $lastErr["message"];
-  } else {
-    $message .= ": no uploaded file";
-  }
+  $message .= ": {$ee->getMessage()}";
   uUtils::exitWithError($message);
-}
-
-$gpxFile = NULL;
-$gpxUpload = $_FILES["gpx"];
-$uploadErr = $gpxUpload["error"];
-if ($gpxUpload["size"] > uUtils::getUploadMaxSize() && $uploadErr == UPLOAD_ERR_OK) {
-  $uploadErr = UPLOAD_ERR_FORM_SIZE;
-}
-if ($uploadErr == UPLOAD_ERR_OK) {
-  $gpxFile = $gpxUpload["tmp_name"];
-  $gpxName = basename($gpxUpload["name"]);
-} else {
+} catch (Exception $e) {
   $message = $lang["iuploadfailure"];
-  if (isset($uploadErrors[$uploadErr])) {
-    $message .= ": " . $uploadErrors[$uploadErr];
-  }
-  $message .= " ($uploadErr)";
+  $message .= ": {$ee->getMessage()}";
   uUtils::exitWithError($message);
 }
 
-$gpx = false;
+$gpxFile = $fileMeta[uUpload::META_TMP_NAME];
+$gpxName = basename($fileMeta[uUpload::META_NAME]);
 libxml_use_internal_errors(true);
-if ($gpxFile && file_exists($gpxFile)) {
-  $gpx = simplexml_load_file($gpxFile);
-}
+$gpx = simplexml_load_file($gpxFile);
+unlink($gpxFile);
 
 if ($gpx === false) {
   $message = $lang["iparsefailure"];
@@ -88,14 +71,14 @@ if ($gpx === false) {
   }
   uUtils::exitWithError($message);
 }
-else if ($gpx->getName() != "gpx") {
+else if ($gpx->getName() !== "gpx") {
     uUtils::exitWithError($lang["iparsefailure"]);
 }
 else if (empty($gpx->trk)) {
   uUtils::exitWithError($lang["idatafailure"]);
 }
 
-$trackCnt = 0;
+$trackList = [];
 foreach ($gpx->trk as $trk) {
   $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
   $metaName = empty($gpx->metadata->name) ? NULL : (string) $gpx->metadata->name;
@@ -109,19 +92,20 @@ foreach ($gpx->trk as $trk) {
 
   foreach($trk->trkseg as $segment) {
     foreach($segment->trkpt as $point) {
-      if (!isset($point["lat"]) || !isset($point["lon"])) {
+      if (!isset($point["lat"], $point["lon"])) {
         $track->delete();
         uUtils::exitWithError($lang["iparsefailure"]);
       }
       $time = isset($point->time) ? strtotime($point->time) : 1;
       $altitude = isset($point->ele) ? (double) $point->ele : NULL;
+      $comment = isset($point->desc) && !empty($point->desc) ? (string) $point->desc : NULL;
       $speed = NULL;
       $bearing = NULL;
       $accuracy = NULL;
       $provider = "gps";
       if (!empty($point->extensions)) {
         // parse ulogger extensions
-        $ext = $point->extensions->children('ulogger', TRUE);
+        $ext = $point->extensions->children('ulogger', true);
         if (count($ext->speed)) { $speed = (double) $ext->speed; }
         if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
         if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
@@ -129,7 +113,7 @@ foreach ($gpx->trk as $trk) {
       }
       $ret = $track->addPosition($auth->user->id,
                     $time, (double) $point["lat"], (double) $point["lon"], $altitude,
-                    $speed, $bearing, $accuracy, $provider, NULL, NULL);
+                    $speed, $bearing, $accuracy, $provider, $comment, NULL);
       if ($ret === false) {
         $track->delete();
         uUtils::exitWithError($lang["servererror"]);
@@ -138,13 +122,12 @@ foreach ($gpx->trk as $trk) {
     }
   }
   if ($posCnt) {
-    $trackCnt++;
+    array_unshift($trackList, [ "id" => $track->id, "name" => $track->name ]);
   } else {
     $track->delete();
   }
 }
 
-// return last track id and tracks count
-uUtils::exitWithSuccess([ "trackid" => $trackId, "trackcnt" => $trackCnt ]);
-
+header("Content-type: application/json");
+echo json_encode($trackList);
 ?>

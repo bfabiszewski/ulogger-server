@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection HtmlUnknownAttribute */
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -54,12 +54,13 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of tracks");
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
-    $this->assertEquals(1, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(1, (int) $xml->trackcnt, "Wrong error message");
+    $track = $json[0];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -88,12 +89,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id  FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image  FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 
@@ -110,7 +111,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -170,12 +171,14 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
-    $this->assertEquals(1, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(1, (int) $xml->trackcnt, "Wrong error message");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+
+    $track = $json[0];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -204,12 +207,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -241,7 +244,7 @@ class ImportTest extends UloggerAPITestCase {
         <ele>' . $this->testAltitude . '</ele>
         <time>' . gmdate("Y-m-d\TH:i:s\Z", $this->testTimestamp) . '</time>
         <name>1</name>
-        <desc><![CDATA[User: demo Track: client_test2 Time: 2017-06-25 00:50:45 (Europe/Warsaw) Speed: 0 km/h Altitude: 15 m Total time: 00:00:00 Average speed: 0 km/h Total distance: 0 km Point 1 of 18]]></desc>
+        <desc><![CDATA[' . $this->testComment . ']]></desc>
         <extensions>
           <ulogger:speed>' . $this->testSpeed . '</ulogger:speed>
           <ulogger:bearing>' . $this->testBearing . '</ulogger:bearing>
@@ -270,12 +273,14 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
-    $this->assertEquals(1, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(1, (int) $xml->trackcnt, "Wrong error message");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+
+    $track = $json[0];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -303,13 +308,13 @@ class ImportTest extends UloggerAPITestCase {
       "bearing" => $this->testBearing,
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
-      "comment" => null,
-      "image_id" => null
+      "comment" => $this->testComment,
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -351,12 +356,14 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
-    $this->assertEquals(1, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(1, (int) $xml->trackcnt, "Wrong error message");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+
+    $track = $json[0];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -385,12 +392,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -438,12 +445,14 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status: $xml->message");
-    $this->assertEquals(1, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(1, (int) $xml->trackcnt, "Wrong error message");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+
+    $track = $json[0];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -472,12 +481,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $expected = [
@@ -493,7 +502,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -543,12 +552,18 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status: $xml->message");
-    $this->assertEquals(2, (int) $xml->trackid, "Wrong error message");
-    $this->assertEquals(2, (int) $xml->trackcnt, "Wrong error message");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of tracks");
+
+    $track = $json[0];
+    $this->assertEquals(2, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+
+    $track = $json[1];
+    $this->assertEquals(1, (int) $track->id, "Wrong track id");
+    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -584,12 +599,12 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
       "SELECT id, " . $this->unix_timestamp('time') . " AS time, user_id, track_id, latitude, longitude,
-      altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $expected = [
@@ -605,7 +620,7 @@ class ImportTest extends UloggerAPITestCase {
       "accuracy" => null,
       "provider" => "gps",
       "comment" => null,
-      "image_id" => null
+      "image" => null
     ];
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
@@ -647,11 +662,11 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $xml->message, "Wrong error status");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -694,11 +709,11 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $xml->message, "Wrong error status");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -735,11 +750,11 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $xml->message, "Wrong error status");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -780,27 +795,14 @@ class ImportTest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/import.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals(0, strpos((string) $xml->message, $lang["iparsefailure"]), "Wrong error status");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals(0, strpos((string) $json->message, $lang["iparsefailure"]), "Wrong error status");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
-  }
-
-  /**
-   * @param ResponseInterface $response
-   * @return bool|SimpleXMLElement
-   */
-  private function getXMLfromResponse($response) {
-    $xml = false;
-    libxml_use_internal_errors(true);
-    try {
-      $xml = new SimpleXMLElement((string) $response->getBody());
-    } catch (Exception $e) { /* ignore */ }
-    return $xml;
   }
 
   private function getStream($string) {

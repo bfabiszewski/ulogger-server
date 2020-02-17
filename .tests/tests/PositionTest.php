@@ -11,15 +11,15 @@ class PositionTest extends UloggerDatabaseTestCase {
     $trackId = $this->addTestTrack($userId);
     $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
-    $posId = uPosition::add($userId, $trackId + 1, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = uPosition::add($userId, $trackId + 1, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImage);
     $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $this->assertFalse($posId, "Adding position with nonexistant track should fail");
 
-    $posId = uPosition::add($userId + 1, $trackId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = uPosition::add($userId + 1, $trackId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImage);
     $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $this->assertFalse($posId, "Adding position with wrong user should fail");
 
-    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImageId);
+    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, $this->testLat, $this->testLon, $this->testAltitude, $this->testSpeed, $this->testBearing, $this->testAccuracy, $this->testProvider, $this->testComment, $this->testImage);
     $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $expected = [
       "id" => $posId,
@@ -34,11 +34,11 @@ class PositionTest extends UloggerDatabaseTestCase {
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
       "comment" => $this->testComment,
-      "image_id" => $this->testImageId
+      "image" => $this->testImage
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
-      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 

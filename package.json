@@ -1,0 +1,80 @@
+{
+  "name": "ulogger-server",
+  "version": "1.0.0",
+  "description": "This is a web application for real-time collection of geolocation data, tracks viewing and management. Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.",
+  "main": "js/src/ulogger.js",
+  "scripts": {
+    "test": "karma start karma.conf.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "lint:css": "stylelint css/main.css",
+    "lint:js": "eslint js/src/*.js",
+    "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.fabiszewski.net/~/ulogger-server.git"
+  },
+  "author": "Bartek Fabiszewski",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "browserlist": "^1.0.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "core-js": "^3.6.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jasmine": "^4.1.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "jasmine": "^3.5.0",
+    "karma": "^4.4.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage-istanbul-instrumenter": "^1.0.1",
+    "karma-coverage-istanbul-reporter": "^2.1.1",
+    "karma-jasmine": "^2.0.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^4.0.2",
+    "puppeteer": "^2.0.0",
+    "regenerator-runtime": "^0.13.3",
+    "stylelint": "^12.0.1",
+    "stylelint-config-standard": "^19.0.0",
+    "terser-webpack-plugin": "^2.3.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.7.7",
+    "chartist": "^0.11.4",
+    "chartist-plugin-axistitle": "0.0.7",
+    "ol": "^6.1.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "entry"
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "selector-list-comma-newline-after": "always-multi-line",
+      "no-descending-specificity": null
+    }
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}

@@ -32,24 +32,14 @@ if ($userId) {
   }
 }
 
-header("Content-type: text/xml");
-$xml = new XMLWriter();
-$xml->openURI("php://output");
-$xml->startDocument("1.0");
-$xml->setIndent(true);
-$xml->startElement('root');
-
-if (!empty($tracksArr)) {
-  foreach ($tracksArr as $aTrack) {
-    $xml->startElement("track");
-      $xml->writeElement("trackid", $aTrack->id);
-      $xml->writeElement("trackname", $aTrack->name);
-    $xml->endElement();
+$result = [];
+if ($tracksArr === false) {
+  $result = [ "error" => true ];
+} else if (!empty($tracksArr)) {
+  foreach ($tracksArr as $track) {
+    $result[] = [ "id" => $track->id, "name" => $track->name ];
   }
 }
-
-$xml->endElement();
-$xml->endDocument();
-$xml->flush();
-
+header("Content-type: application/json");
+echo json_encode($result);
 ?>

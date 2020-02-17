@@ -30,19 +30,22 @@
 
   $lang = (new uLang(uConfig::$lang))->getStrings();
 
-  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login == $login || empty($action) || empty($login)) {
+  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login === $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
   }
 
   $aUser = new uUser($login);
+  $data = NULL;
 
   switch ($action) {
     case 'add':
       if ($aUser->isValid) {
         uUtils::exitWithError($lang["userexists"]);
       }
-      if (empty($pass) || uUser::add($login, $pass) === false) {
+      if (empty($pass) || ($userId = uUser::add($login, $pass)) === false) {
         uUtils::exitWithError($lang["servererror"]);
+      } else {
+        $data = [ 'id' => $userId ];
       }
       break;
 
@@ -64,6 +67,6 @@
       break;
   }
 
-  uUtils::exitWithSuccess();
+  uUtils::exitWithSuccess($data);
 
 ?>

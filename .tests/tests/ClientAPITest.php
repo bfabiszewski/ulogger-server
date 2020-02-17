@@ -224,8 +224,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'bearing' => $this->testBearing,
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
-        'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'comment' => $this->testComment
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
@@ -246,13 +245,113 @@ class ClientAPITest extends UloggerAPITestCase {
       "accuracy" => $this->testAccuracy,
       "provider" => $this->testProvider,
       "comment" => $this->testComment,
-      "image_id" => $this->testImageId
+      "image" => null
     ];
     $actual = $this->getConnection()->createQueryTable(
       "positions",
-      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image_id FROM positions"
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
+  }
+
+  public function testAddPositionWithImage() {
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+
+    $trackId = $this->addTestTrack($this->testUserId);
+    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+
+    $options = [
+      'http_errors' => false,
+      'multipart' => [
+        [
+          'name' => 'action',
+          'contents' => 'addpos',
+        ],
+        [
+          'name' => 'trackid',
+          'contents' => $trackId,
+        ],
+        [
+          'name' => 'time',
+          'contents' => $this->testTimestamp,
+        ],
+        [
+          'name' => 'lat',
+          'contents' => $this->testLat,
+        ],
+        [
+          'name' => 'lon',
+          'contents' => $this->testLon,
+        ],
+        [
+          'name' => 'altitude',
+          'contents' => $this->testAltitude,
+        ],
+        [
+          'name' => 'speed',
+          'contents' => $this->testSpeed,
+        ],
+        [
+          'name' => 'bearing',
+          'contents' => $this->testBearing,
+        ],
+        [
+          'name' => 'accuracy',
+          'contents' => $this->testAccuracy,
+        ],
+        [
+          'name' => 'provider',
+          'contents' => $this->testProvider,
+        ],
+        [
+          'name' => 'comment',
+          'contents' => $this->testComment,
+        ],
+        [
+          'name' => 'image',
+          'contents' => 'DEADBEEF',
+          'filename' => 'upload',
+          'headers' => [ 'Content-Type' => 'image/jpeg', 'Content-Transfer-Encoding' => 'binary' ]
+        ]
+      ]
+    ];
+    $response = $this->http->post('/client/index.php', $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    $json = json_decode((string) $response->getBody());
+    $this->assertFalse($json->{'error'}, "Unexpected error");
+    $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    $expected = [
+      "id" => 1,
+      "user_id" => $this->testUserId,
+      "track_id" => $trackId,
+      "time" => $this->testTimestamp,
+      "latitude" => $this->testLat,
+      "longitude" => $this->testLon,
+      "altitude" => $this->testAltitude,
+      "speed" => $this->testSpeed,
+      "bearing" => $this->testBearing,
+      "accuracy" => $this->testAccuracy,
+      "provider" => $this->testProvider,
+      "comment" => $this->testComment
+    ];
+    $actual = $this->getConnection()->createQueryTable(
+      "positions",
+      "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
+    );
+    $this->assertEquals($expected['id'], $actual->getValue(0, 'id'));
+    $this->assertEquals($expected['user_id'], $actual->getValue(0, 'user_id'));
+    $this->assertEquals($expected['track_id'], $actual->getValue(0, 'track_id'));
+    $this->assertEquals($expected['time'], $actual->getValue(0, 'time'));
+    $this->assertEquals($expected['latitude'], $actual->getValue(0, 'latitude'));
+    $this->assertEquals($expected['longitude'], $actual->getValue(0, 'longitude'));
+    $this->assertEquals($expected['altitude'], $actual->getValue(0, 'altitude'));
+    $this->assertEquals($expected['speed'], $actual->getValue(0, 'speed'));
+    $this->assertEquals($expected['bearing'], $actual->getValue(0, 'bearing'));
+    $this->assertEquals($expected['accuracy'], $actual->getValue(0, 'accuracy'));
+    $this->assertEquals($expected['provider'], $actual->getValue(0, 'provider'));
+    $this->assertEquals($expected['comment'], $actual->getValue(0, 'comment'));
+    $this->assertContains('.jpg', $actual->getValue(0, 'image'));
   }
 
   public function testAddPositionNoexistantTrack() {
@@ -275,7 +374,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
@@ -306,7 +405,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
 
@@ -343,7 +442,7 @@ class ClientAPITest extends UloggerAPITestCase {
         'accuracy' => $this->testAccuracy,
         'provider' => $this->testProvider,
         'comment' => $this->testComment,
-        'imageid' => $this->testImageId
+        'imageid' => $this->testImage
       ],
     ];
 

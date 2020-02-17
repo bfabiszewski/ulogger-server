@@ -56,7 +56,7 @@ CREATE TABLE positions (
   accuracy int DEFAULT NULL,
   provider varchar(100) DEFAULT NULL,
   comment varchar(255) DEFAULT NULL,
-  image_id int DEFAULT NULL,
+  image varchar(100) DEFAULT NULL,
   FOREIGN KEY(user_id) REFERENCES users(id),
   FOREIGN KEY(track_id) REFERENCES tracks(id)
 );

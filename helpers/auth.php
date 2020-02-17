@@ -27,6 +27,7 @@
   */
   class uAuth {
 
+    /** @var bool Is user authenticated */
     private $isAuthenticated = false;
     /** @var null|uUser */
     public $user = null;
@@ -37,6 +38,15 @@
       $user = (new uUser())->getFromSession();
       if ($user->isValid) {
         $this->setAuthenticated($user);
+      }
+    }
+
+    /**
+     * Update user instance stored in session
+     */
+    public function updateSession() {
+      if ($this->isAuthenticated()) {
+        $this->user->storeInSession();
       }
     }
 

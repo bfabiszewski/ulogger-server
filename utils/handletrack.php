@@ -36,7 +36,7 @@
   }
   $track = new uTrack($trackId);
   if (!$track->isValid ||
-      (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id != $track->userId))) {
+      (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $track->userId))) {
     uUtils::exitWithError($lang["servererror"]);
   }
 

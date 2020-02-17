@@ -84,7 +84,7 @@
           $stmt = self::db()->prepare($query);
           $params = [ $userId, $name, $comment ];
           $stmt->execute($params);
-          $trackId = self::db()->lastInsertId("${table}_id_seq");
+          $trackId = (int) self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
           syslog(LOG_ERR, $e->getMessage());
@@ -158,7 +158,7 @@
       $ret = false;
       if (empty($name)) { $name = $this->name; }
       if (is_null($comment)) { $comment = $this->comment; }
-      if ($comment == "") { $comment = NULL; }
+      if ($comment === "") { $comment = NULL; }
       if ($this->isValid) {
         try {
           $query = "UPDATE " . self::db()->table('tracks') . " SET name = ?, comment = ? WHERE id = ?";
@@ -184,21 +184,17 @@
     */
     public static function deleteAll($userId) {
       $ret = false;
-      if (!empty($userId)) {
-        // remove all positions
-        if (uPosition::deleteAll($userId) === true) {
-          // remove all tracks
-          try {
-            $query = "DELETE FROM " . self::db()->table('tracks') . " WHERE user_id = ?";
-            $stmt = self::db()->prepare($query);
-            $stmt->execute([ $userId ]);
-            $ret = true;
-          } catch (PDOException $e) {
-            // TODO: handle exception
-            syslog(LOG_ERR, $e->getMessage());
-          }
+      if (!empty($userId) && uPosition::deleteAll($userId) === true) {
+        // remove all tracks
+        try {
+          $query = "DELETE FROM " . self::db()->table('tracks') . " WHERE user_id = ?";
+          $stmt = self::db()->prepare($query);
+          $stmt->execute([ $userId ]);
+          $ret = true;
+        } catch (PDOException $e) {
+          // TODO: handle exception
+          syslog(LOG_ERR, $e->getMessage());
         }
-
       }
       return $ret;
     }

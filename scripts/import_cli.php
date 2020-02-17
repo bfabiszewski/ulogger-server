@@ -158,7 +158,7 @@ foreach ($gpxFiles as $i => $gpxFile) {
         $provider = "gps";
         if (!empty($point->extensions)) {
           // parse ulogger extensions
-          $ext = $point->extensions->children('ulogger', TRUE);
+          $ext = $point->extensions->children('ulogger', true);
           if (count($ext->speed)) { $speed = (double) $ext->speed; }
           if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
           if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }

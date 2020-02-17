@@ -32,7 +32,7 @@
       $upload_max_filesize = self::iniGetBytes('upload_max_filesize');
       $post_max_size = self::iniGetBytes('post_max_size');
       // post_max_size = 0 means unlimited size
-      if ($post_max_size == 0) { $post_max_size = $upload_max_filesize; }
+      if ($post_max_size === 0) { $post_max_size = $upload_max_filesize; }
       $memory_limit = self::iniGetBytes('memory_limit');
       // memory_limit = -1 means no limit
       if ($memory_limit < 0) { $memory_limit = $post_max_size; }
@@ -45,10 +45,11 @@
      *
      * @param string $iniParam Ini parameter name
      * @return int Bytes
+     * @noinspection PhpMissingBreakStatementInspection
      */
     private static function iniGetBytes($iniParam) {
       $iniStr = ini_get($iniParam);
-      $val = floatval($iniStr);
+      $val = (float) $iniStr;
       $suffix = substr(trim($iniStr), -1);
       if (ctype_alpha($suffix)) {
         switch (strtolower($suffix)) {
@@ -89,22 +90,17 @@
      * @param array|null $extra Optional array of extra parameters
      */
     private static function exitWithStatus($isError, $extra = NULL) {
-      header("Content-type: text/xml");
-      $xml = new XMLWriter();
-      $xml->openURI("php://output");
-      $xml->startDocument("1.0");
-      $xml->setIndent(true);
-      $xml->startElement("root");
-      $xml->writeElement("error", (int) $isError);
+      $output = [];
+      if ($isError) {
+        $output["error"] = true;
+      }
       if (!empty($extra)) {
         foreach ($extra as $key => $value) {
-          $xml->writeElement($key, $value);
+          $output[$key] = $value;
         }
       }
-
-      $xml->endElement();
-      $xml->endDocument();
-      $xml->flush();
+      header("Content-type: application/json");
+      echo json_encode($output);
       exit;
     }
 
@@ -115,9 +111,9 @@
      * @return string URL
      */
     public static function getBaseUrl() {
-      $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] == "" || $_SERVER["HTTPS"] == "off") ? "http://" : "https://";
+      $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "" || $_SERVER["HTTPS"] === "off") ? "http://" : "https://";
       // Check if we are behind an https proxy
-      if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https") {
+      if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") {
         $proto = "https://";
       }
       $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "";
@@ -165,29 +161,47 @@
       return self::requestInt($name, $default, INPUT_GET);
     }
 
+    public static function requestFile($name, $default = NULL) {
+      if (isset($_FILES[$name])) {
+        $files = $_FILES[$name];
+        if (isset($files["name"], $files["type"], $files["size"], $files["tmp_name"])) {
+          return $_FILES[$name];
+        }
+      }
+      return $default;
+    }
+
+    /**
+     * @param string $name Input name
+     * @param boolean $checkMime Optionally check mime with known types
+     * @return array File metadata array
+     * @throws Exception Upload exception
+     * @throws ErrorException Internal server exception
+     */
+    public static function requireFile($name, $checkMime = false) {
+      return uUpload::sanitizeUpload($_FILES[$name], $checkMime);
+    }
+
     private static function requestString($name, $default, $type) {
       if (is_string(($val = self::requestValue($name, $default, $type)))) {
         return trim($val);
-      } else {
-        return $val;
       }
+      return $val;
     }
 
     private static function requestInt($name, $default, $type) {
       if (is_float(($val = self::requestValue($name, $default, $type, FILTER_VALIDATE_FLOAT)))) {
         return (int) round($val);
-      } else {
-        return self::requestValue($name, $default, $type, FILTER_VALIDATE_INT);
       }
+      return self::requestValue($name, $default, $type, FILTER_VALIDATE_INT);
     }
 
     private static function requestValue($name, $default, $type, $filters = FILTER_DEFAULT, $flags = NULL) {
       $input = filter_input($type, $name, $filters, $flags);
-      if ($input !== false && !is_null($input)) {
+      if ($input !== false && $input !== null) {
         return $input;
-      } else {
-        return $default;
       }
+      return $default;
     }
 
   }

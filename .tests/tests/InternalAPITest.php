@@ -28,20 +28,20 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 2, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of positions");
 
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 1, "Wrong position id");
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, 1, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp, "Wrong timestamp");
     $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
     $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
 
-    $position = $xml->position[1];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $position = $json[1];
+    $this->assertEquals((int) $position->id, 2, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 1, "Wrong timestamp");
@@ -67,20 +67,20 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 2, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of positions");
 
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 1, "Wrong position id");
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, 1, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp, "Wrong timestamp");
     $this->assertEquals((string) $position->username, $this->testUser, "Wrong username");
     $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
 
-    $position = $xml->position[1];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $position = $json[1];
+    $this->assertEquals((int) $position->id, 2, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 1, "Wrong timestamp");
@@ -107,9 +107,9 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 0, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 0, "Wrong count of positions");
   }
 
   public function testGetPositionsOtherUserByAdmin() {
@@ -131,20 +131,20 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 2, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of positions");
 
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 1, "Wrong position id");
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, 1, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp, "Wrong timestamp");
     $this->assertEquals((string) $position->username, $this->testUser, "Wrong username");
     $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
 
-    $position = $xml->position[1];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $position = $json[1];
+    $this->assertEquals((int) $position->id, 2, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 1, "Wrong timestamp");
@@ -175,12 +175,12 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 1, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of positions");
 
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, 2, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 3, "Wrong timestamp");
@@ -212,20 +212,20 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->position->count(), 2, "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of positions");
 
-    $position = $xml->position[0];
-    $this->assertEquals((int) $position["id"], 2, "Wrong position id");
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, 2, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 3, "Wrong timestamp");
     $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
     $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
 
-    $position = $xml->position[1];
-    $this->assertEquals((int) $position["id"], 3, "Wrong position id");
+    $position = $json[1];
+    $this->assertEquals((int) $position->id, 3, "Wrong position id");
     $this->assertEquals((float) $position->latitude, $this->testLat, "Wrong latitude");
     $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
     $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 2, "Wrong timestamp");
@@ -250,9 +250,9 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, $xml->position->count(), "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertCount(0, $json, "Wrong count of positions");
   }
 
   public function testGetPositionsNoUserId() {
@@ -272,10 +272,9 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, $xml->position->count(), "Wrong count of positions");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertCount(0, $json, "Wrong count of positions");
   }
 
   public function testGetPositionsNoAuth() {
@@ -291,10 +290,10 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/getpositions.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
+    $json = json_decode($response->getBody());
 
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals($xml->position->count(), 0, "Wrong count of positions");
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 0, "Wrong count of positions");
   }
 
 
@@ -317,17 +316,17 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->track->count(), 2, "Wrong count of tracks");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of tracks");
 
-    $track = $xml->track[0];
-    $this->assertEquals((int) $track->trackid, $this->testTrackId2, "Wrong track id");
-    $this->assertEquals((string) $track->trackname, $this->testTrackName . "2", "Wrong track name");
+    $track = $json[0];
+    $this->assertEquals((int) $track->id, $this->testTrackId2, "Wrong track id");
+    $this->assertEquals((string) $track->name, $this->testTrackName . "2", "Wrong track name");
 
-    $track = $xml->track[1];
-    $this->assertEquals((int) $track->trackid, $this->testTrackId, "Wrong track id");
-    $this->assertEquals((string) $track->trackname, $this->testTrackName, "Wrong track name");
+    $track = $json[1];
+    $this->assertEquals((int) $track->id, $this->testTrackId, "Wrong track id");
+    $this->assertEquals((string) $track->name, $this->testTrackName, "Wrong track name");
   }
 
   public function testGetTracksUser() {
@@ -347,18 +346,18 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->track->count(), 2, "Wrong count of tracks");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 2, "Wrong count of tracks");
 
-    $track = $xml->track[0];
-    $this->assertEquals((int) $track->trackid, $this->testTrackId2, "Wrong track id");
-    $this->assertEquals((string) $track->trackname, $this->testTrackName . "2", "Wrong track name");
+    $track = $json[0];
+    $this->assertEquals((int) $track->id, $this->testTrackId2, "Wrong track id");
+    $this->assertEquals((string) $track->name, $this->testTrackName . "2", "Wrong track name");
 
-    $track = $xml->track[1];
-    $this->assertEquals((int) $track->trackid, $this->testTrackId, "Wrong track id");
-    $this->assertEquals((string) $track->trackname, $this->testTrackName, "Wrong track name");
-    }
+    $track = $json[1];
+    $this->assertEquals((int) $track->id, $this->testTrackId, "Wrong track id");
+    $this->assertEquals((string) $track->name, $this->testTrackName, "Wrong track name");
+  }
 
   public function testGetTracksOtherUser() {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -377,9 +376,9 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals($xml->track->count(), 0, "Wrong count of tracks");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 0, "Wrong count of tracks");
   }
 
   public function testGetTracksNoUserId() {
@@ -397,9 +396,9 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals($xml->track->count(), 0, "Wrong count of tracks");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 0, "Wrong count of tracks");
   }
 
   public function testGetTracksNoAuth() {
@@ -416,9 +415,9 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->get("/utils/gettracks.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals($xml->track->count(), 0, "Wrong count of tracks");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 0, "Wrong count of tracks");
   }
 
 
@@ -428,15 +427,19 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $options = [
       "http_errors" => false,
-      "form_params" => [ "userid" => $this->testUserId ],
+      "form_params" => [
+        "login" => $this->testUser,
+        "pass" => $this->testPass,
+        "oldpass" => $this->testPass
+      ],
     ];
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(401, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "Unauthorized", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Unauthorized", "Wrong error message");
   }
 
   public function testChangePassEmpty() {
@@ -449,13 +452,13 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "Empty password", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Empty password", "Wrong error message");
   }
 
-  public function testChangePassNoUser() {
+  public function testChangePassUserUnknown() {
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -468,10 +471,28 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "User unknown", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "User unknown", "Wrong error message");
+  }
+
+  public function testChangePassEmptyLogin() {
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+
+    $options = [
+      "http_errors" => false,
+      "form_params" => [
+        "pass" => $this->testPass,
+      ],
+    ];
+    $response = $this->http->post("/utils/changepass.php", $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Empty login", "Wrong error message");
   }
 
   public function testChangePassWrongOldpass() {
@@ -480,6 +501,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "oldpass" => "badpass",
         "pass" => "newpass",
       ],
@@ -487,10 +509,10 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "Wrong old password", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Wrong old password", "Wrong error message");
   }
 
   public function testChangePassNoOldpass() {
@@ -499,16 +521,17 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "pass" => "newpass",
       ],
     ];
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "Wrong old password", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Wrong old password", "Wrong error message");
   }
 
   public function testChangePassSelfAdmin() {
@@ -519,6 +542,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testAdminUser,
         "oldpass" => $this->testAdminPass,
         "pass" => $newPass,
       ],
@@ -526,9 +550,8 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users")), "Wrong actual password hash");
   }
 
@@ -541,6 +564,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $options = [
       "http_errors" => false,
       "form_params" => [
+        "login" => $this->testUser,
         "oldpass" => $this->testPass,
         "pass" => $newPass,
       ],
@@ -548,9 +572,8 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE id = $userId")), "Wrong actual password hash");
   }
 
@@ -570,9 +593,8 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE id = $userId")), "Wrong actual password hash");
   }
 
@@ -593,10 +615,10 @@ class InternalAPITest extends UloggerAPITestCase {
     $response = $this->http->post("/utils/changepass.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is not false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, "Unauthorized", "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, "Unauthorized", "Wrong error message");
   }
 
   /* handletrack.php */
@@ -617,9 +639,8 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals($trackId2, $this->pdoGetColumn("SELECT id FROM tracks WHERE id = $trackId2"), "Wrong actual track id");
   }
@@ -640,9 +661,8 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals($trackId2, $this->pdoGetColumn("SELECT id FROM tracks WHERE id = $trackId2"), "Wrong actual track id");
   }
@@ -663,10 +683,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
   }
 
   public function testHandleTrackUpdate() {
@@ -686,9 +706,8 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 0, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $row1 = [
       "id" => $trackId2,
@@ -727,10 +746,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
   }
 
@@ -752,10 +771,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
   }
 
   public function testHandleTrackMissingAction() {
@@ -767,10 +786,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handletrack.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
   }
 
 
@@ -785,10 +804,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
   }
 
   public function testHandleUserNonAdmin() {
@@ -803,10 +822,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
   }
@@ -822,10 +841,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -840,10 +859,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -859,10 +878,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals((int) $xml->error, 1, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals((int) $json->error, 1, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -876,9 +895,8 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $expected = [
       "login" => $this->testUser,
@@ -903,10 +921,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["userexists"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["userexists"], "Wrong error message");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -922,9 +940,8 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }
@@ -941,10 +958,10 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(1, (int) $xml->error, "Wrong error status");
-    $this->assertEquals((string) $xml->message, $lang["servererror"], "Wrong error message");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue(password_verify($this->testPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }
@@ -960,23 +977,9 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $xml = $this->getXMLfromResponse($response);
-    $this->assertTrue($xml !== false, "XML object is false");
-    $this->assertEquals(0, (int) $xml->error, "Wrong error status");
+    $json = json_decode($response->getBody());
+    $this->assertNotNull($json, "JSON object is null");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
-  }
-
-  /**
-   * @param ResponseInterface $response
-   * @return bool|SimpleXMLElement
-   */
-  private function getXMLfromResponse($response) {
-    $xml = false;
-    libxml_use_internal_errors(true);
-    try {
-      $xml = new SimpleXMLElement((string) $response->getBody());
-    } catch (Exception $e) { /* ignore */ }
-    return $xml;
   }
 
 }

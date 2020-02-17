@@ -37,7 +37,6 @@ RUN chown nginx.nginx /etc/nginx/conf.d/default.conf
 RUN rm -rf /var/www/html
 RUN mkdir -p /var/www/html
 COPY . /var/www/html
-RUN grep '^[$<?]' /var/www/html/config.default.php > /var/www/html/config.php
 
 RUN /init.sh "${DB_ROOT_PASS}" "${DB_USER_PASS}"
 

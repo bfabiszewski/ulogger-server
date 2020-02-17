@@ -84,7 +84,7 @@
           $query = "INSERT INTO $table (login, password) VALUES (?, ?)";
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $login, $hash ]);
-          $userid = self::db()->lastInsertId("${table}_id_seq");
+          $userid = (int) self::db()->lastInsertId("${table}_id_seq");
         } catch (PDOException $e) {
           // TODO: handle exception
           syslog(LOG_ERR, $e->getMessage());
@@ -140,6 +140,7 @@
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $hash, $this->login ]);
           $ret = true;
+          $this->hash = $hash;
         } catch (PDOException $e) {
           // TODO: handle exception
           syslog(LOG_ERR, $e->getMessage());
@@ -194,7 +195,7 @@
    /**
     * Get all users
     *
-    * @return array|bool Array of uUser users, false on error
+    * @return uUser[]|bool Array of uUser users, false on error
     */
     public static function getAll() {
       try {
