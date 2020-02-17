@@ -49,7 +49,7 @@ try {
   uUtils::exitWithError($message);
 } catch (Exception $e) {
   $message = $lang["iuploadfailure"];
-  $message .= ": {$ee->getMessage()}";
+  $message .= ": {$e->getMessage()}";
   uUtils::exitWithError($message);
 }
 
