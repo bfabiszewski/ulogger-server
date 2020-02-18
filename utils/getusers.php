@@ -35,7 +35,9 @@ if ($usersArr === false) {
   $result = [ "error" => true ];
 } else if (!empty($usersArr)) {
   foreach ($usersArr as $user) {
-    $result[] = [ "id" => $user->id, "login" => $user->login ];
+    // only load admin status on admin user request
+    $isAdmin = $auth->isAdmin() ? $user->isAdmin : null;
+    $result[] = [ "id" => $user->id, "login" => $user->login, "isAdmin" => $isAdmin ];
   }
 }
 header("Content-type: application/json");

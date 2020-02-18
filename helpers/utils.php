@@ -149,6 +149,10 @@
       return self::requestString($name, $default, INPUT_GET);
     }
 
+    public static function postBool($name, $default = NULL) {
+      return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_BOOLEAN);
+    }
+
     public static function getBool($name, $default = NULL) {
       return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_BOOLEAN);
     }

@@ -27,11 +27,16 @@
   $action = uUtils::postString('action');
   $login = uUtils::postString('login');
   $pass = uUtils::postPass('pass');
+  $admin = uUtils::postBool('admin', false);
 
   $lang = (new uLang(uConfig::$lang))->getStrings();
 
   if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login === $login || empty($action) || empty($login)) {
     uUtils::exitWithError($lang["servererror"]);
+  }
+
+  if ($admin && !$auth->isAdmin()) {
+    uUtils::exitWithError($lang["notauthorized"]);
   }
 
   $aUser = new uUser($login);
@@ -42,7 +47,7 @@
       if ($aUser->isValid) {
         uUtils::exitWithError($lang["userexists"]);
       }
-      if (empty($pass) || ($userId = uUser::add($login, $pass)) === false) {
+      if (empty($pass) || ($userId = uUser::add($login, $pass, $admin)) === false) {
         uUtils::exitWithError($lang["servererror"]);
       } else {
         $data = [ 'id' => $userId ];
@@ -50,8 +55,10 @@
       break;
 
     case 'update':
-      // update password
-      if (empty($pass) || $aUser->setPass($pass) === false) {
+      if ($aUser->setAdmin($admin) === false) {
+        uUtils::exitWithError($lang["servererror"]);
+      }
+      if (!empty($pass) && $aUser->setPass($pass) === false) {
         uUtils::exitWithError($lang["servererror"]);
       }
       break;

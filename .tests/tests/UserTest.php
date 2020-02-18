@@ -50,6 +50,20 @@ class UserTest extends UloggerDatabaseTestCase {
     $this->assertFalse($userInvalid->setPass($newPass), "Setting pass for nonexistant user should fail");
   }
 
+  public function testSetAdmin() {
+    $this->addTestUser($this->testUser);
+    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    $user = new uUser($this->testUser);
+    $this->assertFalse((bool) $this->pdoGetColumn("SELECT admin FROM users"), "User should not be admin");
+    $this->assertFalse($user->isAdmin, "User should not be admin");
+    $user->setAdmin(true);
+    $this->assertTrue((bool) $this->pdoGetColumn("SELECT admin FROM users"), "User should be admin");
+    $this->assertTrue($user->isAdmin, "User should be admin");
+    $user->setAdmin(false);
+    $this->assertFalse((bool) $this->pdoGetColumn("SELECT admin FROM users"), "User should not be admin");
+    $this->assertFalse($user->isAdmin, "User should not be admin");
+  }
+
   public function testGetAll() {
     $this->addTestUser($this->testUser);
     $this->addTestUser($this->testUser2);

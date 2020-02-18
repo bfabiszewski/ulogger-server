@@ -31,14 +31,16 @@ export default class uUser extends uListItem {
   /**
    * @param {number} id
    * @param {string} login
+   * @param {boolean=} isAdmin
    */
-  constructor(id, login) {
+  constructor(id, login, isAdmin = null) {
     super();
     if (!Number.isSafeInteger(id) || id <= 0) {
       throw new Error('Invalid argument for user constructor');
     }
     this.id = id;
     this.login = login;
+    this.isAdmin = isAdmin;
     this.listItem(id, login);
   }
 
@@ -65,7 +67,7 @@ export default class uUser extends uListItem {
     return uAjax.get('utils/getusers.php').then((_users) => {
       const users = [];
       for (const user of _users) {
-        users.push(new uUser(user.id, user.login));
+        users.push(new uUser(user.id, user.login, user.isAdmin));
       }
       return users;
     });
@@ -101,8 +103,8 @@ export default class uUser extends uListItem {
   }
 
   /**
-   * @param {string} password
-   * @param {string=} oldPassword Needed when changing own password
+   * @param {string} password New password
+   * @param {string} oldPassword Current password
    * @return {Promise<void, Error>}
    */
   setPassword(password, oldPassword) {
@@ -113,4 +115,23 @@ export default class uUser extends uListItem {
         oldpass: oldPassword
       });
   }
+
+  /**
+   * @param {boolean} isAdmin
+   * @param {string|null} password
+   * @return {Promise<void, Error>}
+   */
+  modify(isAdmin, password = null) {
+    const data = {
+      action: 'update',
+      login: this.login,
+      admin: isAdmin
+    };
+    if (password) {
+      data.pass = password;
+    }
+    return uUser.update(data)
+      .then(() => { this.isAdmin = isAdmin; });
+  }
+
 }

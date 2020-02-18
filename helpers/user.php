@@ -127,6 +127,27 @@
     }
 
    /**
+    * Set user admin status
+    *
+    * @param bool $isAdmin True if is admin
+    * @return bool True on success, false otherwise
+    */
+    public function setAdmin($isAdmin) {
+      $ret = false;
+      try {
+        $query = "UPDATE " . self::db()->table('users') . " SET admin = ? WHERE login = ?";
+        $stmt = self::db()->prepare($query);
+        $stmt->execute([ $isAdmin, $this->login ]);
+        $ret = true;
+        $this->isAdmin = $isAdmin;
+      } catch (PDOException $e) {
+        // TODO: handle exception
+        syslog(LOG_ERR, $e->getMessage());
+      }
+      return $ret;
+    }
+
+   /**
     * Set user password
     *
     * @param string $pass Password

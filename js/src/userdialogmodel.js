@@ -33,18 +33,22 @@ export default class UserDialogModel extends ViewModel {
     super({
       onUserDelete: null,
       onUserUpdate: null,
+      onPassChange: null,
       onUserAdd: null,
       onCancel: null,
+      passVisibility: false,
       login: null,
       password: null,
       password2: null,
-      oldPassword: null
+      oldPassword: null,
+      admin: false
     });
     this.user = viewModel.state.currentUser;
     this.type = type;
     this.userVM = viewModel;
     this.model.onUserDelete = () => this.onUserDelete();
     this.model.onUserUpdate = () => this.onUserUpdate();
+    this.model.onPassChange = () => this.onPassChange();
     this.model.onUserAdd = () => this.onUserAdd();
     this.model.onCancel = () => this.onCancel();
   }
@@ -54,6 +58,14 @@ export default class UserDialogModel extends ViewModel {
     this.dialog = new uDialog(html);
     this.dialog.show();
     this.bindAll(this.dialog.element);
+    const passInput = this.getBoundElement('passInput');
+    this.onChanged('passVisibility', () => {
+      if (passInput.style.display === 'none') {
+        passInput.style.display = 'block';
+      } else {
+        passInput.style.display = 'none';
+      }
+    });
   }
 
   onUserDelete() {
@@ -67,8 +79,16 @@ export default class UserDialogModel extends ViewModel {
 
   onUserUpdate() {
     if (this.validate()) {
-      const user = this.type === 'pass' ? auth.user : this.user;
-      user.setPassword(this.model.password, this.model.oldPassword)
+      const password = this.model.passVisibility ? this.model.password : null;
+      this.user.modify(this.model.admin, password)
+        .then(() => this.dialog.destroy())
+        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+    }
+  }
+
+  onPassChange() {
+    if (this.validate()) {
+      auth.user.setPassword(this.model.password, this.model.oldPassword)
         .then(() => this.dialog.destroy())
         .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
     }
@@ -76,7 +96,7 @@ export default class UserDialogModel extends ViewModel {
 
   onUserAdd() {
     if (this.validate()) {
-      uUser.add(this.model.login, this.model.password).then((user) => {
+      uUser.add(this.model.login, this.model.password, this.model.admin).then((user) => {
         this.userVM.onUserAdded(user);
         this.dialog.destroy();
       }).catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
@@ -103,17 +123,19 @@ export default class UserDialogModel extends ViewModel {
         return false;
       }
     }
-    if (!this.model.password || !this.model.password2) {
-      alert($._('allrequired'));
-      return false;
-    }
-    if (this.model.password !== this.model.password2) {
-      alert($._('passnotmatch'));
-      return false;
-    }
-    if (!config.passRegex.test(this.model.password)) {
-      alert($._('passlenmin') + '\n' + $._('passrules'));
-      return false;
+    if (this.type === 'pass' || this.model.passVisibility) {
+      if (!this.model.password || !this.model.password2) {
+        alert($._('allrequired'));
+        return false;
+      }
+      if (this.model.password !== this.model.password2) {
+        alert($._('passnotmatch'));
+        return false;
+      }
+      if (!config.passRegex.test(this.model.password)) {
+        alert($._('passlenmin') + '\n' + $._('passrules'));
+        return false;
+      }
     }
     return true;
   }
@@ -134,20 +156,28 @@ export default class UserDialogModel extends ViewModel {
         fields = `<label><b>${$._('password')}</b></label>
         <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
         <label><b>${$._('passwordrepeat')}</b></label>
-        <input type="password" placeholder="${$._('passwordenter')}" name="password2" data-bind="password2" required>`;
+        <input type="password" placeholder="${$._('passwordenter')}" name="password2" data-bind="password2" required>
+        <label><b>${$._('admin')}</b></label>
+        <input type="checkbox" name="admin" data-bind="admin">`;
         break;
       case 'edit':
         observer = 'onUserUpdate';
         deleteButton = `<div class="red-button button-resolve"><b><a data-bind="onUserDelete">${$._('deluser')}</a></b></div>
         <div>${$._('editinguser', `<b>${uUtils.htmlEncode(this.user.login)}</b>`)}</div>
         <div style="clear: both; padding-bottom: 1em;"></div>`;
-        fields = `<label><b>${$._('password')}</b></label>
-        <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
-        <label><b>${$._('passwordrepeat')}</b></label>
-        <input type="password" placeholder="${$._('passwordenter')}" name="password2" data-bind="password2" required>`;
+        fields = `<label><b>${$._('changepass')}</b></label>
+        <input type="checkbox" name="changepass" data-bind="passVisibility"><br>
+        <div style="display: none;" data-bind="passInput">
+          <label><b>${$._('password')}</b></label>
+          <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
+          <label><b>${$._('passwordrepeat')}</b></label>
+          <input type="password" placeholder="${$._('passwordenter')}" name="password2" data-bind="password2" required>
+        </div>
+        <label><b>${$._('admin')}</b></label>
+        <input type="checkbox" name="admin" data-bind="admin" ${this.user.isAdmin ? 'checked' : ''}>`;
         break;
       case 'pass':
-        observer = 'onUserUpdate';
+        observer = 'onPassChange';
         fields = `<label><b>${$._('oldpassword')}</b></label>
         <input type="password" placeholder="${$._('passwordenter')}" name="old-password" data-bind="oldPassword" required>
         <label><b>${$._('newpassword')}</b></label>

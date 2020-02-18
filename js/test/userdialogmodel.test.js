@@ -46,6 +46,8 @@ describe('UserDialogModel tests', () => {
     dm.user = new uUser(1, 'testUser');
     spyOn(dm.user, 'delete').and.returnValue(Promise.resolve());
     spyOn(dm.user, 'setPassword').and.returnValue(Promise.resolve());
+    spyOn(dm.user, 'modify').and.callThrough();
+    spyOn(uUser, 'update').and.returnValue(Promise.resolve());
     spyOn(auth.user, 'setPassword').and.returnValue(Promise.resolve());
     spyOn(uUser, 'add').and.returnValue(Promise.resolve(newUser));
     spyOn(config.passRegex, 'test').and.returnValue(true);
@@ -92,7 +94,7 @@ describe('UserDialogModel tests', () => {
     dm.init();
     // then
     expect(document.querySelector('#modal')).toBeInstanceOf(HTMLDivElement);
-    expect(dm.dialog.element.querySelector("[data-bind='onUserUpdate']")).toBeInstanceOf(HTMLButtonElement);
+    expect(dm.dialog.element.querySelector("[data-bind='onPassChange']")).toBeInstanceOf(HTMLButtonElement);
     expect(dm.dialog.element.querySelector("[data-bind='onUserDelete']")).toBe(null);
   });
 
@@ -135,16 +137,67 @@ describe('UserDialogModel tests', () => {
     dm.type = 'edit';
     dm.init();
     const button = dm.dialog.element.querySelector("[data-bind='onUserUpdate']");
+    const passVisibility = dm.dialog.element.querySelector("[data-bind='passVisibility']");
     const passEl = dm.dialog.element.querySelector("[data-bind='password']");
     const newPassword = 'newpass';
     // when
+    passVisibility.checked = true;
+    passVisibility.dispatchEvent(new Event('change'));
     passEl.value = newPassword;
     passEl.dispatchEvent(new Event('change'));
     button.click();
     // then
     setTimeout(() => {
-      expect(dm.user.setPassword).toHaveBeenCalledTimes(1);
-      expect(dm.user.setPassword).toHaveBeenCalledWith(newPassword, null);
+      expect(dm.user.modify).toHaveBeenCalledTimes(1);
+      expect(dm.user.modify).toHaveBeenCalledWith(dm.model.admin, newPassword);
+      expect(document.querySelector('#modal')).toBe(null);
+      done();
+    }, 100);
+  });
+
+  it('should toggle password input fields visibility on user edit form', (done) => {
+    // given
+    dm.type = 'edit';
+    dm.init();
+    const passInput = dm.getBoundElement('passInput');
+    const passVisibility = dm.dialog.element.querySelector("[data-bind='passVisibility']");
+
+    expect(passInput.style.display).toBe('none');
+    // when
+    passVisibility.checked = true;
+    passVisibility.dispatchEvent(new Event('change'));
+    // then
+    setTimeout(() => {
+      expect(passInput.style.display).toBe('block');
+      // when
+      passVisibility.checked = false;
+      passVisibility.dispatchEvent(new Event('change'));
+      // then
+      setTimeout(() => {
+        expect(passInput.style.display).toBe('none');
+        done();
+      }, 100);
+      done();
+    }, 100);
+  });
+
+  it('should update user admin status and hide edit dialog on positive button clicked', (done) => {
+    // given
+    spyOn(dm, 'validate').and.returnValue(true);
+    dm.type = 'edit';
+    dm.init();
+    const button = dm.dialog.element.querySelector("[data-bind='onUserUpdate']");
+    const adminEl = dm.dialog.element.querySelector("[data-bind='admin']");
+    const isAdmin = true;
+    // when
+    adminEl.checked = isAdmin;
+    adminEl.dispatchEvent(new Event('change'));
+    button.click();
+    // then
+    setTimeout(() => {
+      expect(dm.user.modify).toHaveBeenCalledTimes(1);
+      expect(dm.user.modify).toHaveBeenCalledWith(isAdmin, null);
+      expect(dm.user.isAdmin).toBeTrue();
       expect(document.querySelector('#modal')).toBe(null);
       done();
     }, 100);
@@ -155,7 +208,7 @@ describe('UserDialogModel tests', () => {
     spyOn(dm, 'validate').and.returnValue(true);
     dm.type = 'pass';
     dm.init();
-    const button = dm.dialog.element.querySelector("[data-bind='onUserUpdate']");
+    const button = dm.dialog.element.querySelector("[data-bind='onPassChange']");
     const passEl = dm.dialog.element.querySelector("[data-bind='password']");
     const passOldEl = dm.dialog.element.querySelector("[data-bind='oldPassword']");
     const newPassword = 'newpass';
@@ -194,7 +247,7 @@ describe('UserDialogModel tests', () => {
     // then
     setTimeout(() => {
       expect(uUser.add).toHaveBeenCalledTimes(1);
-      expect(uUser.add).toHaveBeenCalledWith(newUser.login, newPassword);
+      expect(uUser.add).toHaveBeenCalledWith(newUser.login, newPassword, false);
       expect(mockVM.onUserAdded).toHaveBeenCalledWith(newUser);
       expect(document.querySelector('#modal')).toBe(null);
       done();
@@ -257,6 +310,7 @@ describe('UserDialogModel tests', () => {
   it('should return false on add user dialog passwords not match', () => {
     // given
     dm.model.login = 'test';
+    dm.model.passVisibility = true;
     dm.model.password = 'password';
     dm.model.password2 = 'password2';
     // when
@@ -266,10 +320,24 @@ describe('UserDialogModel tests', () => {
     expect(window.alert).toHaveBeenCalledTimes(1);
   });
 
+  it('should return true and ignore passwords on add user dialog passwords hidden', () => {
+    // given
+    dm.model.login = 'test';
+    dm.model.passVisibility = false;
+    dm.model.password = 'password';
+    dm.model.password2 = 'password2';
+    // when
+    const result = dm.validate();
+    // then
+    expect(result).toBe(true);
+    expect(window.alert).toHaveBeenCalledTimes(0);
+  });
+
   it('should test password regex on dialog validate', () => {
     // given
     const password = 'password';
     dm.model.login = 'test';
+    dm.model.passVisibility = true;
     dm.model.password = password;
     dm.model.password2 = password;
     // when
