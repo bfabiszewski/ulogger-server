@@ -21,6 +21,7 @@ import * as ol from '../src/lib/ol.js';
 import OpenlayersApi from '../src/mapapi/api_openlayers.js';
 import TrackFactory from './helpers/trackfactory.js';
 import { config } from '../src/initializer.js'
+import uLayer from '../src/layer.js';
 import uUtils from '../src/utils.js';
 
 describe('Openlayers map API tests', () => {
@@ -76,10 +77,11 @@ describe('Openlayers map API tests', () => {
   it('should initialize map layers with config values', () => {
     // given
     spyOn(api, 'initLayerSwitcher');
-    config.olLayers = {
-      'layer1': 'http://layer1',
-      'layer2': 'http://layer2'
-    };
+    config.olLayers = [
+      new uLayer(1, 'layer1', 'http://layer1', 0),
+      new uLayer(1, 'layer2', 'http://layer2', 0)
+    ];
+
     api.map = mockMap;
     // when
     api.initLayers();
