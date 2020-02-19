@@ -21,9 +21,6 @@
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/position.php");
 
-  // for PHP 5.4 uncomment following line to include password_compat library
-  //require_once(ROOT_DIR . "/helpers/password.php");
-
  /**
   * User handling routines
   */

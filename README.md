@@ -6,8 +6,8 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 ## Live demo:
 - http://ulogger-demo.herokuapp.com (test track upload with Android app and editing, login: demo, password: demo)
 
-## Requirements:
-- PHP 5.5 (5.4 with [password_compat](https://github.com/bfabiszewski/ulogger-server/blob/04b2b771398d8511bfa6fe8a85d58162bd32fc46/helpers/user.php#L24))
+## Minimum requirements:
+- PHP 5.5
 - PHP extensions: ctype, json, pdo (with respective drivers), session, simplexml, xmlwriter, xdebug (only for tests)
 - MySQL, PostgreSQL or SQLite (over PDO driver)
 - browser with javascript enabled, cookies for authentication and saving preferences
