@@ -131,7 +131,7 @@ export default class uUtils {
   /**
    * Convert hex string and opacity to an rgba string
    * @param {string} hex
-   * @param {number} opacity
+   * @param {number=} opacity
    * @returns {string}
    */
   static hexToRGBA(hex, opacity) {

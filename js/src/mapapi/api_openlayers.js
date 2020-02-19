@@ -158,17 +158,19 @@ export default class OpenLayersApi {
     this.selectedLayer = osm;
 
     // add extra tile layers
-    for (const layerName in config.olLayers) {
-      if (config.olLayers.hasOwnProperty(layerName)) {
-        const layerUrl = config.olLayers[layerName];
-        const ol_layer = new ol.layer.TileLayer({
-          name: layerName,
-          visible: false,
-          source: new ol.source.XYZ({
-            url: layerUrl
-          })
-        });
-        this.map.addLayer(ol_layer);
+    for (const layer of config.olLayers) {
+      const ol_layer = new ol.layer.TileLayer({
+        name: layer.name,
+        visible: false,
+        source: new ol.source.XYZ({
+          url: layer.url
+        })
+      });
+      this.map.addLayer(ol_layer);
+      if (layer.priority) {
+        this.selectedLayer.setVisible(false);
+        this.selectedLayer = ol_layer;
+        this.selectedLayer.setVisible(true);
       }
     }
 

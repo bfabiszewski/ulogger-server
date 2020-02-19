@@ -1,7 +1,8 @@
 <?php
-/* μlogger
+/**
+ * μlogger
  *
- * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
+ * Copyright(C) 2020 Bartek Fabiszewski (www.fabiszewski.net)
  *
  * This is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by
@@ -17,25 +18,23 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-// This is default configuration file.
-// Copy it to config.php and customize
+class uLayer {
+  public $id;
+  public $name;
+  public $url;
+  public $priority;
 
-// Database config
-
-// PDO data source name, eg.:
-// mysql:host=localhost;port=3307;dbname=ulogger;charset=utf8
-// mysql:unix_socket=/tmp/mysql.sock;dbname=ulogger;charset=utf8
-// pgsql:host=localhost;port=5432;dbname=ulogger
-// sqlite:/tmp/ulogger.db
-$dbdsn = "";
-
-// Database user name
-$dbuser = "";
-
-// Database user password
-$dbpass = "";
-
-// Optional table names prefix, eg. "ulogger_"
-$dbprefix = "";
-
-?>
+  /**
+   * uLayer constructor.
+   * @param int $id
+   * @param string $name
+   * @param string $url
+   * @param int $priority
+   */
+  public function __construct($id, $name, $url, $priority) {
+    $this->id = $id;
+    $this->name = $name;
+    $this->url = $url;
+    $this->priority = $priority;
+  }
+}

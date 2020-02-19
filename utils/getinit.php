@@ -38,17 +38,17 @@ $resultConfig = [
   "interval" => uConfig::$interval,
   "units" => uConfig::$units,
   "lang" => uConfig::$lang,
-  "mapApi" => uConfig::$mapapi,
-  "gkey" => uConfig::$gkey,
-  "initLatitude" => uConfig::$init_latitude,
-  "initLongitude" => uConfig::$init_longitude,
+  "mapApi" => uConfig::$mapApi,
+  "gkey" => uConfig::$googleKey,
+  "initLatitude" => uConfig::$initLatitude,
+  "initLongitude" => uConfig::$initLongitude,
   "passRegex" => uConfig::passRegex(),
   "strokeWeight" => uConfig::$strokeWeight,
   "strokeColor" => uConfig::$strokeColor,
   "strokeOpacity" => uConfig::$strokeOpacity,
   "olLayers" => []
 ];
-foreach (uConfig::$ol_layers as $key => $val) {
+foreach (uConfig::$olLayers as $key => $val) {
   $resultConfig["olLayers"][$key] = $val;
 }
 

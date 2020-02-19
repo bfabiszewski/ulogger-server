@@ -49,14 +49,14 @@
      *
      * @var array
      */
-    private $strings = [];
+    private $strings;
     /**
      * Setup script strings
      * Array of key => translation pairs
      *
      * @var array
      */
-    private $setupStrings = [];
+    private $setupStrings;
 
     /**
      * Constructor
@@ -71,13 +71,14 @@
 
       // override with translated strings if needed
       // missing strings will be displayed in English
-      if ($language != "en" && array_key_exists($language, self::$languages)) {
+      if ($language !== "en" && array_key_exists($language, self::$languages)) {
         require(ROOT_DIR . "/lang/$language.php");
       }
 
       // choose password messages based on config
-      $lang['passrules'] = isset($lang["passrules_" . uConfig::$pass_strength]) ? $lang["passrules_" . uConfig::$pass_strength] : "";
-      $lang['passlenmin'] = sprintf($lang["passlenmin"], uConfig::$pass_lenmin);
+      $passRules = "passrules_" . uConfig::$passStrength;
+      $lang['passrules'] = isset($lang[$passRules]) ? $lang[$passRules] : "";
+      $lang['passlenmin'] = sprintf($lang["passlenmin"], uConfig::$passLenMin);
       $this->strings = $lang;
       $this->setupStrings = $langSetup;
     }

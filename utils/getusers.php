@@ -24,7 +24,7 @@ require_once(ROOT_DIR . "/helpers/track.php");
 $auth = new uAuth();
 
 $usersArr = [];
-if (uConfig::$public_tracks || $auth->isAdmin()) {
+if (uConfig::$publicTracks || $auth->isAdmin()) {
   $usersArr = uUser::getAll();
 } else if ($auth->isAuthenticated()) {
   $usersArr = [ $auth->user ];

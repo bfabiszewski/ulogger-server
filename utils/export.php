@@ -62,7 +62,7 @@ $type = uUtils::getString('type', 'kml');
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
 
-if (!uConfig::$public_tracks &&
+if (!uConfig::$publicTracks &&
     (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $userId))) {
   // unauthorized
   exit();

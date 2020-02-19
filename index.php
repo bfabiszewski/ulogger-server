@@ -39,7 +39,7 @@
   if ($action === 'auth' && !$auth->isAuthenticated()) {
     $auth->exitWithRedirect('login.php?auth_error=1');
   }
-  if (uConfig::$require_authentication && !$auth->isAuthenticated()) {
+  if (uConfig::$requireAuthentication && !$auth->isAuthenticated()) {
     $auth->exitWithRedirect('login.php');
   }
 
@@ -91,8 +91,8 @@
           <div>
             <label for="api"><?= $lang['api'] ?></label>
             <select id="api" name="api" data-bind="mapApi">
-              <option value="gmaps"<?= (uConfig::$mapapi === 'gmaps') ? ' selected' : '' ?>>Google Maps</option>
-              <option value="openlayers"<?= (uConfig::$mapapi === 'openlayers') ? ' selected' : '' ?>>OpenLayers</option>
+              <option value="gmaps"<?= (uConfig::$mapApi === 'gmaps') ? ' selected' : '' ?>>Google Maps</option>
+              <option value="openlayers"<?= (uConfig::$mapApi === 'openlayers') ? ' selected' : '' ?>>OpenLayers</option>
             </select>
           </div>
 

@@ -3,4 +3,6 @@
     <users />
     <tracks />
     <positions />
+    <config map_api="openlayers" />
+    <ol_layers />
 </dataset>

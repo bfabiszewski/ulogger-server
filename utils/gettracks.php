@@ -26,7 +26,7 @@ $userId = uUtils::getInt('userid');
 
 $tracksArr = [];
 if ($userId) {
-  if (uConfig::$public_tracks ||
+  if (uConfig::$publicTracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     $tracksArr = uTrack::getAll($userId);
   }

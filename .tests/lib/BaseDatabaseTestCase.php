@@ -91,11 +91,12 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
     return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_empty.xml');
   }
 
-  protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1) {
+  protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1, $layers = 1) {
     if (self::$driver === "pgsql") {
       self::$pdo->exec("ALTER SEQUENCE users_id_seq RESTART WITH $users");
       self::$pdo->exec("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
       self::$pdo->exec("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
+      self::$pdo->exec("ALTER SEQUENCE ol_layers_id_seq RESTART WITH $layers");
     } else if (self::$driver === "sqlite") {
       $retry = 1;
       do {
@@ -103,6 +104,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
           self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
           self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
           self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
+          self::$pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'ol_layers'");
           $retry = 0;
         } catch (Exception $e) {
           // sqlite raises error when db schema changes in another connection.

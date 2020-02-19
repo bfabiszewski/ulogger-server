@@ -47,7 +47,9 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Database changes:
   - `ALTER TABLE positions CHANGE image_id image VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL`
   - `ALTER TABLE users ADD admin BOOLEAN NOT NULL DEFAULT FALSE AFTER password`
+  - new tables for config values: `config` and `ol_layers`, see SQL files in scripts folder, eg. [mysql](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/ulogger.mysql)
   - modify admin user entry in `users` table: set `admin` to `true`
+- Config file changes: only database setup is defined in config file, see [config.default.php](https://github.com/bfabiszewski/ulogger-server/blob/master/config.default.php) for valid values
 
 ## Docker
 - Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser. Log in with `admin`:`admin` credentials and change default password.

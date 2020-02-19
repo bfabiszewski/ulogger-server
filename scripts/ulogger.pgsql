@@ -65,6 +65,62 @@ CREATE TABLE positions (
 CREATE INDEX idx_ptrack_id ON positions(track_id);
 CREATE INDEX idx_puser_id ON positions(user_id);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `config`
+--
+
+DROP TABLE IF EXISTS config;
+CREATE TABLE config (
+  map_api varchar(50) NOT NULL DEFAULT 'openlayers',
+  latitude double precision NOT NULL DEFAULT '52.23',
+  longitude double precision NOT NULL DEFAULT '21.01',
+  google_key varchar(50) DEFAULT NULL,
+  require_auth boolean NOT NULL DEFAULT TRUE,
+  public_tracks boolean NOT NULL DEFAULT FALSE,
+  pass_lenmin int NOT NULL DEFAULT '10',
+  pass_strength smallint NOT NULL DEFAULT '2',
+  interval_seconds int NOT NULL DEFAULT '10',
+  lang varchar(10) NOT NULL DEFAULT 'en',
+  units varchar(10) NOT NULL DEFAULT 'metric',
+  stroke_weight int NOT NULL DEFAULT '2',
+  stroke_color int NOT NULL DEFAULT '16711680',
+  stroke_opacity int NOT NULL DEFAULT '100'
+);
+
+--
+-- Data for table `config`
+--
+
+INSERT INTO config DEFAULT VALUES;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ol_layers`
+--
+
+DROP TABLE IF EXISTS ol_layers;
+
+CREATE TABLE ol_layers (
+  id serial PRIMARY KEY,
+  name varchar(50) NOT NULL,
+  url varchar(255) NOT NULL,
+  priority int NOT NULL DEFAULT '0'
+);
+
+--
+-- Data for table ol_layers
+--
+
+INSERT INTO ol_layers (id, name, url, priority) VALUES
+(1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
+(2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
+(3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
+(4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
+(5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
+(6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0);
 
 --
 -- This will add default user admin with password admin

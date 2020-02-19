@@ -77,6 +77,8 @@
       self::$tables['positions'] = $prefix . "positions";
       self::$tables['tracks'] = $prefix . "tracks";
       self::$tables['users'] = $prefix . "users";
+      self::$tables['config'] = $prefix . "config";
+      self::$tables['ol_layers'] = $prefix . "ol_layers";
     }
 
    /**
@@ -146,8 +148,8 @@
      * @param string $charset
      */
     private function setCharset($charset) {
-      if (self::$driver == "pgsql" || self::$driver == "mysql") {
-        $this->query("SET NAMES '$charset'");
+      if (self::$driver === "pgsql" || self::$driver === "mysql") {
+        $this->exec("SET NAMES '$charset'");
       }
     }
 
@@ -156,7 +158,7 @@
      * @param string $dsn
      * @return string Empty string if not found
      */
-    static public function getDbName($dsn) {
+    public static function getDbName($dsn) {
       $name = "";
       if (strpos($dsn, ":") !== false) {
         list($scheme, $dsnWithoutScheme) = explode(":", $dsn, 2);

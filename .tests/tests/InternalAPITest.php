@@ -1,7 +1,5 @@
 <?php
 
-use Psr\Http\Message\ResponseInterface;
-
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(ROOT_DIR . "/helpers/config.php");
@@ -503,7 +501,7 @@ class InternalAPITest extends UloggerAPITestCase {
       "form_params" => [
         "login" => $this->testAdminUser,
         "oldpass" => "badpass",
-        "pass" => "newpass",
+        "pass" => "Newpass1234567890",
       ],
     ];
     $response = $this->http->post("/utils/changepass.php", $options);
@@ -522,7 +520,7 @@ class InternalAPITest extends UloggerAPITestCase {
       "http_errors" => false,
       "form_params" => [
         "login" => $this->testAdminUser,
-        "pass" => "newpass",
+        "pass" => "Newpass1234567890",
       ],
     ];
     $response = $this->http->post("/utils/changepass.php", $options);
@@ -537,7 +535,7 @@ class InternalAPITest extends UloggerAPITestCase {
   public function testChangePassSelfAdmin() {
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
-    $newPass = "newpass";
+    $newPass = "Newpass1234567890";
 
     $options = [
       "http_errors" => false,
@@ -559,7 +557,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
 
-    $newPass = "newpass";
+    $newPass = "Newpass1234567890";
 
     $options = [
       "http_errors" => false,
@@ -581,7 +579,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
 
-    $newPass = "newpass";
+    $newPass = "Newpass1234567890";
 
     $options = [
       "http_errors" => false,
@@ -599,11 +597,11 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testChangePassOtherUser() {
-    $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $userId2 = $this->addTestUser($this->testUser2, password_hash($this->testPass, PASSWORD_DEFAULT));
+    $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
+    $this->addTestUser($this->testUser2, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
 
-    $newPass = "newpass";
+    $newPass = "Newpass1234567890";
 
     $options = [
       "http_errors" => false,
@@ -736,7 +734,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
     $trackId = $this->addTestTrack($userId);
-    $trackId2 = $this->addTestTrack($userId);
+    $this->addTestTrack($userId);
 
     $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
 
@@ -947,7 +945,6 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserUpdateEmptyPass() {
-    $lang = (new uLang("en"))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -958,10 +955,7 @@ class InternalAPITest extends UloggerAPITestCase {
     ];
     $response = $this->http->post("/utils/handleuser.php", $options);
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
-    $json = json_decode($response->getBody());
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(1, (int) $json->error, "Wrong error status");
-    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
+
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue(password_verify($this->testPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }

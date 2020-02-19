@@ -45,6 +45,8 @@ $prefix = preg_replace("/[^a-z0-9_]/i", "", uConfig::$dbprefix);
 $tPositions = $prefix . "positions";
 $tTracks = $prefix . "tracks";
 $tUsers = $prefix . "users";
+$tConfig = $prefix . "config";
+$tLayers = $prefix . "ol_layers";
 
 $messages = [];
 
@@ -171,7 +173,7 @@ switch ($command) {
  * @return array
  */
 function getQueries($dbDriver) {
-  global $tPositions, $tUsers, $tTracks;
+  global $tPositions, $tUsers, $tTracks, $tConfig, $tLayers;
 
   $queries = [];
   switch ($dbDriver) {
@@ -179,6 +181,8 @@ function getQueries($dbDriver) {
       $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
       $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+      $queries[] = "DROP TABLE IF EXISTS `$tConfig`";
+      $queries[] = "DROP TABLE IF EXISTS `$tLayers`";
 
       $queries[] = "CREATE TABLE `$tUsers` (
                       `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -216,54 +220,128 @@ function getQueries($dbDriver) {
                       FOREIGN KEY(`user_id`) REFERENCES `$tUsers`(`id`),
                       FOREIGN KEY(`track_id`) REFERENCES `$tTracks`(`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+      $queries[] = "CREATE TABLE `$tConfig` (
+                      `map_api` varchar(50) NOT NULL DEFAULT 'openlayers',
+                      `latitude` double NOT NULL DEFAULT '52.23',
+                      `longitude` double NOT NULL DEFAULT '21.01',
+                      `google_key` varchar(50) DEFAULT NULL,
+                      `require_auth` boolean NOT NULL DEFAULT TRUE,
+                      `public_tracks` boolean NOT NULL DEFAULT FALSE,
+                      `pass_lenmin` int(11) NOT NULL DEFAULT '10',
+                      `pass_strength` tinyint(1) NOT NULL DEFAULT '2',
+                      `interval_seconds` int(11) NOT NULL DEFAULT '10',
+                      `lang` varchar(10) NOT NULL DEFAULT 'en',
+                      `units` varchar(10) NOT NULL DEFAULT 'metric',
+                      `stroke_weight` int(11) NOT NULL DEFAULT '2',
+                      `stroke_color` int(11) NOT NULL DEFAULT '16711680',
+                      `stroke_opacity` int(11) NOT NULL DEFAULT '100'
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+      $queries[] = "INSERT INTO `$tConfig` () VALUES ();";
+
+      $queries[] = "CREATE TABLE `$tLayers` (
+                     `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                     `name` varchar(50) NOT NULL,
+                     `url` varchar(255) NOT NULL,
+                     `priority` int(11) NOT NULL DEFAULT '0'
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+      $queries[] = "INSERT INTO `$tLayers` (`id`, `name`, `url`, `priority`) VALUES
+                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
+                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
+                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
+                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
+                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
+                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
+
       break;
 
     case "pgsql":
       $queries[] = "DROP TABLE IF EXISTS $tPositions";
       $queries[] = "DROP TABLE IF EXISTS $tTracks";
       $queries[] = "DROP TABLE IF EXISTS $tUsers";
+      $queries[] = "DROP TABLE IF EXISTS $tConfig";
+      $queries[] = "DROP TABLE IF EXISTS $tLayers";
 
       $queries[] = "CREATE TABLE $tUsers (
-                      id SERIAL PRIMARY KEY,
-                      login VARCHAR(15) NOT NULL UNIQUE,
-                      password VARCHAR(255) NOT NULL DEFAULT '',
-                      admin BOOLEAN NOT NULL DEFAULT FALSE
+                      id serial PRIMARY KEY,
+                      login varchar(15) NOT NULL UNIQUE,
+                      password varchar(255) NOT NULL DEFAULT '',
+                      admin boolean NOT NULL DEFAULT FALSE
                     )";
 
       $queries[] = "CREATE TABLE $tTracks (
-                      id SERIAL PRIMARY KEY,
-                      user_id INT NOT NULL,
-                      name VARCHAR(255) DEFAULT NULL,
-                      comment VARCHAR(1024) DEFAULT NULL,
+                      id serial PRIMARY KEY,
+                      user_id int NOT NULL,
+                      name varchar(255) DEFAULT NULL,
+                      comment varchar(1024) DEFAULT NULL,
                       FOREIGN KEY(user_id) REFERENCES $tUsers(id)
                     )";
       $queries[] = "CREATE INDEX idx_user_id ON $tTracks(user_id)";
 
       $queries[] = "CREATE TABLE $tPositions (
-                      id SERIAL PRIMARY KEY,
-                      time TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                      user_id INT NOT NULL,
-                      track_id INT NOT NULL,
-                      latitude DOUBLE PRECISION NOT NULL,
-                      longitude DOUBLE PRECISION NOT NULL,
-                      altitude DOUBLE PRECISION DEFAULT NULL,
-                      speed DOUBLE PRECISION DEFAULT NULL,
-                      bearing DOUBLE PRECISION DEFAULT NULL,
-                      accuracy INT DEFAULT NULL,
-                      provider VARCHAR(100) DEFAULT NULL,
-                      comment VARCHAR(255) DEFAULT NULL,
-                      image VARCHAR(100) DEFAULT NULL,
+                      id serial PRIMARY KEY,
+                      time timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                      user_id int NOT NULL,
+                      track_id int NOT NULL,
+                      latitude double precision NOT NULL,
+                      longitude double precision NOT NULL,
+                      altitude double precision DEFAULT NULL,
+                      speed double precision DEFAULT NULL,
+                      bearing double precision DEFAULT NULL,
+                      accuracy int DEFAULT NULL,
+                      provider varchar(100) DEFAULT NULL,
+                      comment varchar(255) DEFAULT NULL,
+                      image varchar(100) DEFAULT NULL,
                       FOREIGN KEY(user_id) REFERENCES $tUsers(id),
                       FOREIGN KEY(track_id) REFERENCES $tTracks(id)
                     )";
       $queries[] = "CREATE INDEX idx_ptrack_id ON $tPositions(track_id)";
       $queries[] = "CREATE INDEX idx_puser_id ON $tPositions(user_id)";
+
+      $queries[] = "CREATE TABLE $tConfig (
+                      map_api varchar(50) NOT NULL DEFAULT 'openlayers',
+                      latitude double precision NOT NULL DEFAULT '52.23',
+                      longitude double precision NOT NULL DEFAULT '21.01',
+                      google_key varchar(50) DEFAULT NULL,
+                      require_auth boolean NOT NULL DEFAULT TRUE,
+                      public_tracks boolean NOT NULL DEFAULT FALSE,
+                      pass_lenmin int NOT NULL DEFAULT '10',
+                      pass_strength smallint NOT NULL DEFAULT '2',
+                      interval_seconds int NOT NULL DEFAULT '10',
+                      lang varchar(10) NOT NULL DEFAULT 'en',
+                      units varchar(10) NOT NULL DEFAULT 'metric',
+                      stroke_weight int NOT NULL DEFAULT '2',
+                      stroke_color int NOT NULL DEFAULT '16711680',
+                      stroke_opacity int NOT NULL DEFAULT '100'
+                    )";
+
+      $queries[] = "INSERT INTO $tConfig DEFAULT VALUES";
+
+      $queries[] = "CREATE TABLE $tLayers (
+                      id serial PRIMARY KEY,
+                      name varchar(50) NOT NULL,
+                      url varchar(255) NOT NULL,
+                      priority int NOT NULL DEFAULT '0'
+                    )";
+
+      $queries[] = "INSERT INTO $tLayers (id, name, url, priority) VALUES
+                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
+                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
+                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
+                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
+                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
+                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
+
       break;
 
     case "sqlite":
       $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
       $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
+      $queries[] = "DROP TABLE IF EXISTS `$tConfig`";
+      $queries[] = "DROP TABLE IF EXISTS `$tLayers`";
 
       $queries[] = "CREATE TABLE `$tUsers` (
                     `id` integer PRIMARY KEY AUTOINCREMENT,
@@ -299,6 +377,41 @@ function getQueries($dbDriver) {
                   )";
       $queries[] = "CREATE INDEX `idx_ptrack_id` ON `$tPositions`(`track_id`)";
       $queries[] = "CREATE INDEX `idx_puser_id` ON `$tPositions`(`user_id`)";
+
+      $queries[] = "CREATE TABLE `$tConfig` (
+                      `map_api` varchar(50) NOT NULL DEFAULT 'openlayers',
+                      `latitude` double NOT NULL DEFAULT '52.23',
+                      `longitude` double NOT NULL DEFAULT '21.01',
+                      `google_key` varchar(50) DEFAULT NULL,
+                      `require_auth` integer NOT NULL DEFAULT 1,
+                      `public_tracks` integer NOT NULL DEFAULT 0,
+                      `pass_lenmin` integer NOT NULL DEFAULT '10',
+                      `pass_strength` integer NOT NULL DEFAULT '2',
+                      `interval_seconds` integer NOT NULL DEFAULT '10',
+                      `lang` varchar(10) NOT NULL DEFAULT 'en',
+                      `units` varchar(10) NOT NULL DEFAULT 'metric',
+                      `stroke_weight` integer NOT NULL DEFAULT '2',
+                      `stroke_color` integer NOT NULL DEFAULT '16711680',
+                      `stroke_opacity` integer NOT NULL DEFAULT '100'
+                    )";
+
+      $queries[] = "INSERT INTO `$tConfig` DEFAULT VALUES";
+
+      $queries[] = "CREATE TABLE `$tLayers` (
+                     `id` integer PRIMARY KEY AUTOINCREMENT,
+                     `name` varchar(50) NOT NULL,
+                     `url` varchar(255) NOT NULL,
+                     `priority` integer NOT NULL DEFAULT '0'
+                    )";
+
+      $queries[] = "INSERT INTO `$tLayers` (`id`, `name`, `url`, `priority`) VALUES
+                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
+                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
+                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
+                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
+                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
+                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
+
       break;
 
     default:

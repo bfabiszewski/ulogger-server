@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uLayer from './layer.js';
 import uObserve from './observe.js';
 
 /**
@@ -25,7 +26,7 @@ import uObserve from './observe.js';
  * @property {string} units
  * @property {string} mapApi
  * @property {?string} gkey
- * @property {Object<string, string>} olLayers
+ * @property {uLayer[]} olLayers
  * @property {number} initLatitude
  * @property {number} initLongitude
  * @property {RegExp} passRegex
@@ -51,7 +52,7 @@ export default class uConfig {
     this.lang = 'en';
     this.mapApi = 'openlayers';
     this.gkey = null;
-    this.olLayers = {};
+    this.olLayers = [];
     this.initLatitude = 52.23;
     this.initLongitude = 21.01;
     this.passRegex = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{12,})');
@@ -94,19 +95,29 @@ export default class uConfig {
   }
 
   /**
+   * @param {Array} layers
+   */
+  loadLayers(layers) {
+    for (const layer of layers) {
+      this.olLayers.push(new uLayer(layer.id, layer.name, layer.url, layer.priority));
+    }
+  }
+
+  /**
    * Load config values from data object
    * @param {Object} data
    */
   load(data) {
     if (data) {
       for (const property in data) {
-        if (data.hasOwnProperty(property) && this.hasOwnProperty(property)) {
+        if (property === 'olLayers') {
+          this.loadLayers(data[property]);
+        } else if (property === 'passRegex') {
+          const re = data[property];
+          this[property] = new RegExp(re.substr(1, re.length - 2));
+        } else if (data.hasOwnProperty(property) && this.hasOwnProperty(property)) {
           this[property] = data[property];
         }
-      }
-      if (data.passRegex) {
-        const re = data.passRegex;
-        this.passRegex = new RegExp(re.substr(1, re.length - 2));
       }
       this.initUnits();
     }

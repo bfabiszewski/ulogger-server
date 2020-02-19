@@ -38,8 +38,8 @@ class SetupTest extends UloggerAPITestCase {
     $body = (string) $response->getBody();
     $this->assertContains("<span class=\"ok\">", $body);
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
-    $expected = [ "id" => 2, "login" => $this->testUser ];
-    $actual = $this->getConnection()->createQueryTable("users", "SELECT id, login FROM users WHERE id = 2");
+    $expected = [ "id" => 2, "login" => $this->testUser, "admin" => 1 ];
+    $actual = $this->getConnection()->createQueryTable("users", "SELECT id, login, admin FROM users WHERE id = 2");
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
     $this->assertTrue(password_verify($this->testPass, $this->pdoGetColumn("SELECT password FROM users WHERE id = 2")), "Wrong actual password hash");
   }

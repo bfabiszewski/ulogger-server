@@ -30,7 +30,7 @@ $last = uUtils::getBool('last');
 
 $positionsArr = [];
 if ($userId) {
-  if (uConfig::$public_tracks ||
+  if (uConfig::$publicTracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     if ($trackId) {
       // get all track data
@@ -44,7 +44,7 @@ if ($userId) {
     }
   }
 } else if ($last) {
-  if (uConfig::$public_tracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
+  if (uConfig::$publicTracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
     $positionsArr = uPosition::getLastAllUsers();
   }
 }
