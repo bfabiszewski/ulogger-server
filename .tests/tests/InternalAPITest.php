@@ -666,7 +666,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackDeleteOtherUser() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -728,7 +728,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackUpdateEmptyName() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -752,7 +752,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackUpdateNonexistantTrack() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $newName = "New name";
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -776,7 +776,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleTrackMissingAction() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -794,7 +794,7 @@ class InternalAPITest extends UloggerAPITestCase {
   /* handleuser.php */
 
   public function testHandleUserMissingAction() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -809,7 +809,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserNonAdmin() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -829,7 +829,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserSelf() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -847,7 +847,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserEmptyLogin() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -865,7 +865,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserNoAuth() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -908,7 +908,7 @@ class InternalAPITest extends UloggerAPITestCase {
   }
 
   public function testHandleUserAddSameLogin() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");

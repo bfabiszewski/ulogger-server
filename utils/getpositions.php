@@ -18,10 +18,12 @@
  */
 
 require_once(dirname(__DIR__) . "/helpers/auth.php");
+require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/position.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
 
 $auth = new uAuth();
+$config = uConfig::getInstance();
 
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
@@ -30,7 +32,7 @@ $last = uUtils::getBool('last');
 
 $positionsArr = [];
 if ($userId) {
-  if (uConfig::$publicTracks ||
+  if ($config->publicTracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     if ($trackId) {
       // get all track data
@@ -44,7 +46,7 @@ if ($userId) {
     }
   }
 } else if ($last) {
-  if (uConfig::$publicTracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
+  if ($config->publicTracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
     $positionsArr = uPosition::getLastAllUsers();
   }
 }

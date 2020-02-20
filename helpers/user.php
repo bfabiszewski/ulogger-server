@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-  require_once(ROOT_DIR . "/helpers/config.php");
   require_once(ROOT_DIR . "/helpers/db.php");
   require_once(ROOT_DIR . "/helpers/track.php");
   require_once(ROOT_DIR . "/helpers/position.php");
@@ -75,7 +74,7 @@
      */
     public static function add($login, $pass, $isAdmin = false) {
       $userid = false;
-      if (!empty($login) && !empty($pass) && self::validPassStrength($pass)) {
+      if (!empty($login) && !empty($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $table = self::db()->table('users');
         try {
@@ -152,7 +151,7 @@
     */
     public function setPass($pass) {
       $ret = false;
-      if (!empty($this->login) && !empty($pass) && self::validPassStrength($pass)) {
+      if (!empty($this->login) && !empty($pass)) {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         try {
           $query = "UPDATE " . self::db()->table('users') . " SET password = ? WHERE login = ?";
@@ -179,16 +178,6 @@
     }
 
    /**
-    * Check if given password matches user's one
-    *
-    * @param String $password Password
-    * @return bool True if matches, false otherwise
-    */
-    private static function validPassStrength($password) {
-      return preg_match(uConfig::passRegex(), $password);
-    }
-
-   /**
     * Store uUser object in session
     */
     public function storeInSession() {
@@ -199,16 +188,17 @@
     * Fill uUser object properties from session data
     * @return uUser
     */
-    public function getFromSession() {
+    public static function getFromSession() {
+      $user = new uUser();
       if (isset($_SESSION['user'])) {
         $sessionUser = $_SESSION['user'];
-        $this->id = $sessionUser->id;
-        $this->login = $sessionUser->login;
-        $this->hash = $sessionUser->hash;
-        $this->isAdmin = $sessionUser->isAdmin;
-        $this->isValid = $sessionUser->isValid;
+        $user->id = $sessionUser->id;
+        $user->login = $sessionUser->login;
+        $user->hash = $sessionUser->hash;
+        $user->isAdmin = $sessionUser->isAdmin;
+        $user->isValid = $sessionUser->isValid;
       }
-      return $this;
+      return $user;
     }
 
    /**

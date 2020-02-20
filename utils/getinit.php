@@ -22,7 +22,8 @@ require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/lang.php");
 
 $auth = new uAuth();
-$langStrings = (new uLang(uConfig::$lang))->getStrings();
+$config = uConfig::getInstance();
+$langStrings = (new uLang($config))->getStrings();
 
 $result = [];
 $resultAuth = [
@@ -35,20 +36,20 @@ if ($auth->isAuthenticated()) {
 }
 
 $resultConfig = [
-  "interval" => uConfig::$interval,
-  "units" => uConfig::$units,
-  "lang" => uConfig::$lang,
-  "mapApi" => uConfig::$mapApi,
-  "gkey" => uConfig::$googleKey,
-  "initLatitude" => uConfig::$initLatitude,
-  "initLongitude" => uConfig::$initLongitude,
-  "passRegex" => uConfig::passRegex(),
-  "strokeWeight" => uConfig::$strokeWeight,
-  "strokeColor" => uConfig::$strokeColor,
-  "strokeOpacity" => uConfig::$strokeOpacity,
+  "interval" => $config->interval,
+  "units" => $config->units,
+  "lang" => $config->lang,
+  "mapApi" => $config->mapApi,
+  "gkey" => $config->googleKey,
+  "initLatitude" => $config->initLatitude,
+  "initLongitude" => $config->initLongitude,
+  "passRegex" => $config->passRegex(),
+  "strokeWeight" => $config->strokeWeight,
+  "strokeColor" => $config->strokeColor,
+  "strokeOpacity" => $config->strokeOpacity,
   "olLayers" => []
 ];
-foreach (uConfig::$olLayers as $key => $val) {
+foreach ($config->olLayers as $key => $val) {
   $resultConfig["olLayers"][$key] = $val;
 }
 

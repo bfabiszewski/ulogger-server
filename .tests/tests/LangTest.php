@@ -1,10 +1,19 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
+if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
+
 require_once(__DIR__ . "/../../helpers/config.php");
 require_once(__DIR__ . "/../../helpers/lang.php");
 
 class LangTest extends TestCase {
+
+  protected $mockConfig;
+
+  public function setUp() {
+    parent::setUp();
+    $this->mockConfig = new uConfig(false);
+  }
 
   public function testGetLanguages() {
     $languages = uLang::getLanguages();
@@ -16,16 +25,18 @@ class LangTest extends TestCase {
   }
 
   public function testGetStrings() {
-    $lang = new uLang("en");
+    $lang = new uLang($this->mockConfig);
     $this->assertEquals("User", $lang->getStrings()["user"]);
-    $lang = new uLang("pl");
+    $this->mockConfig->lang = "pl";
+    $lang = new uLang($this->mockConfig);
     $this->assertEquals("Użytkownik", $lang->getStrings()["user"]);
   }
 
   public function testGetSetupStrings() {
-    $lang = new uLang("en");
+    $lang = new uLang($this->mockConfig);
     $this->assertEquals("Congratulations!", $lang->getSetupStrings()["congratulations"]);
-    $lang = new uLang("pl");
+    $this->mockConfig->lang = "pl";
+    $lang = new uLang($this->mockConfig);
     $this->assertEquals("Gratulacje!", $lang->getSetupStrings()["congratulations"]);
   }
 }

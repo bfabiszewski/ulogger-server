@@ -19,12 +19,14 @@
  */
 
 require_once(dirname(__DIR__) . "/helpers/auth.php");
+require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 
 $auth = new uAuth();
+$config = uConfig::getInstance();
 
 $usersArr = [];
-if (uConfig::$publicTracks || $auth->isAdmin()) {
+if ($config->publicTracks || $auth->isAdmin()) {
   $usersArr = uUser::getAll();
 } else if ($auth->isAuthenticated()) {
   $usersArr = [ $auth->user ];

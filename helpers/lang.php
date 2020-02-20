@@ -61,9 +61,10 @@
     /**
      * Constructor
      *
-     * @param string $language Language code (IANA)
+     * @param uConfig $config Config
      */
-    public function __construct($language = "en") {
+    public function __construct($config) {
+      $language = $config->lang;
       $lang = [];
       $langSetup = [];
       // always load en base
@@ -76,9 +77,9 @@
       }
 
       // choose password messages based on config
-      $passRules = "passrules_" . uConfig::$passStrength;
+      $passRules = "passrules_" . $config->passStrength;
       $lang['passrules'] = isset($lang[$passRules]) ? $lang[$passRules] : "";
-      $lang['passlenmin'] = sprintf($lang["passlenmin"], uConfig::$passLenMin);
+      $lang['passlenmin'] = sprintf($lang["passlenmin"], $config->passLenMin);
       $this->strings = $lang;
       $this->setupStrings = $langSetup;
     }

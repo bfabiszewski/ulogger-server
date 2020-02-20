@@ -17,63 +17,64 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(dirname(__DIR__) . "/helpers/auth.php");
-  require_once(ROOT_DIR . "/helpers/lang.php");
-  require_once(ROOT_DIR . "/helpers/config.php");
-  require_once(ROOT_DIR . "/helpers/utils.php");
+require_once(dirname(__DIR__) . "/helpers/auth.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
+require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
 
-  $auth = new uAuth();
+$auth = new uAuth();
+$config = uConfig::getInstance();
 
-  $action = uUtils::postString('action');
-  $login = uUtils::postString('login');
-  $pass = uUtils::postPass('pass');
-  $admin = uUtils::postBool('admin', false);
+$action = uUtils::postString('action');
+$login = uUtils::postString('login');
+$pass = uUtils::postPass('pass');
+$admin = uUtils::postBool('admin', false);
 
-  $lang = (new uLang(uConfig::$lang))->getStrings();
+$lang = (new uLang($config))->getStrings();
 
-  if (!$auth->isAuthenticated() || !$auth->isAdmin() || $auth->user->login === $login || empty($action) || empty($login)) {
-    uUtils::exitWithError($lang["servererror"]);
-  }
+if ($auth->user->login === $login || empty($action) || empty($login) || !$auth->isAuthenticated() || !$auth->isAdmin()) {
+  uUtils::exitWithError($lang["servererror"]);
+}
 
-  if ($admin && !$auth->isAdmin()) {
-    uUtils::exitWithError($lang["notauthorized"]);
-  }
+if ($admin && !$auth->isAdmin()) {
+  uUtils::exitWithError($lang["notauthorized"]);
+}
 
-  $aUser = new uUser($login);
-  $data = NULL;
+$aUser = new uUser($login);
+$data = NULL;
 
-  switch ($action) {
-    case 'add':
-      if ($aUser->isValid) {
-        uUtils::exitWithError($lang["userexists"]);
-      }
-      if (empty($pass) || ($userId = uUser::add($login, $pass, $admin)) === false) {
-        uUtils::exitWithError($lang["servererror"]);
-      } else {
-        $data = [ 'id' => $userId ];
-      }
-      break;
-
-    case 'update':
-      if ($aUser->setAdmin($admin) === false) {
-        uUtils::exitWithError($lang["servererror"]);
-      }
-      if (!empty($pass) && $aUser->setPass($pass) === false) {
-        uUtils::exitWithError($lang["servererror"]);
-      }
-      break;
-
-    case 'delete':
-      if ($aUser->delete() === false) {
-        uUtils::exitWithError($lang["servererror"]);
-      }
-      break;
-
-    default:
+switch ($action) {
+  case 'add':
+    if ($aUser->isValid) {
+      uUtils::exitWithError($lang["userexists"]);
+    }
+    if (empty($pass) || !$config->validPassStrength($pass) || ($userId = uUser::add($login, $pass, $admin)) === false) {
       uUtils::exitWithError($lang["servererror"]);
-      break;
-  }
+    } else {
+      $data = [ 'id' => $userId ];
+    }
+    break;
 
-  uUtils::exitWithSuccess($data);
+  case 'update':
+    if ($aUser->setAdmin($admin) === false) {
+      uUtils::exitWithError($lang["servererror"]);
+    }
+    if (!empty($pass) && (!$config->validPassStrength($pass) || $aUser->setPass($pass) === false)) {
+      uUtils::exitWithError($lang["servererror"]);
+    }
+    break;
+
+  case 'delete':
+    if ($aUser->delete() === false) {
+      uUtils::exitWithError($lang["servererror"]);
+    }
+    break;
+
+  default:
+    uUtils::exitWithError($lang["servererror"]);
+    break;
+}
+
+uUtils::exitWithSuccess($data);
 
 ?>

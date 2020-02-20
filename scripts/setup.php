@@ -30,6 +30,21 @@ if (version_compare(PHP_VERSION, "5.5.0", "<")) {
 }
 
 define("ROOT_DIR", dirname(__DIR__));
+$dbConfig = ROOT_DIR . "/config.php";
+$dbConfigLoaded = false;
+$configDSN = "";
+$configUser = "";
+$configPass = "";
+$configPrefix = "";
+if (file_exists($dbConfig)) {
+  /** @noinspection PhpIncludeInspection */
+  include($dbConfig);
+  $dbConfigLoaded = true;
+  if (isset($dbdsn)) { $configDSN = $dbdsn; }
+  if (isset($dbuser)) { $configUser = $dbuser; }
+  if (isset($dbpass)) { $configPass = $dbpass; }
+  if (isset($dbprefix)) { $configPrefix = $dbprefix; }
+}
 require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/lang.php");
@@ -37,11 +52,14 @@ require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
 
 $command = uUtils::postString("command");
+$language = uUtils::getString("lang", "en");
 
-$lang = (new uLang(uConfig::$lang))->getStrings();
-$langSetup = (new uLang(uConfig::$lang))->getSetupStrings();
+$config = uConfig::getOfflineInstance();
+$config->lang = $language;
+$lang = (new uLang($config))->getStrings();
+$langSetup = (new uLang($config))->getSetupStrings();
 
-$prefix = preg_replace("/[^a-z0-9_]/i", "", uConfig::$dbprefix);
+$prefix = preg_replace("/[^a-z0-9_]/i", "", $configPrefix);
 $tPositions = $prefix . "positions";
 $tTracks = $prefix . "tracks";
 $tUsers = $prefix . "users";
@@ -79,7 +97,7 @@ switch ($command) {
     if (!$error) {
       $messages[] = "<span class=\"ok\">{$langSetup["dbtablessuccess"]}</span>";
       $messages[] = $langSetup["setupuser"];
-      $form = "<form id=\"userForm\" method=\"post\" action=\"setup.php\" onsubmit=\"return validateForm()\"><input type=\"hidden\" name=\"command\" value=\"adduser\">";
+      $form = "<form id=\"userForm\" method=\"post\" action=\"setup.php?lang=$language\" onsubmit=\"return validateForm()\"><input type=\"hidden\" name=\"command\" value=\"adduser\">";
       $form .= "<label><b>{$lang["username"]}</b></label><input type=\"text\" placeholder=\"{$lang["usernameenter"]}\" name=\"login\" required>";
       $form .= "<label><b>{$lang["password"]}</b></label><input type=\"password\" placeholder=\"{$lang["passwordenter"]}\" name=\"pass\" required>";
       $form .= "<label><b>{$lang["passwordrepeat"]}</b></label><input type=\"password\" placeholder=\"{$lang["passwordenter"]}\" name=\"pass2\" required>";
@@ -90,6 +108,7 @@ switch ($command) {
     break;
 
   case "adduser":
+    $config->save();
     $login = uUtils::postString("login");
     $pass = uUtils::postPass("pass");
 
@@ -104,43 +123,54 @@ switch ($command) {
     break;
 
   default:
+    $langsArr = uLang::getLanguages();
+    $langsOpts = "";
+    foreach ($langsArr as $langCode => $langName) {
+      $langsOpts .= "<option value=\"$langCode\"" . ($config->lang === $langCode ? " selected" : "") . ">$langName</option>";
+    }
+    $messages[] = "<div id=\"language\">
+      <label for=\"lang\">{$lang['language']}</label>
+      <select id=\"lang\" name=\"lang\" onchange=\"return changeLang(this)\">
+        $langsOpts
+      </select>
+    </div>";
     $messages[] = "<img src=\"../icons/favicon-32x32.png\" alt=\"µLogger\">" . $langSetup["welcome"];
     if (!isset($enabled) || $enabled === false) {
       $messages[] = sprintf($langSetup["disabledwarn"], "<b>\$enabled</b>", "<b>true</b>");
       $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (!uConfig::isFileLoaded()) {
+    if (!$dbConfigLoaded) {
       $messages[] = $langSetup["createconfig"];
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
     if (ini_get("session.auto_start") === "1") {
       $messages[] = sprintf($langSetup["optionwarn"], "session.auto_start", "0 (off)");
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
     if (!extension_loaded("pdo")) {
       $messages[] = sprintf($langSetup["extensionwarn"], "PDO");
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
-    if (empty(uConfig::$dbdsn)) {
+    if (empty($configDSN)) {
       $messages[] = sprintf($langSetup["nodbsettings"], "\$dbdsn");
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
     try {
       $pdo = getPdo();
     } catch (PDOException $e) {
-      $isSqlite = stripos(uConfig::$dbdsn, "sqlite") === 0;
-      if (!$isSqlite && empty(uConfig::$dbuser)) {
+      $isSqlite = stripos($configDSN, "sqlite") === 0;
+      if (!$isSqlite && empty($configUser)) {
         $messages[] = sprintf($langSetup["nodbsettings"], "\$dbuser, \$dbpass");
       } else {
         $messages[] = $langSetup["dbconnectfailed"];
@@ -148,15 +178,15 @@ switch ($command) {
         $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
       }
       $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
     $pdo = null;
-    $dbName = uDb::getDbName(uConfig::$dbdsn);
+    $dbName = uDb::getDbName($configDSN);
     $dbName = empty($dbName) ? '""' : "<b>" . htmlentities($dbName) . "</b>";
     $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", $dbName);
     $messages[] = $langSetup["scriptdesc2"];
-    $messages[] = "<form method=\"post\" action=\"setup.php\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
+    $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;
 }
 
@@ -417,14 +447,15 @@ function getQueries($dbDriver) {
  * @throws PDOException
  */
 function getPdo() {
-  $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-  return new PDO(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass, $options);
+  global $configDSN, $configUser, $configPass;
+  $options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ];
+  return new PDO($configDSN, $configUser, $configPass, $options);
 }
 
 ?>
 
 <!DOCTYPE html>
-<html lang="<?= uConfig::$lang ?>">
+<html lang="<?= $language ?>">
 <head>
   <title><?= $lang["title"] ?></title>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -455,6 +486,14 @@ function getPdo() {
       -webkit-border-radius: 5px;
     }
 
+    #language {
+      text-align: right;
+    }
+
+    #language label {
+      font-size: small;
+    }
+
     .warn {
       color: #ffc747;
     }
@@ -466,7 +505,6 @@ function getPdo() {
   <!--suppress ES6ConvertVarToLetConst -->
   <script>
     var lang = <?= json_encode($lang) ?>;
-    var pass_regex = <?= uConfig::passRegex() ?>;
 
     function validateForm() {
       var form = document.getElementById('userForm');
@@ -481,11 +519,12 @@ function getPdo() {
         alert(lang['passnotmatch']);
         return false;
       }
-      if (!pass_regex.test(pass)) {
-        alert(lang['passlenmin'] + '\n' + lang['passrules']);
-        return false;
-      }
       return true;
+    }
+
+    function changeLang(el) {
+      window.location = '?lang=' + el.value;
+      return false;
     }
   </script>
 </head>

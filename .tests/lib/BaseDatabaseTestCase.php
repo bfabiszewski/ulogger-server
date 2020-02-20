@@ -1,6 +1,7 @@
 <?php
 
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
+require_once(__DIR__ . "/../../helpers/config.php");
 
 abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase {
 
@@ -13,6 +14,8 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    */
   private $conn;
   static private $driver = "mysql";
+
+  protected $mockConfig;
 
   protected $testUser = "testUser";
   protected $testUser2 = "testUser2";
@@ -44,6 +47,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 
   public function setUp() {
     parent::setUp();
+    $this->mockConfig = new uConfig(false);
   }
 
   public static function setUpBeforeClass() {

@@ -23,11 +23,12 @@
 
   $auth_error = uUtils::getBool('auth_error', false);
 
-  $lang = (new uLang(uConfig::$lang))->getStrings();
+  $config = uConfig::getInstance();
+  $lang = (new uLang($config))->getStrings();
 
 ?>
 <!DOCTYPE html>
-<html lang="<?= uConfig::$lang ?>">
+<html lang="<?= $config->lang ?>">
   <head>
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
@@ -49,7 +50,7 @@
         <br>
         <input type="submit" value="<?= $lang["login"] ?>">
         <input type="hidden" name="action" value="auth">
-        <?php if (!uConfig::$requireAuthentication): ?>
+        <?php if (!$config->requireAuthentication): ?>
           <div id="cancel"><a href="<?= BASE_URL ?>"><?= $lang["cancel"] ?></a></div>
         <?php endif; ?>
       </form>

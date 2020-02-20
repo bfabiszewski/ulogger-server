@@ -17,44 +17,49 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(dirname(__DIR__) . "/helpers/auth.php");
-  require_once(ROOT_DIR . "/helpers/utils.php");
+require_once(dirname(__DIR__) . "/helpers/auth.php");
+require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
 
-  $auth = new uAuth();
-  if (!$auth->isAuthenticated()) {
-    $auth->sendUnauthorizedHeader();
-    uUtils::exitWithError("Unauthorized");
-  }
+$auth = new uAuth();
+$config = uConfig::getInstance();
+if (!$auth->isAuthenticated()) {
+  $auth->sendUnauthorizedHeader();
+  uUtils::exitWithError("Unauthorized");
+}
 
-  $login = uUtils::postString('login');
-  $oldpass = uUtils::postPass('oldpass');
-  $pass = uUtils::postPass('pass');
-  // FIXME: strings need to be localized
-  if (empty($pass)) {
-    uUtils::exitWithError("Empty password");
+$login = uUtils::postString('login');
+$oldpass = uUtils::postPass('oldpass');
+$pass = uUtils::postPass('pass');
+// FIXME: strings need to be localized
+if (empty($pass)) {
+  uUtils::exitWithError("Empty password");
+}
+if (!$config->validPassStrength($pass)) {
+  uUtils::exitWithError("Invalid password strength");
+}
+if (empty($login)) {
+  uUtils::exitWithError("Empty login");
+}
+if ($auth->user->login === $login) {
+  // current user
+  $passUser = $auth->user;
+  if (!$passUser->validPassword($oldpass)) {
+    uUtils::exitWithError("Wrong old password");
   }
-  if (empty($login)) {
-    uUtils::exitWithError("Empty login");
+} else if ($auth->isAdmin()) {
+  // different user, only admin
+  $passUser = new uUser($login);
+  if (!$passUser->isValid) {
+    uUtils::exitWithError("User unknown");
   }
-  if ($auth->user->login === $login) {
-    // current user
-    $passUser = $auth->user;
-    if (!$passUser->validPassword($oldpass)) {
-      uUtils::exitWithError("Wrong old password");
-    }
-  } else if ($auth->isAdmin()) {
-    // different user, only admin
-    $passUser = new uUser($login);
-    if (!$passUser->isValid) {
-      uUtils::exitWithError("User unknown");
-    }
-  } else {
-    uUtils::exitWithError("Unauthorized");
-  }
-  if ($passUser->setPass($pass) === false) {
-    uUtils::exitWithError("Server error");
-  }
-  $auth->updateSession();
-  uUtils::exitWithSuccess();
+} else {
+  uUtils::exitWithError("Unauthorized");
+}
+if ($passUser->setPass($pass) === false) {
+  uUtils::exitWithError("Server error");
+}
+$auth->updateSession();
+uUtils::exitWithSuccess();
 
 ?>

@@ -6,6 +6,8 @@ require_once(__DIR__ . "/../lib/UloggerDatabaseTestCase.php");
 
 class ConfigTest extends UloggerDatabaseTestCase {
   
+  private $config;
+  
   private $mapApi;
   private $latitude;
   private $longitude;
@@ -26,6 +28,7 @@ class ConfigTest extends UloggerDatabaseTestCase {
 
   public function setUp() {
     parent::setUp();
+    $this->config = uConfig::getInstance();
     $this->initConfigValues();
   }
 
@@ -60,25 +63,75 @@ class ConfigTest extends UloggerDatabaseTestCase {
   }
 
   public function testSetFromDatabase() {
-    uConfig::setFromDatabase();
-    $this->assertEquals($this->mapApi, uConfig::$mapApi);
-    $this->assertEquals($this->latitude, uConfig::$initLatitude);
-    $this->assertEquals($this->longitude, uConfig::$initLongitude);
-    $this->assertEquals($this->googleKey, uConfig::$googleKey);
-    $this->assertEquals($this->requireAuth, uConfig::$requireAuthentication);
-    $this->assertEquals($this->publicTracks, uConfig::$publicTracks);
-    $this->assertEquals($this->passLenMin, uConfig::$passLenMin);
-    $this->assertEquals($this->passStrength, uConfig::$passStrength);
-    $this->assertEquals($this->interval, uConfig::$interval);
-    $this->assertEquals($this->lang, uConfig::$lang);
-    $this->assertEquals($this->units, uConfig::$units);
-    $this->assertEquals($this->strokeWeight, uConfig::$strokeWeight);
-    $this->assertEquals($this->strokeColor, uConfig::$strokeColor);
-    $this->assertEquals($this->strokeOpacity, uConfig::$strokeOpacity);
+    $this->assertEquals($this->mapApi, $this->config->mapApi);
+    $this->assertEquals($this->latitude, $this->config->initLatitude);
+    $this->assertEquals($this->longitude, $this->config->initLongitude);
+    $this->assertEquals($this->googleKey, $this->config->googleKey);
+    $this->assertEquals($this->requireAuth, $this->config->requireAuthentication);
+    $this->assertEquals($this->publicTracks, $this->config->publicTracks);
+    $this->assertEquals($this->passLenMin, $this->config->passLenMin);
+    $this->assertEquals($this->passStrength, $this->config->passStrength);
+    $this->assertEquals($this->interval, $this->config->interval);
+    $this->assertEquals($this->lang, $this->config->lang);
+    $this->assertEquals($this->units, $this->config->units);
+    $this->assertEquals($this->strokeWeight, $this->config->strokeWeight);
+    $this->assertEquals($this->strokeColor, $this->config->strokeColor);
+    $this->assertEquals($this->strokeOpacity, $this->config->strokeOpacity);
 
-    $this->assertEquals($this->testLayer, uConfig::$olLayers[0]->name);
-    $this->assertEquals($this->testUrl, uConfig::$olLayers[0]->url);
-    $this->assertEquals($this->testPriority, uConfig::$olLayers[0]->priority);
+    $this->assertEquals($this->testLayer, $this->config->olLayers[0]->name);
+    $this->assertEquals($this->testUrl, $this->config->olLayers[0]->url);
+    $this->assertEquals($this->testPriority, $this->config->olLayers[0]->priority);
+  }
+
+  public function testSave() {
+    $this->config->mapApi = 'newApi';
+    $this->config->initLatitude = 33.11;
+    $this->config->initLongitude = 22.11;
+    $this->config->googleKey = 'newKey';
+    $this->config->requireAuthentication = false;
+    $this->config->publicTracks = false;
+    $this->config->passLenMin = 31;
+    $this->config->passStrength = 31;
+    $this->config->interval = 661;
+    $this->config->lang = 'newLang';
+    $this->config->units = 'newUnits';
+    $this->config->strokeWeight = 551;
+    $this->config->strokeColor = '#bfbfbf';
+    $this->config->strokeOpacity = 0.11;
+    $this->config->olLayers = [];
+    $this->config->olLayers[0] = new uLayer(11, 'newLayer', 'newUrl', 51);
+
+    $this->config->save();
+
+    $this->assertEquals(1, $this->getConnection()->getRowCount('config'), "Wrong row count");
+    $expected = [
+      "map_api" => $this->config->mapApi,
+      "latitude" => $this->config->initLatitude,
+      "longitude" => $this->config->initLongitude,
+      "google_key" => $this->config->googleKey,
+      "require_auth" => $this->config->requireAuthentication,
+      "public_tracks" => $this->config->publicTracks,
+      "pass_lenmin" => $this->config->passLenMin,
+      "pass_strength" => $this->config->passStrength,
+      "interval_seconds" => $this->config->interval,
+      "lang" => $this->config->lang,
+      "units" => $this->config->units,
+      "stroke_weight" => $this->config->strokeWeight,
+      "stroke_color" => hexdec(str_replace('#', '', $this->config->strokeColor)),
+      "stroke_opacity" => (int) ($this->config->strokeOpacity * 100)
+    ];
+    $actual = $this->getConnection()->createQueryTable("config", "SELECT * FROM config");
+    $this->assertTableContains($expected, $actual, "Wrong actual table data: " . implode(', ', $actual->getRow(0)));
+
+    $this->assertEquals(1, $this->getConnection()->getRowCount('ol_layers'), "Wrong row count");
+    $expected = [
+      "id" => $this->config->olLayers[0]->id,
+      "name" => $this->config->olLayers[0]->name,
+      "url" => $this->config->olLayers[0]->url,
+      "priority" => $this->config->olLayers[0]->priority
+    ];
+    $actual = $this->getConnection()->createQueryTable("ol_layers", "SELECT * FROM ol_layers");
+    $this->assertTableContains($expected, $actual, "Wrong actual table data: " . implode(', ', $actual->getRow(0)));
   }
 
   private function initConfigValues() {
@@ -102,35 +155,35 @@ class ConfigTest extends UloggerDatabaseTestCase {
   }
 
   public function testPassRegex() {
-    uConfig::$passLenMin = 0;
-    uConfig::$passStrength = 0;
+    $this->config->passLenMin = 0;
+    $this->config->passStrength = 0;
     $password0 = "password";
     $password1 = "PASSword";
     $password2 = "PASSword1234";
     $password3 = "PASSword1234-;";
 
-    $regex = uConfig::passRegex();
+    $regex = $this->config->passRegex();
     $this->assertRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
     $this->assertRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
     $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
     $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
-    uConfig::$passStrength = 1;
-    $regex = uConfig::passRegex();
+    $this->config->passStrength = 1;
+    $regex = $this->config->passRegex();
     $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
     $this->assertRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
     $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
     $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
-    uConfig::$passStrength = 2;
-    $regex = uConfig::passRegex();
+    $this->config->passStrength = 2;
+    $regex = $this->config->passRegex();
     $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
     $this->assertNotRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
     $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
     $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
-    uConfig::$passStrength = 3;
-    $regex = uConfig::passRegex();
+    $this->config->passStrength = 3;
+    $regex = $this->config->passRegex();
     $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
     $this->assertNotRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
     $this->assertNotRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
@@ -138,19 +191,19 @@ class ConfigTest extends UloggerDatabaseTestCase {
 
     $password_len5 = "12345";
     $password_len10 = "1234567890";
-    uConfig::$passLenMin = 5;
-    uConfig::$passStrength = 0;
-    $regex = uConfig::passRegex();
+    $this->config->passLenMin = 5;
+    $this->config->passStrength = 0;
+    $regex = $this->config->passRegex();
     $this->assertRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
     $this->assertRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
 
-    uConfig::$passLenMin = 7;
-    $regex = uConfig::passRegex();
+    $this->config->passLenMin = 7;
+    $regex = $this->config->passRegex();
     $this->assertNotRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
     $this->assertRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
 
-    uConfig::$passLenMin = 12;
-    $regex = uConfig::passRegex();
+    $this->config->passLenMin = 12;
+    $regex = $this->config->passRegex();
     $this->assertNotRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
     $this->assertNotRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
   }

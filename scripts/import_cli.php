@@ -33,7 +33,7 @@ if (file_exists(ROOT_DIR . '/vendor/autoload.php')) {
 }
 
 // check we are running in CLI mode
-if (PHP_SAPI != 'cli') {
+if (PHP_SAPI !== 'cli') {
   exit('Call me on CLI only!' . PHP_EOL);
 }
 
@@ -90,7 +90,9 @@ if (!$getopt->getOption('import-existing-track')) {
 $gpxFiles = $getopt->getOperand('gpx');
 foreach ($gpxFiles as $i => $gpxFile) {
   // skip last track?
-  if ($getopt->getOption('skip-last-track') && $i === count($gpxFiles) - 1) continue;
+  if ($getopt->getOption('skip-last-track') && $i === count($gpxFiles) - 1) {
+    continue;
+  }
 
   $gpxName = basename($gpxFile);
 
@@ -105,7 +107,8 @@ foreach ($gpxFiles as $i => $gpxFile) {
 
   print('importing ' . $gpxFile.'...' . PHP_EOL);
 
-  $lang = (new uLang(uConfig::$lang))->getStrings();
+  $config = uConfig::getInstance();
+  $lang = (new uLang($config))->getStrings();
 
   $gpx = false;
   libxml_use_internal_errors(true);
@@ -125,8 +128,8 @@ foreach ($gpxFiles as $i => $gpxFile) {
     }
     uUtils::exitWithError($message);
   }
-  else if ($gpx->getName() != "gpx") {
-      uUtils::exitWithError($lang["iparsefailure"]);
+  else if ($gpx->getName() !== "gpx") {
+    uUtils::exitWithError($lang["iparsefailure"]);
   }
   else if (empty($gpx->trk)) {
     uUtils::exitWithError($lang["idatafailure"]);
@@ -165,8 +168,8 @@ foreach ($gpxFiles as $i => $gpxFile) {
           if (count($ext->provider)) { $provider = (string) $ext->provider; }
         }
         $ret = $track->addPosition($userId,
-                      $time, (double) $point["lat"], (double) $point["lon"], $altitude,
-                      $speed, $bearing, $accuracy, $provider, NULL, NULL);
+          $time, (double) $point["lat"], (double) $point["lon"], $altitude,
+          $speed, $bearing, $accuracy, $provider, NULL, NULL);
         if ($ret === false) {
           $track->delete();
           uUtils::exitWithError($lang["servererror"]);

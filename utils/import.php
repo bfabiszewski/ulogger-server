@@ -26,7 +26,8 @@ require_once(ROOT_DIR . "/helpers/lang.php");
 
 $auth = new uAuth();
 
-$lang = (new uLang(uConfig::$lang))->getStrings();
+$config = uConfig::getInstance();
+$lang = (new uLang($config))->getStrings();
 
 $uploadErrors = [];
 $uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";

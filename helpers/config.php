@@ -20,75 +20,60 @@
 require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/layer.php");
 
-/**
- * Initialize on file include
- */
-uConfig::init();
 
 /**
  * Handles config values
  */
 class uConfig {
   /**
+   * Singleton instance
+   *
+   * @var uConfig Object instance
+   */
+  private static $instance;
+  /**
    * @var string Version number
    */
-  public static $version = "1.0-beta";
+  public $version = "1.0-beta";
 
   /**
    * @var string Default map drawing framework
    */
-  public static $mapApi = "openlayers";
+  public $mapApi = "openlayers";
 
   /**
    * @var string|null Google maps key
    */
-  public static $googleKey;
+  public $googleKey;
 
   /**
    * @var uLayer[] Openlayers extra map layers
    */
-  public static $olLayers = [];
+  public $olLayers = [];
 
   /**
    * @var float Default latitude for initial map
    */
-  public static $initLatitude = 52.23;
+  public $initLatitude = 52.23;
   /**
    * @var float Default longitude for initial map
    */
-  public static $initLongitude = 21.01;
-
-  /**
-   * @var string Database DSN
-   */
-  public static $dbdsn = "";
-  /**
-   * @var string Database user
-   */
-  public static $dbuser = "";
-  /**
-   * @var string Database pass
-   */
-  public static $dbpass = "";
-  /**
-   * @var string Optional table names prefix, eg. "ulogger_"
-   */
-  public static $dbprefix = "";
+  public $initLongitude = 21.01;
 
   /**
    * @var bool Require login/password authentication
    */
-  public static $requireAuthentication = true;
+  public $requireAuthentication = true;
 
   /**
    * @var bool All users tracks are visible to authenticated user
    */
-  public static $publicTracks = false;
+  public $publicTracks = false;
 
   /**
    * @var int Miniumum required length of user password
    */
-  public static $passLenMin = 10;
+  public $passLenMin = 10;
 
   /**
    * @var int Required strength of user password
@@ -97,49 +82,65 @@ class uConfig {
    * 2 = require mixed case and numbers
    * 3 = require mixed case, numbers and non-alphanumeric characters
    */
-  public static $passStrength = 2;
+  public $passStrength = 2;
 
   /**
    * @var int Default interval in seconds for live auto reload
    */
-  public static $interval = 10;
+  public $interval = 10;
 
   /**
    * @var string Default language code
    */
-  public static $lang = "en";
+  public $lang = "en";
 
   /**
    * @var string Default units
    */
-  public static $units = "metric";
+  public $units = "metric";
 
   /**
    * @var int Stroke weight
    */
-  public static $strokeWeight = 2;
+  public $strokeWeight = 2;
   /**
    * @var string Stroke color
    */
-  public static $strokeColor = '#ff0000';
+  public $strokeColor = '#ff0000';
   /**
-   * @var int Stroke opacity
+   * @var float Stroke opacity
    */
-  public static $strokeOpacity = 1;
-
-  private static $fileLoaded = false;
-  private static $initialized = false;
-
-  /**
-   * Static initializer
-   */
-  public static function init() {
-    if (!self::$initialized) {
-      self::setFromFile();
-      self::setFromDatabase();
-      self::setFromCookies();
-      self::$initialized = true;
+  public $strokeOpacity = 1.0;
+  
+  public function __construct($useDatabase = true) {
+    if ($useDatabase) {
+      $this->setFromDatabase();
     }
+    $this->setFromCookies();
+  }
+
+  /**
+   * Returns singleton instance
+   *
+   * @return uConfig Singleton instance
+   */
+  public static function getInstance() {
+    if (!self::$instance) {
+      self::$instance = new self();
+    }
+    return self::$instance;
+  }
+
+  /**
+   * Returns singleton instance
+   *
+   * @return uConfig Singleton instance
+   */
+  public static function getOfflineInstance() {
+    if (!self::$instance) {
+      self::$instance = new self(false);
+    }
+    return self::$instance;
   }
 
   /**
@@ -154,7 +155,7 @@ class uConfig {
   /**
    * Read config values from database
    */
-  public static function setFromDatabase() {
+  public function setFromDatabase() {
     try {
       $query = "SELECT map_api, latitude, longitude, google_key, require_auth, public_tracks, 
                        pass_lenmin, pass_strength, interval_seconds, lang, units, 
@@ -163,30 +164,91 @@ class uConfig {
       $result = self::db()->query($query);
       $row = $result->fetch();
       if ($row) {
-        if (!empty($row['map_api'])) { self::$mapApi = $row['map_api']; }
-        if (is_numeric($row['latitude'])) { self::$initLatitude = $row['latitude']; }
-        if (is_numeric($row['longitude'])) { self::$initLongitude = $row['longitude']; }
-        if (!empty($row['google_key'])) { self::$googleKey = $row['google_key']; }
-        if (is_numeric($row['require_auth']) || is_bool($row['require_auth'])) { self::$requireAuthentication = (bool) $row['require_auth']; }
-        if (is_numeric($row['public_tracks']) || is_bool($row['public_tracks'])) { self::$publicTracks = (bool) $row['public_tracks']; }
-        if (is_numeric($row['pass_lenmin'])) { self::$passLenMin = $row['pass_lenmin']; }
-        if (is_numeric($row['pass_strength'])) { self::$passStrength = $row['pass_strength']; }
-        if (is_numeric($row['interval_seconds'])) { self::$interval = $row['interval_seconds']; }
-        if (!empty($row['lang'])) { self::$lang = $row['lang']; }
-        if (!empty($row['units'])) { self::$units = $row['units']; }
-        if (is_numeric($row['stroke_weight'])) { self::$strokeWeight = $row['stroke_weight']; }
-        if (is_numeric($row['stroke_color'])) { self::$strokeColor = self::getColorAsHex($row['stroke_color']); }
-        if (is_numeric($row['stroke_opacity'])) { self::$strokeOpacity = $row['stroke_opacity'] / 100; }
+        if (!empty($row['map_api'])) { $this->mapApi = $row['map_api']; }
+        if (is_numeric($row['latitude'])) { $this->initLatitude = (float) $row['latitude']; }
+        if (is_numeric($row['longitude'])) { $this->initLongitude = (float) $row['longitude']; }
+        if (!empty($row['google_key'])) { $this->googleKey = $row['google_key']; }
+        if (is_numeric($row['require_auth']) || is_bool($row['require_auth'])) { $this->requireAuthentication = (bool) $row['require_auth']; }
+        if (is_numeric($row['public_tracks']) || is_bool($row['public_tracks'])) { $this->publicTracks = (bool) $row['public_tracks']; }
+        if (is_numeric($row['pass_lenmin'])) { $this->passLenMin = (int) $row['pass_lenmin']; }
+        if (is_numeric($row['pass_strength'])) { $this->passStrength = (int) $row['pass_strength']; }
+        if (is_numeric($row['interval_seconds'])) { $this->interval = (int) $row['interval_seconds']; }
+        if (!empty($row['lang'])) { $this->lang = $row['lang']; }
+        if (!empty($row['units'])) { $this->units = $row['units']; }
+        if (is_numeric($row['stroke_weight'])) { $this->strokeWeight = (int) $row['stroke_weight']; }
+        if (is_numeric($row['stroke_color'])) { $this->strokeColor = self::getColorAsHex($row['stroke_color']); }
+        if (is_numeric($row['stroke_opacity'])) { $this->strokeOpacity = $row['stroke_opacity'] / 100; }
       }
-      self::setLayersFromDatabase();
-      if (!self::$requireAuthentication) {
+      $this->setLayersFromDatabase();
+      if (!$this->requireAuthentication) {
         // tracks must be public if we don't require authentication
-        self::$publicTracks = true;
+        $this->publicTracks = true;
       }
     } catch (PDOException $e) {
       // TODO: handle exception
       syslog(LOG_ERR, $e->getMessage());
-      return;
+    }
+  }
+
+  /**
+   * Save config values to database
+   * @return bool True on success, false otherwise
+   */
+  public function save() {
+    $ret = false;
+    try {
+      $query = "UPDATE " . self::db()->table('config') . "
+                SET map_api = ?, latitude = ?, longitude = ?, google_key = ?, require_auth = ?, public_tracks = ?, 
+                    pass_lenmin = ?, pass_strength = ?, interval_seconds = ?, lang = ?, units = ?, 
+                    stroke_weight = ?, stroke_color = ?, stroke_opacity = ?";
+      $stmt = self::db()->prepare($query);
+      $params = [
+        $this->mapApi,
+        $this->initLatitude,
+        $this->initLongitude,
+        $this->googleKey,
+        (int) $this->requireAuthentication,
+        (int) $this->publicTracks,
+        $this->passLenMin,
+        $this->passStrength,
+        $this->interval,
+        $this->lang,
+        $this->units,
+        $this->strokeWeight,
+        self::getColorAsInt($this->strokeColor),
+        (int) ($this->strokeOpacity * 100)
+      ];
+      $stmt->execute($params);
+      $this->saveLayers();
+      $ret = true;
+    } catch (PDOException $e) {
+      // TODO: handle exception
+      syslog(LOG_ERR, $e->getMessage());
+    }
+    return $ret;
+  }
+
+  /**
+   * Truncate ol_layers table
+   * @throws PDOException
+   */
+  private function deleteLayers() {
+    $query = "DELETE FROM " . self::db()->table('ol_layers');
+    self::db()->exec($query);
+  }
+
+  /**
+   * Save layers to database
+   * @throws PDOException
+   */
+  private function saveLayers() {
+    $this->deleteLayers();
+    if (!empty($this->olLayers)) {
+      $query = "INSERT INTO " . self::db()->table('ol_layers') . " (id, name, url, priority) VALUES (?, ?, ?, ?)";
+      $stmt = self::db()->prepare($query);
+      foreach ($this->olLayers as $layer) {
+        $stmt->execute([ $layer->id, $layer->name, $layer->url, $layer->priority]);
+      }
     }
   }
 
@@ -194,50 +256,34 @@ class uConfig {
    * Read config values from database
    * @throws PDOException
    */
-  private static function setLayersFromDatabase() {
-    self::$olLayers = [];
+  private function setLayersFromDatabase() {
+    $this->olLayers = [];
     $query = "SELECT id, name, url, priority FROM " . self::db()->table('ol_layers');
     $result = self::db()->query($query);
     while ($row = $result->fetch()) {
-      self::$olLayers[] = new uLayer($row['id'], $row['name'], $row['url'], $row['priority']);
+      $this->olLayers[] = new uLayer($row['id'], $row['name'], $row['url'], $row['priority']);
     }
-  }
-
-  /**
-   * Read config values from "/config.php" file
-   * @noinspection IssetArgumentExistenceInspection
-   * @noinspection DuplicatedCode
-   * @noinspection PhpIncludeInspection
-   */
-  private static function setFromFile() {
-    $configFile = ROOT_DIR . "/config.php";
-    if (self::$fileLoaded || !file_exists($configFile)) { return; }
-    self::$fileLoaded = true;
-    include_once($configFile);
-
-    if (isset($dbdsn)) { self::$dbdsn = $dbdsn; }
-    if (isset($dbuser)) { self::$dbuser = $dbuser; }
-    if (isset($dbpass)) { self::$dbpass = $dbpass; }
-    if (isset($dbprefix)) { self::$dbprefix = $dbprefix; }
   }
 
   /**
    * Read config values stored in cookies
    */
-  private static function setFromCookies() {
-    if (isset($_COOKIE["ulogger_api"])) { self::$mapApi = $_COOKIE["ulogger_api"]; }
-    if (isset($_COOKIE["ulogger_lang"])) { self::$lang = $_COOKIE["ulogger_lang"]; }
-    if (isset($_COOKIE["ulogger_units"])) { self::$units = $_COOKIE["ulogger_units"]; }
-    if (isset($_COOKIE["ulogger_interval"])) { self::$interval = $_COOKIE["ulogger_interval"]; }
+  private function setFromCookies() {
+    if (isset($_COOKIE["ulogger_api"])) { $this->mapApi = $_COOKIE["ulogger_api"]; }
+    if (isset($_COOKIE["ulogger_lang"])) { $this->lang = $_COOKIE["ulogger_lang"]; }
+    if (isset($_COOKIE["ulogger_units"])) { $this->units = $_COOKIE["ulogger_units"]; }
+    if (isset($_COOKIE["ulogger_interval"])) { $this->interval = $_COOKIE["ulogger_interval"]; }
   }
 
+
   /**
-   * Is config loaded from file?
+   * Check if given password matches user's one
    *
-   * @return bool True if loaded, false otherwise
+   * @param String $password Password
+   * @return bool True if matches, false otherwise
    */
-  public static function isFileLoaded() {
-    return self::$fileLoaded;
+  public function validPassStrength($password) {
+    return preg_match($this->passRegex(), $password);
   }
 
   /**
@@ -245,22 +291,22 @@ class uConfig {
    * Valid for both php and javascript
    * @return string
    */
-  public static function passRegex() {
+  public function passRegex() {
     $regex = "";
-    if (self::$passStrength > 0) {
+    if ($this->passStrength > 0) {
       // lower and upper case
       $regex .= "(?=.*[a-z])(?=.*[A-Z])";
     }
-    if (self::$passStrength > 1) {
+    if ($this->passStrength > 1) {
       // digits
       $regex .= "(?=.*[0-9])";
     }
-    if (self::$passStrength > 2) {
+    if ($this->passStrength > 2) {
       // not latin, not digits
       $regex .= "(?=.*[^a-zA-Z0-9])";
     }
-    if (self::$passLenMin > 0) {
-      $regex .= "(?=.{" . self::$passLenMin . ",})";
+    if ($this->passLenMin > 0) {
+      $regex .= "(?=.{" . $this->passLenMin . ",})";
     }
     if (empty($regex)) {
       $regex = ".*";

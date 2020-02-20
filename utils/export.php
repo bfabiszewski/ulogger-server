@@ -23,7 +23,8 @@ require_once(ROOT_DIR . "/helpers/lang.php");
 require_once(ROOT_DIR . "/helpers/config.php");
 
 $auth = new uAuth();
-$lang = (new uLang(uConfig::$lang))->getStrings();
+$config = uConfig::getInstance();
+$lang = (new uLang($config))->getStrings();
 
 /**
  * Add kml marker style element
@@ -62,13 +63,13 @@ $type = uUtils::getString('type', 'kml');
 $userId = uUtils::getInt('userid');
 $trackId = uUtils::getInt('trackid');
 
-if (!uConfig::$publicTracks &&
+if (!$config->publicTracks &&
     (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $userId))) {
   // unauthorized
   exit();
 }
 
-if (uConfig::$units === "imperial") {
+if ($config->units === "imperial") {
   $factor_kmh = 0.62; //to mph
   $unit_kmh = "mph";
   $factor_m = 3.28; // to feet
@@ -185,7 +186,7 @@ if ($trackId && $userId) {
       $xml->writeAttributeNs("xsi", "schemaLocation", NULL, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://github.com/bfabiszewski/ulogger-android/1 https://raw.githubusercontent.com/bfabiszewski/ulogger-server/master/scripts/gpx_extensions1.xsd");
       $xml->writeAttributeNs("xmlns", "xsi", NULL, "http://www.w3.org/2001/XMLSchema-instance");
       $xml->writeAttributeNs("xmlns", "ulogger", NULL, "https://github.com/bfabiszewski/ulogger-android/1");
-      $xml->writeAttribute("creator", "μlogger-server " . uConfig::$version);
+      $xml->writeAttribute("creator", "μlogger-server " . $config->version);
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
         $xml->writeElement("name", $positionsArr[0]->trackName);

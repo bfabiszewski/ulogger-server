@@ -30,12 +30,12 @@
     /** @var bool Is user authenticated */
     private $isAuthenticated = false;
     /** @var null|uUser */
-    public $user = null;
+    public $user;
 
     public function __construct() {
       $this->sessionStart();
 
-      $user = (new uUser())->getFromSession();
+      $user = uUser::getFromSession();
       if ($user->isValid) {
         $this->setAuthenticated($user);
       }

@@ -626,7 +626,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoLongitude() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -673,7 +673,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoLatitude() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -720,7 +720,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportNoGPX() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
@@ -761,7 +761,7 @@ class ImportTest extends UloggerAPITestCase {
   }
 
   public function testImportCorrupt() {
-    $lang = (new uLang("en"))->getStrings();
+    $lang = (new uLang($this->mockConfig))->getStrings();
     $this->assertTrue($this->authenticate(), "Authentication failed");
 
     $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");

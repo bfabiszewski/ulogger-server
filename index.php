@@ -28,7 +28,8 @@
   $pass = uUtils::postPass('pass');
   $action = uUtils::postString('action');
 
-  $lang = (new uLang(uConfig::$lang))->getStrings();
+  $config = uConfig::getInstance();
+  $lang = (new uLang($config))->getStrings();
   $langsArr = uLang::getLanguages();
 
   $auth = new uAuth();
@@ -39,13 +40,13 @@
   if ($action === 'auth' && !$auth->isAuthenticated()) {
     $auth->exitWithRedirect('login.php?auth_error=1');
   }
-  if (uConfig::$requireAuthentication && !$auth->isAuthenticated()) {
+  if ($config->requireAuthentication && !$auth->isAuthenticated()) {
     $auth->exitWithRedirect('login.php');
   }
 
 ?>
 <!DOCTYPE html>
-<html lang="<?= uConfig::$lang ?>">
+<html lang="<?= $config->lang ?>">
   <head>
     <title><?= $lang['title'] ?></title>
     <?php include('meta.php'); ?>
@@ -78,7 +79,7 @@
             <label for="track"><?= $lang['track'] ?></label>
             <select id="track" data-bind="currentTrackId" name="track"></select>
             <input id="latest" type="checkbox" data-bind="showLatest"> <label for="latest"><?= $lang['latest'] ?></label><br>
-            <input id="auto-reload" type="checkbox" data-bind="autoReload"> <label for="auto-reload"><?= $lang['autoreload'] ?></label> (<a id="set-interval" data-bind="onSetInterval"><span id="interval" data-bind="interval"><?= uConfig::$interval ?></span></a> s)<br>
+            <input id="auto-reload" type="checkbox" data-bind="autoReload"> <label for="auto-reload"><?= $lang['autoreload'] ?></label> (<a id="set-interval" data-bind="onSetInterval"><span id="interval" data-bind="interval"><?= $config->interval ?></span></a> s)<br>
             <a id="force-reload" data-bind="onReload"> <?= $lang['reload'] ?></a><br>
           </div>
 
@@ -91,8 +92,8 @@
           <div>
             <label for="api"><?= $lang['api'] ?></label>
             <select id="api" name="api" data-bind="mapApi">
-              <option value="gmaps"<?= (uConfig::$mapApi === 'gmaps') ? ' selected' : '' ?>>Google Maps</option>
-              <option value="openlayers"<?= (uConfig::$mapApi === 'openlayers') ? ' selected' : '' ?>>OpenLayers</option>
+              <option value="gmaps"<?= ($config->mapApi === 'gmaps') ? ' selected' : '' ?>>Google Maps</option>
+              <option value="openlayers"<?= ($config->mapApi === 'openlayers') ? ' selected' : '' ?>>OpenLayers</option>
             </select>
           </div>
 
@@ -100,7 +101,7 @@
             <label for="lang"><?= $lang['language'] ?></label>
             <select id="lang" name="lang" data-bind="lang">
               <?php foreach ($langsArr as $langCode => $langName): ?>
-                <option value="<?= $langCode ?>"<?= (uConfig::$lang === $langCode) ? ' selected' : '' ?>><?= $langName ?></option>
+                <option value="<?= $langCode ?>"<?= ($config->lang === $langCode) ? ' selected' : '' ?>><?= $langName ?></option>
               <?php endforeach; ?>
             </select>
           </div>
@@ -108,9 +109,9 @@
           <div class="section">
             <label for="units"><?= $lang['units'] ?></label>
             <select id="units" name="units" data-bind="units">
-              <option value="metric"<?= (uConfig::$units === 'metric') ? ' selected' : '' ?>><?= $lang['metric'] ?></option>
-              <option value="imperial"<?= (uConfig::$units === 'imperial') ? ' selected' : '' ?>><?= $lang['imperial'] ?></option>
-              <option value="nautical"<?= (uConfig::$units === 'nautical') ? ' selected' : '' ?>><?= $lang['nautical'] ?></option>
+              <option value="metric"<?= ($config->units === 'metric') ? ' selected' : '' ?>><?= $lang['metric'] ?></option>
+              <option value="imperial"<?= ($config->units === 'imperial') ? ' selected' : '' ?>><?= $lang['imperial'] ?></option>
+              <option value="nautical"<?= ($config->units === 'nautical') ? ' selected' : '' ?>><?= $lang['nautical'] ?></option>
             </select>
           </div>
 
@@ -142,7 +143,7 @@
 
         </div>
         <div id="menu-button"><a data-bind="onMenuToggle"></a></div>
-        <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> <?= uConfig::$version ?></div>
+        <div id="footer"><a target="_blank" href="https://github.com/bfabiszewski/ulogger-server"><span class="mi">μ</span>logger</a> <?= $config->version ?></div>
       </div>
 
       <div id="main">

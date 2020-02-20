@@ -17,8 +17,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(ROOT_DIR . "/helpers/config.php");
-
  /**
   * PDO wrapper
   */
@@ -43,6 +41,23 @@
      * @var string Driver
      */
     protected static $driver;
+
+    /**
+     * @var string Database DSN
+     */
+    private static $dbdsn = "";
+    /**
+     * @var string Database user
+     */
+    private static $dbuser = "";
+    /**
+     * @var string Database pass
+     */
+    private static $dbpass = "";
+    /**
+     * @var string Optional table names prefix, eg. "ulogger_"
+     */
+    private static $dbprefix = "";
 
    /**
     * PDO constuctor
@@ -73,7 +88,7 @@
      */
     private function initTables() {
       self::$tables = [];
-      $prefix = preg_replace('/[^a-z0-9_]/i', '', uConfig::$dbprefix);
+      $prefix = preg_replace('/[^a-z0-9_]/i', '', self::$dbprefix);
       self::$tables['positions'] = $prefix . "positions";
       self::$tables['tracks'] = $prefix . "tracks";
       self::$tables['users'] = $prefix . "users";
@@ -88,12 +103,39 @@
     */
     public static function getInstance() {
       if (!self::$instance) {
-        self::$instance = new self(uConfig::$dbdsn, uConfig::$dbuser, uConfig::$dbpass);
+        self::getConfig();
+        self::$instance = new self(self::$dbdsn, self::$dbuser, self::$dbpass);
       }
       return self::$instance;
     }
 
-   /**
+    /**
+     * Read database setup from config file
+     * @noinspection IssetArgumentExistenceInspection
+     * @noinspection PhpIncludeInspection
+     */
+    private static function getConfig() {
+      $configFile = dirname(__DIR__) . "/config.php";
+      if (!file_exists($configFile)) {
+        header("HTTP/1.1 503 Service Unavailable");
+        die("Missing config.php file!");
+      }
+      include($configFile);
+      if (isset($dbdsn)) {
+        self::$dbdsn = $dbdsn;
+      }
+      if (isset($dbuser)) {
+        self::$dbuser = $dbuser;
+      }
+      if (isset($dbpass)) {
+        self::$dbpass = $dbpass;
+      }
+      if (isset($dbprefix)) {
+        self::$dbprefix = $dbprefix;
+      }
+    }
+
+    /**
     * Get full table name including prefix
     *
     * @param string $name Name

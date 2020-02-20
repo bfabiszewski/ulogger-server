@@ -18,15 +18,17 @@
  */
 
 require_once(dirname(__DIR__) . "/helpers/auth.php");
+require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/track.php");
 
 $auth = new uAuth();
+$config = uConfig::getInstance();
 
 $userId = uUtils::getInt('userid');
 
 $tracksArr = [];
 if ($userId) {
-  if (uConfig::$publicTracks ||
+  if ($config->publicTracks ||
       ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
     $tracksArr = uTrack::getAll($userId);
   }
