@@ -91,7 +91,13 @@ export default class uAjax {
       } else {
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
-            params.push(`${key}=${encodeURIComponent(data[key])}`);
+            if (Array.isArray(data[key])) {
+              for (const value of data[key]) {
+                params.push(`${key}[]=${this.encodeValue(value)}`);
+              }
+            } else {
+              params.push(`${key}=${this.encodeValue(data[key])}`);
+            }
           }
         }
         body = params.join('&');
@@ -107,5 +113,12 @@ export default class uAjax {
       }
       xhr.send(body);
     });
+  }
+
+  static encodeValue(value) {
+    if (typeof value === 'object') {
+      value = JSON.stringify(value);
+    }
+    return encodeURIComponent(value);
   }
 }

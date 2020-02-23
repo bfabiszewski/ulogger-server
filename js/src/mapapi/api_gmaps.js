@@ -53,7 +53,7 @@ export default class GoogleMapsApi {
    * @return {Promise<void, Error>}
    */
   init() {
-    const params = `?${(config.gkey) ? `key=${config.gkey}&` : ''}callback=gm_loaded`;
+    const params = `?${(config.googleKey) ? `key=${config.googleKey}&` : ''}callback=gm_loaded`;
     const gmReady = Promise.all([
       GoogleMapsApi.onScriptLoaded(),
       uUtils.loadScript(`https://maps.googleapis.com/maps/api/js${params}`, 'mapapi_gmaps', GoogleMapsApi.loadTimeoutMs)

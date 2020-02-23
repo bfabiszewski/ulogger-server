@@ -244,23 +244,30 @@ function getQueries($dbDriver) {
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
       $queries[] = "CREATE TABLE `$tConfig` (
-                      `map_api` varchar(50) NOT NULL DEFAULT 'openlayers',
-                      `latitude` double NOT NULL DEFAULT '52.23',
-                      `longitude` double NOT NULL DEFAULT '21.01',
-                      `google_key` varchar(50) DEFAULT NULL,
-                      `require_auth` boolean NOT NULL DEFAULT TRUE,
-                      `public_tracks` boolean NOT NULL DEFAULT FALSE,
-                      `pass_lenmin` int(11) NOT NULL DEFAULT '10',
-                      `pass_strength` tinyint(1) NOT NULL DEFAULT '2',
-                      `interval_seconds` int(11) NOT NULL DEFAULT '10',
-                      `lang` varchar(10) NOT NULL DEFAULT 'en',
-                      `units` varchar(10) NOT NULL DEFAULT 'metric',
-                      `stroke_weight` int(11) NOT NULL DEFAULT '2',
-                      `stroke_color` int(11) NOT NULL DEFAULT '16711680',
-                      `stroke_opacity` int(11) NOT NULL DEFAULT '100'
+                      `name` varchar(20) PRIMARY KEY,
+                      `value` tinyblob NOT NULL
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-      $queries[] = "INSERT INTO `$tConfig` () VALUES ();";
+      $queries[] = "INSERT INTO `$tConfig` (`name`, `value`) VALUES
+                    ('color_extra', 's:7:\"#cccccc\";'),
+                    ('color_hilite', 's:7:\"#feff6a\";'),
+                    ('color_normal', 's:7:\"#ffffff\";'),
+                    ('color_start', 's:7:\"#55b500\";'),
+                    ('color_stop', 's:7:\"#ff6a00\";'),
+                    ('google_key', 's:0:\"\";'),
+                    ('interval_seconds', 'i:10;'),
+                    ('lang', 's:2:\"en\";'),
+                    ('latitude', 'd:52.229999999999997;'),
+                    ('longitude', 'd:21.010000000000002;'),
+                    ('map_api', 's:10:\"openlayers\";'),
+                    ('pass_lenmin', 'i:10;'),
+                    ('pass_strength', 'i:2;'),
+                    ('public_tracks', 'b:1;'),
+                    ('require_auth', 'b:1;'),
+                    ('stroke_color', 's:7:\"#ff0000\";'),
+                    ('stroke_opacity', 'd:1;'),
+                    ('stroke_weight', 'i:2;'),
+                    ('units', 's:6:\"metric\";');";
 
       $queries[] = "CREATE TABLE `$tLayers` (
                      `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -323,23 +330,30 @@ function getQueries($dbDriver) {
       $queries[] = "CREATE INDEX idx_puser_id ON $tPositions(user_id)";
 
       $queries[] = "CREATE TABLE $tConfig (
-                      map_api varchar(50) NOT NULL DEFAULT 'openlayers',
-                      latitude double precision NOT NULL DEFAULT '52.23',
-                      longitude double precision NOT NULL DEFAULT '21.01',
-                      google_key varchar(50) DEFAULT NULL,
-                      require_auth boolean NOT NULL DEFAULT TRUE,
-                      public_tracks boolean NOT NULL DEFAULT FALSE,
-                      pass_lenmin int NOT NULL DEFAULT '10',
-                      pass_strength smallint NOT NULL DEFAULT '2',
-                      interval_seconds int NOT NULL DEFAULT '10',
-                      lang varchar(10) NOT NULL DEFAULT 'en',
-                      units varchar(10) NOT NULL DEFAULT 'metric',
-                      stroke_weight int NOT NULL DEFAULT '2',
-                      stroke_color int NOT NULL DEFAULT '16711680',
-                      stroke_opacity int NOT NULL DEFAULT '100'
+                      name varchar(20) PRIMARY KEY,
+                      value bytea NOT NULL
                     )";
 
-      $queries[] = "INSERT INTO $tConfig DEFAULT VALUES";
+      $queries[] = "INSERT INTO $tConfig (name, value) VALUES
+                    ('color_extra', 's:7:\"#cccccc\";'),
+                    ('color_hilite', 's:7:\"#feff6a\";'),
+                    ('color_normal', 's:7:\"#ffffff\";'),
+                    ('color_start', 's:7:\"#55b500\";'),
+                    ('color_stop', 's:7:\"#ff6a00\";'),
+                    ('google_key', 's:0:\"\";'),
+                    ('interval_seconds', 'i:10;'),
+                    ('lang', 's:2:\"en\";'),
+                    ('latitude', 'd:52.229999999999997;'),
+                    ('longitude', 'd:21.010000000000002;'),
+                    ('map_api', 's:10:\"openlayers\";'),
+                    ('pass_lenmin', 'i:10;'),
+                    ('pass_strength', 'i:2;'),
+                    ('public_tracks', 'b:1;'),
+                    ('require_auth', 'b:1;'),
+                    ('stroke_color', 's:7:\"#ff0000\";'),
+                    ('stroke_opacity', 'd:1;'),
+                    ('stroke_weight', 'i:2;'),
+                    ('units', 's:6:\"metric\";')";
 
       $queries[] = "CREATE TABLE $tLayers (
                       id serial PRIMARY KEY,
@@ -401,23 +415,30 @@ function getQueries($dbDriver) {
       $queries[] = "CREATE INDEX `idx_puser_id` ON `$tPositions`(`user_id`)";
 
       $queries[] = "CREATE TABLE `$tConfig` (
-                      `map_api` varchar(50) NOT NULL DEFAULT 'openlayers',
-                      `latitude` double NOT NULL DEFAULT '52.23',
-                      `longitude` double NOT NULL DEFAULT '21.01',
-                      `google_key` varchar(50) DEFAULT NULL,
-                      `require_auth` integer NOT NULL DEFAULT 1,
-                      `public_tracks` integer NOT NULL DEFAULT 0,
-                      `pass_lenmin` integer NOT NULL DEFAULT '10',
-                      `pass_strength` integer NOT NULL DEFAULT '2',
-                      `interval_seconds` integer NOT NULL DEFAULT '10',
-                      `lang` varchar(10) NOT NULL DEFAULT 'en',
-                      `units` varchar(10) NOT NULL DEFAULT 'metric',
-                      `stroke_weight` integer NOT NULL DEFAULT '2',
-                      `stroke_color` integer NOT NULL DEFAULT '16711680',
-                      `stroke_opacity` integer NOT NULL DEFAULT '100'
+                      `name` varchar(20) PRIMARY KEY,
+                      `value` tinyblob NOT NULL
                     )";
 
-      $queries[] = "INSERT INTO `$tConfig` DEFAULT VALUES";
+      $queries[] = "INSERT INTO `$tConfig` (`name`, `value`) VALUES
+                    ('color_extra', 's:7:\"#cccccc\";'),
+                    ('color_hilite', 's:7:\"#feff6a\";'),
+                    ('color_normal', 's:7:\"#ffffff\";'),
+                    ('color_start', 's:7:\"#55b500\";'),
+                    ('color_stop', 's:7:\"#ff6a00\";'),
+                    ('google_key', 's:0:\"\";'),
+                    ('interval_seconds', 'i:10;'),
+                    ('lang', 's:2:\"en\";'),
+                    ('latitude', 'd:52.229999999999997;'),
+                    ('longitude', 'd:21.010000000000002;'),
+                    ('map_api', 's:10:\"openlayers\";'),
+                    ('pass_lenmin', 'i:10;'),
+                    ('pass_strength', 'i:2;'),
+                    ('public_tracks', 'b:1;'),
+                    ('require_auth', 'b:1;'),
+                    ('stroke_color', 's:7:\"#ff0000\";'),
+                    ('stroke_opacity', 'd:1;'),
+                    ('stroke_weight', 'i:2;'),
+                    ('units', 's:6:\"metric\";');";
 
       $queries[] = "CREATE TABLE `$tLayers` (
                      `id` integer PRIMARY KEY AUTOINCREMENT,

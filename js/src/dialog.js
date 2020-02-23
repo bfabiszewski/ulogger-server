@@ -40,7 +40,6 @@ export default class uDialog {
     img.setAttribute('alt', $._('close'));
     buttonClose.append(img);
     dialogHeader.append(buttonClose);
-    dialog.append(dialogHeader);
     const dialogBody = document.createElement('div');
     dialogBody.setAttribute('id', 'modal-body');
     if (typeof content === 'string') {
@@ -52,6 +51,7 @@ export default class uDialog {
     } else {
       dialogBody.append(content);
     }
+    dialogBody.prepend(dialogHeader);
     dialog.append(dialogBody);
     this.element = dialog;
     this.visible = false;

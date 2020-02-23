@@ -132,8 +132,8 @@ export default class UserDialogModel extends ViewModel {
         alert($._('passnotmatch'));
         return false;
       }
-      if (!config.passRegex.test(this.model.password)) {
-        alert($._('passlenmin') + '\n' + $._('passrules'));
+      if (!config.validPassStrength(this.model.password)) {
+        alert($.getLocalePassRules());
         return false;
       }
     }

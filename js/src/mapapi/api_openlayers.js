@@ -159,17 +159,17 @@ export default class OpenLayersApi {
 
     // add extra tile layers
     for (const layer of config.olLayers) {
-      const ol_layer = new ol.layer.TileLayer({
+      const olLayer = new ol.layer.TileLayer({
         name: layer.name,
         visible: false,
         source: new ol.source.XYZ({
           url: layer.url
         })
       });
-      this.map.addLayer(ol_layer);
+      this.map.addLayer(olLayer);
       if (layer.priority) {
         this.selectedLayer.setVisible(false);
-        this.selectedLayer = ol_layer;
+        this.selectedLayer = olLayer;
         this.selectedLayer.setVisible(true);
       }
     }
@@ -401,9 +401,7 @@ export default class OpenLayersApi {
     element.className = 'ol-switcher-button ol-unselectable ol-control';
     element.appendChild(switcherButton);
 
-    const switcherControl = new ol.control.Control({
-      element: element
-    });
+    const switcherControl = new ol.control.Control({ element });
     this.map.addControl(switcherControl);
   }
 
@@ -463,7 +461,7 @@ export default class OpenLayersApi {
 
   /**
    * Set or replace ZoomToExtent control
-   * @param extent
+   * @param {Array.<number>} extent
    */
   setZoomToExtent(extent) {
     this.map.getControls().forEach((el) => {
@@ -472,7 +470,7 @@ export default class OpenLayersApi {
       }
     });
     this.map.addControl(new ol.control.ZoomToExtent({
-      extent,
+      extent: extent,
       label: OpenLayersApi.getExtentImg()
     }));
   }

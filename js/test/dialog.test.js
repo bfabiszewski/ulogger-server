@@ -42,6 +42,7 @@ describe('Dialog tests', () => {
   it('should create dialog with string content', () => {
     // when
     const body = dialog.element.querySelector('#modal-body');
+    body.firstChild.remove();
     // then
     expect(body.innerHTML).toBe(content);
     expect(dialog.visible).toBe(false);
@@ -53,6 +54,7 @@ describe('Dialog tests', () => {
     dialog = new uDialog(content);
     // when
     const body = dialog.element.querySelector('#modal-body');
+    body.firstChild.remove();
     // then
     expect(body.firstChild).toBe(content);
   });
@@ -66,6 +68,7 @@ describe('Dialog tests', () => {
     dialog = new uDialog(content);
     // when
     const body = dialog.element.querySelector('#modal-body');
+    body.firstChild.remove();
     // then
     expect(body.children[0]).toBe(content[0]);
     expect(body.children[1]).toBe(content[1]);
@@ -81,6 +84,7 @@ describe('Dialog tests', () => {
     dialog = new uDialog(content);
     // when
     const body = dialog.element.querySelector('#modal-body');
+    body.firstChild.remove();
     // then
     expect(body.childNodes).toEqual(content);
   });

@@ -17,19 +17,25 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import uLayer from './layer.js';
+import uAjax from './ajax.js';
+import uLayerCollection from './layercollection.js';
 import uObserve from './observe.js';
 
 /**
  * @class uConfig
  * @property {number} interval;
  * @property {string} units
+ * @property {string} lang
  * @property {string} mapApi
- * @property {?string} gkey
- * @property {uLayer[]} olLayers
+ * @property {string} googleKey
+ * @property {uLayerCollection} olLayers
  * @property {number} initLatitude
  * @property {number} initLongitude
- * @property {RegExp} passRegex
+ * @property {number} initLongitude
+ * @property {boolean} requireAuth
+ * @property {boolean} publicTracks
+ * @property {number} passStrength
+ * @property {number} passLenMin
  * @property {number} strokeWeight
  * @property {string} strokeColor
  * @property {number} strokeOpacity
@@ -51,19 +57,22 @@ export default class uConfig {
     this.units = 'metric';
     this.lang = 'en';
     this.mapApi = 'openlayers';
-    this.gkey = null;
-    this.olLayers = [];
+    this.googleKey = '';
+    this.olLayers = new uLayerCollection();
     this.initLatitude = 52.23;
     this.initLongitude = 21.01;
-    this.passRegex = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{12,})');
+    this.requireAuth = true;
+    this.publicTracks = false;
+    this.passStrength = 2;
+    this.passLenMin = 10;
     this.strokeWeight = 2;
     this.strokeColor = '#ff0000';
     this.strokeOpacity = 1;
     // marker colors
-    this.colorNormal = '#fff';
+    this.colorNormal = '#ffffff';
     this.colorStart = '#55b500';
     this.colorStop = '#ff6a00';
-    this.colorExtra = '#ccc';
+    this.colorExtra = '#cccccc';
     this.colorHilite = '#feff6a';
     this.initUnits();
   }
@@ -95,32 +104,35 @@ export default class uConfig {
   }
 
   /**
-   * @param {Array} layers
-   */
-  loadLayers(layers) {
-    for (const layer of layers) {
-      this.olLayers.push(new uLayer(layer.id, layer.name, layer.url, layer.priority));
-    }
-  }
-
-  /**
    * Load config values from data object
    * @param {Object} data
    */
   load(data) {
     if (data) {
       for (const property in data) {
-        if (property === 'olLayers') {
-          this.loadLayers(data[property]);
-        } else if (property === 'passRegex') {
-          const re = data[property];
-          this[property] = new RegExp(re.substr(1, re.length - 2));
+        if (property === 'layers') {
+          this.olLayers.load(data[property]);
         } else if (data.hasOwnProperty(property) && this.hasOwnProperty(property)) {
           this[property] = data[property];
         }
       }
       this.initUnits();
     }
+  }
+
+  /**
+   * Save config values from data object
+   * @param {Object} data
+   */
+  save(data) {
+    this.load(data);
+    data = Object.keys(this)
+      .filter((key) => typeof this[key] !== 'function')
+      .reduce((obj, key) => {
+        obj[key] = this[key];
+        return obj;
+      }, {});
+    return uAjax.post('utils/saveconfig.php', data);
   }
 
   reinitialize() {
@@ -134,5 +146,41 @@ export default class uConfig {
    */
   onChanged(property, callback) {
     uObserve.observe(this, property, callback);
+  }
+
+
+  /**
+   * @param {string} password
+   * @return {boolean}
+   */
+  validPassStrength(password) {
+    return this.getPassRegExp().test(password);
+  }
+
+  /**
+   * Set password validation regexp
+   * @return {RegExp}
+   */
+  getPassRegExp() {
+    let regex = '';
+    if (this.passStrength > 0) {
+      // lower and upper case
+      regex += '(?=.*[a-z])(?=.*[A-Z])';
+    }
+    if (this.passStrength > 1) {
+      // digits
+      regex += '(?=.*[0-9])';
+    }
+    if (this.passStrength > 2) {
+      // not latin, not digits
+      regex += '(?=.*[^a-zA-Z0-9])';
+    }
+    if (this.passLenMin > 0) {
+      regex += `(?=.{${this.passLenMin},})`;
+    }
+    if (regex.length === 0) {
+      regex = '.*';
+    }
+    return new RegExp(regex);
   }
 }

@@ -106,11 +106,31 @@ class uConfig {
   /**
    * @var string Stroke color
    */
-  public $strokeColor = '#ff0000';
+  public $strokeColor = "#ff0000";
   /**
    * @var float Stroke opacity
    */
   public $strokeOpacity = 1.0;
+  /**
+   * @var string Stroke color
+   */
+  public $colorNormal = "#ffffff";
+  /**
+   * @var string Stroke color
+   */
+  public $colorStart = "#55b500";
+  /**
+   * @var string Stroke color
+   */
+  public $colorStop = "#ff6a00";
+  /**
+   * @var string Stroke color
+   */
+  public $colorExtra = "#cccccc";
+  /**
+   * @var string Stroke color
+   */
+  public $colorHilite = "#feff6a";
   
   public function __construct($useDatabase = true) {
     if ($useDatabase) {
@@ -157,28 +177,10 @@ class uConfig {
    */
   public function setFromDatabase() {
     try {
-      $query = "SELECT map_api, latitude, longitude, google_key, require_auth, public_tracks, 
-                       pass_lenmin, pass_strength, interval_seconds, lang, units, 
-                       stroke_weight, stroke_color, stroke_opacity 
-                FROM " . self::db()->table('config') . " LIMIT 1";
+      $query = "SELECT name, value FROM " . self::db()->table('config');
       $result = self::db()->query($query);
-      $row = $result->fetch();
-      if ($row) {
-        if (!empty($row['map_api'])) { $this->mapApi = $row['map_api']; }
-        if (is_numeric($row['latitude'])) { $this->initLatitude = (float) $row['latitude']; }
-        if (is_numeric($row['longitude'])) { $this->initLongitude = (float) $row['longitude']; }
-        if (!empty($row['google_key'])) { $this->googleKey = $row['google_key']; }
-        if (is_numeric($row['require_auth']) || is_bool($row['require_auth'])) { $this->requireAuthentication = (bool) $row['require_auth']; }
-        if (is_numeric($row['public_tracks']) || is_bool($row['public_tracks'])) { $this->publicTracks = (bool) $row['public_tracks']; }
-        if (is_numeric($row['pass_lenmin'])) { $this->passLenMin = (int) $row['pass_lenmin']; }
-        if (is_numeric($row['pass_strength'])) { $this->passStrength = (int) $row['pass_strength']; }
-        if (is_numeric($row['interval_seconds'])) { $this->interval = (int) $row['interval_seconds']; }
-        if (!empty($row['lang'])) { $this->lang = $row['lang']; }
-        if (!empty($row['units'])) { $this->units = $row['units']; }
-        if (is_numeric($row['stroke_weight'])) { $this->strokeWeight = (int) $row['stroke_weight']; }
-        if (is_numeric($row['stroke_color'])) { $this->strokeColor = self::getColorAsHex($row['stroke_color']); }
-        if (is_numeric($row['stroke_opacity'])) { $this->strokeOpacity = $row['stroke_opacity'] / 100; }
-      }
+      $arr = $result->fetchAll(PDO::FETCH_KEY_PAIR);
+      $this->setFromArray(array_map([ $this, 'unserialize' ], $arr));
       $this->setLayersFromDatabase();
       if (!$this->requireAuthentication) {
         // tracks must be public if we don't require authentication
@@ -191,34 +193,72 @@ class uConfig {
   }
 
   /**
+   * Unserialize data from database
+   * @param string|resource $data Resource returned by pgsql, string otherwise
+   * @return mixed
+   */
+  private function unserialize($data) {
+    if (is_resource($data)) {
+      return unserialize(stream_get_contents($data));
+    }
+    return unserialize($data);
+  }
+
+  /**
    * Save config values to database
    * @return bool True on success, false otherwise
    */
   public function save() {
     $ret = false;
     try {
+      // PDO::PARAM_LOB doesn't work here with pgsql, why?
+      $placeholder = self::db()->lobPlaceholder();
       $query = "UPDATE " . self::db()->table('config') . "
-                SET map_api = ?, latitude = ?, longitude = ?, google_key = ?, require_auth = ?, public_tracks = ?, 
-                    pass_lenmin = ?, pass_strength = ?, interval_seconds = ?, lang = ?, units = ?, 
-                    stroke_weight = ?, stroke_color = ?, stroke_opacity = ?";
+                SET value = CASE name
+                WHEN 'map_api' THEN $placeholder
+                WHEN 'latitude' THEN $placeholder
+                WHEN 'longitude' THEN $placeholder
+                WHEN 'google_key' THEN $placeholder
+                WHEN 'require_auth' THEN $placeholder
+                WHEN 'public_tracks' THEN $placeholder
+                WHEN 'pass_lenmin' THEN $placeholder
+                WHEN 'pass_strength' THEN $placeholder
+                WHEN 'interval_seconds' THEN $placeholder
+                WHEN 'lang' THEN $placeholder
+                WHEN 'units' THEN $placeholder
+                WHEN 'stroke_weight' THEN $placeholder
+                WHEN 'stroke_color' THEN $placeholder
+                WHEN 'stroke_opacity' THEN $placeholder
+                WHEN 'color_normal' THEN $placeholder
+                WHEN 'color_start' THEN $placeholder
+                WHEN 'color_stop' THEN $placeholder
+                WHEN 'color_extra' THEN $placeholder
+                WHEN 'color_hilite' THEN $placeholder
+                END";
       $stmt = self::db()->prepare($query);
       $params = [
         $this->mapApi,
         $this->initLatitude,
         $this->initLongitude,
         $this->googleKey,
-        (int) $this->requireAuthentication,
-        (int) $this->publicTracks,
+        $this->requireAuthentication,
+        $this->publicTracks,
         $this->passLenMin,
         $this->passStrength,
         $this->interval,
         $this->lang,
         $this->units,
         $this->strokeWeight,
-        self::getColorAsInt($this->strokeColor),
-        (int) ($this->strokeOpacity * 100)
+        $this->strokeColor,
+        $this->strokeOpacity,
+        $this->colorNormal,
+        $this->colorStart,
+        $this->colorStop,
+        $this->colorExtra,
+        $this->colorHilite
       ];
-      $stmt->execute($params);
+
+      $stmt->execute(array_map('serialize', $params));
       $this->saveLayers();
       $ret = true;
     } catch (PDOException $e) {
@@ -315,19 +355,70 @@ class uConfig {
   }
 
   /**
-   * @param int $color Color value as integer
-   * @return string Color hex string
+   * Set config values from array
+   * @param array $arr
    */
-  private static function getColorAsHex($color) {
-    return '#' . sprintf('%03x', $color);
-  }
-
-  /**
-   * @param string $color Color hex string
-   * @return int Color value as integer
-   */
-  private static function getColorAsInt($color) {
-    return hexdec(str_replace('#', '', $color));
+  public function setFromArray($arr) {
+    if (!is_array($arr)) {
+      return;
+    }
+    if (!empty($arr['map_api'])) {
+      $this->mapApi = $arr['map_api'];
+    }
+    if (is_numeric($arr['latitude'])) {
+      $this->initLatitude = (float) $arr['latitude'];
+    }
+    if (is_numeric($arr['longitude'])) {
+      $this->initLongitude = (float) $arr['longitude'];
+    }
+    if (!is_null($arr['google_key'])) {
+      $this->googleKey = $arr['google_key'];
+    }
+    if (is_numeric($arr['require_auth']) || is_bool($arr['require_auth'])) {
+      $this->requireAuthentication = (bool) $arr['require_auth'];
+    }
+    if (is_numeric($arr['public_tracks']) || is_bool($arr['public_tracks'])) {
+      $this->publicTracks = (bool) $arr['public_tracks'];
+    }
+    if (is_numeric($arr['pass_lenmin'])) {
+      $this->passLenMin = (int) $arr['pass_lenmin'];
+    }
+    if (is_numeric($arr['pass_strength'])) {
+      $this->passStrength = (int) $arr['pass_strength'];
+    }
+    if (is_numeric($arr['interval_seconds'])) {
+      $this->interval = (int) $arr['interval_seconds'];
+    }
+    if (!empty($arr['lang'])) {
+      $this->lang = $arr['lang'];
+    }
+    if (!empty($arr['units'])) {
+      $this->units = $arr['units'];
+    }
+    if (is_numeric($arr['stroke_weight'])) {
+      $this->strokeWeight = (int) $arr['stroke_weight'];
+    }
+    if (!empty($arr['stroke_color'])) {
+      $this->strokeColor = $arr['stroke_color'];
+    }
+    if (is_numeric($arr['stroke_opacity'])) {
+      $this->strokeOpacity = (float) $arr['stroke_opacity'];
+    }
+    if (!empty($arr['color_normal'])) {
+      $this->colorNormal = $arr['color_normal'];
+    }
+    if (!empty($arr['color_start'])) {
+      $this->colorStart = $arr['color_start'];
+    }
+    if (!empty($arr['color_stop'])) {
+      $this->colorStop = $arr['color_stop'];
+    }
+    if (!empty($arr['color_extra'])) {
+      $this->colorExtra = $arr['color_extra'];
+    }
+    if (!empty($arr['color_hilite'])) {
+      $this->colorHilite = $arr['color_hilite'];
+    }
   }
 }
 

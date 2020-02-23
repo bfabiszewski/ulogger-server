@@ -134,6 +134,7 @@
             <div id="admin-menu">
               <div class="menu-title"><?= $lang['adminmenu'] ?></div>
               <?php if ($auth->isAdmin()): ?>
+                <a id="adduser" class="menu-link" data-bind="onConfigEdit"><?= $lang['config'] ?></a>
                 <a id="adduser" class="menu-link" data-bind="onUserAdd"><?= $lang['adduser'] ?></a>
                 <a id="edituser" class="menu-link" data-bind="onUserEdit"><?= $lang['edituser'] ?></a>
               <?php endif; ?>

@@ -18,6 +18,7 @@
  */
 
 import { lang as $, config } from './initializer.js';
+import ConfigDialogModel from './configdialogmodel.js';
 import ViewModel from './viewmodel.js';
 import uUtils from './utils.js';
 
@@ -32,6 +33,7 @@ export default class ConfigViewModel extends ViewModel {
     super(config);
     this.state = state;
     this.model.onSetInterval = () => this.setAutoReloadInterval();
+    this.model.onConfigEdit = () => this.showConfigDialog();
   }
 
   /**
@@ -69,5 +71,10 @@ export default class ConfigViewModel extends ViewModel {
     if (!isNaN(interval) && interval !== this.model.interval) {
       this.model.interval = interval;
     }
+  }
+
+  showConfigDialog() {
+    const vm = new ConfigDialogModel(this);
+    vm.init();
   }
 }

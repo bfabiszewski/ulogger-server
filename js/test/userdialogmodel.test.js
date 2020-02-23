@@ -50,7 +50,7 @@ describe('UserDialogModel tests', () => {
     spyOn(uUser, 'update').and.returnValue(Promise.resolve());
     spyOn(auth.user, 'setPassword').and.returnValue(Promise.resolve());
     spyOn(uUser, 'add').and.returnValue(Promise.resolve(newUser));
-    spyOn(config.passRegex, 'test').and.returnValue(true);
+    spyOn(config, 'validPassStrength').and.returnValue(true);
     spyOn(window, 'alert');
   });
 
@@ -343,6 +343,6 @@ describe('UserDialogModel tests', () => {
     // when
     dm.validate();
     // then
-    expect(config.passRegex.test).toHaveBeenCalledWith(password);
+    expect(config.validPassStrength).toHaveBeenCalledWith(password);
   });
 });

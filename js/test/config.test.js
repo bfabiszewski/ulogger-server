@@ -33,11 +33,10 @@ describe('Config tests', () => {
     expect(config.units).toBeDefined();
     expect(config.lang).toBeDefined();
     expect(config.mapApi).toBeDefined();
-    expect(config.gkey).toBeDefined();
+    expect(config.googleKey).toBeDefined();
     expect(config.olLayers).toBeDefined();
     expect(config.initLatitude).toBeDefined();
     expect(config.initLongitude).toBeDefined();
-    expect(config.passRegex).toBeDefined();
     expect(config.strokeWeight).toBeDefined();
     expect(config.strokeColor).toBeDefined();
     expect(config.strokeOpacity).toBeDefined();
@@ -128,15 +127,16 @@ describe('Config tests', () => {
     expect(config.factorSpeed).toBe(2.237);
   });
 
-  it('should parse regex if present in data', () => {
+  it('should generate regex for values in data', () => {
     // given
     const data = {
-      passRegex: '/(?=.{5,})/'
+      passLenMin: 5,
+      passStrength: 2
     };
     // when
     config.load(data);
     // then
-    expect(config.passRegex).toEqual(jasmine.any(RegExp));
+    expect(config.getPassRegExp()).toEqual(jasmine.any(RegExp));
   });
 
   it('should reinitialize config and remove any observers', () => {
@@ -163,6 +163,152 @@ describe('Config tests', () => {
       done();
     });
     config.interval = newInterval;
+  });
+
+  it('should validate passwords length', () => {
+    // given
+    config.passLenMin = 4;
+    config.passStrength = 0;
+    // when
+    let password = '123';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '1234';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = '1235';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+  });
+
+  it('should validate passwords strength 0', () => {
+    // given
+    config.passLenMin = 0;
+    config.passStrength = 0;
+    // when
+    let password = 'abcd';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = 'aBcD';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = '';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = '1234';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = 'Abcde1235$%';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+  });
+
+  it('should validate passwords strength 1 (one upper, one lower case letter)', () => {
+    // given
+    config.passLenMin = 0;
+    config.passStrength = 1;
+    // when
+    let password = 'abcd';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'aBcD';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = '';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'Abcde1235$%';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+  });
+
+  it('should validate passwords strength 2 (one upper, one lower case letter, one digit)', () => {
+    // given
+    config.passLenMin = 0;
+    config.passStrength = 2;
+    // when
+    let password = 'abcd';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'aBcD';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'ab1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'aB1234';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+    // when
+    password = 'Abcde1235$%';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
+  });
+
+  it('should validate passwords strength 3 (one upper, one lower case letter, one digit, one non-alpha)', () => {
+    // given
+    config.passLenMin = 0;
+    config.passStrength = 3;
+    // when
+    let password = 'abcd';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'aBcD';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = '1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'ab1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'aB1234';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'ab1234.';
+    // then
+    expect(config.validPassStrength(password)).toBeFalse();
+    // when
+    password = 'Abcde1235$%';
+    // then
+    expect(config.validPassStrength(password)).toBeTrue();
   });
 
 });

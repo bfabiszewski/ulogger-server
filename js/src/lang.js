@@ -161,4 +161,23 @@ export default class uLang {
     }
     return `${Math.abs(ipos).toLocaleString(this.config.lang)}°${dec.toLocaleString(this.config.lang, { maximumFractionDigits: 2 })}'${dir}`;
   }
+
+  getLocalePassRules() {
+    let rulesStr = '';
+    if (this.config.passLenMin > 0) {
+      rulesStr = uUtils.sprintf(this._('passlenmin') + '\n', this.config.passLenMin);
+    }
+    if (this.config.passStrength > 0 && this.config.passStrength < 4) {
+      rulesStr += this._(`passrules_${this.config.passStrength}`);
+    }
+    return rulesStr;
+  }
+
+  /**
+   * Get languages list { langCode: langName }
+   * @return {Object.<string, string>}
+   */
+  getLangList() {
+    return this.strings['langArr'];
+  }
 }

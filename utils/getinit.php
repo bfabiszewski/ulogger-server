@@ -40,20 +40,25 @@ $resultConfig = [
   "units" => $config->units,
   "lang" => $config->lang,
   "mapApi" => $config->mapApi,
-  "gkey" => $config->googleKey,
+  "googleKey" => $config->googleKey,
   "initLatitude" => $config->initLatitude,
   "initLongitude" => $config->initLongitude,
-  "passRegex" => $config->passRegex(),
+  "requireAuth" => $config->requireAuthentication,
+  "publicTracks" => $config->publicTracks,
+  "passLenMin" => $config->passLenMin,
+  "passStrength" => $config->passStrength,
   "strokeWeight" => $config->strokeWeight,
   "strokeColor" => $config->strokeColor,
   "strokeOpacity" => $config->strokeOpacity,
-  "olLayers" => []
+  "layers" => []
 ];
 foreach ($config->olLayers as $key => $val) {
-  $resultConfig["olLayers"][$key] = $val;
+  $resultConfig["layers"][$key] = $val;
 }
 
-$resultLang = [];
+$resultLang = [
+  "langArr" => uLang::getLanguages()
+];
 foreach ($langStrings as $key => $val) {
   $resultLang[$key] = $val;
 }

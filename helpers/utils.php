@@ -150,11 +150,13 @@
     }
 
     public static function postBool($name, $default = NULL) {
-      return self::requestValue($name, $default, INPUT_POST, FILTER_VALIDATE_BOOLEAN);
+      $input = filter_input(INPUT_POST, $name, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+      return $input !== null ? (bool) $input : $default;
     }
 
     public static function getBool($name, $default = NULL) {
-      return self::requestValue($name, $default, INPUT_GET, FILTER_VALIDATE_BOOLEAN);
+      $input = filter_input(INPUT_GET, $name, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+      return $input !== null ? (bool) $input : $default;
     }
 
     public static function postInt($name, $default = NULL) {
@@ -173,6 +175,10 @@
         }
       }
       return $default;
+    }
+
+    public static function postArray($name, $default = NULL) {
+      return ((isset($_POST[$name]) && is_array($_POST[$name])) ? $_POST[$name] : $default);
     }
 
     /**

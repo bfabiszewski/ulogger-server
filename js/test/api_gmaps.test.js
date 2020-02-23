@@ -83,12 +83,12 @@ describe('Google Maps map API tests', () => {
     // given
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
     spyOn(api, 'initMap');
-    config.gkey = 'key1234567890';
+    config.googleKey = 'key1234567890';
     // when
     api.init()
       .then(() => {
         // then
-        expect(uUtils.loadScript).toHaveBeenCalledWith(`https://maps.googleapis.com/maps/api/js?key=${config.gkey}&callback=gm_loaded`, 'mapapi_gmaps', loadTimeout);
+        expect(uUtils.loadScript).toHaveBeenCalledWith(`https://maps.googleapis.com/maps/api/js?key=${config.googleKey}&callback=gm_loaded`, 'mapapi_gmaps', loadTimeout);
         expect(api.initMap).toHaveBeenCalledTimes(1);
         done();
       })
@@ -111,7 +111,7 @@ describe('Google Maps map API tests', () => {
     expect(google.maps.InfoWindow.prototype.addListener).toHaveBeenCalledWith('closeclick', jasmine.any(Function));
   });
 
-  it('should initialize map engine with null gkey', (done) => {
+  it('should initialize map engine without Google API key', (done) => {
     // given
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
     // when

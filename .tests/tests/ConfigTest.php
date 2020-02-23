@@ -37,22 +37,20 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $this->resetAutoincrement();
     $dataset = [
       "config" => [
-        [
-          "map_api" => $this->mapApi,
-          "latitude" => $this->latitude,
-          "longitude" => $this->longitude,
-          "google_key" => $this->googleKey,
-          "require_auth" => (int) $this->requireAuth,
-          "public_tracks" => (int) $this->publicTracks,
-          "pass_lenmin" => $this->passLenMin,
-          "pass_strength" => $this->passStrength,
-          "interval_seconds" => $this->interval,
-          "lang" => $this->lang,
-          "units" => $this->units,
-          "stroke_weight" => $this->strokeWeight,
-          "stroke_color" => hexdec(str_replace('#', '', $this->strokeColor)),
-          "stroke_opacity" => $this->strokeOpacity * 100
-        ]
+        [ "name" => "map_api", "value" => serialize($this->mapApi) ],
+        [ "name" => "latitude", "value" => serialize($this->latitude) ],
+        [ "name" => "longitude", "value" => serialize($this->longitude) ],
+        [ "name" => "google_key", "value" => serialize($this->googleKey) ],
+        [ "name" => "require_auth", "value" => serialize($this->requireAuth) ],
+        [ "name" => "public_tracks", "value" => serialize($this->publicTracks) ],
+        [ "name" => "pass_lenmin", "value" => serialize($this->passLenMin) ],
+        [ "name" => "pass_strength", "value" => serialize($this->passStrength) ],
+        [ "name" => "interval_seconds", "value" => serialize($this->interval) ],
+        [ "name" => "lang", "value" => serialize($this->lang) ],
+        [ "name" => "units", "value" => serialize($this->units) ],
+        [ "name" => "stroke_weight", "value" => serialize($this->strokeWeight) ],
+        [ "name" => "stroke_color", "value" => serialize($this->strokeColor) ],
+        [ "name" => "stroke_opacity", "value" => serialize($this->strokeOpacity) ]
       ],
       "ol_layers" => [
         [
@@ -103,7 +101,6 @@ class ConfigTest extends UloggerDatabaseTestCase {
 
     $this->config->save();
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount('config'), "Wrong row count");
     $expected = [
       "map_api" => $this->config->mapApi,
       "latitude" => $this->config->initLatitude,
@@ -117,12 +114,17 @@ class ConfigTest extends UloggerDatabaseTestCase {
       "lang" => $this->config->lang,
       "units" => $this->config->units,
       "stroke_weight" => $this->config->strokeWeight,
-      "stroke_color" => hexdec(str_replace('#', '', $this->config->strokeColor)),
-      "stroke_opacity" => (int) ($this->config->strokeOpacity * 100)
+      "stroke_color" => $this->config->strokeColor,
+      "stroke_opacity" => $this->config->strokeOpacity
     ];
+    $cnt = count($expected);
+    $this->assertEquals($cnt, $this->getConnection()->getRowCount('config'), "Wrong row count");
     $actual = $this->getConnection()->createQueryTable("config", "SELECT * FROM config");
-    $this->assertTableContains($expected, $actual, "Wrong actual table data: " . implode(', ', $actual->getRow(0)));
-
+    for ($i = 0; $i < $cnt; $i++) {
+      $row = $actual->getRow($i);
+      $actualValue = $row['value'];
+      $this->assertEquals(serialize($expected[$row['name']]), is_resource($actualValue) ? stream_get_contents($actualValue) : $actualValue);
+    }
     $this->assertEquals(1, $this->getConnection()->getRowCount('ol_layers'), "Wrong row count");
     $expected = [
       "id" => $this->config->olLayers[0]->id,

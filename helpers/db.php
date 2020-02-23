@@ -166,6 +166,23 @@
     }
 
     /**
+     * Returns placeholder for LOB data types
+     * @return string
+     */
+    public function lobPlaceholder() {
+      switch (self::$driver) {
+        default:
+        case "mysql":
+        case "sqlite":
+        return "?";
+          break;
+        case "pgsql":
+          return "?::bytea";
+          break;
+      }
+    }
+
+    /**
      * Returns function name for getting date-time column value as 'YYYY-MM-DD hh:mm:ss'
      * @param string $column
      * @return string

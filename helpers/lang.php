@@ -76,10 +76,6 @@
         require(ROOT_DIR . "/lang/$language.php");
       }
 
-      // choose password messages based on config
-      $passRules = "passrules_" . $config->passStrength;
-      $lang['passrules'] = isset($lang[$passRules]) ? $lang[$passRules] : "";
-      $lang['passlenmin'] = sprintf($lang["passlenmin"], $config->passLenMin);
       $this->strings = $lang;
       $this->setupStrings = $langSetup;
     }
