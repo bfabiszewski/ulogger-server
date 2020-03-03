@@ -631,6 +631,11 @@ button > * {
   visibility: hidden;
 }
 
+.gm-style .gm-style-iw-d::-webkit-scrollbar-track,
+.gm-style .gm-style-iw-d::-webkit-scrollbar-track-piece {
+  background: #666 !important;
+}
+
 #switcher {
   position: absolute;
   bottom: 12px;
