@@ -58,6 +58,27 @@ class DbTest extends TestCase {
       $this->assertEquals($fileName, uDb::getDbName("sqlite:$fileName"));
     }
   }
+
+  public function testNormalizeDsn() {
+    $testDbName = "testDbName";
+    $nonSqlite = [
+      "mysql:host=db.example.com;port=3306;dbname=$testDbName",
+      "mysql:host=db.example.com;dbname=$testDbName;port=3306",
+      "mysql:dbname=$testDbName;host=db.example.com;port=3306",
+      "mysql:unix_socket=/tmp/mysql.sock;dbname=$testDbName;charset=utf8",
+      "pgsql:host=localhost;port=5432;dbname=$testDbName;user=myuser;password=mypass",
+      "pgsql:host=db.example.com port=31075 dbname=$testDbName",
+      "pgsql:host=db.example.com port=31075 dbname=$testDbName user=myuser password=mypass",
+    ];
+
+    foreach ($nonSqlite as $dsn) {
+      $this->assertEquals($dsn, uDb::normalizeDsn($dsn));
+    }
+
+    $this->assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:index.php"));
+    $this->assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:helpers/../index.php"));
+    $this->assertNotEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:../index.php"));
+  }
 }
 
 ?>

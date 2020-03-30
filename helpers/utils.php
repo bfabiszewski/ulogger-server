@@ -40,6 +40,14 @@
     }
 
     /**
+     * @param $path string Path
+     * @return bool True if is absolute
+     */
+    public static function isAbsolutePath($path) {
+      return $path[0] === '/' || $path[0] === '\\' || preg_match('/^[a-zA-Z]:\\\\/', $path);
+    }
+
+    /**
      * Get number of bytes from ini parameter.
      * Optionally parses shorthand byte values (G, M, B)
      *

@@ -99,5 +99,21 @@ class UtilsTest extends TestCase {
     unset($_SERVER["HTTPS"]);
     $this->assertEquals($expected, $result);
   }
+
+  public function testIsAbsolutePath() {
+    $this->assertTrue(uUtils::isAbsolutePath("/foo"));
+    $this->assertTrue(uUtils::isAbsolutePath("/foo/bar"));
+    $this->assertTrue(uUtils::isAbsolutePath("/"));
+    $this->assertTrue(uUtils::isAbsolutePath("/."));
+    $this->assertTrue(uUtils::isAbsolutePath("\\"));
+    $this->assertTrue(uUtils::isAbsolutePath("C:\\\\foo"));
+    $this->assertTrue(uUtils::isAbsolutePath("Z:\\\\FOO/BAR"));
+
+    $this->assertFalse(uUtils::isAbsolutePath("foo"));
+    $this->assertFalse(uUtils::isAbsolutePath("foo/bar"));
+    $this->assertFalse(uUtils::isAbsolutePath("./foo"));
+    $this->assertFalse(uUtils::isAbsolutePath("../"));
+    $this->assertFalse(uUtils::isAbsolutePath(".\\foo"));
+  }
 }
 ?>

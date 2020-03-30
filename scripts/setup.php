@@ -30,6 +30,13 @@ if (version_compare(PHP_VERSION, "5.5.0", "<")) {
 }
 
 define("ROOT_DIR", dirname(__DIR__));
+
+require_once(ROOT_DIR . "/helpers/db.php");
+require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
+require_once(ROOT_DIR . "/helpers/user.php");
+require_once(ROOT_DIR . "/helpers/utils.php");
+
 $dbConfig = ROOT_DIR . "/config.php";
 $dbConfigLoaded = false;
 $configDSN = "";
@@ -40,16 +47,11 @@ if (file_exists($dbConfig)) {
   /** @noinspection PhpIncludeInspection */
   include($dbConfig);
   $dbConfigLoaded = true;
-  if (isset($dbdsn)) { $configDSN = $dbdsn; }
+  if (isset($dbdsn)) { $configDSN = uDb::normalizeDsn($dbdsn); }
   if (isset($dbuser)) { $configUser = $dbuser; }
   if (isset($dbpass)) { $configPass = $dbpass; }
   if (isset($dbprefix)) { $configPrefix = $dbprefix; }
 }
-require_once(ROOT_DIR . "/helpers/db.php");
-require_once(ROOT_DIR . "/helpers/config.php");
-require_once(ROOT_DIR . "/helpers/lang.php");
-require_once(ROOT_DIR . "/helpers/user.php");
-require_once(ROOT_DIR . "/helpers/utils.php");
 
 $command = uUtils::postString("command");
 $language = uUtils::getString("lang", "en");

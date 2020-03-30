@@ -17,6 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once(ROOT_DIR . "/helpers/utils.php");
+
  /**
   * PDO wrapper
   */
@@ -122,7 +124,7 @@
       }
       include($configFile);
       if (isset($dbdsn)) {
-        self::$dbdsn = $dbdsn;
+        self::$dbdsn = self::normalizeDsn($dbdsn);
       }
       if (isset($dbuser)) {
         self::$dbuser = $dbuser;
@@ -240,6 +242,25 @@
         }
       }
       return $name;
+    }
+
+    /**
+     * Normalize DSN.
+     * Make sure sqlite DSN file path is absolute
+     * @param $dsn string DSN
+     * @return string Normalized DSN
+     */
+    public static function normalizeDsn($dsn) {
+      if (stripos($dsn, "sqlite") !== 0) {
+        return $dsn;
+      }
+      $arr = explode(":", $dsn, 2);
+      if (count($arr) < 2 || empty($arr[1]) || uUtils::isAbsolutePath($arr[1])) {
+        return $dsn;
+      }
+      $scheme = $arr[0];
+      $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . $arr[1];
+      return $scheme . ":" . realpath(dirname($path)) . DIRECTORY_SEPARATOR . basename(($path));
     }
   }
 ?>
