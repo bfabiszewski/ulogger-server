@@ -234,8 +234,8 @@
     */
     private static function rowToObject($row) {
       $track = new uTrack();
-      $track->id = $row['id'];
-      $track->userId = $row['user_id'];
+      $track->id = (int) $row['id'];
+      $track->userId = (int) $row['user_id'];
       $track->name = $row['name'];
       $track->comment = $row['comment'];
       $track->isValid = true;

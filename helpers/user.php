@@ -230,7 +230,7 @@
     */
     private static function rowToObject($row) {
       $user = new uUser();
-      $user->id = $row['id'];
+      $user->id = (int) $row['id'];
       $user->login = $row['login'];
       $user->hash = $row['password'];
       $user->isAdmin = (bool) $row['admin'];

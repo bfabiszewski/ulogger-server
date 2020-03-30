@@ -427,18 +427,18 @@ require_once(ROOT_DIR . "/helpers/upload.php");
     */
     private static function rowToObject($row) {
       $position = new uPosition();
-      $position->id = $row['id'];
-      $position->timestamp = $row['tstamp'];
-      $position->userId = $row['user_id'];
+      $position->id = (int) $row['id'];
+      $position->timestamp = (int) $row['tstamp'];
+      $position->userId = (int) $row['user_id'];
       $position->userLogin = $row['login'];
-      $position->trackId = $row['track_id'];
+      $position->trackId = (int) $row['track_id'];
       $position->trackName = $row['name'];
-      $position->latitude = $row['latitude'];
-      $position->longitude = $row['longitude'];
-      $position->altitude = $row['altitude'];
-      $position->speed = $row['speed'];
-      $position->bearing = $row['bearing'];
-      $position->accuracy = $row['accuracy'];
+      $position->latitude = (double) $row['latitude'];
+      $position->longitude = (double) $row['longitude'];
+      $position->altitude = (double) $row['altitude'];
+      $position->speed = (double) $row['speed'];
+      $position->bearing = (double) $row['bearing'];
+      $position->accuracy = (int) $row['accuracy'];
       $position->provider = $row['provider'];
       $position->comment = $row['comment'];
       $position->image = $row['image'];
