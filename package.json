@@ -30,6 +30,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jasmine": "^4.1.0",
+    "husky": "^4.2.3",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine": "^3.5.0",
     "karma": "^4.4.1",
@@ -39,9 +40,10 @@
     "karma-jasmine": "^3.1.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^4.0.2",
+    "prepush-if-changed": "^1.0.8",
     "puppeteer": "^2.1.1",
     "regenerator-runtime": "^0.13.5",
-    "stylelint": "^13.2.1",
+    "stylelint": "^13.3.0",
     "stylelint-config-standard": "^20.0.0",
     "terser-webpack-plugin": "^2.3.5",
     "webpack": "^4.42.1",
@@ -50,21 +52,28 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
+    "@babel/runtime-corejs3": "^7.9.2",
     "chartist": "^0.11.4",
     "chartist-plugin-axistitle": "0.0.7",
-    "ol": "^6.2.1"
+    "ol": "^6.3.0"
   },
   "babel": {
     "presets": [
       [
         "@babel/preset-env",
         {
-          "useBuiltIns": "entry"
+          "useBuiltIns": "entry",
+          "corejs": 3
         }
       ]
     ],
     "plugins": [
-      "@babel/plugin-transform-runtime"
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "corejs": 3
+        }
+      ]
     ]
   },
   "stylelint": {
@@ -76,5 +85,13 @@
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "prepush-if-changed"
+    }
+  },
+  "prepush-if-changed": {
+    "(js/src/**/*.js|package?(-lock).json)": "npm run build"
+  }
 }
