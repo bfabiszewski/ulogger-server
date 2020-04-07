@@ -1,4 +1,3 @@
 *
 !.gitignore
-!1.bundle.js*
-!bundle.js*
+!*bundle.js*

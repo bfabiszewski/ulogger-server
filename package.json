@@ -88,10 +88,10 @@
   ],
   "husky": {
     "hooks": {
-      "pre-push": "prepush-if-changed"
+      "pre-commit": "lint-staged"
     }
   },
-  "prepush-if-changed": {
-    "(js/src/**/*.js|package?(-lock).json)": "npm run build"
+  "lint-staged": {
+    "js/src/**/*.js": "node .githooks/build-staged.js"
   }
 }
