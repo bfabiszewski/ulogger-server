@@ -87,6 +87,7 @@ export default class UserDialogModel extends ViewModel {
   }
 
   onPassChange() {
+    this.model.passVisibility = true;
     if (this.validate()) {
       auth.user.setPassword(this.model.password, this.model.oldPassword)
         .then(() => this.dialog.destroy())
@@ -95,6 +96,7 @@ export default class UserDialogModel extends ViewModel {
   }
 
   onUserAdd() {
+    this.model.passVisibility = true;
     if (this.validate()) {
       uUser.add(this.model.login, this.model.password, this.model.admin).then((user) => {
         this.userVM.onUserAdded(user);
@@ -123,7 +125,7 @@ export default class UserDialogModel extends ViewModel {
         return false;
       }
     }
-    if (this.type === 'pass' || this.model.passVisibility) {
+    if (this.model.passVisibility) {
       if (!this.model.password || !this.model.password2) {
         alert($._('allrequired'));
         return false;
