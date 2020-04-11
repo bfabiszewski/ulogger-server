@@ -17,32 +17,15 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-const fs = require('fs');
-const crypto = require('crypto');
 const exec = require('child_process').execSync;
 
-const getBundleHash = () => {
-  const distDir = 'js/dist/';
-  const hash = crypto.createHash('sha1');
-  fs.readdirSync(distDir)
-    .filter(path => path.endsWith('.js'))
-    .sort()
-    .forEach(path => {
-      hash.update(fs.readFileSync(distDir + path));
-    });
-  return hash.digest('hex');
+const sourcesModified = () => {
+  const lastBuildCommit = exec('git log -1 --pretty="format:%H" js/dist/*bundle*js*').toString();
+  const output = exec(`git diff --name-only ${lastBuildCommit} HEAD js/src`).toString();
+  return !!output && output.split('\n').length > 0;
 };
 
-const main = () => {
-  const bundleHash = getBundleHash();
-  try {
-    exec('npm run build');
-    if (getBundleHash() !== bundleHash) {
-      exec('git add js/dist/*');
-    }
-  } catch (e) {
-    console.log('Warning: build failed!');
-  }
-};
-
-main();
+if (sourcesModified()) {
+  console.log('\nPlease update and commit distribution bundle first!\nYou may still push using --no-verify option.\n');
+  process.exitCode = 1;
+}

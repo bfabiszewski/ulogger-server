@@ -88,10 +88,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-push": "node .githooks/build-status.js"
     }
-  },
-  "lint-staged": {
-    "js/src/**/*.js": "node .githooks/build-staged.js"
   }
 }
