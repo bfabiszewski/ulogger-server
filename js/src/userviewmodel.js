@@ -119,11 +119,14 @@ export default class UserViewModel extends ViewModel {
   }
 
   onUserDeleted() {
-    const index = this.model.userList.indexOf(this.state.currentUser);
+    let index = this.model.userList.indexOf(this.state.currentUser);
     this.state.currentUser = null;
     if (index !== -1) {
       this.model.userList.splice(index, 1);
       if (this.model.userList.length) {
+        if (index >= this.model.userList.length) {
+          index = this.model.userList.length - 1;
+        }
         this.model.currentUserId = this.model.userList[index].listValue;
       } else {
         this.model.currentUserId = '0';

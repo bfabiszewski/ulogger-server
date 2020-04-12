@@ -281,6 +281,19 @@ describe('UserViewModel tests', () => {
     expect(vm.state.currentUser).toBe(null);
   });
 
+  it('should remove current last user from user list and set new current user id', () => {
+    // given
+    vm.model.userList = [ user1, user2 ];
+    vm.state.currentUser = user2;
+    vm.model.currentUserId = user2.listValue;
+    // when
+    vm.onUserDeleted();
+    // then
+    expect(vm.model.userList.length).toBe(1);
+    expect(vm.model.currentUserId).toBe(user1.listValue);
+    expect(vm.state.currentUser).toBe(null);
+  });
+
   it('should remove last remaining element from user list and set empty user id', () => {
     // given
     vm.model.userList = [ user1 ];

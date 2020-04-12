@@ -277,11 +277,14 @@ export default class TrackViewModel extends ViewModel {
   }
 
   onTrackDeleted() {
-    const index = this.model.trackList.indexOf(this.state.currentTrack);
+    let index = this.model.trackList.indexOf(this.state.currentTrack);
     this.state.currentTrack = null;
     if (index !== -1) {
       this.model.trackList.splice(index, 1);
       if (this.model.trackList.length) {
+        if (index >= this.model.trackList.length) {
+          index = this.model.trackList.length - 1;
+        }
         this.model.currentTrackId = this.model.trackList[index].listValue;
       } else {
         this.model.currentTrackId = '';

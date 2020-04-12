@@ -632,6 +632,19 @@ describe('TrackViewModel tests', () => {
     expect(vm.state.currentTrack).toBe(null);
   });
 
+  it('should remove current last track from track list and set new current track id', () => {
+    // given
+    vm.model.trackList = [ track1, track2 ];
+    vm.state.currentTrack = track2;
+    vm.model.currentTrackId = track2.listValue;
+    // when
+    vm.onTrackDeleted();
+    // then
+    expect(vm.model.trackList.length).toBe(1);
+    expect(vm.model.currentTrackId).toBe(track1.listValue);
+    expect(vm.state.currentTrack).toBe(null);
+  });
+
   it('should remove last remaining element from track list and set empty track id', () => {
     // given
     vm.model.trackList = [ track1 ];
