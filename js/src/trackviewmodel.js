@@ -310,7 +310,6 @@ export default class TrackViewModel extends ViewModel {
   stopAutoReload() {
     clearInterval(this.timerId);
     this.timerId = 0;
-    this.model.autoReload = false;
   }
 
   /**
