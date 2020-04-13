@@ -294,6 +294,39 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals(count($json), 0, "Wrong count of positions");
   }
 
+  public function testGetPositionsAfterId() {
+
+    $this->assertTrue($this->authenticate(), "Authentication failed");
+
+    $trackId = $this->addTestTrack($this->testUserId);
+    $afterId = $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp);
+    $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp + 1, $this->testLat + 1);
+    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+
+    $options = [
+      "http_errors" => false,
+      "query" => [ "userid" => $this->testUserId, "trackid" => $trackId, "afterid" => $afterId ],
+    ];
+    $response = $this->http->get("/utils/getpositions.php", $options);
+    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+
+    $json = json_decode($response->getBody());
+
+    $this->assertNotNull($json, "JSON object is null");
+    $this->assertEquals(count($json), 1, "Wrong count of positions");
+
+    $position = $json[0];
+    $this->assertEquals((int) $position->id, $afterId + 1, "Wrong position id");
+    $this->assertEquals((float) $position->latitude, $this->testLat + 1, "Wrong latitude");
+    $this->assertEquals((float) $position->longitude, $this->testLon, "Wrong longitude");
+    $this->assertEquals((int) $position->timestamp, $this->testTimestamp + 1, "Wrong timestamp");
+    $this->assertEquals((string) $position->username, $this->testAdminUser, "Wrong username");
+    $this->assertEquals((string) $position->trackname, $this->testTrackName, "Wrong trackname");
+    $this->assertEquals((int) $position->meters, 111195, "Wrong distance delta");
+    $this->assertEquals((int) $position->seconds, 1, "Wrong timestamp delta");
+  }
+
 
   /* gettracks.php */
 

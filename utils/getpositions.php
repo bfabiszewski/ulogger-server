@@ -55,6 +55,12 @@ $result = [];
 if ($positionsArr === false) {
   $result = [ "error" => true ];
 } else if (!empty($positionsArr)) {
+  if ($afterId) {
+    $afterPosition = new uPosition($afterId);
+    if ($afterPosition->isValid) {
+      $prevPosition = $afterPosition;
+    }
+  }
   foreach ($positionsArr as $position) {
     $meters = !$last && isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
     $seconds = !$last && isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
