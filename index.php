@@ -151,7 +151,7 @@
         <div id="map-canvas"></div>
         <div id="bottom">
           <div id="chart"></div>
-          <a id="chart-close" data-bind="onChartToggle"><?= $lang['close'] ?></a>
+          <a id="chart-close" data-bind="onChartToggle"><img src="images/close_blue.svg" alt="<?= $lang['close'] ?>"></a>
         </div>
       </div>
 

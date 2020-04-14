@@ -315,13 +315,11 @@ label[for=user] {
 }
 
 #chart-close {
-  font-size: 0.8em;
   position: absolute;
   z-index: 10001;
-  right: 15px;
-  bottom: 160px;
+  right: 4px;
+  bottom: 166px;
   cursor: pointer;
-  color: #5070af;
 }
 
 .mi {
