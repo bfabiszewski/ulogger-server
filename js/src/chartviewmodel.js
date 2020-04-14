@@ -130,7 +130,9 @@ export default class ChartViewModel extends ViewModel {
       this.model.chartVisible = !this.model.chartVisible;
     };
     this.model.onMenuToggle = () => {
-      this.chart.update();
+      if (this.model.chartVisible) {
+        this.chart.update();
+      }
     };
   }
 
