@@ -21,6 +21,7 @@ import { lang as $ } from './initializer.js';
 import Chartist from 'chartist'
 import ViewModel from './viewmodel.js';
 import ctAxisTitle from 'chartist-plugin-axistitle';
+import uObserve from './observe.js';
 import uUtils from './utils.js';
 
 /**
@@ -116,8 +117,12 @@ export default class ChartViewModel extends ViewModel {
 
   setObservers() {
     this.state.onChanged('currentTrack', (track) => {
-      this.render();
-      this.model.buttonVisible = !!track && track.hasPlotData;
+      if (track) {
+        uObserve.observe(track, 'positions', () => {
+          this.onTrackUpdate(track, true);
+        });
+      }
+      this.onTrackUpdate(track);
     });
     this.onChanged('buttonVisible', (visible) => this.renderButton(visible));
     this.onChanged('chartVisible', (visible) => this.renderContainer(visible));
@@ -130,12 +135,21 @@ export default class ChartViewModel extends ViewModel {
   }
 
   /**
+   * @param {?uTrack} track
+   * @param {boolean=} update
+   */
+  onTrackUpdate(track, update = false) {
+    this.render(track, update);
+    this.model.buttonVisible = !!track && track.hasPlotData;
+  }
+
+  /**
    * @param {boolean} isVisible
    */
   renderContainer(isVisible) {
     if (isVisible) {
       this.chartContainer.style.display = 'block';
-      this.render();
+      this.render(this.state.currentTrack);
     } else {
       this.chartContainer.style.display = 'none';
     }
@@ -152,15 +166,19 @@ export default class ChartViewModel extends ViewModel {
     }
   }
 
-  render() {
+  /**
+   * @param {?uTrack} track
+   * @param {boolean=} update
+   */
+  render(track, update = false) {
     let data = [];
-    if (this.state.currentTrack && this.state.currentTrack.hasPlotData && this.model.chartVisible) {
-      data = this.state.currentTrack.plotData;
+    if (track && track.hasPlotData && this.model.chartVisible) {
+      data = track.plotData;
     } else {
       this.model.chartVisible = false;
     }
-    if (this.data !== data) {
-      console.log(`Chart update (${data.length})`);
+    if (update || this.data !== data) {
+      console.log(`Chart${update ? ' forced' : ''} update (${data.length})`);
       this.data = data;
       const options = {
         lineSmooth: (data.length <= LARGE_DATA)

@@ -256,7 +256,7 @@ describe('ChartViewModel tests', () => {
     vm.data = null;
     vm.chartSetup();
     // when
-    vm.render();
+    vm.render(state.currentTrack);
     // then
     expect(mockChart.update).toHaveBeenCalledTimes(1);
     expect(mockChart.update.calls.mostRecent().args[0].series[0]).toBe(track.plotData);
@@ -275,9 +275,28 @@ describe('ChartViewModel tests', () => {
     vm.data = track.plotData;
     vm.chartSetup();
     // when
-    vm.render();
+    vm.render(state.currentTrack);
     // then
     expect(mockChart.update).not.toHaveBeenCalled();
+    expect(vm.data).toBe(track.plotData);
+  });
+
+  it('should render chart on same track and chart visible with update requested', () => {
+    // given
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, altitude: 4 }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, altitude: 5 })
+    ];
+    const track = TrackFactory.getTrack(positions);
+    state.currentTrack = track;
+    vm.model.chartVisible = true;
+    vm.data = track.plotData;
+    vm.chartSetup();
+    // when
+    vm.render(state.currentTrack, true);
+    // then
+    expect(mockChart.update).toHaveBeenCalledTimes(1);
+    expect(mockChart.update.calls.mostRecent().args[0].series[0]).toBe(track.plotData);
     expect(vm.data).toBe(track.plotData);
   });
 
@@ -289,7 +308,7 @@ describe('ChartViewModel tests', () => {
     vm.data = chartData;
     vm.chartSetup();
     // when
-    vm.render();
+    vm.render(state.currentTrack);
     // then
     expect(mockChart.update).toHaveBeenCalledTimes(1);
     expect(mockChart.update.calls.mostRecent().args[0].series[0]).toEqual(track.plotData);
@@ -304,7 +323,7 @@ describe('ChartViewModel tests', () => {
     vm.data = chartData;
     vm.chartSetup();
     // when
-    vm.render();
+    vm.render(state.currentTrack);
     // then
     expect(mockChart.update).toHaveBeenCalledTimes(1);
     expect(mockChart.update.calls.mostRecent().args[0].series[0]).toEqual([]);
