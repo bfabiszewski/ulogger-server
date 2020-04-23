@@ -8,5 +8,5 @@
     <link rel="shortcut icon" href="icons/favicon.ico">
     <meta name="msapplication-config" content="browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" type="text/css" href="css/fonts.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/dist/fonts.css">
+    <link rel="stylesheet" type="text/css" href="css/dist/main.css">

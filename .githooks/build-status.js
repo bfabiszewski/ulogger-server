@@ -19,13 +19,19 @@
 
 const exec = require('child_process').execSync;
 
-const sourcesModified = () => {
+const jsSourcesModified = () => {
   const lastBuildCommit = exec('git log -1 --pretty="format:%H" js/dist/*bundle*js*').toString();
   const output = exec(`git diff --name-only ${lastBuildCommit} HEAD js/src`).toString();
   return !!output && output.split('\n').length > 0;
 };
 
-if (sourcesModified()) {
+const cssSourcesModified = () => {
+  const lastBuildCommit = exec('git log -1 --pretty="format:%H" css/dist/*.css*').toString();
+  const output = exec(`git diff --name-only ${lastBuildCommit} HEAD css/src`).toString();
+  return !!output && output.split('\n').length > 0;
+};
+
+if (jsSourcesModified() || cssSourcesModified()) {
   console.log('\nPlease update and commit distribution bundle first!\nYou may still push using --no-verify option.\n');
   process.exitCode = 1;
 }

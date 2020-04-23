@@ -89,7 +89,7 @@ export default class OpenLayersApi {
    * @return {Promise<void, Error>}
    */
   init() {
-    uUtils.addCss('css/ol.css', 'ol_css');
+    uUtils.addCss('css/dist/ol.css', 'ol_css');
     const olReady = ol ? Promise.resolve() : import(/* webpackChunkName : "ol" */'../lib/ol.js').then((m) => { ol = m; });
     return olReady.then(() => {
       this.initMap();

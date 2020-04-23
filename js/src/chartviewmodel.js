@@ -73,7 +73,7 @@ export default class ChartViewModel extends ViewModel {
   }
 
   chartSetup() {
-    uUtils.addCss('css/chartist.min.css', 'chartist_css');
+    uUtils.addCss('css/dist/chartist.css', 'chartist_css');
     this.chart = new Chartist.Line(this.chartElement, {
       series: [ this.data ]
     }, {
