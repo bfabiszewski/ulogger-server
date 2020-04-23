@@ -368,7 +368,6 @@ label[for=user] {
   padding: 1em;
   color: white;
   border: 1px solid #888;
-  -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
   background-color: rgba(102, 102, 102, 0.9);
@@ -390,7 +389,6 @@ label[for=user] {
   margin: 0.8em 0;
   padding: 0.4em;
   border: 1px solid #ccc;
-  -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
@@ -423,7 +421,6 @@ button {
   cursor: pointer;
   color: white;
   border: 1px solid white;
-  -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   background-color: #434343;
@@ -441,7 +438,6 @@ button > * {
   float: right;
   padding: 0.1em 0.4em;
   color: white;
-  -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
   background-color: red;
@@ -602,7 +598,7 @@ button > * {
   right: -10px;
   width: 30px;
   height: 30px;
-  background-image: url(../images/close.svg) !important;
+  background-image: url(../../images/close.svg) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -621,7 +617,7 @@ button > * {
 }
 
 .gm-style-iw button {
-  background-image: url(../images/close.svg) !important;
+  background-image: url(../../images/close.svg) !important;
   background-repeat: no-repeat !important;
 }
 
