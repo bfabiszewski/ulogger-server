@@ -59,13 +59,15 @@ export default class UserDialogModel extends ViewModel {
     this.dialog.show();
     this.bindAll(this.dialog.element);
     const passInput = this.getBoundElement('passInput');
-    this.onChanged('passVisibility', () => {
-      if (passInput.style.display === 'none') {
-        passInput.style.display = 'block';
-      } else {
-        passInput.style.display = 'none';
-      }
-    });
+    if (passInput) {
+      this.onChanged('passVisibility', () => {
+        if (passInput.style.display === 'none') {
+          passInput.style.display = 'block';
+        } else {
+          passInput.style.display = 'none';
+        }
+      });
+    }
   }
 
   onUserDelete() {
