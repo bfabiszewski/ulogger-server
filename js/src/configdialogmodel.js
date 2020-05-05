@@ -227,9 +227,9 @@ export default class ConfigDialogModel extends ViewModel {
         <label><b>${$._('interval')}</b>
         <input type="number" data-bind="interval" min="1" value="${this.model.interval}" required></label>
         <label><b>${$._('longitude')}</b>
-        <input type="number" data-bind="longitude" min="-180" max="180" step="0.01" value="${this.model.initLongitude}" required></label>
+        <input type="number" data-bind="initLongitude" min="-180" max="180" step="0.01" value="${this.model.initLongitude}" required></label>
         <label><b>${$._('latitude')}</b>
-        <input type="number" data-bind="latitude" min="-90" max="90" step="0.01" value="${this.model.initLatitude}" required></label>
+        <input type="number" data-bind="initLatitude" min="-90" max="90" step="0.01" value="${this.model.initLatitude}" required></label>
         <label><b>${$._('googlekey')}</b>
         <input type="text" data-bind="googleKey" value="${this.model.googleKey}"></label>
         <label><b>${$._('passlength')}</b>
@@ -252,15 +252,15 @@ export default class ConfigDialogModel extends ViewModel {
         <label><b>${$._('strokecolor')}</b>
         <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.strokeColor}" required></label>
         <label><b>${$._('colornormal')}</b>
-        <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorNormal}" required></label>
+        <input type="color" data-bind="colorNormal" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorNormal}" required></label>
         <label><b>${$._('colorstart')}</b>
-        <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorStart}" required></label>
+        <input type="color" data-bind="colorStart" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorStart}" required></label>
         <label><b>${$._('colorstop')}</b>
-        <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorStop}" required></label>
+        <input type="color" data-bind="colorStop" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorStop}" required></label>
         <label><b>${$._('colorextra')}</b>
-        <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorExtra}" required></label>
+        <input type="color" data-bind="colorExtra" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorExtra}" required></label>
         <label><b>${$._('colorhilite')}</b>
-        <input type="color" data-bind="strokeColor" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorHilite}" required></label>
+        <input type="color" data-bind="colorHilite" pattern="#[0-9a-f]{6}" maxlength="7" value="${this.model.colorHilite}" required></label>
         <div class="buttons">
           <button class="button-reject" data-bind="onCancel" type="button">${$._('cancel')}</button>
           <button class="button-resolve" data-bind="onSave" type="submit">${$._('submit')}</button>
