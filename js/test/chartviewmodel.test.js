@@ -125,7 +125,7 @@ describe('ChartViewModel tests', () => {
     // when
     vm.chartSetup();
     // then
-    expect(uUtils.addCss).toHaveBeenCalledWith('css/chartist.min.css', 'chartist_css');
+    expect(uUtils.addCss).toHaveBeenCalledWith('css/dist/chartist.css', 'chartist_css');
     expect(Chartist.Line).toHaveBeenCalledWith(chartEl, jasmine.any(Object), jasmine.any(Object));
     expect(mockChart.on).toHaveBeenCalledWith('created', jasmine.any(Function));
   });
