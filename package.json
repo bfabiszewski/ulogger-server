@@ -6,7 +6,7 @@
   "scripts": {
     "test": "karma start karma.conf.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
-    "lint:css": "stylelint css/main.css",
+    "lint:css": "stylelint css/src/main.css",
     "lint:js": "eslint js/src/*.js",
     "build": "webpack --config webpack.prod.js",
     "build:dev": "webpack --config webpack.dev.js"
