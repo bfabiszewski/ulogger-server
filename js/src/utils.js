@@ -46,7 +46,7 @@ export default class uUtils {
     const ret = fmt.replace(/%%|%s|%d/g, (match) => {
       if (match === '%%') {
         return '%';
-      } else if (match === '%d' && isNaN(params[i])) {
+      } else if (match === '%d' && isNaN(params[i]) && typeof params[i] !== 'undefined') {
         throw new Error(`Wrong format specifier ${match} for ${params[i]} argument`);
       }
       if (typeof params[i] === 'undefined') {
@@ -106,6 +106,11 @@ export default class uUtils {
     return Promise.race([ scriptLoaded, timeout ]);
   }
 
+  /**
+   * Promise rejected after given time
+   * @param {number} ms Time in milliseconds
+   * @return {Promise<void, Error>}
+   */
   static timeoutPromise(ms) {
     return new Promise((resolve, reject) => {
       const tid = setTimeout(() => {
@@ -135,16 +140,17 @@ export default class uUtils {
    * @returns {string}
    */
   static hexToRGBA(hex, opacity) {
+    opacity = typeof opacity !== 'undefined' ? opacity : 1;
     return `rgba(${(hex = hex.replace('#', ''))
       .match(new RegExp(`(.{${hex.length / 3}})`, 'g'))
       .map((l) => parseInt(hex.length % 2 ? l + l : l, 16))
-      .concat(opacity || 1).join(',')})`;
+      .concat(opacity).join(',')})`;
   }
 
   /**
    * Add link tag with type css
    * @param {string} url attribute
-   * @param {string} id attribute
+   * @param {string=} id attribute
    */
   static addCss(url, id) {
     if (id && document.getElementById(id)) {
@@ -166,47 +172,19 @@ export default class uUtils {
    */
   static removeElementById(id) {
     const tag = document.getElementById(id);
-    if (tag && tag.parentNode) {
-      tag.parentNode.removeChild(tag);
+    if (tag) {
+      tag.remove();
     }
   }
 
   /**
    * @param {string} html HTML representing a single element
-   * @return {Node}
+   * @return {Node|NodeList}
    */
   static nodeFromHtml(html) {
     const template = document.createElement('template');
-    template.innerHTML = html;
-    return template.content.firstChild;
-  }
-
-  /**
-   * @param {string} html HTML representing a single element
-   * @return {NodeList}
-   */
-  static nodesFromHtml(html) {
-    const template = document.createElement('template');
-    template.innerHTML = html;
-    return template.content.childNodes;
-  }
-
-  /**
-   *
-   * @param {NodeList} nodeList
-   * @param {string} selector
-   * @return {?Element}
-   */
-  static querySelectorInList(nodeList, selector) {
-    for (const node of nodeList) {
-      if (node instanceof HTMLElement) {
-        const el = node.querySelector(selector);
-        if (el) {
-          return el;
-        }
-      }
-    }
-    return null;
+    template.innerHTML = html.trim();
+    return template.content.childNodes.length > 1 ? template.content.childNodes : template.content.firstChild;
   }
 
   /**

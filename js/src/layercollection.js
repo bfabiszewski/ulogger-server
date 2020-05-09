@@ -19,6 +19,9 @@
 
 import uLayer from './layer.js';
 
+/**
+ * @extends {Array.<uLayer>}
+ */
 export default class uLayerCollection extends Array {
 
   /**
@@ -53,6 +56,7 @@ export default class uLayerCollection extends Array {
 
   /**
    * @param {number|string} id Id or listValue
+   * @return {uLayer}
    */
   get(id) {
     if (typeof id === 'string') {
@@ -70,6 +74,7 @@ export default class uLayerCollection extends Array {
   }
 
   /**
+   * Set layer with given id as priority
    * @param {number} id
    */
   setPriorityLayer(id) {

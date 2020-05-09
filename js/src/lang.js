@@ -178,6 +178,6 @@ export default class uLang {
    * @return {Object.<string, string>}
    */
   getLangList() {
-    return this.strings['langArr'];
+    return this.strings['langArr'] || {};
   }
 }

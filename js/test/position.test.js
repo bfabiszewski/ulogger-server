@@ -17,6 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import uAjax from '../src/ajax.js';
 import uPosition from '../src/position.js';
 
 describe('Position tests', () => {
@@ -209,6 +210,66 @@ describe('Position tests', () => {
     const position = uPosition.fromJson(jsonPosition);
     // then
     expect(position.hasImage()).toBe(true);
+  });
+
+  it('should calculate speed', () => {
+    // when
+    const position = uPosition.fromJson(jsonPosition);
+    position.totalMeters = 1000;
+    position.totalSeconds = 10;
+    // then
+    expect(position.totalSpeed).toBe(position.totalMeters / position.totalSeconds);
+  });
+
+  it('should delete position on server', () => {
+    // given
+    spyOn(uPosition, 'update');
+    const position = uPosition.fromJson(jsonPosition);
+    // when
+    position.delete()
+    // then
+    expect(uPosition.update).toHaveBeenCalledWith({ action: 'delete', posid: posId });
+  });
+
+  it('should save position on server', () => {
+    // given
+    spyOn(uPosition, 'update');
+    const position = uPosition.fromJson(jsonPosition);
+    // when
+    position.save()
+    // then
+    expect(uPosition.update).toHaveBeenCalledWith({ action: 'update', posid: posId, comment: comment });
+  });
+
+  it('should call ajax post with url and params', () => {
+    // given
+    const url = 'utils/handleposition.php';
+    spyOn(uAjax, 'post');
+    const data = 'test data';
+    // when
+    uPosition.update(data);
+    // then
+    expect(uAjax.post).toHaveBeenCalledWith(url, data);
+  });
+
+  it('should calculate distance to another position', () => {
+    // given
+    const position = uPosition.fromJson(jsonPosition);
+    const position2 = uPosition.fromJson(jsonPosition);
+    position2.latitude += 1;
+    position2.longitude += 1;
+    // then
+    expect(position.distanceTo(position2)).toBeCloseTo(155621.15, 2);
+  });
+
+  it('should calculate time difference to another position', () => {
+    // given
+    const timeDifference = 1234;
+    const position = uPosition.fromJson(jsonPosition);
+    const position2 = uPosition.fromJson(jsonPosition);
+    position.timestamp += timeDifference;
+    // then
+    expect(position.secondsTo(position2)).toBe(timeDifference);
   });
 
 });
