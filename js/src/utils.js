@@ -281,22 +281,6 @@ export default class uUtils {
   }
 
   /**
-   * @param {(Error|string)} e
-   * @param {string=} message
-   */
-  static error(e, message) {
-    let details;
-    if (e instanceof Error) {
-      details = `${e.name}: ${e.message} (${e.stack})`;
-    } else {
-      details = e;
-      message = e;
-    }
-    console.error(details);
-    alert(message);
-  }
-
-  /**
    * Degrees to radians
    * @param {number} degrees
    * @return {number}

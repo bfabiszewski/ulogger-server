@@ -526,6 +526,43 @@ button > * {
   margin: 0 5px;
 }
 
+.alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 300px;
+  background: #666;
+  color: white;
+  font-family: "Open Sans", Verdana, sans-serif;
+  font-size: 0.8em;
+  line-height: 20px;
+  text-align: center;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  margin: 1em 0 1em -150px;
+  padding: 6px 20px;
+  border-radius: 5px;
+  border-top: 1px solid #555;
+  box-shadow: 10px 10px 10px -8px rgba(0, 0, 0, 0.3);
+}
+
+.alert.error {
+  background: #d95b5b;
+  border-top: 1px solid #d05858;
+}
+
+.alert button {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  border: none;
+  margin: 0;
+  height: 100%;
+  background: none;
+  font-weight: normal;
+  font-size: 15px;
+}
+
 /* chart */
 .ct-point {
   transition: 0.3s;
