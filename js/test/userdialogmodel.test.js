@@ -19,6 +19,7 @@
 
 import { auth, config, lang } from '../src/initializer.js';
 import UserDialogModel from '../src/userdialogmodel.js';
+import uAlert from '../src/alert.js';
 import uDialog from '../src/dialog.js';
 import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
@@ -51,7 +52,7 @@ describe('UserDialogModel tests', () => {
     spyOn(auth.user, 'setPassword').and.returnValue(Promise.resolve());
     spyOn(uUser, 'add').and.returnValue(Promise.resolve(newUser));
     spyOn(config, 'validPassStrength').and.returnValue(true);
-    spyOn(window, 'alert');
+    spyOn(uAlert, 'error');
   });
 
   afterEach(() => {
@@ -277,7 +278,7 @@ describe('UserDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(true);
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(uAlert.error).not.toHaveBeenCalled();
   });
 
   it('should return false on add user dialog empty login', () => {
@@ -290,7 +291,7 @@ describe('UserDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(false);
-    expect(window.alert).toHaveBeenCalledTimes(1);
+    expect(uAlert.error).toHaveBeenCalledTimes(1);
   });
 
   it('should return false on password change dialog empty old password', () => {
@@ -304,7 +305,7 @@ describe('UserDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(false);
-    expect(window.alert).toHaveBeenCalledTimes(1);
+    expect(uAlert.error).toHaveBeenCalledTimes(1);
   });
 
   it('should return false on add user dialog passwords not match', () => {
@@ -317,7 +318,7 @@ describe('UserDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(false);
-    expect(window.alert).toHaveBeenCalledTimes(1);
+    expect(uAlert.error).toHaveBeenCalledTimes(1);
   });
 
   it('should return true and ignore passwords on add user dialog passwords hidden', () => {
@@ -330,7 +331,7 @@ describe('UserDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(true);
-    expect(window.alert).toHaveBeenCalledTimes(0);
+    expect(uAlert.error).toHaveBeenCalledTimes(0);
   });
 
   it('should test password regex on dialog validate', () => {

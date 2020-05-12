@@ -19,11 +19,11 @@
 
 import { lang as $, config } from './initializer.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uLayer from './layer.js';
 import uLayerCollection from './layercollection.js';
 import uSelect from './select.js';
-import uUtils from './utils.js';
 
 /**
  * @class ConfigDialogModel
@@ -105,7 +105,7 @@ export default class ConfigDialogModel extends ViewModel {
       this.model.layers.setPriorityLayer(this.model.layerId);
       config.save(this.model)
         .then(() => this.dialog.destroy())
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 

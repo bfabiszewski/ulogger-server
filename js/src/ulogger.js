@@ -24,6 +24,7 @@ import MainViewModel from './mainviewmodel.js';
 import MapViewModel from './mapviewmodel.js';
 import TrackViewModel from './trackviewmodel.js';
 import UserViewModel from './userviewmodel.js';
+import uAlert from './alert.js';
 import uState from './state.js';
 
 const domReady = uInitializer.waitForDom();
@@ -33,7 +34,7 @@ Promise.all([ domReady, initReady ])
   .then(() => {
     start();
   })
-  .catch((msg) => alert(`${$._('actionfailure')}\n${msg}`));
+  .catch((msg) => uAlert.error(`${$._('actionfailure')}\n${msg}`));
 
 
 function start() {

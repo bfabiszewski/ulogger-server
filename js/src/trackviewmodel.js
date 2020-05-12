@@ -20,6 +20,7 @@
 import { lang as $, auth, config } from './initializer.js';
 import TrackDialogModel from './trackdialogmodel.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uObserve from './observe.js';
 import uPositionSet from './positionset.js';
 import uSelect from './select.js';
@@ -165,24 +166,24 @@ export default class TrackViewModel extends ViewModel {
     const form = this.importEl.parentElement;
     const sizeMax = form.elements['MAX_FILE_SIZE'].value;
     if (this.importEl.files && this.importEl.files.length === 1 && this.importEl.files[0].size > sizeMax) {
-      uUtils.error($._('isizefailure', sizeMax));
+      uAlert.error($._('isizefailure', sizeMax));
       return;
     }
     if (!auth.isAuthenticated) {
-      uUtils.error($._('notauthorized'));
+      uAlert.error($._('notauthorized'));
       return;
     }
     uTrack.import(form, auth.user)
       .then((trackList) => {
         if (trackList.length) {
           if (trackList.length > 1) {
-            alert($._('imultiple', trackList.length));
+            uAlert.toast($._('imultiple', trackList.length));
           }
           this.model.trackList = trackList.concat(this.model.trackList);
           this.model.currentTrackId = trackList[0].listValue;
         }
       })
-      .catch((e) => uUtils.error(e, `${$._('actionfailure')}\n${e.message}`))
+      .catch((e) => uAlert.error(`${$._('actionfailure')}\n${e.message}`, e))
       .finally(() => {
         this.model.inputFile = '';
       });
@@ -205,7 +206,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.showLatest = false;
         }
       })
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -218,7 +219,7 @@ export default class TrackViewModel extends ViewModel {
       this.state.currentTrack.clear();
     }
     this.state.currentTrack.fetchPositions()
-      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
   }
 
   /**
@@ -235,7 +236,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.currentTrackId = _track.listValue;
         }
       })
-      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
   }
 
   /**
@@ -250,7 +251,7 @@ export default class TrackViewModel extends ViewModel {
           this.state.currentTrack = _track;
         }
       })
-      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
   }
 
   loadTrackList() {
@@ -268,7 +269,7 @@ export default class TrackViewModel extends ViewModel {
           this.model.currentTrackId = '';
         }
       })
-      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
   }
 
   showDialog() {

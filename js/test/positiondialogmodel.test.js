@@ -44,7 +44,6 @@ describe('PositionDialogModel tests', () => {
     spyOn(track.positions[positionIndex], 'save').and.returnValue(Promise.resolve());
     spyOn(track.positions[positionIndex], 'delete').and.returnValue(Promise.resolve());
     spyOn(uObserve, 'forceUpdate');
-    spyOn(window, 'alert');
   });
 
   afterEach(() => {

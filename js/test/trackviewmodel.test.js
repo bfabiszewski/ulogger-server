@@ -22,12 +22,12 @@ import Fixture from './helpers/fixture.js';
 import TrackFactory from './helpers/trackfactory.js';
 import TrackViewModel from '../src/trackviewmodel.js';
 import ViewModel from '../src/viewmodel.js';
+import uAlert from '../src/alert.js';
 import uObserve from '../src/observe.js';
 import uPositionSet from '../src/positionset.js';
 import uState from '../src/state.js';
 import uTrack from '../src/track.js';
 import uUser from '../src/user.js';
-import uUtils from '../src/utils.js';
 
 describe('TrackViewModel tests', () => {
 
@@ -453,7 +453,7 @@ describe('TrackViewModel tests', () => {
       return Promise.resolve(imported);
     });
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    spyOn(window, 'alert');
+    spyOn(uAlert, 'toast');
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
@@ -478,7 +478,7 @@ describe('TrackViewModel tests', () => {
       expect(state.currentTrack).toBe(imported[0]);
       expect(vm.model.currentTrackId).toBe(imported[0].listValue);
       expect(state.currentTrack.length).toBe(positions.length);
-      expect(window.alert).toHaveBeenCalledTimes(1);
+      expect(uAlert.toast).toHaveBeenCalledTimes(1);
       expect(trackEl.options.length).toBe(optLength + imported.length);
       expect(vm.model.trackList.length).toBe(optLength + imported.length);
       expect(vm.model.inputFile).toBe('');
@@ -495,7 +495,7 @@ describe('TrackViewModel tests', () => {
     ];
     spyOn(uTrack, 'import').and.returnValue(Promise.resolve(imported));
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    spyOn(uUtils, 'error');
+    spyOn(uAlert, 'error');
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
@@ -534,7 +534,7 @@ describe('TrackViewModel tests', () => {
     const file = new File([ 'blob' ], '/path/filepath.gpx');
     spyOn(uTrack, 'import').and.returnValue(Promise.resolve(imported));
     spyOn(uPositionSet, 'fetch').and.returnValue(Promise.resolve(positions));
-    spyOn(uUtils, 'error');
+    spyOn(uAlert, 'error');
     const options = '<option selected value="1">track1</option><option value="2">track2</option>';
     trackEl.insertAdjacentHTML('afterbegin', options);
     const optLength = trackEl.options.length;
@@ -556,7 +556,7 @@ describe('TrackViewModel tests', () => {
       expect(uTrack.import).not.toHaveBeenCalled();
       expect(state.currentTrack).toBe(track1);
       expect(vm.model.currentTrackId).toBe(track1.listValue);
-      expect(uUtils.error).toHaveBeenCalledTimes(1);
+      expect(uAlert.error).toHaveBeenCalledTimes(1);
       expect(lang._).toHaveBeenCalledWith('notauthorized');
       expect(trackEl.options.length).toBe(optLength);
       expect(vm.model.trackList.length).toBe(optLength);

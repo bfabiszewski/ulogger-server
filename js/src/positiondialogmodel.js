@@ -19,6 +19,7 @@
 
 import { lang as $ } from './initializer.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uObserve from './observe.js';
 import uUtils from './utils.js';
@@ -81,7 +82,7 @@ export default class PositionDialogModel extends ViewModel {
           track.recalculatePositions();
           this.state.currentTrack = track;
           this.dialog.destroy();
-        }).catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        }).catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -93,7 +94,7 @@ export default class PositionDialogModel extends ViewModel {
           uObserve.forceUpdate(this.state, 'currentTrack');
           this.dialog.destroy()
         })
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 

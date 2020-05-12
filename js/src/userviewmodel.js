@@ -20,9 +20,9 @@
 import { lang as $, auth } from './initializer.js';
 import UserDialogModel from './userdialogmodel.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uSelect from './select.js';
 import uUser from './user.js';
-import uUtils from './utils.js';
 
 /**
  * @class UserViewModel
@@ -80,7 +80,7 @@ export default class UserViewModel extends ViewModel {
         this.model.currentUserId = userId;
       }
     })
-      .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     return this;
   }
 

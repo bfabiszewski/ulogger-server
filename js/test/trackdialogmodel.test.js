@@ -20,6 +20,7 @@
 import { config, lang } from '../src/initializer.js';
 import TrackDialogModel from '../src/trackdialogmodel.js';
 import TrackFactory from './helpers/trackfactory.js';
+import uAlert from '../src/alert.js';
 import uDialog from '../src/dialog.js';
 import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
@@ -41,7 +42,7 @@ describe('TrackDialogModel tests', () => {
     spyOn(dm.track, 'delete').and.returnValue(Promise.resolve());
     spyOn(dm.track, 'saveMeta').and.returnValue(Promise.resolve());
     spyOn(dm.track, 'setName');
-    spyOn(window, 'alert');
+    spyOn(uAlert, 'error');
   });
 
   afterEach(() => {
@@ -153,7 +154,7 @@ describe('TrackDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(false);
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(uAlert.error).not.toHaveBeenCalled();
   });
 
   it('should return false and raise alert if track name is empty', () => {
@@ -164,7 +165,7 @@ describe('TrackDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(false);
-    expect(window.alert).toHaveBeenCalledTimes(1);
+    expect(uAlert.error).toHaveBeenCalledTimes(1);
   });
 
   it('should return true on valid track name', () => {
@@ -175,6 +176,6 @@ describe('TrackDialogModel tests', () => {
     const result = dm.validate();
     // then
     expect(result).toBe(true);
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(uAlert.error).not.toHaveBeenCalled();
   });
 });

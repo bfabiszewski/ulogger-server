@@ -19,6 +19,7 @@
 
 import { lang as $ } from '../src/initializer.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uUtils from './utils.js';
 
@@ -70,7 +71,7 @@ export default class TrackDialogModel extends ViewModel {
       this.track.delete().then(() => {
         this.trackVM.onTrackDeleted();
         this.dialog.destroy();
-      }).catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      }).catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -79,7 +80,7 @@ export default class TrackDialogModel extends ViewModel {
       this.track.setName(this.model.trackname);
       this.track.saveMeta()
         .then(() => this.dialog.destroy())
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -96,7 +97,7 @@ export default class TrackDialogModel extends ViewModel {
       return false;
     }
     if (!this.model.trackname) {
-      alert($._('allrequired'));
+      uAlert.error($._('allrequired'));
       return false;
     }
     return true;

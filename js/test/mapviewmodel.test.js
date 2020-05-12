@@ -22,6 +22,7 @@ import Fixture from './helpers/fixture.js';
 import MapViewModel from '../src/mapviewmodel.js';
 import TrackFactory from './helpers/trackfactory.js';
 import ViewModel from '../src/viewmodel.js';
+import uAlert from '../src/alert.js';
 import uObserve from '../src/observe.js';
 import uState from '../src/state.js';
 import uUtils from '../src/utils.js';
@@ -111,7 +112,7 @@ describe('MapViewModel tests', () => {
   it('should load gmaps api and fail with error, config map api should be set to another api', (done) => {
     // given
     spyOn(vm, 'onReady');
-    spyOn(uUtils, 'error');
+    spyOn(uAlert, 'error');
     mockApi.init.and.returnValue(Promise.reject(new Error('init failed')));
     // when
     vm.loadMapAPI('gmaps');
@@ -120,7 +121,7 @@ describe('MapViewModel tests', () => {
       expect(vm.getApi).toHaveBeenCalledWith('gmaps');
       expect(vm.onReady).not.toHaveBeenCalled();
       expect(config.mapApi).toBe('openlayers');
-      expect(uUtils.error).toHaveBeenCalledWith(jasmine.any(Error), jasmine.stringMatching('init failed'));
+      expect(uAlert.error).toHaveBeenCalledWith(jasmine.stringMatching('init failed'), jasmine.any(Error));
       done();
     }, 100);
   });

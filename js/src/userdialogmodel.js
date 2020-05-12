@@ -19,6 +19,7 @@
 
 import { lang as $, auth, config } from './initializer.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uUser from './user.js';
 import uUtils from './utils.js';
@@ -75,7 +76,7 @@ export default class UserDialogModel extends ViewModel {
       this.user.delete().then(() => {
         this.userVM.onUserDeleted();
         this.dialog.destroy();
-      }).catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      }).catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -84,7 +85,7 @@ export default class UserDialogModel extends ViewModel {
       const password = this.model.passVisibility ? this.model.password : null;
       this.user.modify(this.model.admin, password)
         .then(() => this.dialog.destroy())
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -93,7 +94,7 @@ export default class UserDialogModel extends ViewModel {
     if (this.validate()) {
       auth.user.setPassword(this.model.password, this.model.oldPassword)
         .then(() => this.dialog.destroy())
-        .catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -103,7 +104,7 @@ export default class UserDialogModel extends ViewModel {
       uUser.add(this.model.login, this.model.password, this.model.admin).then((user) => {
         this.userVM.onUserAdded(user);
         this.dialog.destroy();
-      }).catch((e) => { uUtils.error(e, `${$._('actionfailure')}\n${e.message}`); });
+      }).catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
     }
   }
 
@@ -118,26 +119,26 @@ export default class UserDialogModel extends ViewModel {
   validate() {
     if (this.type === 'add') {
       if (!this.model.login) {
-        alert($._('allrequired'));
+        uAlert.error($._('allrequired'));
         return false;
       }
     } else if (this.type === 'pass') {
       if (!this.model.oldPassword) {
-        alert($._('allrequired'));
+        uAlert.error($._('allrequired'));
         return false;
       }
     }
     if (this.model.passVisibility) {
       if (!this.model.password || !this.model.password2) {
-        alert($._('allrequired'));
+        uAlert.error($._('allrequired'));
         return false;
       }
       if (this.model.password !== this.model.password2) {
-        alert($._('passnotmatch'));
+        uAlert.error($._('passnotmatch'));
         return false;
       }
       if (!config.validPassStrength(this.model.password)) {
-        alert($.getLocalePassRules());
+        uAlert.error($.getLocalePassRules());
         return false;
       }
     }

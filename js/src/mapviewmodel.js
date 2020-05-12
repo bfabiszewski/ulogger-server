@@ -22,6 +22,7 @@ import GoogleMapsApi from './mapapi/api_gmaps.js';
 import OpenLayersApi from './mapapi/api_openlayers.js';
 import PositionDialogModel from './positiondialogmodel.js';
 import ViewModel from './viewmodel.js';
+import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uObserve from './observe.js';
 import uUtils from './utils.js';
@@ -96,7 +97,7 @@ export default class MapViewModel extends ViewModel {
         if (e && e.message) {
           txt += ` (${e.message})`;
         }
-        uUtils.error(e, txt);
+        uAlert.error(txt, e);
         config.mapApi = (apiName === 'gmaps') ? 'openlayers' : 'gmaps';
       });
   }

@@ -21,6 +21,7 @@ import * as gmStub from './helpers/googlemaps.stub.js';
 import { config, lang } from '../src/initializer.js'
 import GoogleMapsApi from '../src/mapapi/api_gmaps.js';
 import TrackFactory from './helpers/trackfactory.js';
+import uAlert from '../src/alert.js';
 import uObserve from '../src/observe.js';
 import uUtils from '../src/utils.js';
 
@@ -45,7 +46,7 @@ describe('Google Maps map API tests', () => {
     spyOn(google.maps, 'Marker').and.callThrough();
     spyOn(google.maps, 'Polyline').and.callThrough();
     spyOnProperty(GoogleMapsApi, 'loadTimeoutMs', 'get').and.returnValue(loadTimeout);
-    spyOn(window, 'alert');
+    spyOn(uAlert, 'error');
     spyOn(lang, '_').and.returnValue('{placeholder}');
     gmStub.applyPrototypes();
   });
@@ -155,8 +156,8 @@ describe('Google Maps map API tests', () => {
     window.gm_loaded();
     window.gm_authFailure();
 
-    expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert.calls.mostRecent().args[0]).toContain('authfailure');
+    expect(uAlert.error).toHaveBeenCalledTimes(1);
+    expect(uAlert.error.calls.mostRecent().args[0]).toContain('authfailure');
   });
 
   it('should clean up class fields', () => {

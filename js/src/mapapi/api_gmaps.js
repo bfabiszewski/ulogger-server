@@ -19,6 +19,7 @@
 
 import { lang as $, config } from '../initializer.js';
 import MapViewModel from '../mapviewmodel.js';
+import uAlert from '../alert.js';
 import uTrack from '../track.js';
 import uUtils from '../utils.js';
 
@@ -78,7 +79,7 @@ export default class GoogleMapsApi {
         message += '<br><br>' + $._('gmauthfailure');
         message += '<br><br>' + $._('gmapilink');
         if (GoogleMapsApi.gmInitialized) {
-          alert(message);
+          uAlert.error(message);
         }
         reject(new Error(message));
       };
@@ -178,7 +179,7 @@ export default class GoogleMapsApi {
               this.setZoom(15);
             }
           });
-        setTimeout(function () {
+        setTimeout(() => {
           google.maps.event.removeListener(zListener);
         }, 2000);
       }
