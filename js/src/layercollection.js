@@ -55,13 +55,10 @@ export default class uLayerCollection extends Array {
   }
 
   /**
-   * @param {number|string} id Id or listValue
+   * @param {number} id
    * @return {uLayer}
    */
   get(id) {
-    if (typeof id === 'string') {
-      return this.find((o) => o.listValue === id);
-    }
     return this.find((o) => o.id === id);
   }
 

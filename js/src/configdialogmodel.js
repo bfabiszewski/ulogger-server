@@ -37,7 +37,7 @@ export default class ConfigDialogModel extends ViewModel {
       lang: config.lang,
       mapApi: config.mapApi,
       googleKey: config.googleKey,
-      layerId: config.olLayers.getPriorityLayer(),
+      layerId: config.olLayers.getPriorityLayer().toString(),
       layers: new uLayerCollection(new uLayer(0, 'OpenStreetMap', '', 0), ...config.olLayers),
       layerName: null,
       layerUrl: null,
@@ -75,8 +75,9 @@ export default class ConfigDialogModel extends ViewModel {
     this.layerSelect = new uSelect(this.getBoundElement('layerId'));
     this.layerSelect.setOptions(this.model.layers, this.currentLayer().listValue);
     this.setPublicTracksActivity(this.model.requireAuth);
+    this.toggleEditVisible();
     this.onChanged('layerId', (listValue) => {
-      const layer = this.model.layers.get(listValue);
+      const layer = this.model.layers.get(parseInt(listValue));
       this.model.layerName = layer ? layer.name : '';
       this.model.layerUrl = layer ? layer.url : '';
       this.toggleEditVisible();
@@ -102,7 +103,7 @@ export default class ConfigDialogModel extends ViewModel {
 
   onSave() {
     if (this.validate()) {
-      this.model.layers.setPriorityLayer(this.model.layerId);
+      this.model.layers.setPriorityLayer(parseInt(this.model.layerId));
       config.save(this.model)
         .then(() => this.dialog.destroy())
         .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
@@ -119,7 +120,7 @@ export default class ConfigDialogModel extends ViewModel {
   }
 
   toggleEditVisible() {
-    if (this.model.layerId > 0) {
+    if (parseInt(this.model.layerId) > 0) {
       this.toggleEditEl.style.visibility = 'visible';
     } else {
       this.toggleEditEl.style.visibility = 'hidden';
@@ -128,8 +129,8 @@ export default class ConfigDialogModel extends ViewModel {
   }
 
   onLayerDelete() {
-    this.model.layers.delete(this.model.layerId);
-    this.model.layerId = 0;
+    this.model.layers.delete(parseInt(this.model.layerId));
+    this.model.layerId = '0';
   }
 
   onLayerEdit() {
@@ -144,7 +145,7 @@ export default class ConfigDialogModel extends ViewModel {
     if (!this.model.layerName || !this.model.layerUrl) {
       return;
     }
-    if (this.model.layerId === -1) {
+    if (this.model.layerId === '-1') {
       this.model.layers.addNewLayer(this.model.layerName, this.model.layerUrl);
     } else {
       const layer = this.currentLayer();
@@ -161,7 +162,7 @@ export default class ConfigDialogModel extends ViewModel {
   }
 
   onLayerAdd() {
-    this.model.layerId = -1;
+    this.model.layerId = '-1';
     this.onLayerEdit();
   }
 
@@ -174,7 +175,7 @@ export default class ConfigDialogModel extends ViewModel {
   }
 
   currentLayer() {
-    return this.model.layers.get(this.model.layerId);
+    return this.model.layers.get(parseInt(this.model.layerId));
   }
 
   /**

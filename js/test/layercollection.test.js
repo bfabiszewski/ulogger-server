@@ -86,14 +86,6 @@ describe('LayerCollection tests', () => {
     expect(layers.get(testId).id).toBe(testId);
   });
 
-  it('should get layer by id (string)', () => {
-    // when
-    layers.addLayer(testId + 1, testName, testUrl, testPriority);
-    layers.addLayer(testId, testName, testUrl, testPriority);
-    // then
-    expect(layers.get(testId.toString()).id).toBe(testId);
-  });
-
   it('should get max id of all layers in array', () => {
     // when
     layers.addLayer(testId + 1, testName, testUrl, testPriority);

@@ -97,7 +97,7 @@ describe('ConfigDialogModel tests', () => {
     // then
     setTimeout(() => {
       expect(cm.layerEditEl.style.display).toBe('block');
-      expect(cm.model.layerId).toBe(-1);
+      expect(cm.model.layerId).toBe('-1');
       done();
     }, 100);
   });
@@ -112,7 +112,7 @@ describe('ConfigDialogModel tests', () => {
     // then
     setTimeout(() => {
       expect(cm.layerEditEl.style.display).toBe('none');
-      expect(cm.model.layerId).toBe(-1);
+      expect(cm.model.layerId).toBe('-1');
       done();
     }, 100);
   });
@@ -130,6 +130,22 @@ describe('ConfigDialogModel tests', () => {
       expect(cm.validate).toHaveBeenCalledTimes(1);
       expect(config.save).toHaveBeenCalledTimes(1);
       expect(document.querySelector('#modal')).toBe(null);
+      done();
+    }, 100);
+  });
+
+  it('should set priority layer on save', (done) => {
+    // given
+    spyOn(cm, 'validate').and.returnValue(true);
+    spyOn(config, 'save').and.returnValue(Promise.resolve());
+    cm.model.layerId = '1';
+    cm.init();
+    const button = cm.dialog.element.querySelector("[data-bind='onSave']");
+    // when
+    button.click();
+    // then
+    setTimeout(() => {
+      expect(cm.model.layers[1].priority).toBe(1);
       done();
     }, 100);
   });
@@ -192,7 +208,7 @@ describe('ConfigDialogModel tests', () => {
         // then
         expect(layers.length).toBe(1);
         expect(layers[0].id).toBe(0);
-        expect(cm.model.layerId).toBe(0);
+        expect(cm.model.layerId).toBe('0');
         done();
       }, 100);
     }, 100);
