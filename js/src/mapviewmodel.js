@@ -81,17 +81,22 @@ export default class MapViewModel extends ViewModel {
    * @param {string} apiName API name
    */
   loadMapAPI(apiName) {
-    if (this.api) {
+    let mapApi = this.api;
+    this.api = null;
+    if (mapApi) {
       try {
-        this.savedBounds = this.api.getBounds();
+        this.savedBounds = mapApi.getBounds();
       } catch (e) {
         this.savedBounds = null;
       }
-      this.api.cleanup();
+      mapApi.cleanup();
     }
-    this.api = this.getApi(apiName);
-    this.api.init()
-      .then(() => this.onReady())
+    mapApi = this.getApi(apiName);
+    mapApi.init()
+      .then(() => {
+        this.api = mapApi;
+        this.onReady();
+      })
       .catch((e) => {
         let txt = $._('apifailure', apiName);
         if (e && e.message) {
