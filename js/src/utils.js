@@ -32,7 +32,7 @@ export default class uUtils {
       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
       expires = `; expires=${date.toUTCString()}`;
     }
-    document.cookie = `ulogger_${name}=${value}${expires}; path=/`;
+    document.cookie = `ulogger_${name}=${value}${expires}; path=/; samesite=lax`;
   }
 
   /**
