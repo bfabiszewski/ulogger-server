@@ -281,7 +281,7 @@ describe('Google Maps map API tests', () => {
     expect(api.polies[0].path.length).toBe(track.length);
     expect(api.setMarker).toHaveBeenCalledTimes(track.length);
     expect(google.maps.Map.prototype.fitBounds).toHaveBeenCalledTimes(1);
-    expect(google.maps.event.addListenerOnce).not.toHaveBeenCalled();
+    expect(google.maps.event.addListenerOnce).toHaveBeenCalledTimes(1);
     expect(setTimeout).not.toHaveBeenCalled();
   });
 

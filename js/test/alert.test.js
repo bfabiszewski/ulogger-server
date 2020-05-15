@@ -24,6 +24,10 @@ describe('Alert tests', () => {
   const message = 'test message';
   let alert;
 
+  beforeEach(() => {
+    spyOn(window, 'requestAnimationFrame').and.callFake((callback) => callback());
+  })
+
   afterEach(() => {
     if (alert) {
       alert.destroy();
@@ -79,6 +83,7 @@ describe('Alert tests', () => {
 
   it('should render and destroy alert box', () => {
     // given
+    spyOn(window, 'setTimeout').and.callFake((callback) => callback());
     const id = 'testId';
     const options = { id }
     alert = new uAlert(message, options);
@@ -96,6 +101,7 @@ describe('Alert tests', () => {
 
   it('should show and autoclose alert box', (done) => {
     // given
+    jasmine.clock().install();
     const id = 'testId';
     const options = { id: id, autoClose: 50 }
 
@@ -103,7 +109,8 @@ describe('Alert tests', () => {
     alert = uAlert.show(message, options);
     // then
     expect(document.querySelector(`#${id}`)).not.toBeNull();
-
+    jasmine.clock().tick(5000);
+    jasmine.clock().uninstall();
     setTimeout(() => {
       expect(document.querySelector(`#${id}`)).toBeNull();
       done();
@@ -112,12 +119,15 @@ describe('Alert tests', () => {
 
   it('should close alert box on close button click', (done) => {
     // given
+    jasmine.clock().install();
     const id = 'testId';
     const options = { id }
     alert = uAlert.show(message, options);
     const closeButton = alert.box.querySelector('button');
     // when
     closeButton.click();
+    jasmine.clock().tick(5000);
+    jasmine.clock().uninstall();
     // then
     setTimeout(() => {
       expect(document.querySelector(`#${id}`)).toBeNull();

@@ -424,11 +424,18 @@ export default class OpenLayersApi {
    * Display track
    * @param {uPositionSet} track Track
    * @param {boolean} update Should fit bounds if true
+   * @return {Promise.<void>}
    */
   displayTrack(track, update) {
     if (!track || !track.hasPositions) {
-      return;
+      return Promise.resolve();
     }
+    const promise = new Promise((resolve) => {
+      this.map.once('rendercomplete', () => {
+        console.log('rendercomplete');
+        resolve();
+      });
+    });
     let start = this.layerMarkers ? this.layerMarkers.getSource().getFeatures().length : 0;
     if (start > 0) {
       this.removePoint(--start);
@@ -457,6 +464,7 @@ export default class OpenLayersApi {
       extent = this.fitToExtent(extent);
     }
     this.setZoomToExtent(extent);
+    return promise;
   }
 
   /**

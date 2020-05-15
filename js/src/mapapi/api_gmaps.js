@@ -129,11 +129,18 @@ export default class GoogleMapsApi {
    * Display track
    * @param {uPositionSet} track
    * @param {boolean} update Should fit bounds if true
+   * @return {Promise.<void>}
    */
   displayTrack(track, update) {
     if (!track || !track.hasPositions) {
-      return;
+      return Promise.resolve();
     }
+    const promise = new Promise((resolve) => {
+      google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
+        console.log('tilesloaded');
+        resolve();
+      })
+    });
     // init polyline
     const polyOptions = {
       strokeColor: config.strokeColor,
@@ -184,6 +191,7 @@ export default class GoogleMapsApi {
         }, 2000);
       }
     }
+    return promise;
   }
 
   /**

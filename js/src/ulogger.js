@@ -25,6 +25,7 @@ import MapViewModel from './mapviewmodel.js';
 import TrackViewModel from './trackviewmodel.js';
 import UserViewModel from './userviewmodel.js';
 import uAlert from './alert.js';
+import uSpinner from './spinner.js';
 import uState from './state.js';
 
 const domReady = uInitializer.waitForDom();
@@ -39,13 +40,14 @@ Promise.all([ domReady, initReady ])
 
 function start() {
   const state = new uState();
-
+  const spinner = new uSpinner(state);
   const mainVM = new MainViewModel(state);
   const userVM = new UserViewModel(state);
   const trackVM = new TrackViewModel(state);
   const mapVM = new MapViewModel(state);
   const chartVM = new ChartViewModel(state);
   const configVM = new ConfigViewModel(state);
+  spinner.init();
   mainVM.init();
   userVM.init();
   trackVM.init();

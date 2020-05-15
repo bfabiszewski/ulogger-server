@@ -24,8 +24,10 @@ export default class uAlert {
   /**
    * @typedef {Object} AlertOptions
    * @property {number} [autoClose=0] Optional autoclose delay time in ms, default 0 – no autoclose
+   * @property {boolean} [hasButton] Optional can be closed by button click, default true when autoClose not set
    * @property {string} [id] Optional box id
    * @property {string} [class] Optional box class
+   * @property {boolean} [fixed=false] Optional set fixed position, default false
    */
 
   /**
@@ -35,6 +37,8 @@ export default class uAlert {
    */
   constructor(message, options = {}) {
     this.autoClose = options.autoClose || 0;
+    this.hasButton = typeof options.hasButton !== 'undefined' ? options.hasButton : this.autoClose === 0
+    this.fixedPosition = options.fixed || false;
     const html = `<div class="alert"><span>${message}</span></div>`;
     this.box = uUtils.nodeFromHtml(html);
     if (options.id) {
@@ -43,7 +47,7 @@ export default class uAlert {
     if (options.class) {
       this.box.classList.add(options.class);
     }
-    if (this.autoClose === 0) {
+    if (this.hasButton) {
       const button = document.createElement('button');
       button.setAttribute('type', 'button');
       button.textContent = '×';
@@ -72,11 +76,18 @@ export default class uAlert {
   }
 
   render() {
-    const top = uAlert.getPosition();
-    if (top) {
-      this.box.style.top = `${top}px`;
+    if (!this.fixedPosition) {
+      const top = uAlert.getPosition();
+      if (top) {
+        this.box.style.top = `${top}px`;
+      }
     }
     document.body.appendChild(this.box);
+    setTimeout(() => {
+      if (this.box) {
+        this.box.classList.add('in');
+      }
+    }, 50);
   }
 
   destroy() {
@@ -84,10 +95,14 @@ export default class uAlert {
       clearTimeout(this.closeHandle);
       this.closeHandle = null;
     }
-    if (this.box) {
-      if (document.body.contains(this.box)) {
-        document.body.removeChild(this.box);
-      }
+    if (this.box && document.body.contains(this.box)) {
+      const element = this.box;
+      requestAnimationFrame(() => {
+        element.classList.add('out');
+        setTimeout(() => {
+          element.remove();
+        }, 1000);
+      });
       this.box = null;
     }
   }
@@ -127,6 +142,10 @@ export default class uAlert {
    */
   static toast(message) {
     return this.show(message, { class: 'toast', autoClose: 10000 });
+  }
+
+  static spinner() {
+    return this.show('', { class: 'spinner', hasButton: false, fixed: true });
   }
 
 }

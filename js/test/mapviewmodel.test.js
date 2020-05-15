@@ -56,7 +56,7 @@ describe('MapViewModel tests', () => {
       'cleanup': { /* ignored */ },
       'zoomToBounds': { /* ignored */ },
       'zoomToExtent': { /* ignored */ },
-      'displayTrack': { /* ignored */ },
+      'displayTrack': Promise.resolve(),
       'clearMap': { /* ignored */ },
       'updateSize': { /* ignored */ }
     });

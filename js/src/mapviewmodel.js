@@ -120,7 +120,7 @@ export default class MapViewModel extends ViewModel {
       this.api.zoomToBounds(this.savedBounds);
     }
     if (this.state.currentTrack) {
-      this.api.displayTrack(this.state.currentTrack, this.savedBounds === null);
+      this.displayTrack(this.state.currentTrack, this.savedBounds === null);
     }
   }
 
@@ -135,12 +135,18 @@ export default class MapViewModel extends ViewModel {
       this.api.clearMap();
       if (track) {
         uObserve.observe(track, 'positions', () => {
-          this.api.displayTrack(track, false);
+          this.displayTrack(track, false);
           this.api.zoomToExtent();
         });
-        this.api.displayTrack(track, true);
+        this.displayTrack(track, true);
       }
     });
+  }
+
+  displayTrack(track, update) {
+    this.state.jobStart();
+    this.api.displayTrack(track, update)
+      .finally(() => this.state.jobStop());
   }
 
   /**

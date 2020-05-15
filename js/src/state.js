@@ -25,6 +25,7 @@ import uObserve from './observe.js';
  * @property {?uUser} currentUser
  * @property {boolean} showLatest
  * @property {boolean} showAllUsers
+ * @property {number} activeJobs
  */
 export default class uState {
 
@@ -33,6 +34,15 @@ export default class uState {
     this.currentUser = null;
     this.showLatest = false;
     this.showAllUsers = false;
+    this.activeJobs = 0;
+  }
+
+  jobStart() {
+    this.activeJobs++;
+  }
+
+  jobStop() {
+    this.activeJobs--;
   }
 
   /**

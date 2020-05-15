@@ -472,16 +472,6 @@ button > * {
   text-decoration: underline;
 }
 
-.loader {
-  animation: blink 1s linear infinite;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
 #configForm label {
   display: block;
 }
@@ -502,8 +492,6 @@ button > * {
   width: 150px;
   margin: 3px 0;
   padding: 2px 4px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -526,6 +514,8 @@ button > * {
   margin: 0 5px;
 }
 
+/* alert */
+
 .alert {
   position: fixed;
   top: 0;
@@ -545,11 +535,21 @@ button > * {
   border-top: 1px solid #555;
   box-shadow: 10px 10px 10px -8px rgba(0, 0, 0, 0.3);
   z-index: 100000;
+  opacity: 0;
+  transition: all 1s;
 }
 
 .alert.error {
   background: #d95b5b;
   border-top: 1px solid #d05858;
+}
+
+.alert.in {
+  opacity: 1;
+}
+
+.alert.out {
+  opacity: 0;
 }
 
 .alert button {
@@ -562,6 +562,67 @@ button > * {
   background: none;
   font-weight: normal;
   font-size: 15px;
+}
+
+.alert.spinner {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.alert.spinner > span {
+  position: relative;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #9880ff;
+  color: #9880ff;
+  animation: spinner-dot 1s infinite linear alternate;
+  animation-delay: 0.5s;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+.alert.spinner > span::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #9880ff;
+  color: #9880ff;
+  animation: spinner-dot 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+.alert.spinner > span::before, .alert.spinner > span::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.alert.spinner > span::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #9880ff;
+  color: #9880ff;
+  animation: spinner-dot 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+@keyframes spinner-dot {
+  0% {
+    background-color: #9880ff;
+  }
+
+  50%, 100% {
+    background-color: #ebe6ff;
+  }
 }
 
 /* chart */
@@ -592,7 +653,7 @@ button > * {
   font-size: 0.8em;
 }
 
-/* openlayers 3 popup */
+/* openlayers popup */
 .ol-popup {
   position: absolute;
   bottom: 12px;

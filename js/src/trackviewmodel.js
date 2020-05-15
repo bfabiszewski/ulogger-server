@@ -173,6 +173,7 @@ export default class TrackViewModel extends ViewModel {
       uAlert.error($._('notauthorized'));
       return;
     }
+    this.state.jobStart();
     uTrack.import(form, auth.user)
       .then((trackList) => {
         if (trackList.length) {
@@ -186,6 +187,7 @@ export default class TrackViewModel extends ViewModel {
       .catch((e) => uAlert.error(`${$._('actionfailure')}\n${e.message}`, e))
       .finally(() => {
         this.model.inputFile = '';
+        this.state.jobStop();
       });
   }
 
@@ -199,6 +201,7 @@ export default class TrackViewModel extends ViewModel {
     if (!track) {
       this.state.currentTrack = null;
     } else if (!track.isEqualTo(this.state.currentTrack)) {
+      this.state.jobStart();
       track.fetchPositions().then(() => {
         console.log(`currentTrack id: ${track.id}, loaded ${track.length} positions`);
         this.state.currentTrack = track;
@@ -206,7 +209,8 @@ export default class TrackViewModel extends ViewModel {
           this.model.showLatest = false;
         }
       })
-        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
+        .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); })
+        .finally(() => this.state.jobStop());
     }
   }
 
@@ -243,6 +247,7 @@ export default class TrackViewModel extends ViewModel {
    * Handle last position of all users request
    */
   loadAllUsersPosition() {
+    this.state.jobStart();
     uPositionSet.fetchLatest()
       .then((_track) => {
         if (_track) {
@@ -251,10 +256,12 @@ export default class TrackViewModel extends ViewModel {
           this.state.currentTrack = _track;
         }
       })
-      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); })
+      .finally(() => this.state.jobStop());
   }
 
   loadTrackList() {
+    this.state.jobStart();
     uTrack.fetchList(this.state.currentUser)
       .then((_tracks) => {
         this.model.trackList = _tracks;
@@ -269,7 +276,8 @@ export default class TrackViewModel extends ViewModel {
           this.model.currentTrackId = '';
         }
       })
-      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); });
+      .catch((e) => { uAlert.error(`${$._('actionfailure')}\n${e.message}`, e); })
+      .finally(() => this.state.jobStop());
   }
 
   showDialog() {
