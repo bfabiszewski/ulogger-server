@@ -69,6 +69,13 @@ export default class uSelect {
   }
 
   /**
+   * @return {string}
+   */
+  get head() {
+    return this.headText;
+  }
+
+  /**
    * @param {string=} text Optional text
    */
   showAllOption(text) {
