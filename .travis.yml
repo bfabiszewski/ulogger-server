@@ -4,8 +4,6 @@ sudo: required
 
 php:
   - 7.4
-node_js:
-  - 12
 
 env:
   matrix:
@@ -45,6 +43,7 @@ before_install:
         ;;
     esac
   - composer install
+  - nvm install 12
   - npm install
   - until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
 
