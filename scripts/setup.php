@@ -483,8 +483,8 @@ function getPdo() {
   <title><?= $lang["title"] ?></title>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&amp;subset=cyrillic" rel="stylesheet">
-  <link href="../css/main.css" type="text/css" rel="stylesheet">
+  <link href="../css/dist/main.css" type="text/css" rel="stylesheet">
+  <link href="../css/dist/fonts.css" type="text/css" rel="stylesheet">
   <style>
     #message {
       font-family: 'Open Sans', Verdana, sans-serif;
