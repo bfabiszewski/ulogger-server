@@ -1,12 +1,12 @@
 language: php
-
-sudo: required
+os: linux
+dist: xenial
 
 php:
   - 7.4
 
 env:
-  matrix:
+  jobs:
     - DB_DSN="mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8"
     - DB_DSN="pgsql:host=127.0.0.1;port=8081;dbname=ulogger"
     - DB_DSN="sqlite:/tmp/data/sqlite/ulogger.db"
