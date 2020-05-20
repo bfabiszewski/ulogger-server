@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<dataset>
+    <users id="1" login="admin" password="$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq" />
+    <tracks id="1" user_id="1" name="test track" comment="test comment" />
+    <positions id="1" time="2020-05-18" user_id="1" track_id="1" latitude="1" longitude="1" />
+</dataset>

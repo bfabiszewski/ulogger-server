@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
 require_once("BaseDatabaseTestCase.php");
 require_once(__DIR__ . "/../../helpers/db.php");
@@ -11,6 +10,9 @@ class UloggerDatabaseTestCase extends BaseDatabaseTestCase {
    */
   static private $udb = null;
 
+  /**
+   * @throws ReflectionException
+   */
   public static function setUpBeforeClass() {
     parent::setUpBeforeClass();
 

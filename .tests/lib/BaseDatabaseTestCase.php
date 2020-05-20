@@ -97,10 +97,10 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 
   protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1, $layers = 1) {
     if (self::$driver === "pgsql") {
-      self::$pdo->exec("ALTER SEQUENCE users_id_seq RESTART WITH $users");
-      self::$pdo->exec("ALTER SEQUENCE tracks_id_seq RESTART WITH $tracks");
-      self::$pdo->exec("ALTER SEQUENCE positions_id_seq RESTART WITH $positions");
-      self::$pdo->exec("ALTER SEQUENCE ol_layers_id_seq RESTART WITH $layers");
+      self::$pdo->exec("ALTER SEQUENCE IF EXISTS users_id_seq RESTART WITH $users");
+      self::$pdo->exec("ALTER SEQUENCE IF EXISTS tracks_id_seq RESTART WITH $tracks");
+      self::$pdo->exec("ALTER SEQUENCE IF EXISTS positions_id_seq RESTART WITH $positions");
+      self::$pdo->exec("ALTER SEQUENCE IF EXISTS ol_layers_id_seq RESTART WITH $layers");
     } else if (self::$driver === "sqlite") {
       $retry = 1;
       do {
@@ -119,6 +119,17 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
         }
       } while ($retry--);
     }
+  }
+
+  /**
+   * Reset connection
+   * Fixes sqlite error when db schema changes in another connection.
+   */
+  protected function resetConnection() {
+    $this->closeConnection($this->conn);
+    $this->conn = null;
+    self::tearDownAfterClass();
+    self::setUpBeforeClass();
   }
 
   /**

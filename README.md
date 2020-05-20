@@ -43,13 +43,20 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Folders `.docker/` and `.tests/` as well as composer files are needed only for development. May be safely removed.
 
 ## Upgrade to version 1.x
-- TODO: convert following notes to migration script
-- Database changes:
-  - `ALTER TABLE positions CHANGE image_id image VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL`
-  - `ALTER TABLE users ADD admin BOOLEAN NOT NULL DEFAULT FALSE AFTER password`
-  - new tables for config values: `config` and `ol_layers`, see SQL files in scripts folder, eg. [mysql](https://github.com/bfabiszewski/ulogger-server/blob/master/scripts/ulogger.mysql)
-  - modify admin user entry in `users` table: set `admin` to `true`
-- Config file changes: only database setup is defined in config file, see [config.default.php](https://github.com/bfabiszewski/ulogger-server/blob/master/config.default.php) for valid values
+- Incompatible changes include database and config file changes
+- Upgrading manually:
+  - for database changes, see MySQL example script in `scripts/migrate_to_1_x.mysql`
+  - set `admin` column in `users` table to true for admin users
+  - edit configuration from application settings dialog
+- Upgrading with migration script from version 0.6:
+  - create database backup
+  - replace all project files with new ones, but keep old local config file: `config.php`
+  - change directory to application root folder and run migration script from the console: `php scripts/migrate_to_1_x.php`
+  - the script will update database schema and save old config variables to database
+- Additional tasks after manual or script update:
+  - edit your `config.php` file and remove all variables except database settings, see [config.default.php](https://github.com/bfabiszewski/ulogger-server/blob/master/config.default.php) for valid values
+  - make sure `uploads` folder (for images uploaded from client app) is writable by PHP
+  - clear browser cache and restart web page
 
 ## Docker
 - Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser. Log in with `admin`:`admin` credentials and change default password.

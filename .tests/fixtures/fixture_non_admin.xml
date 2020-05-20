@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<dataset>
+    <users id="1" login="admin" password="$2y$10$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq" admin="0" />
+    <tracks />
+    <positions />
+    <config name="color_extra" value="s:7:&quot;#000000&quot;;" />
+    <config name="color_hilite" value="s:7:&quot;#000000&quot;;" />
+    <config name="color_normal" value="s:7:&quot;#000000&quot;;" />
+    <config name="color_start" value="s:7:&quot;#000000&quot;;" />
+    <config name="color_stop" value="s:7:&quot;#000000&quot;;" />
+    <config name="google_key" value="s:0:&quot;&quot;;" />
+    <config name="interval_seconds" value="i:0;" />
+    <config name="lang" value="s:2:&quot;en&quot;;" />
+    <config name="latitude" value="d:0;" />
+    <config name="longitude" value="d:0;" />
+    <config name="map_api" value="s:10:&quot;openlayers&quot;;" />
+    <config name="pass_lenmin" value="i:0;" />
+    <config name="pass_strength" value="i:0;" />
+    <config name="public_tracks" value="b:0;" />
+    <config name="require_auth" value="b:0;" />
+    <config name="stroke_color" value="s:7:&quot;#000000&quot;;" />
+    <config name="stroke_opacity" value="d:0;" />
+    <config name="stroke_weight" value="i:0;" />
+    <config name="units" value="s:6:&quot;metric&quot;;" />
+    <ol_layers />
+</dataset>

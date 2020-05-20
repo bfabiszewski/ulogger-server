@@ -32,6 +32,17 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $this->initConfigValues();
   }
 
+  /**
+   * @throws ReflectionException
+   */
+  protected function tearDown() {
+    parent::tearDown();
+    $configClass = new ReflectionClass("uConfig");
+    $configInstance = $configClass->getProperty('instance');
+    $configInstance->setAccessible(true);
+    $configInstance->setValue(null);
+  }
+
   protected function getDataSet() {
     $this->initConfigValues();
     $this->resetAutoincrement();

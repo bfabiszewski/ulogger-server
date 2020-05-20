@@ -29,7 +29,7 @@ if (version_compare(PHP_VERSION, "5.5.0", "<")) {
   die("Sorry, ulogger will not work with PHP version lower than 5.5 (you have " . PHP_VERSION . ")");
 }
 
-define("ROOT_DIR", dirname(__DIR__));
+if (!defined("ROOT_DIR")) { define("ROOT_DIR", dirname(__DIR__)); }
 
 require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/config.php");

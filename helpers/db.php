@@ -185,6 +185,24 @@ require_once(ROOT_DIR . "/helpers/utils.php");
     }
 
     /**
+     * Returns construct for getting LOB as string
+     * @param string $column Column name
+     * @return string
+     */
+    public function from_lob($column) {
+      switch (self::$driver) {
+        default:
+        case "mysql":
+        case "sqlite":
+          return $column;
+          break;
+        case "pgsql":
+          return "encode($column, 'escape') AS $column";
+          break;
+      }
+    }
+
+    /**
      * Returns function name for getting date-time column value as 'YYYY-MM-DD hh:mm:ss'
      * @param string $column
      * @return string
