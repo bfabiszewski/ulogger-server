@@ -5,6 +5,17 @@
 CREATE DATABASE IF NOT EXISTS `ulogger` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `ulogger`;
 
+-- --------------------------------------------------------
+
+--
+-- Drop tables if exist
+--
+
+DROP TABLE IF EXISTS `positions`;
+DROP TABLE IF EXISTS `tracks`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `config`;
+DROP TABLE IF EXISTS `ol_layers`;
 
 -- --------------------------------------------------------
 
@@ -12,7 +23,6 @@ USE `ulogger`;
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `login` varchar(15) CHARACTER SET latin1 NOT NULL UNIQUE,
@@ -26,7 +36,6 @@ CREATE TABLE `users` (
 -- Table structure for table `tracks`
 --
 
-DROP TABLE IF EXISTS `tracks`;
 CREATE TABLE `tracks` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
@@ -42,7 +51,6 @@ CREATE TABLE `tracks` (
 -- Table structure for table `positions`
 --
 
-DROP TABLE IF EXISTS `positions`;
 CREATE TABLE `positions` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +77,6 @@ CREATE TABLE `positions` (
 -- Table structure for table `config`
 --
 
-DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
   `name` varchar(20) PRIMARY KEY,
   `value` tinyblob NOT NULL
@@ -106,7 +113,6 @@ INSERT INTO `config` (`name`, `value`) VALUES
 -- Table structure for table `ol_layers`
 --
 
-DROP TABLE IF EXISTS `ol_layers`;
 CREATE TABLE `ol_layers` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(50) NOT NULL,

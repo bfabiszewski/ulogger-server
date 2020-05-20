@@ -5,6 +5,17 @@
 CREATE DATABASE ulogger WITH ENCODING='UTF8' LC_COLLATE = 'en_US.utf-8' LC_CTYPE = 'en_US.utf-8';
 \connect ulogger;
 
+-- --------------------------------------------------------
+
+--
+-- Drop tables if exist
+--
+
+DROP TABLE IF EXISTS positions;
+DROP TABLE IF EXISTS tracks;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS config;
+DROP TABLE IF EXISTS ol_layers;
 
 -- --------------------------------------------------------
 
@@ -12,7 +23,6 @@ CREATE DATABASE ulogger WITH ENCODING='UTF8' LC_COLLATE = 'en_US.utf-8' LC_CTYPE
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS users;
 CREATE TABLE users (
   id serial PRIMARY KEY,
   login varchar(15) NOT NULL UNIQUE,
@@ -26,7 +36,6 @@ CREATE TABLE users (
 -- Table structure for table `tracks`
 --
 
-DROP TABLE IF EXISTS tracks;
 CREATE TABLE tracks (
   id serial PRIMARY KEY,
   user_id int NOT NULL,
@@ -43,7 +52,6 @@ CREATE INDEX idx_user_id ON tracks(user_id);
 -- Table structure for table `positions`
 --
 
-DROP TABLE IF EXISTS positions;
 CREATE TABLE positions (
   id serial PRIMARY KEY,
   time timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -71,7 +79,6 @@ CREATE INDEX idx_puser_id ON positions(user_id);
 -- Table structure for table `config`
 --
 
-DROP TABLE IF EXISTS config;
 CREATE TABLE config (
   name varchar(20) PRIMARY KEY,
   value bytea NOT NULL
@@ -107,8 +114,6 @@ INSERT INTO config (name, value) VALUES
 --
 -- Table structure for table `ol_layers`
 --
-
-DROP TABLE IF EXISTS ol_layers;
 
 CREATE TABLE ol_layers (
   id serial PRIMARY KEY,
