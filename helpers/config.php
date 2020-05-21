@@ -362,61 +362,61 @@ class uConfig {
     if (!is_array($arr)) {
       return;
     }
-    if (!empty($arr['map_api'])) {
+    if (isset($arr['map_api']) && !empty($arr['map_api'])) {
       $this->mapApi = $arr['map_api'];
     }
-    if (is_numeric($arr['latitude'])) {
+    if (isset($arr['latitude']) && is_numeric($arr['latitude'])) {
       $this->initLatitude = (float) $arr['latitude'];
     }
-    if (is_numeric($arr['longitude'])) {
+    if (isset($arr['longitude']) && is_numeric($arr['longitude'])) {
       $this->initLongitude = (float) $arr['longitude'];
     }
-    if (!is_null($arr['google_key'])) {
+    if (isset($arr['google_key']) && !is_null($arr['google_key'])) {
       $this->googleKey = $arr['google_key'];
     }
-    if (is_numeric($arr['require_auth']) || is_bool($arr['require_auth'])) {
+    if (isset($arr['require_auth']) && (is_numeric($arr['require_auth']) || is_bool($arr['require_auth']))) {
       $this->requireAuthentication = (bool) $arr['require_auth'];
     }
-    if (is_numeric($arr['public_tracks']) || is_bool($arr['public_tracks'])) {
+    if (isset($arr['public_tracks']) && (is_numeric($arr['public_tracks']) || is_bool($arr['public_tracks']))) {
       $this->publicTracks = (bool) $arr['public_tracks'];
     }
-    if (is_numeric($arr['pass_lenmin'])) {
+    if (isset($arr['pass_lenmin']) && is_numeric($arr['pass_lenmin'])) {
       $this->passLenMin = (int) $arr['pass_lenmin'];
     }
-    if (is_numeric($arr['pass_strength'])) {
+    if (isset($arr['pass_strength']) && is_numeric($arr['pass_strength'])) {
       $this->passStrength = (int) $arr['pass_strength'];
     }
-    if (is_numeric($arr['interval_seconds'])) {
+    if (isset($arr['interval_seconds']) && is_numeric($arr['interval_seconds'])) {
       $this->interval = (int) $arr['interval_seconds'];
     }
-    if (!empty($arr['lang'])) {
+    if (isset($arr['lang']) && !empty($arr['lang'])) {
       $this->lang = $arr['lang'];
     }
-    if (!empty($arr['units'])) {
+    if (isset($arr['units']) && !empty($arr['units'])) {
       $this->units = $arr['units'];
     }
-    if (is_numeric($arr['stroke_weight'])) {
+    if (isset($arr['stroke_weight']) && is_numeric($arr['stroke_weight'])) {
       $this->strokeWeight = (int) $arr['stroke_weight'];
     }
-    if (!empty($arr['stroke_color'])) {
+    if (isset($arr['stroke_color']) && !empty($arr['stroke_color'])) {
       $this->strokeColor = $arr['stroke_color'];
     }
-    if (is_numeric($arr['stroke_opacity'])) {
+    if (isset($arr['stroke_opacity']) && is_numeric($arr['stroke_opacity'])) {
       $this->strokeOpacity = (float) $arr['stroke_opacity'];
     }
-    if (!empty($arr['color_normal'])) {
+    if (isset($arr['color_normal']) && !empty($arr['color_normal'])) {
       $this->colorNormal = $arr['color_normal'];
     }
-    if (!empty($arr['color_start'])) {
+    if (isset($arr['color_start']) && !empty($arr['color_start'])) {
       $this->colorStart = $arr['color_start'];
     }
-    if (!empty($arr['color_stop'])) {
+    if (isset($arr['color_stop']) && !empty($arr['color_stop'])) {
       $this->colorStop = $arr['color_stop'];
     }
-    if (!empty($arr['color_extra'])) {
+    if (isset($arr['color_extra']) && !empty($arr['color_extra'])) {
       $this->colorExtra = $arr['color_extra'];
     }
-    if (!empty($arr['color_hilite'])) {
+    if (isset($arr['color_hilite']) && !empty($arr['color_hilite'])) {
       $this->colorHilite = $arr['color_hilite'];
     }
   }
