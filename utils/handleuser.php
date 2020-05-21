@@ -32,7 +32,7 @@ $admin = uUtils::postBool('admin', false);
 
 $lang = (new uLang($config))->getStrings();
 
-if ($auth->user->login === $login || empty($action) || empty($login) || !$auth->isAuthenticated() || !$auth->isAdmin()) {
+if (($auth->user && $auth->user->login === $login) || empty($action) || empty($login) || !$auth->isAuthenticated() || !$auth->isAdmin()) {
   uUtils::exitWithError($lang["servererror"]);
 }
 
