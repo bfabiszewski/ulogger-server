@@ -42,7 +42,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
     $this->setOutputCallback(static function() {});
     $ret = updateSchemas();
     $this->resetConnection();
-    $this->assertEquals(true, $ret, "Function updateSchemas() failed");
+    $this->assertTrue($ret, "Function updateSchemas() failed");
     $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
     $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
@@ -56,14 +56,10 @@ class MigrateTest extends UloggerDatabaseTestCase {
     $this->loadDataSet("fixture_non_admin.xml");
     $this->setOutputCallback(static function() {});
     $ret = updateConfig(dirname(__DIR__) . "/fixtures/config_0_6.php");
-    $this->assertEquals(true, $ret, "Function updateConfig() failed");
+    $this->assertTrue($ret, "Function updateConfig() failed");
     // admin user imported from config file
-    $expected = [ "admin" => 1 ];
-    $actual = $this->getConnection()->createQueryTable(
-      "admin",
-      "SELECT admin FROM users WHERE login = 'admin'"
-    );
-    $this->assertTableContains($expected, $actual, "Wrong actual table data");
+    $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
+    $this->assertTrue((bool) $this->pdoGetColumn("SELECT admin FROM users WHERE login = 'admin'"), "User should be admin");
     // settings imported from config file
     $expected = [ "config" => [
       ["name" => "color_extra", "value" => "s:7:\"#cccccc\";"], // default
@@ -108,13 +104,13 @@ class MigrateTest extends UloggerDatabaseTestCase {
     fwrite($yes, "yes");
     $ret = waitForUser(stream_get_meta_data($yes)['uri']);
     fclose($yes);
-    $this->assertEquals(true, $ret, "Wrong return status");
+    $this->assertTrue($ret, "Wrong return status");
 
     $no = tmpfile();
     fwrite($no, "no");
     $ret = waitForUser(stream_get_meta_data($no)['uri']);
     fclose($no);
-    $this->assertEquals(false, $ret, "Wrong return status");
+    $this->assertFalse($ret, "Wrong return status");
   }
 
   /**

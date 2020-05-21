@@ -113,9 +113,9 @@ function updateConfig($path = ROOT_DIR . "/config.php") {
   if (isset($admin_user) && !empty($admin_user)) {
     try {
       echo "Setting user $admin_user as admin" . PHP_EOL;
-      $query = "UPDATE " . uDb::getInstance()->table('users') . " SET admin = TRUE WHERE login = ?";
+      $query = "UPDATE " . uDb::getInstance()->table('users') . " SET admin = ? WHERE login = ?";
       $stmt = uDb::getInstance()->prepare($query);
-      $stmt->execute([ $admin_user ]);
+      $stmt->execute([ 1, $admin_user ]);
       if ($stmt->rowCount() === 0) {
         echo "User $admin_user not found in database table" . PHP_EOL;
         echo "Set your admin user manually in users table" . PHP_EOL;
