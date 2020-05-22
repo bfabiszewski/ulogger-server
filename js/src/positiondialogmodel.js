@@ -64,7 +64,7 @@ export default class PositionDialogModel extends ViewModel {
       <div style="clear: both; padding-bottom: 1em;"></div>
       <form id="positionForm">
         <label><b>${$._('comment')}</b></label><br>
-        <textarea style="width:100%;" maxlength="255" rows="5" placeholder="${$._('comment')}" name="comment" data-bind="comment">${this.position.hasComment() ? uUtils.htmlEncode(this.position.comment) : ''}</textarea>
+        <textarea style="width:100%;" maxlength="255" rows="5" placeholder="${$._('comment')}" name="comment" data-bind="comment" autofocus>${this.position.hasComment() ? uUtils.htmlEncode(this.position.comment) : ''}</textarea>
         <div class="buttons">
           <button class="button-reject" data-bind="onCancel" type="button">${$._('cancel')}</button>
           <button class="button-resolve" data-bind="onPositionUpdate" type="submit">${$._('submit')}</button>

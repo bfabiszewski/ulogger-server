@@ -64,6 +64,17 @@ export default class uDialog {
     if (!this.visible) {
       document.body.append(this.element);
       this.visible = true;
+      this.autofocus();
+    }
+  }
+
+  /**
+   * Set focus to element with autofocus attribute
+   */
+  autofocus() {
+    const focusEl = this.element.querySelector('[autofocus]');
+    if (focusEl) {
+      focusEl.focus();
     }
   }
 

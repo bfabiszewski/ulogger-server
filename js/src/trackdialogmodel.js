@@ -58,7 +58,7 @@ export default class TrackDialogModel extends ViewModel {
       <div style="clear: both; padding-bottom: 1em;"></div>
       <form id="trackForm">
         <label><b>${$._('trackname')}</b></label>
-        <input type="text" placeholder="${$._('trackname')}" name="trackname" data-bind="trackname" value="${uUtils.htmlEncode(this.track.name)}" required>
+        <input type="text" placeholder="${$._('trackname')}" name="trackname" data-bind="trackname" value="${uUtils.htmlEncode(this.track.name)}" required autofocus>
         <div class="buttons">
           <button class="button-reject" data-bind="onCancel" type="button">${$._('cancel')}</button>
           <button class="button-resolve" data-bind="onTrackUpdate" type="submit">${$._('submit')}</button>

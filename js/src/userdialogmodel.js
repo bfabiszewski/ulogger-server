@@ -157,7 +157,7 @@ export default class UserDialogModel extends ViewModel {
       case 'add':
         observer = 'onUserAdd';
         header = `<label><b>${$._('username')}</b></label>
-        <input type="text" placeholder="${$._('usernameenter')}" name="login" data-bind="login" required>`;
+        <input type="text" placeholder="${$._('usernameenter')}" name="login" data-bind="login" required autofocus>`;
         fields = `<label><b>${$._('password')}</b></label>
         <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
         <label><b>${$._('passwordrepeat')}</b></label>
@@ -174,7 +174,7 @@ export default class UserDialogModel extends ViewModel {
         <input type="checkbox" name="changepass" data-bind="passVisibility"><br>
         <div style="display: none;" data-bind="passInput">
           <label><b>${$._('password')}</b></label>
-          <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
+          <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required autofocus>
           <label><b>${$._('passwordrepeat')}</b></label>
           <input type="password" placeholder="${$._('passwordenter')}" name="password2" data-bind="password2" required>
         </div>
@@ -184,7 +184,7 @@ export default class UserDialogModel extends ViewModel {
       case 'pass':
         observer = 'onPassChange';
         fields = `<label><b>${$._('oldpassword')}</b></label>
-        <input type="password" placeholder="${$._('passwordenter')}" name="old-password" data-bind="oldPassword" required>
+        <input type="password" placeholder="${$._('passwordenter')}" name="old-password" data-bind="oldPassword" required autofocus>
         <label><b>${$._('newpassword')}</b></label>
         <input type="password" placeholder="${$._('passwordenter')}" name="password" data-bind="password" required>
         <label><b>${$._('newpasswordrepeat')}</b></label>
