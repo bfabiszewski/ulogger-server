@@ -12,6 +12,9 @@ sed -i "s/^nobody:.*$/nobody:x:50:/" /etc/group
 
 # Prepare ulogger filesystem
 grep '^[$<?]' /var/www/html/config.default.php > /var/www/html/config.php
+mkdir -p /data/uploads
+rm -rf /var/www/html/uploads
+ln -s /data/uploads /var/www/html/uploads
 chown nobody:nobody /var/www/html/uploads
 chmod 775 /var/www/html/uploads
 
@@ -24,7 +27,7 @@ else
 fi
 
 if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
-  export PGDATA=/data
+  export PGDATA=/data/pgsql
   mkdir -p ${PGDATA} /run/postgresql /etc/postgres
   chown postgres:postgres ${PGDATA} /run/postgresql /etc/postgres
   su postgres -c "initdb --auth-host=md5 --auth-local=trust --locale=en_US.utf-8 --encoding=utf8"
@@ -43,15 +46,15 @@ if [ "$ULOGGER_DB_DRIVER" = "pgsql" ]; then
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"pgsql:host=localhost;port=5432;dbname=ulogger\";/" /var/www/html/config.php
 elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   mkdir -p /data/sqlite
-  chown -R nobody:nobody /data
+  chown -R nobody:nobody /data/sqlite
   sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/sqlite/ulogger.db .exit
-  sqlite3 -line /data/ulogger.db "INSERT INTO users (login, password, admin) VALUES ('${ULOGGER_ADMIN_USER}', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq', 1)"
+  sqlite3 -line /data/sqlite/ulogger.db "INSERT INTO users (login, password, admin) VALUES ('${ULOGGER_ADMIN_USER}', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq', 1)"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else
-  mkdir -p /run/mysqld
-  chown mysql:mysql /run/mysqld
-  mysql_install_db --user=mysql --datadir=/data
-  mysqld_safe --datadir=/data &
+  mkdir -p /run/mysqld /data/mysql
+  chown mysql:mysql /run/mysqld /data/mysql
+  mysql_install_db --user=mysql --datadir=/data/mysql
+  mysqld_safe --datadir=/data/mysql &
   mysqladmin --silent --wait=30 ping
   mysqladmin -u root password "${DB_ROOT_PASS}"
   mysql -u root -p"${DB_ROOT_PASS}" < /var/www/html/scripts/ulogger.mysql

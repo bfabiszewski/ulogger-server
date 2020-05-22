@@ -34,7 +34,8 @@ before_install:
       sqlite*)
         sudo apt-get update -qq
         sudo apt-get install sqlite3
-        mkdir -p /tmp/data/sqlite
+        rm -rf /tmp/data
+        mkdir -p /tmp/data/sqlite /tmp/data/uploads
         sqlite3 -init scripts/ulogger.sqlite /tmp/data/sqlite/ulogger.db .exit
         sudo chown -R travis:travis /tmp/data
         sudo chmod -R 777 /tmp/data
