@@ -168,6 +168,12 @@ switch ($command) {
       $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
       break;
     }
+    if (!is_writable(ROOT_DIR . "/uploads")) {
+      $messages[] = sprintf($langSetup["notwritable"], ROOT_DIR . "/uploads");
+      $messages[] = $langSetup["dorestart"];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+      break;
+    }
     try {
       $pdo = getPdo();
     } catch (PDOException $e) {
@@ -186,7 +192,7 @@ switch ($command) {
     $pdo = null;
     $dbName = uDb::getDbName($configDSN);
     $dbName = empty($dbName) ? '""' : "<b>" . htmlentities($dbName) . "</b>";
-    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers'", $dbName);
+    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers', '$tConfig', '$tLayers'", $dbName);
     $messages[] = $langSetup["scriptdesc2"];
     $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
     break;

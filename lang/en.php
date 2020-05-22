@@ -43,6 +43,7 @@ $langSetup["startbutton"] = "Press to start";
 $langSetup["restartbutton"] = "Restart";
 $langSetup["optionwarn"] = "PHP configuration option %s must be set to %s."; // substitutes option name and value
 $langSetup["extensionwarn"] = "Required PHP extension %s is not available."; // substitutes extension name
+$langSetup["notwritable"] = "Folder '%s' must be writable by PHP."; // substitutes folder path
 
 
 // application strings
