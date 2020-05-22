@@ -4,7 +4,9 @@ This is a web application for real-time collection of geolocation data, tracks v
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
 
 ## Live demo:
-- http://ulogger-demo.herokuapp.com (test track upload with Android app and editing, login: demo, password: demo)
+- http://ulogger-demo.herokuapp.com 
+- for testing track upload with Android app or track editing login with user: demo, password: demo
+- image upload is not supported because of heroku's ephemeral storage (any ideas for another free hosting?)
 
 ## Minimum requirements:
 - PHP 5.5
@@ -39,8 +41,8 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - Follow instructions in setup script. It will add database tables and set up your μlogger user
 - **Remember to remove or disable `scripts/setup.php` script**
 - Log in with your new user on http://YOUR_HOST/ulogger-server/
-- You may also want to set your new user as an [admin in config file](https://github.com/bfabiszewski/ulogger-server/blob/v0.2/config.default.php#L67).
-- Folders `.docker/` and `.tests/` as well as composer files are needed only for development. May be safely removed.
+- You may also want to set your new user as an [admin in config file](https://github.com/bfabiszewski/ulogger-server/blob/v0.2/config.default.php#L67)
+- Folders `.docker/` and `.tests/` as well as composer files are needed only for development. May be safely removed
 
 ## Upgrade to version 1.x
 - Incompatible changes include database and config file changes
@@ -59,17 +61,17 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - clear browser cache and restart web page
 
 ## Docker
-- Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser. Log in with `admin`:`admin` credentials and change default password.
-- Optional configuration options with ENV variables, for list see [Dockerfile](https://github.com/bfabiszewski/ulogger-server/blob/master/Dockerfile). The variables correspond to main μlogger configuration parameteres.
-- For example: `docker run --name ulogger -e ULOGGER_LANG="pl" -p 8080:80 -d bfabiszewski/ulogger`.
-- You may also build the image yourself. Run `docker build .` from the root folder where `Dockerfile` reside. There are optional build-time arguments that allow you to set default database passwords for root and ulogger users.
-- For example: `docker build --build-arg DB_ROOT_PASS=secret1 --build-arg DB_USER_PASS=secret2 --build-arg DB_DRIVER=sqlite .`.
+- Run `docker run --name ulogger -p 8080:80 -d bfabiszewski/ulogger` and access `http://localhost:8080` in your browser. Log in with `admin`:`admin` credentials and change default password
+- Optional configuration options with ENV variables, for list see [Dockerfile](https://github.com/bfabiszewski/ulogger-server/blob/master/Dockerfile). The variables correspond to main μlogger configuration parameteres
+- For example: `docker run --name ulogger -e ULOGGER_LANG="pl" -p 8080:80 -d bfabiszewski/ulogger`
+- You may also build the image yourself. Run `docker build .` from the root folder where `Dockerfile` reside. There are optional build-time arguments that allow you to set default database passwords for root and ulogger users
+- For example: `docker build --build-arg DB_ROOT_PASS=secret1 --build-arg DB_USER_PASS=secret2 --build-arg DB_DRIVER=sqlite .`
 
 ## Tests
 - Install tests dependecies.
   - `composer install`
   - `npm install`
-- Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup.
+- Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup
   - `docker build -t ulogger .`
   - `docker run -d --name ulogger -p 8080:80 -p 8081:3306 --expose 3306 -e ULOGGER_ENABLE_SETUP=1 ulogger`
 - Use environment variables (or create `.env` file in `.tests/` folder) to set up connection details (below database credentials are docker defaults)
@@ -86,7 +88,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - `npm run lint:css`
 
 ## Translations
-- translations may be contributed via [Transifex](https://www.transifex.com/bfabiszewski/ulogger/).
+- translations may be contributed via [Transifex](https://www.transifex.com/bfabiszewski/ulogger/)
 
 ## Donate
 [![Donate paypal](https://img.shields.io/badge/donate-paypal-green.svg)](https://www.paypal.me/bfabiszewski)  
