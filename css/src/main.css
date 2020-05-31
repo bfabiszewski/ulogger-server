@@ -361,8 +361,6 @@ label[for=user] {
   left: 50%;
   transform: translate(-50%, -50%) !important;
   font-size: 0.9em;
-  width: 40%;
-  max-width: 600px;
   min-width: 300px;
   margin: 0 auto 15% auto;
   padding: 1em;
@@ -400,19 +398,14 @@ label[for=user] {
 }
 
 #modal.image #modal-body img {
-  max-width: 100%;
   height: auto;
+  max-width: 90vw;
   max-height: 87vh;
 }
 
 #modal.image #modal-body {
-  width: 90%;
   text-align: center;
   background-color: rgb(45, 45, 45);
-}
-
-#modal.image #modal-header {
-  width: 90%;
 }
 
 button {
