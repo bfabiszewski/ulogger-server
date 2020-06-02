@@ -22,5 +22,6 @@
     <config name="stroke_opacity" value="d:0;" />
     <config name="stroke_weight" value="i:0;" />
     <config name="units" value="s:6:&quot;metric&quot;;" />
+    <config name="upload_maxsize" value="i:0;" />
     <ol_layers />
 </dataset>

@@ -36,20 +36,26 @@ if ($auth->isAuthenticated()) {
 }
 
 $resultConfig = [
-  "interval" => $config->interval,
-  "units" => $config->units,
-  "lang" => $config->lang,
-  "mapApi" => $config->mapApi,
+  "colorExtra" => $config->colorExtra,
+  "colorHilite" => $config->colorHilite,
+  "colorNormal" => $config->colorNormal,
+  "colorStart" => $config->colorStart,
+  "colorStop" => $config->colorStop,
   "googleKey" => $config->googleKey,
   "initLatitude" => $config->initLatitude,
   "initLongitude" => $config->initLongitude,
-  "requireAuth" => $config->requireAuthentication,
-  "publicTracks" => $config->publicTracks,
+  "interval" => $config->interval,
+  "lang" => $config->lang,
+  "mapApi" => $config->mapApi,
   "passLenMin" => $config->passLenMin,
   "passStrength" => $config->passStrength,
-  "strokeWeight" => $config->strokeWeight,
+  "publicTracks" => $config->publicTracks,
+  "requireAuth" => $config->requireAuthentication,
   "strokeColor" => $config->strokeColor,
   "strokeOpacity" => $config->strokeOpacity,
+  "strokeWeight" => $config->strokeWeight,
+  "units" => $config->units,
+  "uploadMaxSize" => $config->uploadMaxSize,
   "layers" => []
 ];
 foreach ($config->olLayers as $key => $val) {

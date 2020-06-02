@@ -23,28 +23,29 @@ import uObserve from './observe.js';
 
 /**
  * @class uConfig
- * @property {number} interval;
- * @property {string} units
- * @property {string} lang
- * @property {string} mapApi
- * @property {string} googleKey
- * @property {uLayerCollection} olLayers
- * @property {number} initLatitude
- * @property {number} initLongitude
- * @property {number} initLongitude
- * @property {boolean} requireAuth
- * @property {boolean} publicTracks
- * @property {number} passStrength
- * @property {number} passLenMin
- * @property {number} strokeWeight
- * @property {string} strokeColor
- * @property {number} strokeOpacity
- * @property {boolean} showLatest
+ * @property {string} colorExtra
+ * @property {string} colorHilite
  * @property {string} colorNormal
  * @property {string} colorStart
  * @property {string} colorStop
- * @property {string} colorExtra
- * @property {string} colorHilite
+ * @property {string} googleKey
+ * @property {number} initLatitude
+ * @property {number} initLongitude
+ * @property {number} initLongitude
+ * @property {number} interval;
+ * @property {string} lang
+ * @property {string} mapApi
+ * @property {uLayerCollection} olLayers
+ * @property {number} passLenMin
+ * @property {number} passStrength
+ * @property {boolean} publicTracks
+ * @property {boolean} requireAuth
+ * @property {boolean} showLatest
+ * @property {string} strokeColor
+ * @property {number} strokeOpacity
+ * @property {number} strokeWeight
+ * @property {string} units
+ * @property {number} uploadMaxSize
  */
 export default class uConfig {
 
@@ -74,6 +75,7 @@ export default class uConfig {
     this.colorStop = '#ff6a00';
     this.colorExtra = '#cccccc';
     this.colorHilite = '#feff6a';
+    this.uploadMaxSize = 0;
     this.initUnits();
   }
 

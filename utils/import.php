@@ -29,15 +29,6 @@ $auth = new uAuth();
 $config = uConfig::getInstance();
 $lang = (new uLang($config))->getStrings();
 
-$uploadErrors = [];
-$uploadErrors[UPLOAD_ERR_INI_SIZE] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-$uploadErrors[UPLOAD_ERR_FORM_SIZE] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-$uploadErrors[UPLOAD_ERR_PARTIAL] = "The uploaded file was only partially uploaded";
-$uploadErrors[UPLOAD_ERR_NO_FILE] = "No file was uploaded";
-$uploadErrors[UPLOAD_ERR_NO_TMP_DIR] = "Missing a temporary folder";
-$uploadErrors[UPLOAD_ERR_CANT_WRITE] = "Failed to write file to disk";
-$uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped the file upload";
-
 if (!$auth->isAuthenticated()) {
   uUtils::exitWithError($lang["private"]);
 }

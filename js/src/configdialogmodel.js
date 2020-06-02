@@ -32,29 +32,30 @@ export default class ConfigDialogModel extends ViewModel {
 
   constructor() {
     super({
-      interval: config.interval,
-      units: config.units,
-      lang: config.lang,
-      mapApi: config.mapApi,
-      googleKey: config.googleKey,
-      layerId: config.olLayers.getPriorityLayer().toString(),
-      layers: new uLayerCollection(new uLayer(0, 'OpenStreetMap', '', 0), ...config.olLayers),
-      layerName: null,
-      layerUrl: null,
-      initLatitude: config.initLatitude,
-      initLongitude: config.initLongitude,
-      requireAuth: config.requireAuth,
-      publicTracks: config.publicTracks,
-      passStrength: config.passStrength,
-      passLenMin: config.passLenMin,
-      strokeWeight: config.strokeWeight,
-      strokeColor: config.strokeColor,
-      strokeOpacity: config.strokeOpacity,
+      colorExtra: config.colorExtra,
+      colorHilite: config.colorHilite,
       colorNormal: config.colorNormal,
       colorStart: config.colorStart,
       colorStop: config.colorStop,
-      colorExtra: config.colorExtra,
-      colorHilite: config.colorHilite
+      googleKey: config.googleKey,
+      initLatitude: config.initLatitude,
+      initLongitude: config.initLongitude,
+      interval: config.interval,
+      lang: config.lang,
+      layerId: config.olLayers.getPriorityLayer().toString(),
+      layerName: null,
+      layers: new uLayerCollection(new uLayer(0, 'OpenStreetMap', '', 0), ...config.olLayers),
+      layerUrl: null,
+      mapApi: config.mapApi,
+      passLenMin: config.passLenMin,
+      passStrength: config.passStrength,
+      publicTracks: config.publicTracks,
+      requireAuth: config.requireAuth,
+      strokeColor: config.strokeColor,
+      strokeOpacity: config.strokeOpacity,
+      strokeWeight: config.strokeWeight,
+      units: config.units,
+      uploadMaxSize: config.uploadMaxSize
     });
     this.model.onCancel = () => this.onCancel();
     this.model.onSave = () => this.onSave();
@@ -242,6 +243,8 @@ export default class ConfigDialogModel extends ViewModel {
           <option value="2"${this.model.passStrength === 2 ? ' selected' : ''}>paSsword1</option>
           <option value="3"${this.model.passStrength === 3 ? ' selected' : ''}>paSsword1#</option>
         </select></label>
+        <label><b>${$._('uploadmaxsize')}</b>
+        <input type="number" data-bind="uploadMaxSize" min="0" value="${this.model.uploadMaxSize}" required></label>
         <label><b>${$._('requireauth')}</b>
         <input type="checkbox" data-bind="requireAuth"${this.model.requireAuth ? ' checked' : ''}></label>
         <label><b>${$._('publictracks')}</b>

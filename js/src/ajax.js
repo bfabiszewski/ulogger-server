@@ -42,7 +42,7 @@ export default class uAjax {
   /**
    * Perform ajax HTTP request
    * @param {string} url Request URL
-   * @param {Object|HTMLFormElement} [data] Optional request parameters: key/value pairs or form element
+   * @param {Object|HTMLFormElement|FormData} [data] Optional request parameters: key/value pairs or form element
    * @param {Object} [options] Optional options
    * @param {string} [options.method='GET'] Optional query method, default 'GET'
    * @return {Promise<Object, Error>}
@@ -81,12 +81,15 @@ export default class uAjax {
           reject(new Error(message));
         }
       };
-      let body;
       if (data instanceof HTMLFormElement) {
+        data = new FormData(data);
+      }
+      let body;
+      if (data instanceof FormData) {
         if (method === 'POST') {
-          body = new FormData(data);
+          body = data;
         } else {
-          body = new URLSearchParams(new FormData(data)).toString();
+          body = new URLSearchParams(data).toString();
         }
       } else {
         for (const key in data) {
@@ -108,7 +111,7 @@ export default class uAjax {
         body = null;
       }
       xhr.open(method, url, true);
-      if (method === 'POST' && !(data instanceof HTMLFormElement)) {
+      if (method === 'POST' && !(data instanceof FormData)) {
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       }
       xhr.send(body);

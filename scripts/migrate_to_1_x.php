@@ -222,7 +222,8 @@ function getQueries() {
           ('stroke_color', 's:7:\"#ff0000\";'),
           ('stroke_opacity', 'd:1;'),
           ('stroke_weight', 'i:2;'),
-          ('units', 's:6:\"metric\";')";
+          ('units', 's:6:\"metric\";'),
+          ('upload_maxsize', 'i:0;')";
 
       $queries[] = "CREATE TABLE `$tLayers` (
           `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -271,7 +272,8 @@ function getQueries() {
           ('stroke_color', 's:7:\"#ff0000\";'),
           ('stroke_opacity', 'd:1;'),
           ('stroke_weight', 'i:2;'),
-          ('units', 's:6:\"metric\";')";
+          ('units', 's:6:\"metric\";'),
+          ('upload_maxsize', 'i:0;')";
 
       $queries[] = "CREATE TABLE $tLayers (
           id serial PRIMARY KEY,
@@ -320,7 +322,8 @@ function getQueries() {
           ('stroke_color', 's:7:\"#ff0000\";'),
           ('stroke_opacity', 'd:1;'),
           ('stroke_weight', 'i:2;'),
-          ('units', 's:6:\"metric\";')";
+          ('units', 's:6:\"metric\";'),
+          ('upload_maxsize', 'i:0;')";
 
       $queries[] = "CREATE TABLE `$tLayers` (
           `id` integer PRIMARY KEY AUTOINCREMENT,

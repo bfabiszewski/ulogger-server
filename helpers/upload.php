@@ -32,7 +32,7 @@ class uUpload {
   const META_ERROR = "error";
   const META_SIZE = "size";
   public static $uploadDir = ROOT_DIR . "/uploads/";
-  private static $filePattern = "[a-z0-9_.]{20,}";
+  private static $filePattern = "/[a-z0-9_.]{20,}/";
   private static $mimeMap = [];
 
   /**

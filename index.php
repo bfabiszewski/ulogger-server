@@ -125,7 +125,7 @@
             <div class="section">
               <div id="import" class="menu-title"><?= $lang['import'] ?></div>
               <form id="import-form" enctype="multipart/form-data" method="post">
-                <input type="hidden" name="MAX_FILE_SIZE" value="<?= uUtils::getUploadMaxSize() ?>" />
+                <input type="hidden" name="MAX_FILE_SIZE" value="<?= $config->uploadMaxSize ?>" />
                 <input type="file" id="input-file" name="gpx" data-bind="inputFile"/>
               </form>
               <a id="import-gpx" class="menu-link" data-bind="onImportGpx">gpx</a>

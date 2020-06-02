@@ -102,7 +102,8 @@ INSERT INTO `config` (`name`, `value`) VALUES
 ('stroke_color', 's:7:"#ff0000";'),
 ('stroke_opacity', 'd:1;'),
 ('stroke_weight', 'i:2;'),
-('units', 's:6:"metric";');
+('units', 's:6:"metric";'),
+('upload_maxsize', 'i:0;');
 
 -- --------------------------------------------------------
 

@@ -52,7 +52,7 @@ describe('ConfigDialogModel tests', () => {
   const testElements = [
     'interval', 'units', 'lang', 'mapApi', 'googleKey', 'layerName', 'layerId', 'layerUrl', 'initLatitude', 'initLongitude',
     'requireAuth', 'publicTracks', 'passStrength', 'passLenMin', 'strokeWeight', 'strokeColor', 'strokeOpacity',
-    'colorNormal', 'colorStart', 'colorStop', 'colorExtra', 'colorHilite'
+    'colorNormal', 'colorStart', 'colorStop', 'colorExtra', 'colorHilite', 'uploadMaxSize'
   ];
   testElements.forEach((name) => {
     it(`should trigger model property change for ${name}`, (done) => {

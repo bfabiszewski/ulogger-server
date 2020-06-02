@@ -131,8 +131,14 @@ class uConfig {
    * @var string Stroke color
    */
   public $colorHilite = "#feff6a";
+  /**
+   * @var int Maximum size of uploaded files in bytes.
+   * Will be adjusted to system maximum upload size
+   */
+  public $uploadMaxSize;
   
   public function __construct($useDatabase = true) {
+    $this->uploadMaxSize = uUtils::getUploadMaxSize();
     if ($useDatabase) {
       $this->setFromDatabase();
     }
@@ -215,47 +221,49 @@ class uConfig {
       $placeholder = self::db()->lobPlaceholder();
       $query = "UPDATE " . self::db()->table('config') . "
                 SET value = CASE name
-                WHEN 'map_api' THEN $placeholder
-                WHEN 'latitude' THEN $placeholder
-                WHEN 'longitude' THEN $placeholder
-                WHEN 'google_key' THEN $placeholder
-                WHEN 'require_auth' THEN $placeholder
-                WHEN 'public_tracks' THEN $placeholder
-                WHEN 'pass_lenmin' THEN $placeholder
-                WHEN 'pass_strength' THEN $placeholder
-                WHEN 'interval_seconds' THEN $placeholder
-                WHEN 'lang' THEN $placeholder
-                WHEN 'units' THEN $placeholder
-                WHEN 'stroke_weight' THEN $placeholder
-                WHEN 'stroke_color' THEN $placeholder
-                WHEN 'stroke_opacity' THEN $placeholder
+                WHEN 'color_extra' THEN $placeholder
+                WHEN 'color_hilite' THEN $placeholder
                 WHEN 'color_normal' THEN $placeholder
                 WHEN 'color_start' THEN $placeholder
                 WHEN 'color_stop' THEN $placeholder
-                WHEN 'color_extra' THEN $placeholder
-                WHEN 'color_hilite' THEN $placeholder
+                WHEN 'google_key' THEN $placeholder
+                WHEN 'interval_seconds' THEN $placeholder
+                WHEN 'lang' THEN $placeholder
+                WHEN 'latitude' THEN $placeholder
+                WHEN 'longitude' THEN $placeholder
+                WHEN 'map_api' THEN $placeholder
+                WHEN 'pass_lenmin' THEN $placeholder
+                WHEN 'pass_strength' THEN $placeholder
+                WHEN 'public_tracks' THEN $placeholder
+                WHEN 'require_auth' THEN $placeholder
+                WHEN 'stroke_color' THEN $placeholder
+                WHEN 'stroke_opacity' THEN $placeholder
+                WHEN 'stroke_weight' THEN $placeholder
+                WHEN 'units' THEN $placeholder
+                WHEN 'upload_maxsize' THEN $placeholder
                 END";
       $stmt = self::db()->prepare($query);
       $params = [
-        $this->mapApi,
-        $this->initLatitude,
-        $this->initLongitude,
-        $this->googleKey,
-        $this->requireAuthentication,
-        $this->publicTracks,
-        $this->passLenMin,
-        $this->passStrength,
-        $this->interval,
-        $this->lang,
-        $this->units,
-        $this->strokeWeight,
-        $this->strokeColor,
-        $this->strokeOpacity,
+        $this->colorExtra,
+        $this->colorHilite,
         $this->colorNormal,
         $this->colorStart,
         $this->colorStop,
-        $this->colorExtra,
-        $this->colorHilite
+        $this->googleKey,
+        $this->initLatitude,
+        $this->initLongitude,
+        $this->interval,
+        $this->lang,
+        $this->mapApi,
+        $this->passLenMin,
+        $this->passStrength,
+        $this->publicTracks,
+        $this->requireAuthentication,
+        $this->strokeColor,
+        $this->strokeOpacity,
+        $this->strokeWeight,
+        $this->units,
+        $this->uploadMaxSize
       ];
 
       $stmt->execute(array_map('serialize', $params));
@@ -418,6 +426,12 @@ class uConfig {
     }
     if (isset($arr['color_hilite']) && !empty($arr['color_hilite'])) {
       $this->colorHilite = $arr['color_hilite'];
+    }
+    if (isset($arr['upload_maxsize']) && is_numeric($arr['upload_maxsize'])) {
+      $this->uploadMaxSize = (int) $arr['upload_maxsize'];
+      if ($this->uploadMaxSize === 0 || $this->uploadMaxSize > uUtils::getUploadMaxSize()) {
+        $this->uploadMaxSize = uUtils::getUploadMaxSize();
+      }
     }
   }
 }

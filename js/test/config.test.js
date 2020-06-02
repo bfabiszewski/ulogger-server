@@ -52,6 +52,7 @@ describe('Config tests', () => {
     expect(config.factorDistanceMajor).toBeDefined();
     expect(config.unitDistanceMajor).toBeDefined();
     expect(config.unitDay).toBeDefined();
+    expect(config.uploadMaxSize).toBeDefined();
   });
 
   it('should set units to imperial', () => {

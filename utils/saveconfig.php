@@ -47,7 +47,8 @@ $data = [
   'color_start' => uUtils::postInt('colorStart'),
   'color_stop' => uUtils::postInt('colorStop'),
   'color_extra' => uUtils::postInt('colorExtra'),
-  'color_hilite' => uUtils::postInt('colorHilite')
+  'color_hilite' => uUtils::postInt('colorHilite'),
+  'upload_maxsize' => uUtils::postInt('uploadMaxSize')
 ];
 
 $config = uConfig::getInstance();
