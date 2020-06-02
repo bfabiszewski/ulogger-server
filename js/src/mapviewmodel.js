@@ -210,7 +210,7 @@ export default class MapViewModel extends ViewModel {
     if (pos.hasImage()) {
       const image = node.querySelector('#pimage img');
       image.onclick = () => {
-        const modal = new uDialog(`<img src="uploads/${pos.image}" alt="image">`);
+        const modal = new uDialog(`<img src="${pos.getImagePath()}" alt="image">`);
         const closeEl = modal.element.querySelector('#modal-close');
         closeEl.onclick = () => modal.destroy();
         modal.element.classList.add('image');

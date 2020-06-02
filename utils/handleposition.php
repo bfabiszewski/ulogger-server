@@ -25,9 +25,9 @@ require_once(ROOT_DIR . "/helpers/config.php");
 
 $auth = new uAuth();
 
-$action = uUtils::postString('action');
-$positionId = uUtils::postInt('posid');
-$comment = uUtils::postString('comment');
+$action = uUtils::postString("action");
+$positionId = uUtils::postInt("posid");
+$comment = uUtils::postString("comment");
 
 $config = uConfig::getInstance();
 $lang = (new uLang($config))->getStrings();
@@ -41,17 +41,43 @@ if (!$position->isValid ||
   uUtils::exitWithError($lang["servererror"]);
 }
 
+$data = null;
+
 switch ($action) {
 
-  case 'update':
+  case "update":
     $position->comment = $comment;
     if ($position->update() === false) {
       uUtils::exitWithError($lang["servererror"]);
     }
     break;
 
-  case 'delete':
+  case "delete":
     if ($position->delete() === false) {
+      uUtils::exitWithError($lang["servererror"]);
+    }
+    break;
+
+  case "imageadd":
+    try {
+      $fileMeta = uUtils::requireFile("image");
+      if ($position->setImage($fileMeta) === false) {
+        uUtils::exitWithError($lang["servererror"]);
+      }
+      $data = [ "image" => $position->image ];
+    } catch (ErrorException $ee) {
+      $message = $lang["servererror"];
+      $message .= ": {$ee->getMessage()}";
+      uUtils::exitWithError($message);
+    } catch (Exception $e) {
+      $message = $lang["iuploadfailure"];
+      $message .= ": {$e->getMessage()}";
+      uUtils::exitWithError($message);
+    }
+    break;
+
+  case "imagedel":
+    if ($position->removeImage() === false) {
       uUtils::exitWithError($lang["servererror"]);
     }
     break;
@@ -61,6 +87,6 @@ switch ($action) {
     break;
 }
 
-uUtils::exitWithSuccess();
+uUtils::exitWithSuccess($data);
 
 ?>

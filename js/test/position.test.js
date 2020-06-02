@@ -241,6 +241,43 @@ describe('Position tests', () => {
     expect(uPosition.update).toHaveBeenCalledWith({ action: 'update', posid: posId, comment: comment });
   });
 
+  it('should delete image on server', (done) => {
+    // given
+    spyOn(uPosition, 'update').and.returnValue(Promise.resolve());
+    const position = uPosition.fromJson(jsonPosition);
+    // when
+    position.imageDelete()
+    // then
+    setTimeout(() => {
+      expect(uPosition.update).toHaveBeenCalledWith({ action: 'imagedel', posid: posId });
+      expect(position.image).toBeNull();
+      done();
+    }, 100);
+  });
+
+  it('should add image on server', (done) => {
+    // given
+    const newImage = 'new_image.jpg';
+    const imageFile = 'imageFile';
+    spyOn(uPosition, 'update').and.returnValue(Promise.resolve({ image: newImage }));
+    const position = uPosition.fromJson(jsonPosition);
+    // when
+    position.imageAdd(imageFile);
+    // then
+    setTimeout(() => {
+      expect(uPosition.update).toHaveBeenCalledWith(jasmine.any(FormData));
+
+      /** @var {FormData} */
+      const data = uPosition.update.calls.mostRecent().args[0];
+
+      expect(data.get('image')).toBe(imageFile);
+      expect(data.get('action')).toBe('imageadd');
+      expect(data.get('posid')).toBe(posId.toString());
+      expect(position.image).toBe(newImage);
+      done();
+    }, 100);
+  });
+
   it('should call ajax post with url and params', () => {
     // given
     const url = 'utils/handleposition.php';

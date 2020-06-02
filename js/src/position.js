@@ -85,6 +85,17 @@ export default class uPosition {
     return (this.image != null && this.image.length > 0);
   }
 
+  /**
+   * @return {?string}
+   */
+  getImagePath() {
+    return this.hasImage() ? `uploads/${this.image}` : null;
+  }
+
+  /**
+   * Get total speed in m/s
+   * @return {number}
+   */
   get totalSpeed() {
     return this.totalSeconds ? this.totalMeters / this.totalSeconds : 0;
   }
@@ -111,9 +122,36 @@ export default class uPosition {
   }
 
   /**
+   * @return {Promise<void, Error>}
+   */
+  imageDelete() {
+    return uPosition.update({
+      action: 'imagedel',
+      posid: this.id
+    }).then(() => { this.image = null; });
+  }
+
+  /**
+   * @param {File} imageFile
+   * @return {Promise<void, Error>}
+   */
+  imageAdd(imageFile) {
+    const data = new FormData();
+    data.append('image', imageFile);
+    data.append('action', 'imageadd');
+    data.append('posid', this.id);
+    return uPosition.update(data).then(
+      /**
+       * @param {Object} result
+       * @param {string} result.image
+       */
+      (result) => { this.image = result.image; });
+  }
+
+  /**
    * Save track data
    * @param {Object} data
-   * @return {Promise<void, Error>}
+   * @return {Promise<void|Object, Error>}
    */
   static update(data) {
     return uAjax.post('utils/handleposition.php', data);

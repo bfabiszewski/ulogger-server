@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . "/../lib/UloggerDatabaseTestCase.php");
 require_once(__DIR__ . "/../../helpers/track.php");
@@ -118,7 +117,7 @@ class PositionTest extends UloggerDatabaseTestCase {
     $this->assertEquals(2, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $this->assertEquals(4, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $posArr = uPosition::getLastAllUsers();
-    $this->assertEquals(2, count($posArr), "Wrong row count");
+    $this->assertCount(2, $posArr, "Wrong row count");
     foreach ($posArr as $position) {
       /** @var uPosition $position */
       switch ($position->id) {
@@ -152,15 +151,15 @@ class PositionTest extends UloggerDatabaseTestCase {
     $this->assertEquals(3, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $posArr = uPosition::getAll();
-    $this->assertEquals(3, count($posArr), "Wrong row count");
+    $this->assertCount(3, $posArr, "Wrong row count");
     $posArr = uPosition::getAll($userId);
-    $this->assertEquals(2, count($posArr), "Wrong row count");
+    $this->assertCount(2, $posArr, "Wrong row count");
     $posArr = uPosition::getAll($userId, $trackId);
-    $this->assertEquals(1, count($posArr), "Wrong row count");
+    $this->assertCount(1, $posArr, "Wrong row count");
     $posArr = uPosition::getAll(NULL, $trackId);
-    $this->assertEquals(1, count($posArr), "Wrong row count");
+    $this->assertCount(1, $posArr, "Wrong row count");
     $posArr = uPosition::getAll($userId3);
-    $this->assertEquals(0, count($posArr), "Wrong row count");
+    $this->assertCount(0, $posArr, "Wrong row count");
   }
 
   public function testDistanceTo() {
@@ -169,7 +168,7 @@ class PositionTest extends UloggerDatabaseTestCase {
     $pos1 = $this->addTestPosition($userId, $trackId, $this->testTimestamp, 0, 0);
     $pos2 = $this->addTestPosition($userId, $trackId, $this->testTimestamp, 0, 1);
     $posArr = uPosition::getAll();
-    $this->assertEquals(2, count($posArr), "Wrong row count");
+    $this->assertCount(2, $posArr, "Wrong row count");
     $this->assertEquals(111195, round($posArr[0]->distanceTo($posArr[1])), "Wrong distance");
   }
 
@@ -179,7 +178,7 @@ class PositionTest extends UloggerDatabaseTestCase {
     $pos1 = $this->addTestPosition($userId, $trackId, $this->testTimestamp);
     $pos2 = $this->addTestPosition($userId, $trackId, $this->testTimestamp + 1);
     $posArr = uPosition::getAll();
-    $this->assertEquals(2, count($posArr), "Wrong row count");
+    $this->assertCount(2, $posArr, "Wrong row count");
     $this->assertEquals(-1, $posArr[0]->secondsTo($posArr[1]), "Wrong time difference");
   }
 

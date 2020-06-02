@@ -194,9 +194,7 @@ require_once(ROOT_DIR . "/helpers/upload.php");
           $query = "DELETE FROM " . self::db()->table('positions') . " WHERE id = ?";
           $stmt = self::db()->prepare($query);
           $stmt->execute([ $this->id ]);
-          if ($this->hasImage()) {
-            uUpload::delete($this->image);
-          }
+          $this->removeImage();
           $ret = true;
           $this->id = NULL;
           $this->isValid = false;
@@ -373,15 +371,9 @@ require_once(ROOT_DIR . "/helpers/upload.php");
      */
     public static function removeImages($userId, $trackId = NULL) {
       if (($positions = self::getAllWithImage($userId, $trackId)) !== false) {
-        /** @var uUpload $position */
         foreach ($positions as $position) {
           try {
-            $query = "UPDATE " . self::db()->table('positions') . "
-              SET image = NULL WHERE id = ?";
-            $stmt = self::db()->prepare($query);
-            $stmt->execute([ $position->id ]);
-            // ignore unlink errors
-            uUpload::delete($position->image);
+            $position->removeImage();
           } catch (PDOException $e) {
             // TODO: handle exception
             syslog(LOG_ERR, $e->getMessage());
@@ -390,6 +382,38 @@ require_once(ROOT_DIR . "/helpers/upload.php");
         }
       }
       return true;
+    }
+
+    /**
+     * Add uploaded image
+     * @param array $imageMeta File metadata array
+     */
+    public function setImage($imageMeta) {
+      if (!empty($imageMeta)) {
+        if ($this->hasImage()) {
+          $this->removeImage();
+        }
+        $this->image = uUpload::add($imageMeta, $this->trackId);
+        $query = "UPDATE " . self::db()->table('positions') . "
+              SET image = ? WHERE id = ?";
+        $stmt = self::db()->prepare($query);
+        $stmt->execute([ $this->image, $this->id ]);
+      }
+    }
+
+    /**
+     * Delete image
+     */
+    public function removeImage() {
+      if ($this->hasImage()) {
+        $query = "UPDATE " . self::db()->table('positions') . "
+              SET image = NULL WHERE id = ?";
+        $stmt = self::db()->prepare($query);
+        $stmt->execute([ $this->id ]);
+        // ignore unlink errors
+        uUpload::delete($this->image);
+        $this->image = null;
+      }
     }
 
    /**
