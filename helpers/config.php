@@ -135,10 +135,9 @@ class uConfig {
    * @var int Maximum size of uploaded files in bytes.
    * Will be adjusted to system maximum upload size
    */
-  public $uploadMaxSize;
+  public $uploadMaxSize = 5242880;
   
   public function __construct($useDatabase = true) {
-    $this->uploadMaxSize = uUtils::getUploadMaxSize();
     if ($useDatabase) {
       $this->setFromDatabase();
     }
@@ -227,10 +226,10 @@ class uConfig {
                 WHEN 'color_start' THEN $placeholder
                 WHEN 'color_stop' THEN $placeholder
                 WHEN 'google_key' THEN $placeholder
-                WHEN 'interval_seconds' THEN $placeholder
-                WHEN 'lang' THEN $placeholder
                 WHEN 'latitude' THEN $placeholder
                 WHEN 'longitude' THEN $placeholder
+                WHEN 'interval_seconds' THEN $placeholder
+                WHEN 'lang' THEN $placeholder
                 WHEN 'map_api' THEN $placeholder
                 WHEN 'pass_lenmin' THEN $placeholder
                 WHEN 'pass_strength' THEN $placeholder
@@ -429,9 +428,17 @@ class uConfig {
     }
     if (isset($arr['upload_maxsize']) && is_numeric($arr['upload_maxsize'])) {
       $this->uploadMaxSize = (int) $arr['upload_maxsize'];
-      if ($this->uploadMaxSize === 0 || $this->uploadMaxSize > uUtils::getUploadMaxSize()) {
-        $this->uploadMaxSize = uUtils::getUploadMaxSize();
-      }
+      $this->setUploadLimit();
+    }
+  }
+
+  /**
+   * Adjust uploadMaxSize to system limits
+   */
+  private function setUploadLimit() {
+    $limit = uUtils::getSystemUploadLimit();
+    if ($this->uploadMaxSize <= 0 || $this->uploadMaxSize > $limit) {
+      $this->uploadMaxSize = $limit;
     }
   }
 }

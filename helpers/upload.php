@@ -141,7 +141,7 @@ class uUpload {
 
     $file = NULL;
     $fileError = isset($fileMeta[self::META_ERROR]) ? $fileMeta[self::META_ERROR] : UPLOAD_ERR_OK;
-    if ($fileMeta[self::META_SIZE] > uUtils::getUploadMaxSize() && $fileError == UPLOAD_ERR_OK) {
+    if ($fileMeta[self::META_SIZE] > uUtils::getSystemUploadLimit() && $fileError == UPLOAD_ERR_OK) {
       $fileError = UPLOAD_ERR_FORM_SIZE;
     }
     if ($fileError == UPLOAD_ERR_OK) {

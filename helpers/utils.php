@@ -28,7 +28,7 @@
      *
      * @return int Number of bytes
      */
-    public static function getUploadMaxSize() {
+    public static function getSystemUploadLimit() {
       $upload_max_filesize = self::iniGetBytes('upload_max_filesize');
       $post_max_size = self::iniGetBytes('post_max_size');
       // post_max_size = 0 means unlimited size

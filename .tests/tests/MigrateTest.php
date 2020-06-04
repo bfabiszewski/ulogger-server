@@ -81,7 +81,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
       ["name" => "stroke_opacity", "value" => "i:1;"],
       ["name" => "stroke_weight", "value" => "i:22;"],
       ["name" => "units", "value" => "s:8:\"imperial\";"],
-      ["name" => "upload_maxsize", "value" => "i:0;"]
+      ["name" => "upload_maxsize", "value" => "i:5242880;"]
     ]];
     $actual = $this->getConnection()->createQueryTable(
       "config",

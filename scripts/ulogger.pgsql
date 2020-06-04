@@ -108,7 +108,7 @@ INSERT INTO config (name, value) VALUES
 ('stroke_opacity', 'd:1;'),
 ('stroke_weight', 'i:2;'),
 ('units', 's:6:"metric";'),
-('upload_maxsize', 'i:0;');
+('upload_maxsize', 'i:5242880;');
 
 -- --------------------------------------------------------
 
