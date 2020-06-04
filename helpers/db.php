@@ -159,7 +159,7 @@ require_once(ROOT_DIR . "/helpers/utils.php");
           return "UNIX_TIMESTAMP($column)";
           break;
         case "pgsql":
-          return "EXTRACT(EPOCH FROM $column)";
+          return "EXTRACT(EPOCH FROM $column::TIMESTAMP WITH TIME ZONE)";
           break;
         case "sqlite":
           return "STRFTIME('%s', $column)";
