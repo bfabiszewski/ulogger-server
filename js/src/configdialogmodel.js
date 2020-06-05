@@ -55,7 +55,8 @@ export default class ConfigDialogModel extends ViewModel {
       strokeOpacity: config.strokeOpacity,
       strokeWeight: config.strokeWeight,
       units: config.units,
-      uploadMaxSize: config.uploadMaxSize
+      uploadMaxSize: config.uploadMaxSize,
+      uploadMaxSizeMB: config.uploadMaxSize / 1024 / 1024
     });
     this.model.onCancel = () => this.onCancel();
     this.model.onSave = () => this.onSave();
@@ -83,6 +84,7 @@ export default class ConfigDialogModel extends ViewModel {
       this.model.layerUrl = layer ? layer.url : '';
       this.toggleEditVisible();
     });
+    this.onChanged('uploadMaxSizeMB', (value) => { this.model.uploadMaxSize = value * 1024 * 1024;})
     this.onChanged('layers', (list) => this.layerSelect.setOptions(list));
     this.onChanged('requireAuth', (value) => {
       this.setPublicTracksActivity(value);
@@ -244,7 +246,7 @@ export default class ConfigDialogModel extends ViewModel {
           <option value="3"${this.model.passStrength === 3 ? ' selected' : ''}>paSsword1#</option>
         </select></label>
         <label><b>${$._('uploadmaxsize')}</b>
-        <input type="number" data-bind="uploadMaxSize" min="0" value="${this.model.uploadMaxSize}" required></label>
+        <input type="number" data-bind="uploadMaxSizeMB" min="0.1" step="0.1" value="${this.model.uploadMaxSizeMB}" required></label>
         <label><b>${$._('requireauth')}</b>
         <input type="checkbox" data-bind="requireAuth"${this.model.requireAuth ? ' checked' : ''}></label>
         <label><b>${$._('publictracks')}</b>
