@@ -52,7 +52,7 @@ describe('ConfigDialogModel tests', () => {
   const testElements = [
     'interval', 'units', 'lang', 'mapApi', 'googleKey', 'layerName', 'layerId', 'layerUrl', 'initLatitude', 'initLongitude',
     'requireAuth', 'publicTracks', 'passStrength', 'passLenMin', 'strokeWeight', 'strokeColor', 'strokeOpacity',
-    'colorNormal', 'colorStart', 'colorStop', 'colorExtra', 'colorHilite', 'uploadMaxSize'
+    'colorNormal', 'colorStart', 'colorStop', 'colorExtra', 'colorHilite', 'uploadMaxSizeMB'
   ];
   testElements.forEach((name) => {
     it(`should trigger model property change for ${name}`, (done) => {
@@ -85,6 +85,21 @@ describe('ConfigDialogModel tests', () => {
         done();
       }, 100);
     });
+  });
+
+  it('should update uploadMaxSize when uploadMaxSizeMB is changed', (done) => {
+    // given
+    cm.init();
+    const element = cm.dialog.element.querySelector('[data-bind=uploadMaxSizeMB]');
+    const valueMB = 2;
+    // when
+    element.value = valueMB;
+    element.dispatchEvent(new Event('change'));
+    // then
+    setTimeout(() => {
+      expect(cm.model.uploadMaxSize).toBe(valueMB * 1024 * 1024);
+      done();
+    }, 100);
   });
 
   it('should show layer edit on add button click', (done) => {
