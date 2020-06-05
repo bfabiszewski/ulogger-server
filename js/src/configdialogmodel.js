@@ -246,7 +246,7 @@ export default class ConfigDialogModel extends ViewModel {
           <option value="3"${this.model.passStrength === 3 ? ' selected' : ''}>paSsword1#</option>
         </select></label>
         <label><b>${$._('uploadmaxsize')}</b>
-        <input type="number" data-bind="uploadMaxSizeMB" min="0.1" step="0.1" value="${this.model.uploadMaxSizeMB}" required></label>
+        <input type="number" data-bind="uploadMaxSizeMB" min="1" value="${this.model.uploadMaxSizeMB}" required></label>
         <label><b>${$._('requireauth')}</b>
         <input type="checkbox" data-bind="requireAuth"${this.model.requireAuth ? ' checked' : ''}></label>
         <label><b>${$._('publictracks')}</b>
