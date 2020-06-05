@@ -223,6 +223,42 @@ require_once(ROOT_DIR . "/helpers/utils.php");
     }
 
     /**
+     * Replace into
+     * Note: requires PostgreSQL >= 9.5
+     * @param string $table Table name (without prefix)
+     * @param string[] $columns Column names
+     * @param string[][] $values Values [ [ value1, value2 ], ... ]
+     * @param string $key Unique column
+     * @param string $update Updated column
+     * @return string
+     */
+    public function insertOrReplace($table, $columns, $values, $key, $update) {
+      $cols = implode(", ", $columns);
+      $rows = [];
+      foreach ($values as $row) {
+        $rows[] = "(" . implode(", ", $row) . ")";
+      }
+      $vals = implode(", ", $rows);
+      switch (self::$driver) {
+        default:
+        case "mysql":
+          return "INSERT INTO {$this->table($table)} ($cols)
+            VALUES $vals
+            ON DUPLICATE KEY UPDATE $update = VALUES($update)";
+          break;
+        case "pgsql":
+          return "INSERT INTO {$this->table($table)} ($cols)
+            VALUES $vals
+            ON CONFLICT ($key) DO UPDATE SET $update = EXCLUDED.$update";
+          break;
+        case "sqlite":
+          return "REPLACE INTO {$this->table($table)} ($cols)
+            VALUES $vals";
+          break;
+      }
+    }
+
+    /**
      * Set character set
      * @param string $charset
      */

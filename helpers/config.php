@@ -182,10 +182,10 @@ class uConfig {
    */
   public function setFromDatabase() {
     try {
-      $query = "SELECT name, value FROM " . self::db()->table('config');
+      $query = "SELECT name, value FROM " . self::db()->table("config");
       $result = self::db()->query($query);
       $arr = $result->fetchAll(PDO::FETCH_KEY_PAIR);
-      $this->setFromArray(array_map([ $this, 'unserialize' ], $arr));
+      $this->setFromArray(array_map([ $this, "unserialize" ], $arr));
       $this->setLayersFromDatabase();
       if (!$this->requireAuthentication) {
         // tracks must be public if we don't require authentication
@@ -218,29 +218,29 @@ class uConfig {
     try {
       // PDO::PARAM_LOB doesn't work here with pgsql, why?
       $placeholder = self::db()->lobPlaceholder();
-      $query = "UPDATE " . self::db()->table('config') . "
-                SET value = CASE name
-                WHEN 'color_extra' THEN $placeholder
-                WHEN 'color_hilite' THEN $placeholder
-                WHEN 'color_normal' THEN $placeholder
-                WHEN 'color_start' THEN $placeholder
-                WHEN 'color_stop' THEN $placeholder
-                WHEN 'google_key' THEN $placeholder
-                WHEN 'latitude' THEN $placeholder
-                WHEN 'longitude' THEN $placeholder
-                WHEN 'interval_seconds' THEN $placeholder
-                WHEN 'lang' THEN $placeholder
-                WHEN 'map_api' THEN $placeholder
-                WHEN 'pass_lenmin' THEN $placeholder
-                WHEN 'pass_strength' THEN $placeholder
-                WHEN 'public_tracks' THEN $placeholder
-                WHEN 'require_auth' THEN $placeholder
-                WHEN 'stroke_color' THEN $placeholder
-                WHEN 'stroke_opacity' THEN $placeholder
-                WHEN 'stroke_weight' THEN $placeholder
-                WHEN 'units' THEN $placeholder
-                WHEN 'upload_maxsize' THEN $placeholder
-                END";
+      $values = [
+        ["'color_extra'", $placeholder],
+        ["'color_hilite'", $placeholder],
+        ["'color_normal'", $placeholder],
+        ["'color_start'", $placeholder],
+        ["'color_stop'", $placeholder],
+        ["'google_key'", $placeholder],
+        ["'latitude'", $placeholder],
+        ["'longitude'", $placeholder],
+        ["'interval_seconds'", $placeholder],
+        ["'lang'", $placeholder],
+        ["'map_api'", $placeholder],
+        ["'pass_lenmin'", $placeholder],
+        ["'pass_strength'", $placeholder],
+        ["'public_tracks'", $placeholder],
+        ["'require_auth'", $placeholder],
+        ["'stroke_color'", $placeholder],
+        ["'stroke_opacity'", $placeholder],
+        ["'stroke_weight'", $placeholder],
+        ["'units'", $placeholder],
+        ["'upload_maxsize'", $placeholder]
+      ];
+      $query = self::db()->insertOrReplace("config", [ "name", "value" ], $values, "name", "value");
       $stmt = self::db()->prepare($query);
       $params = [
         $this->colorExtra,
@@ -265,7 +265,7 @@ class uConfig {
         $this->uploadMaxSize
       ];
 
-      $stmt->execute(array_map('serialize', $params));
+      $stmt->execute(array_map("serialize", $params));
       $this->saveLayers();
       $ret = true;
     } catch (PDOException $e) {
@@ -280,7 +280,7 @@ class uConfig {
    * @throws PDOException
    */
   private function deleteLayers() {
-    $query = "DELETE FROM " . self::db()->table('ol_layers');
+    $query = "DELETE FROM " . self::db()->table("ol_layers");
     self::db()->exec($query);
   }
 
@@ -291,7 +291,7 @@ class uConfig {
   private function saveLayers() {
     $this->deleteLayers();
     if (!empty($this->olLayers)) {
-      $query = "INSERT INTO " . self::db()->table('ol_layers') . " (id, name, url, priority) VALUES (?, ?, ?, ?)";
+      $query = "INSERT INTO " . self::db()->table("ol_layers") . " (id, name, url, priority) VALUES (?, ?, ?, ?)";
       $stmt = self::db()->prepare($query);
       foreach ($this->olLayers as $layer) {
         $stmt->execute([ $layer->id, $layer->name, $layer->url, $layer->priority]);
@@ -308,7 +308,7 @@ class uConfig {
     $query = "SELECT id, name, url, priority FROM " . self::db()->table('ol_layers');
     $result = self::db()->query($query);
     while ($row = $result->fetch()) {
-      $this->olLayers[] = new uLayer($row['id'], $row['name'], $row['url'], $row['priority']);
+      $this->olLayers[] = new uLayer($row["id"], $row["name"], $row["url"], $row["priority"]);
     }
   }
 

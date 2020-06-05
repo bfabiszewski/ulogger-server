@@ -129,12 +129,14 @@ class ConfigTest extends UloggerDatabaseTestCase {
       "stroke_opacity" => $this->config->strokeOpacity
     ];
     $cnt = count($expected);
-    $this->assertEquals($cnt, $this->getConnection()->getRowCount('config'), "Wrong row count");
+    $this->assertGreaterThanOrEqual($cnt, $this->getConnection()->getRowCount('config'), "Wrong row count");
     $actual = $this->getConnection()->createQueryTable("config", "SELECT * FROM config");
     for ($i = 0; $i < $cnt; $i++) {
       $row = $actual->getRow($i);
       $actualValue = $row['value'];
-      $this->assertEquals(serialize($expected[$row['name']]), is_resource($actualValue) ? stream_get_contents($actualValue) : $actualValue);
+      if (isset($expected[$row['name']])) {
+        $this->assertEquals(serialize($expected[$row['name']]), is_resource($actualValue) ? stream_get_contents($actualValue) : $actualValue);
+      }
     }
     $this->assertEquals(1, $this->getConnection()->getRowCount('ol_layers'), "Wrong row count");
     $expected = [
