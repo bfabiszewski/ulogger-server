@@ -43,6 +43,7 @@ $langSetup["startbutton"] = "Naciśnij, aby rozpocząć";
 $langSetup["restartbutton"] = "Uruchom ponownie";
 $langSetup["optionwarn"] = "Opcja %s w ustawieniach PHP musi mieć wartość %s."; // substitutes option name and value
 $langSetup["extensionwarn"] = "Wymagane rozszerzenie PHP %s jest niedostępne."; // substitutes extension name
+$langSetup["notwritable"] = "PHP musi mieć możliwość zapisu w folderze '%s'."; // substitutes folder path
 
 
 // application strings
@@ -115,7 +116,9 @@ $lang["edittrack"] = "Edytuj trasę";
 $lang["positiondelwarn"] = "Uwaga!\n\nZamierzasz całkowicie usunąć pozycję %d z trasy %s.\n\nCzy na pewno?"; // substitutes position index and track name
 $lang["editingposition"] = "Edytujesz pozycję #%d z trasy %s"; // substitutes position index and track name
 $lang["delposition"] = "Usuń pozycję";
+$lang["delimage"] = "Usuń zdjęcie";
 $lang["comment"] = "Komentarz";
+$lang["image"] = "Zdjęcie";
 $lang["editposition"] = "Edytuj pozycję";
 $lang["passlenmin"] = "Hasło musi się składać z minimum %d znaków"; // substitutes password minimum length
 $lang["passrules_1"] = "Powinno ono zawierać przynajmniej jedną małą i jedną wielką literę";
@@ -144,7 +147,7 @@ $lang["config"] = "Ustawienia";
 $lang["editingconfig"] = "Domyślne ustawienia aplikacji";
 $lang["latitude"] = "Początkowa szerokość";
 $lang["longitude"] = "Początkowa długość";
-$lang["interval"] = "Interwał";
+$lang["interval"] = "Interwał (s)";
 $lang["googlekey"] = "Klucz API Google Maps";
 $lang["passlength"] = "Minimalna długość hasła";
 $lang["passstrength"] = "Minimalna siła hasła";
@@ -158,6 +161,7 @@ $lang["colorstart"] = "Kolor znacznika początkowego";
 $lang["colorstop"] = "Kolor znacznika końcowego";
 $lang["colorextra"] = "Kolor znacznika specjalnego";
 $lang["colorhilite"] = "Kolor znacznika zaznaczonego";
+$lang["uploadmaxsize"] = "Limit rozmiaru wgrywanego pliku (MB)";
 $lang["ollayers"] = "Warstwa OpenLayers";
 $lang["layername"] = "Nazwa warstwy";
 $lang["layerurl"] = "URL warstwy";

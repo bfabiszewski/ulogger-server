@@ -43,6 +43,7 @@ $langSetup["startbutton"] = "Нажми для старта";
 $langSetup["restartbutton"] = "Перезапуск";
 $langSetup["optionwarn"] = "Опция %s в конфигурации PHP должна иметь значение %s."; // substitutes option name and value
 $langSetup["extensionwarn"] = "Необходимый модуль PHP %s не найден."; // substitutes extension name
+$langSetup["notwritable"] = "Folder '%s' must be writable by PHP."; // substitutes folder path
 
 
 // application strings
@@ -115,7 +116,9 @@ $lang["edittrack"] = "Редактировать трек";
 $lang["positiondelwarn"] = "Warning!\n\nYou are going to permanently delete position %d of track %s.\n\nAre you sure?"; // substitutes position index and track name
 $lang["editingposition"] = "You are editing position #%d of track %s"; // substitutes position index and track name
 $lang["delposition"] = "Remove position";
+$lang["delimage"] = "Remove image";
 $lang["comment"] = "Comment";
+$lang["image"] = "Image";
 $lang["editposition"] = "Edit position";
 $lang["passlenmin"] = "Длина пароля должна быть минимум %dсимволов."; // substitutes password minimum length
 $lang["passrules_1"] = "Он должен содержать по меньшей мере один маленький символ, один большой символ";
@@ -144,7 +147,7 @@ $lang["config"] = "Настройки";
 $lang["editingconfig"] = "Default application settings";
 $lang["latitude"] = "Initial latitude";
 $lang["longitude"] = "Initial longitude";
-$lang["interval"] = "Interval";
+$lang["interval"] = "Interval (s)";
 $lang["googlekey"] = "Google Maps API key";
 $lang["passlength"] = "Minimum password length";
 $lang["passstrength"] = "Minimum password strength";
@@ -158,6 +161,7 @@ $lang["colorstart"] = "Start marker color";
 $lang["colorstop"] = "Stop marker color";
 $lang["colorextra"] = "Extra marker color";
 $lang["colorhilite"] = "Hilite marker color";
+$lang["uploadmaxsize"] = "Maximum upload size (MB)";
 $lang["ollayers"] = "OpenLayers layer";
 $lang["layername"] = "Layer name";
 $lang["layerurl"] = "Layer URL";

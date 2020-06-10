@@ -43,6 +43,7 @@ $langSetup["startbutton"] = "Clicca per cominciare";
 $langSetup["restartbutton"] = "Riavvia";
 $langSetup["optionwarn"] = "PHP configuration option %s must be set to %s."; // substitutes option name and value
 $langSetup["extensionwarn"] = "Required PHP extension %s is not available."; // substitutes extension name
+$langSetup["notwritable"] = "Folder '%s' must be writable by PHP."; // substitutes folder path
 
 
 // application strings
@@ -115,7 +116,9 @@ $lang["edittrack"] = "Modifica traccia";
 $lang["positiondelwarn"] = "Warning!\n\nYou are going to permanently delete position %d of track %s.\n\nAre you sure?"; // substitutes position index and track name
 $lang["editingposition"] = "You are editing position #%d of track %s"; // substitutes position index and track name
 $lang["delposition"] = "Remove position";
+$lang["delimage"] = "Remove image";
 $lang["comment"] = "Comment";
+$lang["image"] = "Image";
 $lang["editposition"] = "Edit position";
 $lang["passlenmin"] = "La password deve essere almeno di %d caratteri"; // substitutes password minimum length
 $lang["passrules_1"] = "Dovrebbe contenere almeno una lettera minuscola e una lettera maiuscola";
@@ -144,7 +147,7 @@ $lang["config"] = "Settings";
 $lang["editingconfig"] = "Default application settings";
 $lang["latitude"] = "Initial latitude";
 $lang["longitude"] = "Initial longitude";
-$lang["interval"] = "Interval";
+$lang["interval"] = "Interval (s)";
 $lang["googlekey"] = "Google Maps API key";
 $lang["passlength"] = "Minimum password length";
 $lang["passstrength"] = "Minimum password strength";
@@ -158,6 +161,7 @@ $lang["colorstart"] = "Start marker color";
 $lang["colorstop"] = "Stop marker color";
 $lang["colorextra"] = "Extra marker color";
 $lang["colorhilite"] = "Hilite marker color";
+$lang["uploadmaxsize"] = "Maximum upload size (MB)";
 $lang["ollayers"] = "OpenLayers layer";
 $lang["layername"] = "Layer name";
 $lang["layerurl"] = "Layer URL";
