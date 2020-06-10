@@ -141,6 +141,7 @@ select {
   color: white;
   border: 1px solid white;
   background-color: black;
+  cursor: pointer;
 }
 
 #menu input[type="checkbox"] {
