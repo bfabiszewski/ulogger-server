@@ -26,6 +26,8 @@ import uObserve from './observe.js';
  * @property {boolean} showLatest
  * @property {boolean} showAllUsers
  * @property {number} activeJobs
+ * @property {?MapParams} mapParams
+ * @property {?PermalinkState} history
  */
 export default class uState {
 
@@ -35,6 +37,8 @@ export default class uState {
     this.showLatest = false;
     this.showAllUsers = false;
     this.activeJobs = 0;
+    this.mapParams = null;
+    this.history = null;
   }
 
   jobStart() {

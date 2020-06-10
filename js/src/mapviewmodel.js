@@ -41,6 +41,15 @@ import uUtils from './utils.js';
  * @property {function} zoomToExtent
  * @property {function} zoomToBounds
  * @property {function} updateSize
+ * @property {function} updateState
+ */
+
+
+/**
+ * @typedef {Object} MapParams
+ * @property {number[]} center
+ * @property {number} zoom
+ * @property {number} rotation
  */
 
 /**
@@ -116,11 +125,13 @@ export default class MapViewModel extends ViewModel {
   }
 
   onReady() {
-    if (this.savedBounds) {
-      this.api.zoomToBounds(this.savedBounds);
-    }
     if (this.state.currentTrack) {
-      this.displayTrack(this.state.currentTrack, this.savedBounds === null);
+      let update = true;
+      if (this.savedBounds) {
+        this.api.zoomToBounds(this.savedBounds);
+        update = false;
+      }
+      this.displayTrack(this.state.currentTrack, update);
     }
   }
 
@@ -141,10 +152,34 @@ export default class MapViewModel extends ViewModel {
         this.displayTrack(track, true);
       }
     });
+    this.state.onChanged('history', () => {
+      const history = this.state.history;
+      if (this.api && history && !history.trackId) {
+        if (history.mapApi) {
+          config.mapApi = history.mapApi;
+        } else {
+          if (history.mapParams) {
+            this.api.updateState(history.mapParams);
+          } else {
+            this.api.zoomToExtent();
+          }
+          this.state.history = null;
+        }
+      }
+    });
   }
 
+  /**
+   * @param {uTrack} track Track to display
+   * @param {boolean} update Should update map view
+   */
   displayTrack(track, update) {
     this.state.jobStart();
+    if (update && this.state.history && this.state.history.mapParams) {
+      this.api.updateState(this.state.history.mapParams);
+      update = false;
+    }
+    this.state.history = null;
     this.api.displayTrack(track, update)
       .finally(() => this.state.jobStop());
   }

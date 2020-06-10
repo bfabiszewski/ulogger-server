@@ -25,21 +25,26 @@ import MapViewModel from './mapviewmodel.js';
 import TrackViewModel from './trackviewmodel.js';
 import UserViewModel from './userviewmodel.js';
 import uAlert from './alert.js';
+import uPermalink from './permalink.js';
 import uSpinner from './spinner.js';
 import uState from './state.js';
 
 const domReady = uInitializer.waitForDom();
 const initReady = initializer.initialize();
+const initLink = uPermalink.parseHash();
 
-Promise.all([ domReady, initReady ])
-  .then(() => {
-    start();
+Promise.all([ domReady, initReady, initLink ])
+  .then((result) => {
+    start(result[2]);
   })
   .catch((msg) => uAlert.error(`${$._('actionfailure')}\n${msg}`));
 
-
-function start() {
+/**
+ * @param {?Object} linkState
+ */
+function start(linkState) {
   const state = new uState();
+  const permalink = new uPermalink(state);
   const spinner = new uSpinner(state);
   const mainVM = new MainViewModel(state);
   const userVM = new UserViewModel(state);
@@ -47,6 +52,7 @@ function start() {
   const mapVM = new MapViewModel(state);
   const chartVM = new ChartViewModel(state);
   const configVM = new ConfigViewModel(state);
+  permalink.init().onPop(linkState);
   spinner.init();
   mainVM.init();
   userVM.init();

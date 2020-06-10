@@ -18,6 +18,8 @@
  */
 
 import ViewModel from './viewmodel.js';
+import { config } from './initializer.js';
+import uUtils from './utils.js';
 
 const hiddenClass = 'menu-hidden';
 
@@ -29,11 +31,15 @@ export default class MainViewModel extends ViewModel {
   constructor(state) {
     super({
       onMenuToggle: null,
-      onShowUserMenu: null
+      onShowUserMenu: null,
+      onLogin: null,
+      onLogout: null
     });
     this.state = state;
     this.model.onMenuToggle = () => this.toggleSideMenu();
     this.model.onShowUserMenu = () => this.toggleUserMenu();
+    this.model.onLogin = () => MainViewModel.login();
+    this.model.onLogout = () => MainViewModel.logout();
     this.hideUserMenuCallback = (e) => this.hideUserMenu(e);
     this.menuEl = document.querySelector('#menu');
     this.userMenuEl = document.querySelector('#user-menu');
@@ -78,6 +84,18 @@ export default class MainViewModel extends ViewModel {
     if (el.parentElement.id !== 'user-menu') {
       event.stopPropagation();
     }
+  }
+
+  static login() {
+    uUtils.openUrl(`login.php${window.location.hash}`);
+  }
+
+  static logout() {
+    let url = 'utils/logout.php';
+    if (!config.requireAuth) {
+      url += `?hash=${window.location.hash.replace('#', '')}`;
+    }
+    uUtils.openUrl(url);
   }
 
 }

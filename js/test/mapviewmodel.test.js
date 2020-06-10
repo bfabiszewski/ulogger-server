@@ -144,6 +144,7 @@ describe('MapViewModel tests', () => {
     // given
     vm.api = mockApi;
     vm.savedBounds = bounds;
+    state.currentTrack = track;
     // when
     vm.onReady();
     // then

@@ -25,9 +25,9 @@ require_once(ROOT_DIR . "/helpers/config.php");
 
 $auth = new uAuth();
 
-$action = uUtils::postString('action');
-$trackId = uUtils::postInt('trackid');
-$trackName = uUtils::postString('trackname');
+$action = uUtils::postString("action");
+$trackId = uUtils::postInt("trackid");
+$trackName = uUtils::postString("trackname");
 
 $config = uConfig::getInstance();
 $lang = (new uLang($config))->getStrings();
@@ -36,23 +36,37 @@ if (empty($action) || empty($trackId)) {
   uUtils::exitWithError($lang["servererror"]);
 }
 $track = new uTrack($trackId);
-if (!$track->isValid ||
-  (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $track->userId))) {
+if (!$track->isValid) {
   uUtils::exitWithError($lang["servererror"]);
 }
+if (($action === "getmeta" && !$auth->hasReadAccess($track->userId)) ||
+  ($action !== "getmeta" && !$auth->hasReadWriteAccess($track->userId))) {
+  uUtils::exitWithError($lang["notauthorized"]);
+}
+
+$result = null;
 
 switch ($action) {
 
-  case 'update':
+  case "update":
     if (empty($trackName) || $track->update($trackName) === false) {
       uUtils::exitWithError($lang["servererror"]);
     }
     break;
 
-  case 'delete':
+  case "delete":
     if ($track->delete() === false) {
       uUtils::exitWithError($lang["servererror"]);
     }
+    break;
+
+  case "getmeta":
+    $result = [
+      "id" => $track->id,
+      "name" => $track->name,
+      "userId" => $track->userId,
+      "comment" => $track->comment
+    ];
     break;
 
   default:
@@ -60,6 +74,6 @@ switch ($action) {
     break;
 }
 
-uUtils::exitWithSuccess();
+uUtils::exitWithSuccess($result);
 
 ?>

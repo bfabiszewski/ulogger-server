@@ -267,4 +267,103 @@ describe('Utils tests', () => {
     expect(uUtils.deg2rad(1)).toBeCloseTo(0.0174533, 7);
   });
 
+  it('should confirm two objects are equal', () => {
+    // given
+    const obj1 = {
+      property1: true,
+      property2: null,
+      property3: 'string',
+      property4: 4,
+      property5: {
+        sub1: 4,
+        sub2: 'sub'
+      }
+    }
+    const obj2 = JSON.parse(JSON.stringify(obj1));
+    // when
+    const result = uUtils.isDeepEqual(obj1, obj2);
+    // then
+    expect(result).toBeTrue();
+  });
+
+  it('should confirm two objects are not equal', () => {
+    // given
+    const obj1 = {
+      property1: true,
+      property2: null,
+      property3: 'string',
+      property4: 4,
+      property5: {
+        sub1: 4,
+        sub2: 'sub'
+      }
+    }
+    const obj2 = JSON.parse(JSON.stringify(obj1));
+    obj2.property1 = false;
+    // when
+    const result = uUtils.isDeepEqual(obj1, obj2);
+    // then
+    expect(result).toBeFalse();
+  });
+
+  it('should confirm two objects are not equal on deeper level', () => {
+    // given
+    const obj1 = {
+      property1: true,
+      property2: null,
+      property3: 'string',
+      property4: 4,
+      property5: {
+        sub1: 4,
+        sub2: 'sub'
+      }
+    }
+    const obj2 = JSON.parse(JSON.stringify(obj1));
+    obj2.property5.sub1 = 5;
+    // when
+    const result = uUtils.isDeepEqual(obj1, obj2);
+    // then
+    expect(result).toBeFalse();
+  });
+
+  it('should confirm two objects are not equal when object property is null on obj2', () => {
+    // given
+    const obj1 = {
+      property1: true,
+      property2: null,
+      property3: 'string',
+      property4: 4,
+      property5: {
+        sub1: 4,
+        sub2: 'sub'
+      }
+    }
+    const obj2 = JSON.parse(JSON.stringify(obj1));
+    obj2.property5 = null;
+    // when
+    const result = uUtils.isDeepEqual(obj1, obj2);
+    // then
+    expect(result).toBeFalse();
+  });
+
+  it('should confirm two objects are not equal when object property is null on obj1', () => {
+    // given
+    const obj1 = {
+      property1: true,
+      property2: null,
+      property3: 'string',
+      property4: 4,
+      property5: {
+        sub1: 4,
+        sub2: 'sub'
+      }
+    }
+    const obj2 = JSON.parse(JSON.stringify(obj1));
+    obj2.property2 = { sub1: 1 };
+    // when
+    const result = uUtils.isDeepEqual(obj1, obj2);
+    // then
+    expect(result).toBeFalse();
+  });
+
 });

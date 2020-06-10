@@ -23,7 +23,7 @@ const stubFn = function() {/* ignore */};
 const stubFnObj = function() { return stubObj; };
 
 export const setupGmapsStub = () => {
-  // noinspection JSUnresolvedVariable
+  // noinspection JSUnresolvedVariable,JSConstantReassignment
   window.google = {
     maps: {
       Animation: {
@@ -33,7 +33,8 @@ export const setupGmapsStub = () => {
       event: {
         addListener: stubFn,
         addListenerOnce: stubFn,
-        removeListener: stubFn
+        removeListener: stubFn,
+        clearListeners: stubFn
       },
       Icon: stubFn,
       InfoWindow: stubFn,
@@ -94,6 +95,6 @@ export const applyPrototypes = () => {
 };
 
 export const clear = () => {
-  // noinspection JSAnnotator,JSUnresolvedVariable
+  // noinspection JSAnnotator,JSUnresolvedVariable,JSConstantReassignment
   delete window.google;
 };

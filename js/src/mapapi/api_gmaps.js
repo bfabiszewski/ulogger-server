@@ -110,6 +110,9 @@ export default class GoogleMapsApi {
     this.popup.addListener('closeclick', () => {
       this.popupClose();
     });
+    this.saveState = () => {
+      this.viewModel.state.mapParams = this.getState();
+    };
   }
 
   /**
@@ -135,9 +138,12 @@ export default class GoogleMapsApi {
     if (!track || !track.hasPositions) {
       return Promise.resolve();
     }
+    google.maps.event.clearListeners(this.map, 'idle');
     const promise = new Promise((resolve) => {
       google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
         console.log('tilesloaded');
+        this.saveState();
+        this.map.addListener('idle', this.saveState);
         resolve();
       })
     });
@@ -368,6 +374,32 @@ export default class GoogleMapsApi {
     return 10000;
   }
 
+  /**
+   * Set map state
+   * Note: ignores rotation
+   * @param {MapParams} state
+   */
+  updateState(state) {
+    this.map.setCenter({ lat: state.center[0], lng: state.center[1] });
+    this.map.setZoom(state.zoom);
+  }
+
+  /**
+   * Get map state
+   * Note: ignores rotation
+   * @return {MapParams|null}
+   */
+  getState() {
+    if (this.map) {
+      const center = this.map.getCenter();
+      return {
+        center: [ center.lat(), center.lng() ],
+        zoom: this.map.getZoom(),
+        rotation: 0
+      };
+    }
+    return null;
+  }
 }
 
 /** @type {boolean} */

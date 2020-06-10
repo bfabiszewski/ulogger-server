@@ -124,6 +124,11 @@ export default class TrackViewModel extends ViewModel {
         this.startAutoReload();
       }
     });
+    this.state.onChanged('history', (history) => {
+      if (history && !history.userId && history.trackId) {
+        this.model.currentTrackId = history.trackId.toString();
+      }
+    });
   }
 
   setClickHandlers() {
@@ -268,8 +273,9 @@ export default class TrackViewModel extends ViewModel {
         if (_tracks.length) {
           if (this.state.showLatest) {
             this.onUserLastPosition();
+          } else if (this.state.history) {
+            this.model.currentTrackId = this.state.history.trackId.toString();
           } else {
-            // autoload first track in list
             this.model.currentTrackId = _tracks[0].listValue;
           }
         } else {

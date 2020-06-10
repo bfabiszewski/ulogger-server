@@ -288,4 +288,20 @@ export default class uUtils {
   static deg2rad(degrees) {
     return degrees * Math.PI / 180;
   }
+
+  /**
+   * Recursively compare properties of two objects with same keys
+   * @param {Object} obj1
+   * @param {Object} obj2
+   * @return {boolean} True if properties are equal
+   */
+  static isDeepEqual(obj1, obj2) {
+    return Object.keys(obj1).every((key) => {
+      if (typeof obj1[key] === 'object' && obj1[key] !== null &&
+        typeof obj2[key] === 'object' && obj2[key] !== null) {
+        return this.isDeepEqual(obj1[key], obj2[key]);
+      }
+      return obj1[key] === obj2[key];
+    })
+  }
 }

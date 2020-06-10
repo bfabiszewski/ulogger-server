@@ -716,8 +716,8 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals((int) $json->error, 1, "Wrong error status");
-    $this->assertEquals((string) $json->message, $lang["servererror"], "Wrong error message");
+    $this->assertEquals(1, (int) $json->error, "Wrong error status");
+    $this->assertEquals($lang["notauthorized"], (string) $json->message, "Wrong error message");
   }
 
   public function testHandleTrackUpdate() {

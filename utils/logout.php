@@ -19,7 +19,11 @@
 
 include_once(dirname(__DIR__) . "/helpers/auth.php");
 
+$hash = uUtils::getString("hash", "");
+if (!empty($hash)) {
+  $hash = "#{$hash}";
+}
 $auth = new uAuth();
-$auth->logOutWithRedirect();
+$auth->logOutWithRedirect($hash);
 
 ?>

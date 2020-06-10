@@ -71,7 +71,9 @@ export default class UserViewModel extends ViewModel {
       this.model.userList = _users;
       if (_users.length) {
         let userId = _users[0].listValue;
-        if (auth.isAuthenticated) {
+        if (this.state.history) {
+          userId = this.state.history.userId.toString();
+        } else if (auth.isAuthenticated) {
           const user = this.model.userList.find((_user) => _user.listValue === auth.user.listValue);
           if (user) {
             userId = user.listValue;
@@ -101,6 +103,11 @@ export default class UserViewModel extends ViewModel {
         this.select.showAllOption();
       } else {
         this.select.hideAllOption();
+      }
+    });
+    state.onChanged('history', (history) => {
+      if (history && history.userId) {
+        this.model.currentUserId = history.userId.toString();
       }
     });
   }

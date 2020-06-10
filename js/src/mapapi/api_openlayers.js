@@ -142,6 +142,10 @@ export default class OpenLayersApi {
         this.viewModel.model.markerOver = null;
       }
     });
+
+    this.saveState = () => {
+      this.viewModel.state.mapParams = this.getState();
+    };
   }
 
   /**
@@ -430,9 +434,12 @@ export default class OpenLayersApi {
     if (!track || !track.hasPositions) {
       return Promise.resolve();
     }
+    this.map.un('moveend', this.saveState);
     const promise = new Promise((resolve) => {
       this.map.once('rendercomplete', () => {
         console.log('rendercomplete');
+        this.saveState();
+        this.map.on('moveend', this.saveState);
         resolve();
       });
     });
@@ -484,15 +491,13 @@ export default class OpenLayersApi {
   }
 
   /**
-   * Fit to extent, zoom out if needed
+   * Fit to extent, respect max zoom
    * @param {Array.<number>} extent
    * @return {Array.<number>}
    */
   fitToExtent(extent) {
-    this.map.getView().fit(extent, { padding: [ 40, 10, 10, 10 ] });
-    const zoom = this.map.getView().getZoom();
-    if (zoom > OpenLayersApi.ZOOM_MAX) {
-      this.map.getView().setZoom(OpenLayersApi.ZOOM_MAX);
+    this.map.getView().fit(extent, { padding: [ 40, 10, 10, 10 ], maxZoom: OpenLayersApi.ZOOM_MAX });
+    if (this.map.getView().getZoom() === OpenLayersApi.ZOOM_MAX) {
       extent = this.map.getView().calculateExtent(this.map.getSize());
     }
     return extent;
@@ -597,10 +602,10 @@ export default class OpenLayersApi {
   }
 
   /**
-   * Zoom to track extent
+   * Zoom to track extent, respect max zoom
    */
   zoomToExtent() {
-    this.map.getView().fit(this.layerMarkers.getSource().getExtent());
+    this.map.getView().fit(this.layerMarkers.getSource().getExtent(), { maxZoom: OpenLayersApi.ZOOM_MAX });
   }
 
   /**
@@ -630,5 +635,32 @@ export default class OpenLayersApi {
     extentImg.style.width = '60%';
     return extentImg;
   }
+
+  /**
+   * Set map state
+   * @param {MapParams} state
+   */
+  updateState(state) {
+    this.map.getView().setCenter(state.center);
+    this.map.getView().setZoom(state.zoom);
+    this.map.getView().setRotation(state.rotation);
+  }
+
+  /**
+   * Get map state
+   * @return {MapParams|null}
+   */
+  getState() {
+    const view = this.map ? this.map.getView() : null;
+    if (view) {
+      return {
+        center: view.getCenter(),
+        zoom: view.getZoom(),
+        rotation: view.getRotation()
+      };
+    }
+    return null;
+  }
 }
+/** @type {number} */
 OpenLayersApi.ZOOM_MAX = 20;

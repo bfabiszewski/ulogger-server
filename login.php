@@ -33,12 +33,19 @@
     <title><?= $lang["title"] ?></title>
     <?php include("meta.php"); ?>
     <script type="text/javascript">
-      function focus() {
-        document.forms[0].elements[0].focus();
+      function init() {
+        const form = document.forms[0];
+        const action = form.getAttribute('action');
+        form.setAttribute('action', action + window.location.hash);
+        const cancelEl = document.getElementById('cancel');
+        if (cancelEl) {
+          cancelEl.firstElementChild.href += window.location.hash;
+        }
+        form.elements[0].focus();
       }
     </script>
   </head>
-  <body onload="focus()">
+  <body onload="init()">
     <div id="login">
       <div id="title"><?=  $lang["title"] ?></div>
       <div id="subtitle"><?=  $lang["private"] ?></div>

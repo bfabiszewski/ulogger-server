@@ -229,6 +229,17 @@ export default class uTrack extends uPositionSet {
   }
 
   /**
+   * @param {number} id
+   * @return {Promise<{id: number, name: string, userId: number, comment: string|null}, Error>}
+   */
+  static getMeta(id) {
+    return uTrack.update({
+      action: 'getmeta',
+      trackid: id
+    });
+  }
+
+  /**
    * Save track data
    * @param {Object} data
    * @return {Promise<void, Error>}

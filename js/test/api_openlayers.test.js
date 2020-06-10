@@ -366,14 +366,13 @@ describe('Openlayers map API tests', () => {
     const zoomedExtent = [ 3, 2, 1, 0 ];
     api.map = mockMap;
     spyOn(ol.View.prototype, 'fit');
-    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenlayersApi.ZOOM_MAX + 1);
+    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenlayersApi.ZOOM_MAX);
     spyOn(ol.View.prototype, 'setZoom');
     spyOn(ol.View.prototype, 'calculateExtent').and.returnValue(zoomedExtent);
     // when
     const result = api.fitToExtent(extent);
     // then
     expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent, jasmine.any(Object));
-    expect(ol.View.prototype.setZoom).toHaveBeenCalledWith(OpenlayersApi.ZOOM_MAX);
     expect(result).toEqual(zoomedExtent);
   });
 
@@ -498,7 +497,7 @@ describe('Openlayers map API tests', () => {
     // when
     api.zoomToExtent();
     // then
-    expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent);
+    expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent, { maxZoom: OpenlayersApi.ZOOM_MAX });
   });
 
   it('should get map bounds and convert to WGS84 (EPSG:4326)', () => {

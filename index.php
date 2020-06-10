@@ -63,11 +63,11 @@
               <a data-bind="onShowUserMenu"><img class="icon" alt="<?= $lang['user'] ?>" src="images/user.svg"> <?= htmlspecialchars($auth->user->login) ?></a>
               <div id="user-menu" class="menu-hidden">
                 <a id="user-pass" data-bind="onPasswordChange"><img class="icon" alt="<?= $lang['changepass'] ?>" src="images/lock.svg"> <?= $lang['changepass'] ?></a>
-                <a href="utils/logout.php"><img class="icon" alt="<?= $lang['logout'] ?>" src="images/poweroff.svg"> <?= $lang['logout'] ?></a>
+                <a class="menu-link" data-bind="onLogout"><img class="icon" alt="<?= $lang['logout'] ?>" src="images/poweroff.svg"> <?= $lang['logout'] ?></a>
               </div>
             </div>
           <?php else: ?>
-            <a href="login.php"><img class="icon" alt="<?= $lang['login'] ?>" src="images/key.svg"> <?= $lang['login'] ?></a>
+            <a class="menu-link" data-bind="onLogin"><img class="icon" alt="<?= $lang['login'] ?>" src="images/key.svg"> <?= $lang['login'] ?></a>
           <?php endif; ?>
 
           <div class="section">
