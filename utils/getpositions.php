@@ -32,8 +32,7 @@ $last = uUtils::getBool('last');
 
 $positionsArr = [];
 if ($userId) {
-  if ($config->publicTracks ||
-      ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
+  if ($auth->hasReadAccess($userId)) {
     if ($trackId) {
       // get all track data
       $positionsArr = uPosition::getAll($userId, $trackId, $afterId);
@@ -46,7 +45,7 @@ if ($userId) {
     }
   }
 } else if ($last) {
-  if ($config->publicTracks || ($auth->isAuthenticated() && ($auth->isAdmin()))) {
+  if ($config->publicTracks || ($auth->isAuthenticated() && $auth->isAdmin())) {
     $positionsArr = uPosition::getLastAllUsers();
   }
 }

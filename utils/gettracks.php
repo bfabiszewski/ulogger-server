@@ -27,11 +27,8 @@ $config = uConfig::getInstance();
 $userId = uUtils::getInt('userid');
 
 $tracksArr = [];
-if ($userId) {
-  if ($config->publicTracks ||
-      ($auth->isAuthenticated() && ($auth->isAdmin() || $auth->user->id === $userId))) {
-    $tracksArr = uTrack::getAll($userId);
-  }
+if ($userId && $auth->hasReadAccess($userId)) {
+  $tracksArr = uTrack::getAll($userId);
 }
 
 $result = [];

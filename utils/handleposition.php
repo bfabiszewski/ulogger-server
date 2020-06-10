@@ -36,9 +36,8 @@ if (empty($action) || empty($positionId)) {
   uUtils::exitWithError($lang["servererror"]);
 }
 $position = new uPosition($positionId);
-if (!$position->isValid ||
-  (!$auth->isAuthenticated() || (!$auth->isAdmin() && $auth->user->id !== $position->userId))) {
-  uUtils::exitWithError($lang["servererror"]);
+if (!$position->isValid || !$auth->hasReadWriteAccess($position->userId)) {
+  uUtils::exitWithError($lang["notauthorized"]);
 }
 
 $data = null;

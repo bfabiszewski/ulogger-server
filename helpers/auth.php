@@ -118,20 +118,18 @@
     /**
      * Check valid pass for given login
      *
-     * @param $login
-     * @param $pass
+     * @param string $login
+     * @param string $pass
      * @return boolean True if valid
      */
     public function checkLogin($login, $pass) {
-      if (!is_null($login) && !is_null($pass)) {
-        if (!empty($login) && !empty($pass)) {
-          $user = new uUser($login);
-          if ($user->isValid && $user->validPassword($pass)) {
-            $this->setAuthenticated($user);
-            $this->sessionCleanup();
-            $user->storeInSession();
-            return true;
-          }
+      if (!empty($login) && !empty($pass)) {
+        $user = new uUser($login);
+        if ($user->isValid && $user->validPassword($pass)) {
+          $this->setAuthenticated($user);
+          $this->sessionCleanup();
+          $user->storeInSession();
+          return true;
         }
       }
       return false;
@@ -179,4 +177,25 @@
       header("Location: $location");
       exit();
     }
+
+    /**
+     * Check session user has RW access to resource owned by given user
+     *
+     * @param int $ownerId
+     * @return bool True if has access
+     */
+    public function hasReadWriteAccess($ownerId) {
+      return $this->isAuthenticated() && ($this->isAdmin() || $this->user->id === $ownerId);
+    }
+
+    /**
+     * Check session user has RO access to resource owned by given user
+     *
+     * @param int $ownerId
+     * @return bool True if has access
+     */
+    public function hasReadAccess($ownerId) {
+      return $this->hasReadWriteAccess($ownerId) || uConfig::getInstance()->publicTracks;
+    }
+
   }
