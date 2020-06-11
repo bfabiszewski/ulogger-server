@@ -42,7 +42,7 @@ export default class ConfigDialogModel extends ViewModel {
       initLongitude: config.initLongitude,
       interval: config.interval,
       lang: config.lang,
-      layerId: config.olLayers.getPriorityLayer().toString(),
+      layerId: 0,
       layerName: null,
       layers: new uLayerCollection(new uLayer(0, 'OpenStreetMap', '', 0), ...config.olLayers),
       layerUrl: null,
@@ -75,7 +75,6 @@ export default class ConfigDialogModel extends ViewModel {
     this.toggleEditEl = this.getBoundElement('onLayerEdit').parentNode;
     this.layerEditEl = this.getBoundElement('layerName').parentNode;
     this.layerSelect = new uSelect(this.getBoundElement('layerId'));
-    this.layerSelect.setOptions(this.model.layers, this.currentLayer().listValue);
     this.setPublicTracksActivity(this.model.requireAuth);
     this.toggleEditVisible();
     this.onChanged('layerId', (listValue) => {
@@ -84,6 +83,7 @@ export default class ConfigDialogModel extends ViewModel {
       this.model.layerUrl = layer ? layer.url : '';
       this.toggleEditVisible();
     });
+    this.model.layerId = config.olLayers.getPriorityLayer().toString();
     this.onChanged('uploadMaxSizeMB', (value) => { this.model.uploadMaxSize = value * 1024 * 1024;})
     this.onChanged('layers', (list) => this.layerSelect.setOptions(list));
     this.onChanged('requireAuth', (value) => {
