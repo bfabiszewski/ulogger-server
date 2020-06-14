@@ -153,8 +153,8 @@ describe('ConfigDialogModel tests', () => {
     // given
     spyOn(cm, 'validate').and.returnValue(true);
     spyOn(config, 'save').and.returnValue(Promise.resolve());
-    cm.model.layerId = '1';
     cm.init();
+    cm.model.layerId = '1';
     const button = cm.dialog.element.querySelector("[data-bind='onSave']");
     // when
     button.click();
