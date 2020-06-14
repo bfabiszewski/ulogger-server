@@ -98,7 +98,10 @@ export default class TrackViewModel extends ViewModel {
     this.state.onChanged('currentUser', (user) => {
       if (user) {
         this.loadTrackList();
-        TrackViewModel.setMenuVisible(this.editEl, true);
+        const isEditable = auth.user && (auth.isAdmin || auth.user.id === user.id);
+        if (isEditable) {
+          TrackViewModel.setMenuVisible(this.editEl, true);
+        }
       } else {
         this.model.currentTrackId = '';
         this.model.trackList = [];

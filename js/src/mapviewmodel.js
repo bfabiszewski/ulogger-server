@@ -193,7 +193,7 @@ export default class MapViewModel extends ViewModel {
     const pos = this.state.currentTrack.positions[id];
     const count = this.state.currentTrack.length;
     const user = this.state.currentTrack.user;
-    const isEditable = auth.user && (auth.isAdmin || auth.user === user);
+    const isEditable = auth.user && (auth.isAdmin || auth.user.id === user.id);
     let date = '–––';
     let time = '–––';
     if (pos.timestamp > 0) {

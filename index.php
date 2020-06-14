@@ -138,7 +138,7 @@
                 <a id="adduser" class="menu-link" data-bind="onUserAdd"><?= $lang['adduser'] ?></a>
                 <a id="edituser" class="menu-link" data-bind="onUserEdit"><?= $lang['edituser'] ?></a>
               <?php endif; ?>
-              <a id="edittrack" class="menu-link" data-bind="onTrackEdit"><?= $lang['edittrack'] ?></a>
+              <a id="edittrack" class="menu-link menu-hidden" data-bind="onTrackEdit"><?= $lang['edittrack'] ?></a>
             </div>
           <?php endif; ?>
 
