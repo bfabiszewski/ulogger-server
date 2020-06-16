@@ -32,18 +32,19 @@ import uUtils from './utils.js';
  * @interface
  * @memberOf MapViewModel
  * @type {Object}
- * @property {function(MapViewModel)} init
- * @property {function} cleanup
- * @property {function(uTrack, boolean)} displayTrack
- * @property {function} clearMap
  * @property {function(number)} animateMarker
+ * @property {function(uTrack, boolean)} displayTrack
+ * @property {function} cleanup
+ * @property {function} clearMap
  * @property {function} getBounds
- * @property {function} zoomToExtent
- * @property {function} zoomToBounds
+ * @property {function(MapViewModel)} init
+ * @property {function} setTrackDefaultStyle
+ * @property {function(uTrack, string, Object)} setTrackGradientStyle
  * @property {function} updateSize
  * @property {function} updateState
+ * @property {function} zoomToBounds
+ * @property {function} zoomToExtent
  */
-
 
 /**
  * @typedef {Object} MapParams
@@ -66,12 +67,19 @@ export default class MapViewModel extends ViewModel {
       /** @type {?number} */
       markerSelect: null,
       // click handler
-      onMenuToggle: null
+      onMenuToggle: null,
+      speedVisible: false,
+      altitudeVisible: false
     });
-    this.model.onMenuToggle = () => this.onMapResize();
     this.state = state;
     /** @type HTMLElement */
     this.mapElement = document.querySelector('#map-canvas');
+    /** @type HTMLInputElement */
+    this.speedEl = this.getBoundElement('speedVisible');
+    /** @type HTMLInputElement */
+    this.altitudeEl = this.getBoundElement('altitudeVisible');
+    /** @type HTMLElement */
+    this.styleEl = this.getBoundElement('trackColor');
     this.savedBounds = null;
     this.api = null;
   }
@@ -138,6 +146,8 @@ export default class MapViewModel extends ViewModel {
   setObservers() {
     config.onChanged('mapApi', (mapApi) => {
       this.loadMapAPI(mapApi);
+      this.toggleStyleOptions();
+      this.toggleStyleMenu();
     });
     this.state.onChanged('currentTrack', (track) => {
       if (!this.api) {
@@ -151,6 +161,7 @@ export default class MapViewModel extends ViewModel {
         });
         this.displayTrack(track, true);
       }
+      this.toggleStyleOptions();
     });
     this.state.onChanged('history', () => {
       const history = this.state.history;
@@ -167,6 +178,19 @@ export default class MapViewModel extends ViewModel {
         }
       }
     });
+    this.model.onMenuToggle = () => this.onMapResize();
+    this.onChanged('speedVisible', (visible) => {
+      if (visible) {
+        this.model.altitudeVisible = false;
+      }
+      this.setTrackStyle();
+    });
+    this.onChanged('altitudeVisible', (visible) => {
+      if (visible) {
+        this.model.speedVisible = false;
+      }
+      this.setTrackStyle();
+    });
   }
 
   /**
@@ -180,8 +204,65 @@ export default class MapViewModel extends ViewModel {
       update = false;
     }
     this.state.history = null;
+    this.setTrackStyle();
     this.api.displayTrack(track, update)
       .finally(() => this.state.jobStop());
+  }
+
+  onMapResize() {
+    if (this.api) {
+      this.api.updateSize();
+    }
+  }
+
+  toggleStyleOptions() {
+    const track = this.state.currentTrack;
+    this.speedEl.disabled = !track || !track.hasSpeeds || track.length <= 1;
+    this.altitudeEl.disabled = !track || !track.hasAltitudes || track.length <= 1;
+  }
+
+  toggleStyleMenu() {
+    if (config.mapApi === 'openlayers') {
+      this.styleEl.style.display = 'block';
+    } else {
+      this.styleEl.style.display = 'none';
+    }
+  }
+
+  setTrackStyle() {
+    const track = this.state.currentTrack;
+    if (!this.api || !track) {
+      return;
+    }
+    if (this.model.speedVisible && track.hasSpeeds) {
+      this.setSpeedStyle();
+    } else if (this.model.altitudeVisible && track.hasAltitudes) {
+      this.setAltitudeStyle();
+    } else {
+      this.api.setTrackDefaultStyle();
+    }
+  }
+
+  setSpeedStyle() {
+    const track = this.state.currentTrack;
+    const scale = {
+      minValue: 0,
+      maxValue: track.maxSpeed,
+      minColor: [ 0, 255, 0 ],
+      maxColor: [ 255, 0, 0 ]
+    };
+    this.api.setTrackGradientStyle(track, 'speed', scale);
+  }
+
+  setAltitudeStyle() {
+    const track = this.state.currentTrack;
+    const scale = {
+      minValue: track.minAltitude,
+      maxValue: track.maxAltitude,
+      minColor: [ 0, 255, 0 ],
+      maxColor: [ 255, 0, 0 ]
+    };
+    this.api.setTrackGradientStyle(track, 'altitude', scale);
   }
 
   /**
@@ -302,11 +383,4 @@ export default class MapViewModel extends ViewModel {
       <g><path stroke="black" fill="${fill}" d="${MapViewModel.getMarkerPath(isLarge)}"/>${isExtra ? MapViewModel.getMarkerExtra(isLarge) : ''}</g></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   }
-
-  onMapResize() {
-    if (this.api) {
-      this.api.updateSize();
-    }
-  }
-
 }

@@ -87,7 +87,7 @@ export default class ChartViewModel extends ViewModel {
       plugins: [
         ctAxisTitle({
           axisY: {
-            axisTitle: `${$._('altitude')} (${$.unit('unitDistance')})`,
+            axisTitle: `${$._('altitude')} (${$.unit('unitDistance')} ${$.unit('unitAltitude')})`,
             axisClass: 'ct-axis-title',
             offset: {
               x: 0,
@@ -162,9 +162,9 @@ export default class ChartViewModel extends ViewModel {
    */
   renderButton(isVisible) {
     if (isVisible) {
-      this.buttonElement.style.visibility = 'visible';
+      this.buttonElement.classList.remove('menu-hidden');
     } else {
-      this.buttonElement.style.visibility = 'hidden';
+      this.buttonElement.classList.add('menu-hidden');
     }
   }
 

@@ -86,6 +86,20 @@ export default class uPosition {
   }
 
   /**
+   * @return {boolean}
+   */
+  hasSpeed() {
+    return this.speed != null;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  hasAltitude() {
+    return this.altitude != null;
+  }
+
+  /**
    * @return {?string}
    */
   getImagePath() {

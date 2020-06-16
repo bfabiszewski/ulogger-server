@@ -49,6 +49,9 @@ export default class uTrack extends uPositionSet {
     this.user = user;
     this.plotData = [];
     this.maxId = 0;
+    this.maxSpeed = 0;
+    this.maxAltitude = null;
+    this.minAltitude = null;
     this.totalMeters = 0;
     this.totalSeconds = 0;
     this.listItem(id, name);
@@ -66,6 +69,9 @@ export default class uTrack extends uPositionSet {
 
   clearTrackCounters() {
     this.maxId = 0;
+    this.maxSpeed = 0;
+    this.maxAltitude = null;
+    this.minAltitude = null;
     this.plotData.length = 0;
     this.totalMeters = 0;
     this.totalSeconds = 0;
@@ -84,6 +90,20 @@ export default class uTrack extends uPositionSet {
    */
   get hasPlotData() {
     return this.plotData.length > 0;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get hasAltitudes() {
+    return this.maxAltitude !== null;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get hasSpeeds() {
+    return this.maxSpeed > 0;
   }
 
   /**
@@ -268,11 +288,20 @@ export default class uTrack extends uPositionSet {
     this.totalSeconds += position.seconds;
     position.totalMeters = this.totalMeters;
     position.totalSeconds = this.totalSeconds;
-    if (position.altitude != null) {
+    if (position.hasAltitude()) {
       this.plotData.push({ x: position.totalMeters, y: position.altitude });
+      if (this.maxAltitude === null || position.altitude > this.maxAltitude) {
+        this.maxAltitude = position.altitude;
+      }
+      if (this.minAltitude === null || position.altitude < this.minAltitude) {
+        this.minAltitude = position.altitude;
+      }
     }
     if (position.id > this.maxId) {
       this.maxId = position.id;
+    }
+    if (position.hasSpeed() && position.speed > this.maxSpeed) {
+      this.maxSpeed = position.speed;
     }
   }
 }

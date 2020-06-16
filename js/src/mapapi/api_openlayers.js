@@ -179,17 +179,10 @@ export default class OpenLayersApi {
     }
 
     // add track and markers layers
-    const lineStyle = new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: uUtils.hexToRGBA(config.strokeColor, config.strokeOpacity),
-        width: config.strokeWeight
-      })
-    });
     this.layerTrack = new ol.layer.VectorLayer({
       name: 'Track',
       type: 'data',
-      source: new ol.source.Vector(),
-      style: lineStyle
+      source: new ol.source.Vector()
     });
     this.layerMarkers = new ol.layer.VectorLayer({
       name: 'Markers',
@@ -249,6 +242,107 @@ export default class OpenLayersApi {
         })
       })
     };
+  }
+
+  /**
+   * Set default track style
+   */
+  setTrackDefaultStyle() {
+    const lineStyle = new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: uUtils.hexToRGBA(config.strokeColor, config.strokeOpacity),
+        width: config.strokeWeight
+      })
+    })
+    this.layerTrack.setStyle(lineStyle);
+  }
+
+  /**
+   * @param {CanvasRenderingContext2D} context
+   * @param {Coordinate[]} coordinates
+   * @param {string[]} colors
+   * @return {Style}
+   */
+  getGradientStyle(context, coordinates, colors) {
+    const pixelStart = this.map.getPixelFromCoordinate(coordinates[0]);
+    const pixelEnd = this.map.getPixelFromCoordinate(coordinates[1]);
+    const scale = window.devicePixelRatio;
+    const x0 = pixelStart[0] * scale;
+    const y0 = pixelStart[1] * scale;
+    const x1 = pixelEnd[0] * scale;
+    const y1 = pixelEnd[1] * scale;
+    const gradient = context.createLinearGradient(x0, y0, x1, y1);
+    gradient.addColorStop(0, colors[0]);
+    gradient.addColorStop(1, colors[1]);
+    return new ol.style.Style({
+      geometry: new ol.geom.LineString(coordinates),
+      stroke: new ol.style.Stroke({
+        color: gradient,
+        width: config.strokeWeight * 2
+      })
+    })
+  }
+
+  /**
+   * Set gradient style for given track property and scale
+   * @param {uTrack} track
+   * @param {string} property
+   * @param {{ minValue: number, maxValue: number, minColor: number[], maxColor: number[] }} scale
+   */
+  setTrackGradientStyle(track, property, scale) {
+    const minValue = scale.minValue;
+    const maxValue = scale.maxValue;
+    const minColor = scale.minColor;
+    const maxColor = scale.maxColor;
+    if (track.length < 2 || maxValue < minValue) {
+      this.setTrackDefaultStyle();
+      return;
+    }
+    const canvas = document.createElement('canvas', { alpha: false, desynchronized: true });
+    const ctx = canvas.getContext('2d');
+    /**
+     * @param {Feature} feature
+     * @return {Style[]}
+     */
+    const lineStyle = (feature) => {
+      const styles = [
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'grey',
+            width: config.strokeWeight * 2 + 2
+          })
+        })
+      ];
+      const geometry = feature.getGeometry();
+      if (minValue === maxValue) {
+        styles.push(new ol.style.Style({
+          geometry: geometry,
+          stroke: new ol.style.Stroke({
+            color: uUtils.getScaleColor(minColor, maxColor, 0.5),
+            width: config.strokeWeight * 2
+          })
+        }));
+        return styles;
+      }
+      let position = track.positions[0];
+      const value = position[property] !== null ? position[property] : 0;
+      let colorStart = uUtils.getScaleColor(minColor, maxColor, (value - minValue) / (maxValue - minValue));
+      let index = 1;
+      geometry.forEachSegment((start, end) => {
+        position = track.positions[index];
+        let colorStop;
+        if (position[property] !== null) {
+          colorStop = uUtils.getScaleColor(minColor, maxColor, (position[property] - minValue) / (maxValue - minValue));
+        } else {
+          colorStop = colorStart;
+        }
+        styles.push(this.getGradientStyle(ctx, [ start, end ], [ colorStart, colorStop ]));
+        colorStart = colorStop;
+        index++;
+      });
+      return styles;
+    };
+    this.layerTrack.setStyle(lineStyle);
   }
 
   initPopups() {
@@ -438,8 +532,10 @@ export default class OpenLayersApi {
     const promise = new Promise((resolve) => {
       this.map.once('rendercomplete', () => {
         console.log('rendercomplete');
-        this.saveState();
-        this.map.on('moveend', this.saveState);
+        if (this.map) {
+          this.saveState();
+          this.map.on('moveend', this.saveState);
+        }
         resolve();
       });
     });
