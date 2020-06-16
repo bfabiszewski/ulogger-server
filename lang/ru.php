@@ -137,6 +137,7 @@ $lang["allusers"] = "Все пользователи";
 $lang["unitday"] = "сут"; // abbreviation for days, like 4 d 11:11:11
 $lang["unitkmh"] = "км/ч"; // kilometer per hour
 $lang["unitm"] = "м"; // meter
+$lang["unitamsl"] = "a.s.l."; // above mean see level
 $lang["unitkm"] = "км"; // kilometer
 $lang["unitmph"] = "mph"; // mile per hour
 $lang["unitft"] = "ft"; // feet
@@ -169,4 +170,5 @@ $lang["add"] = "Add";
 $lang["edit"] = "Edit";
 $lang["delete"] = "Delete";
 $lang["settings"] = "Настройки";
+$lang["trackcolor"] = "Track color";
 ?>
