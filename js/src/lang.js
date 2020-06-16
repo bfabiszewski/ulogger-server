@@ -67,59 +67,67 @@ export default class uLang {
   /**
    * Get speed converted to locale units
    * @param {number} ms Speed in meters per second
-   * @param {boolean} withUnit
-   * @return {(number|string)} String when with unit
+   * @param {?boolean=false} withUnit
+   * @return {string}
    */
-  getLocaleSpeed(ms, withUnit) {
+  getLocaleSpeed(ms, withUnit = false) {
     const value = Math.round(ms * this.config.factorSpeed * 100) / 100;
+    let localized = value.toLocaleString(this.config.lang);
     if (withUnit) {
-      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitSpeed')}`;
+      localized += ` ${this.unit('unitSpeed')}`;
     }
-    return value;
+    return localized;
   }
 
   /**
    * Get distance converted to locale units
    * @param {number} m Distance in meters
-   * @param {boolean} withUnit
-   * @return {(number|string)} String when with unit
+   * @param {?boolean=false} withUnit
+   * @return {string}
    */
-  getLocaleDistanceMajor(m, withUnit) {
+  getLocaleDistanceMajor(m, withUnit = false) {
     const value = Math.round(m * this.config.factorDistanceMajor / 10) / 100;
+    let localized = value.toLocaleString(this.config.lang);
     if (withUnit) {
-      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitDistanceMajor')}`
+      localized += ` ${this.unit('unitDistanceMajor')}`;
     }
-    return value;
+    return localized;
   }
 
   /**
    * @param {number} m Distance in meters
-   * @param {boolean} withUnit
-   * @return {(number|string)} String when with unit
+   * @param {?boolean=false} withUnit
+   * @return {string}
    */
-  getLocaleDistance(m, withUnit) {
+  getLocaleDistance(m, withUnit = false) {
     const value = Math.round(m * this.config.factorDistance * 100) / 100;
+    let localized = value.toLocaleString(this.config.lang);
     if (withUnit) {
-      return `${value.toLocaleString(this.config.lang)} ${this.unit('unitDistance')}`;
+      localized += ` ${this.unit('unitDistance')}`;
     }
-    return value;
+    return localized;
   }
 
   /**
-   * @param {number} m Distance in meters
-   * @param {boolean} withUnit
-   * @return {(number|string)} String when with unit
+   * @param {number} m Altitude in meters
+   * @param {?boolean=false} withUnit
+   * @return {string}
    */
-  getLocaleAltitude(m, withUnit) {
-    return this.getLocaleDistance(m, withUnit);
+  getLocaleAltitude(m, withUnit = false) {
+    let localized = this.getLocaleDistance(m, withUnit);
+    if (withUnit) {
+      localized += ` ${this.unit('unitAltitude')}`;
+    }
+    // use typographic minus
+    return localized.replace('-', '−');
   }
 
   /**
-   * @param {number} m Distance in meters
-   * @param {boolean} withUnit
-   * @return {(number|string)} String when with unit
+   * @param {number} m Accuracy in meters
+   * @param {?boolean=false} withUnit
+   * @return {string}
    */
-  getLocaleAccuracy(m, withUnit) {
+  getLocaleAccuracy(m, withUnit = false) {
     return this.getLocaleDistance(m, withUnit);
   }
 

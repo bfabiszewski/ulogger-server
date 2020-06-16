@@ -345,11 +345,12 @@ export default class TrackViewModel extends ViewModel {
   }
 
   renderSummary() {
-    if (!this.state.currentTrack || !this.state.currentTrack.hasPositions) {
+    const track = this.state.currentTrack;
+    if (!track || !track.hasPositions) {
       this.model.summary = '';
       return;
     }
-    const last = this.state.currentTrack.positions[this.state.currentTrack.length - 1];
+    const last = track.positions[track.length - 1];
 
     if (this.state.showLatest) {
       const today = new Date();
@@ -362,10 +363,21 @@ export default class TrackViewModel extends ViewModel {
         ${dateString}
         ${timeString}`;
     } else {
-      this.model.summary = `
+      let summary = `
         <div class="menu-title">${$._('summary')}</div>
         <div><img class="icon" alt="${$._('tdistance')}" title="${$._('tdistance')}" src="images/distance.svg"> ${$.getLocaleDistanceMajor(last.totalMeters, true)}</div>
         <div><img class="icon" alt="${$._('ttime')}" title="${$._('ttime')}" src="images/time.svg"> ${$.getLocaleDuration(last.totalSeconds)}</div>`;
+      if (track.hasSpeeds) {
+        summary += `<div><img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed.svg"><b>&#10138;</b> ${$.getLocaleSpeed(track.maxSpeed, true)}</div>`;
+      }
+      if (track.hasAltitudes) {
+        let altitudes = `${$.getLocaleAltitude(track.maxAltitude, true)}`;
+        if (track.minAltitude !== track.maxAltitude) {
+          altitudes = `${$.getLocaleAltitude(track.minAltitude)}&ndash;${altitudes}`;
+        }
+        summary += `<div><img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude.svg"> ${altitudes}</div>`;
+      }
+      this.model.summary = summary;
     }
   }
 

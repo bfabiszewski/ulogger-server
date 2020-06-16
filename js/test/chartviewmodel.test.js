@@ -152,14 +152,14 @@ describe('ChartViewModel tests', () => {
     ];
     state.currentTrack = null;
     vm.model.buttonVisible = false;
-    buttonEl.style.visibility = 'hidden';
+    buttonEl.classList.add('menu-hidden');
     // when
     vm.setObservers();
     state.currentTrack = TrackFactory.getTrack(positions);
     // then
     expect(vm.render).toHaveBeenCalledTimes(1);
     expect(vm.model.buttonVisible).toBe(true);
-    expect(buttonEl.style.visibility).toBe('visible');
+    expect(buttonEl.classList.contains('menu-hidden')).toBeFalse();
   });
 
   it('should render chart on null track and hide altitudes button', () => {
@@ -171,14 +171,14 @@ describe('ChartViewModel tests', () => {
     ];
     state.currentTrack = TrackFactory.getTrack(positions);
     vm.model.buttonVisible = true;
-    buttonEl.style.visibility = 'visible';
+    buttonEl.classList.remove('menu-hidden');
     // when
     vm.setObservers();
     state.currentTrack = null;
     // then
     expect(vm.render).toHaveBeenCalledTimes(1);
     expect(vm.model.buttonVisible).toBe(false);
-    expect(buttonEl.style.visibility).toBe('hidden');
+    expect(buttonEl.classList.contains('menu-hidden')).toBeTrue();
   });
 
   it('should render chart on empty track and hide altitudes button', () => {
@@ -186,36 +186,36 @@ describe('ChartViewModel tests', () => {
     spyOn(vm, 'render');
     state.currentTrack = TrackFactory.getTrack(2);
     vm.model.buttonVisible = true;
-    buttonEl.style.visibility = 'visible';
+    buttonEl.classList.remove('menu-hidden');
     // when
     vm.setObservers();
     state.currentTrack = TrackFactory.getTrack(0);
     // then
     expect(vm.render).toHaveBeenCalledTimes(1);
     expect(vm.model.buttonVisible).toBe(false);
-    expect(buttonEl.style.visibility).toBe('hidden');
+    expect(buttonEl.classList.contains('menu-hidden')).toBeTrue();
   });
 
   it('should render button visible', () => {
     // given
     vm.model.buttonVisible = false;
-    buttonEl.style.visibility = 'hidden';
+    buttonEl.classList.add('menu-hidden');
     // when
     vm.setObservers();
     vm.model.buttonVisible = true;
     // then
-    expect(buttonEl.style.visibility).toBe('visible');
+    expect(buttonEl.classList.contains('menu-hidden')).toBeFalse();
   });
 
   it('should render button hidden', () => {
     // given
     vm.model.buttonVisible = true;
-    buttonEl.style.visibility = 'visible';
+    buttonEl.classList.remove('menu-hidden');
     // when
     vm.setObservers();
     vm.model.buttonVisible = false;
     // then
-    expect(buttonEl.style.visibility).toBe('hidden');
+    expect(buttonEl.classList.contains('menu-hidden')).toBeTrue();
   });
 
   it('should render chart container visible and render chart', () => {

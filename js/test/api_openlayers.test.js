@@ -112,8 +112,6 @@ describe('Openlayers map API tests', () => {
           expect(_layer.getVisible()).toBe(true);
           expect(_layer).toEqual(jasmine.any(ol.layer.VectorLayer));
           expect(_layer.getSource()).toEqual(jasmine.any(ol.source.Vector));
-          expect(_layer.getStyle().getStroke().getColor()).toBe(uUtils.hexToRGBA(config.strokeColor, config.strokeOpacity));
-          expect(_layer.getStyle().getStroke().getWidth()).toBe(config.strokeWeight);
           expect(_layer.get('type')).toBe('data');
           expect(api.layerTrack).toEqual(_layer);
           break;
@@ -570,4 +568,63 @@ describe('Openlayers map API tests', () => {
     expect(api.popup.getElement().firstElementChild.innerHTML).toBe('');
     expect(mockViewModel.model.markerSelect).toBe(null);
   });
+
+  it('should create gradient style', () => {
+    // given
+    const ctx = document.createElement('canvas').getContext('2d');
+    const coordinates = [ [ 0, 0 ], [ 1, 1 ] ];
+    const colors = [ 'white', 'red' ];
+    api.map = mockMap;
+    spyOn(api.map, 'getPixelFromCoordinate').and.callFake((coord) => coord);
+    // when
+    const style = api.getGradientStyle(ctx, coordinates, colors);
+    // then
+    expect(style).toBeInstanceOf(ol.style.Style);
+    expect(style.getGeometry().getCoordinates()).toEqual(coordinates);
+    expect(style.getStroke().getColor()).toBeInstanceOf(CanvasGradient);
+  });
+
+  it('should set default style for track', () => {
+    // given
+    api.layerTrack = new ol.layer.VectorLayer();
+    config.strokeWeight = 1234;
+    config.strokeColor = 'test color';
+    config.strokeOpacity = 0.1234;
+    const color = 'rgba(1, 1, 1, 1)';
+    spyOn(uUtils, 'hexToRGBA').and.returnValue(color);
+    // when
+    api.setTrackDefaultStyle();
+    // then
+    expect(api.layerTrack.getStyle()).toBeInstanceOf(ol.style.Style);
+    expect(api.layerTrack.getStyle().getStroke().getWidth()).toBe(config.strokeWeight);
+    expect(api.layerTrack.getStyle().getStroke().getColor()).toBe(color);
+    expect(uUtils.hexToRGBA).toHaveBeenCalledWith(config.strokeColor, config.strokeOpacity);
+  });
+
+  it('should set gradient style for track', () => {
+    // given
+    const track = TrackFactory.getTrack(3);
+    track.positions[0].speed = 0;
+    track.positions[1].speed = 1;
+    track.positions[2].speed = 2;
+    api.map = mockMap;
+    api.layerTrack = new ol.layer.VectorLayer({
+      source: new ol.source.Vector()
+    });
+    spyOn(uUtils, 'getScaleColor').and.returnValue('test color');
+    spyOn(api, 'getGradientStyle').and.returnValue(new ol.style.Style());
+    const lineFeature = new ol.Feature({ geometry: new ol.geom.LineString([]) });
+    for (let i = 0; i < track.length; i++) {
+      lineFeature.getGeometry().appendCoordinate(ol.proj.fromLonLat([ 0, 0 ]));
+    }
+    api.layerTrack.getSource().addFeature(lineFeature);
+    // when
+    api.setTrackGradientStyle(track, 'speed', { minValue: 0, maxValue: 2, minColor: [ 255, 255, 255 ], maxColor: [ 0, 0, 0 ] });
+    api.layerTrack.getStyle()(lineFeature);
+    // then
+    expect(api.layerTrack.getStyle()).toBeInstanceOf(Function);
+    expect(uUtils.getScaleColor).toHaveBeenCalledTimes(track.length);
+    expect(api.getGradientStyle).toHaveBeenCalledTimes(track.length - 1);
+  });
+
 });

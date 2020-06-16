@@ -103,6 +103,7 @@ export default class uConfig {
       this.unitDistanceMajor = 'unitkm';
     }
     this.unitDay = 'unitday';
+    this.unitAltitude = 'unitamsl';
   }
 
   /**

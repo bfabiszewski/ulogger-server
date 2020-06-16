@@ -57,6 +57,8 @@ describe('MapViewModel tests', () => {
       'zoomToBounds': { /* ignored */ },
       'zoomToExtent': { /* ignored */ },
       'displayTrack': Promise.resolve(),
+      'setTrackDefaultStyle': { /* ignored */ },
+      'setTrackGradientStyle': { /* ignored */ },
       'clearMap': { /* ignored */ },
       'updateSize': { /* ignored */ }
     });
@@ -206,6 +208,7 @@ describe('MapViewModel tests', () => {
     // given
     vm.api = mockApi;
     vm.bindAll();
+    vm.setObservers();
     // when
     menuButtonEl.click();
     // then

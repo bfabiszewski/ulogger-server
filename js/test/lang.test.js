@@ -37,7 +37,8 @@ describe('Lang tests', () => {
       unitDistance: 'unitd',
       factorDistanceMajor: 0.55,
       unitDistanceMajor: 'unitdm',
-      unitDay: 'unitday'
+      unitDay: 'unitday',
+      unitAltitude: 'unitamsl'
     };
     mockStrings = {
       string1: 'łańcuch1',
@@ -45,7 +46,8 @@ describe('Lang tests', () => {
       units: 'jp',
       unitd: 'jo',
       unitdm: 'jo / 1000',
-      unitday: 'd'
+      unitday: 'd',
+      unitamsl: 'a.s.l.'
     }
   });
 
@@ -96,7 +98,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleSpeed(value, false)).toBe(330);
+    expect(lang.getLocaleSpeed(value, false)).toBe('330');
   });
 
   it('should return localized speed value with unit', () => {
@@ -110,7 +112,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistanceMajor(value, false)).toBe(0.55);
+    expect(lang.getLocaleDistanceMajor(value, false)).toBe('0.55');
   });
 
   it('should return localized distance major value with unit', () => {
@@ -124,7 +126,7 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, false)).toBe(1300);
+    expect(lang.getLocaleDistance(value, false)).toBe('1,300');
   });
 
   it('should return localized distance value with unit', () => {
@@ -138,28 +140,28 @@ describe('Lang tests', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, false)).toBe(1300);
+    expect(lang.getLocaleAltitude(value, false)).toBe('1,300');
   });
 
   it('should return localized altitude value with unit', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
+    expect(lang.getLocaleAltitude(value, true)).toBe(`1,300 ${mockStrings.unitd} ${mockStrings.unitamsl}`);
   });
 
   it('should return localized accuracy value', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, false)).toBe(1300);
+    expect(lang.getLocaleAccuracy(value, false)).toBe('1,300');
   });
 
   it('should return localized accuracy value with unit', () => {
     // when
     lang.init(mockConfig, mockStrings);
     // then
-    expect(lang.getLocaleDistance(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
+    expect(lang.getLocaleAccuracy(value, true)).toBe(`1,300 ${mockStrings.unitd}`);
   });
 
   it('should return localized time duration', () => {

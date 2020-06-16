@@ -148,6 +148,27 @@ export default class uUtils {
   }
 
   /**
+   * Get rgb color for given scale and intensity
+   * @param {number[]} start Minimum scale color as [ r, g, b ]
+   * @param {number[]} end Maximum scale color as [ r, g, b ]
+   * @param {number} intensity Intensity from 0 to 1
+   * @return {string} Color as rgb() string
+   */
+  static getScaleColor(start, end, intensity) {
+    if (intensity < 0 || intensity > 1) {
+      throw new Error('Invalid value');
+    }
+    const rgb = [];
+    for (let i = 0; i < 3; i++) {
+      if (start[i] < 0 || start[i] > 255 || end[i] < 0 || end[i] > 255) {
+        throw new Error('Invalid value');
+      }
+      rgb[i] = Math.round((end[i] - start[i]) * intensity + start[i]);
+    }
+    return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+  }
+
+  /**
    * Add link tag with type css
    * @param {string} url attribute
    * @param {string=} id attribute

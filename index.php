@@ -85,8 +85,14 @@
 
           <div id="summary" class="section" data-bind="summary"></div>
 
+          <div class="section" data-bind="trackColor">
+            <div class="menu-title"><?= $lang['trackcolor'] ?></div>
+            <input id="color-speed" type="checkbox" data-bind="speedVisible"> <label for="color-speed"><?= $lang['speed'] ?></label><br>
+            <input id="color-altitude" type="checkbox" data-bind="altitudeVisible"> <label for="color-altitude"><?= $lang['altitude'] ?></label><br>
+          </div>
+
           <div id="other" class="section">
-            <a id="altitudes" data-bind="onChartToggle"><?= $lang['chart'] ?></a>
+            <a id="altitudes" class="menu-link menu-hidden" data-bind="onChartToggle"><?= $lang['chart'] ?></a>
           </div>
 
           <div>

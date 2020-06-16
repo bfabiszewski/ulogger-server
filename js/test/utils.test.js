@@ -366,4 +366,15 @@ describe('Utils tests', () => {
     expect(result).toBeFalse();
   });
 
+  it('should create color from scale and intensity', () => {
+    // given
+    const start = [ 0, 128, 255 ];
+    const stop = [ 255, 128, 0 ];
+    const intensity = 0.5;
+    // when
+    const color = uUtils.getScaleColor(start, stop, intensity);
+    // then
+    expect(color).toBe('rgb(128, 128, 128)');
+  });
+
 });

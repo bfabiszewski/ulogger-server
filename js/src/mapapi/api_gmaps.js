@@ -142,8 +142,10 @@ export default class GoogleMapsApi {
     const promise = new Promise((resolve) => {
       google.maps.event.addListenerOnce(this.map, 'tilesloaded', () => {
         console.log('tilesloaded');
-        this.saveState();
-        this.map.addListener('idle', this.saveState);
+        if (this.map) {
+          this.saveState();
+          this.map.addListener('idle', this.saveState);
+        }
         resolve();
       })
     });
@@ -370,7 +372,26 @@ export default class GoogleMapsApi {
     // ignore for google API
   }
 
-  static get loadTimeoutMs() {
+  /**
+   * Set default track style
+   */
+  // eslint-disable-next-line class-methods-use-this
+  setTrackDefaultStyle() {
+    // ignore for google API
+  }
+
+  /**
+   * Set gradient style for given track property and scale
+   * @param {uTrack} track
+   * @param {string} property
+   * @param {{ minValue: number, maxValue: number, minColor: number[], maxColor: number[] }} scale
+   */
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  setTrackGradientStyle(track, property, scale) {
+    // ignore for google API
+  }
+
+    static get loadTimeoutMs() {
     return 10000;
   }
 
