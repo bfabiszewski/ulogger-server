@@ -34,7 +34,7 @@ class uConfig {
   /**
    * @var string Version number
    */
-  public $version = "1.0";
+  public $version = "1.1-beta";
 
   /**
    * @var string Default map drawing framework
