@@ -41,6 +41,7 @@ class uUpload {
   private static function getMimeMap() {
     if (empty(self::$mimeMap)) {
       self::$mimeMap["image/jpeg"] = "jpg";
+      self::$mimeMap["image/jpg"] = "jpg";
       self::$mimeMap["image/x-ms-bmp"] = "bmp";
       self::$mimeMap["image/gif"] = "gif";
       self::$mimeMap["image/png"] = "png";
