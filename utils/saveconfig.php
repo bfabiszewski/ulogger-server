@@ -43,11 +43,11 @@ $data = [
   'stroke_weight' => uUtils::postInt('strokeWeight'),
   'stroke_color' => uUtils::postString('strokeColor'),
   'stroke_opacity' => uUtils::postFloat('strokeOpacity'),
-  'color_normal' => uUtils::postInt('colorNormal'),
-  'color_start' => uUtils::postInt('colorStart'),
-  'color_stop' => uUtils::postInt('colorStop'),
-  'color_extra' => uUtils::postInt('colorExtra'),
-  'color_hilite' => uUtils::postInt('colorHilite'),
+  'color_normal' => uUtils::postString('colorNormal'),
+  'color_start' => uUtils::postString('colorStart'),
+  'color_stop' => uUtils::postString('colorStop'),
+  'color_extra' => uUtils::postString('colorExtra'),
+  'color_hilite' => uUtils::postString('colorHilite'),
   'upload_maxsize' => uUtils::postInt('uploadMaxSize')
 ];
 
