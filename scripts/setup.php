@@ -33,6 +33,7 @@ if (!defined("ROOT_DIR")) { define("ROOT_DIR", dirname(__DIR__)); }
 
 require_once(ROOT_DIR . "/helpers/db.php");
 require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/layer.php");
 require_once(ROOT_DIR . "/helpers/lang.php");
 require_once(ROOT_DIR . "/helpers/user.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
@@ -58,6 +59,13 @@ $language = uUtils::getString("lang", "en");
 
 $config = uConfig::getOfflineInstance();
 $config->lang = $language;
+$config->olLayers[] = new uLayer(1, "OpenCycleMap", "https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png", 0);
+$config->olLayers[] = new uLayer(2, "OpenTopoMap", "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png", 0);
+$config->olLayers[] = new uLayer(3, "OpenSeaMap", "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png", 0);
+$config->olLayers[] = new uLayer(4, "ESRI", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 0);
+$config->olLayers[] = new uLayer(5, "UMP", "http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png", 0);
+$config->olLayers[] = new uLayer(6, "Osmapa.pl", "http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png", 0);
+
 $lang = (new uLang($config))->getStrings();
 $langSetup = (new uLang($config))->getSetupStrings();
 
@@ -256,42 +264,12 @@ function getQueries($dbDriver) {
                       `value` tinyblob NOT NULL
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 
-      $queries[] = "INSERT INTO `$tConfig` (`name`, `value`) VALUES
-                    ('color_extra', 's:7:\"#cccccc\";'),
-                    ('color_hilite', 's:7:\"#feff6a\";'),
-                    ('color_normal', 's:7:\"#ffffff\";'),
-                    ('color_start', 's:7:\"#55b500\";'),
-                    ('color_stop', 's:7:\"#ff6a00\";'),
-                    ('google_key', 's:0:\"\";'),
-                    ('interval_seconds', 'i:10;'),
-                    ('lang', 's:2:\"en\";'),
-                    ('latitude', 'd:52.229999999999997;'),
-                    ('longitude', 'd:21.010000000000002;'),
-                    ('map_api', 's:10:\"openlayers\";'),
-                    ('pass_lenmin', 'i:10;'),
-                    ('pass_strength', 'i:2;'),
-                    ('public_tracks', 'b:1;'),
-                    ('require_auth', 'b:1;'),
-                    ('stroke_color', 's:7:\"#ff0000\";'),
-                    ('stroke_opacity', 'd:1;'),
-                    ('stroke_weight', 'i:2;'),
-                    ('units', 's:6:\"metric\";'),
-                    ('upload_maxsize', 'i:0;')";
-
       $queries[] = "CREATE TABLE `$tLayers` (
                      `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                      `name` varchar(50) NOT NULL,
                      `url` varchar(255) NOT NULL,
                      `priority` int(11) NOT NULL DEFAULT '0'
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-
-      $queries[] = "INSERT INTO `$tLayers` (`id`, `name`, `url`, `priority`) VALUES
-                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
-                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
-                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
-                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
-                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
-                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
 
       break;
 
@@ -343,42 +321,12 @@ function getQueries($dbDriver) {
                       value bytea NOT NULL
                     )";
 
-      $queries[] = "INSERT INTO $tConfig (name, value) VALUES
-                    ('color_extra', 's:7:\"#cccccc\";'),
-                    ('color_hilite', 's:7:\"#feff6a\";'),
-                    ('color_normal', 's:7:\"#ffffff\";'),
-                    ('color_start', 's:7:\"#55b500\";'),
-                    ('color_stop', 's:7:\"#ff6a00\";'),
-                    ('google_key', 's:0:\"\";'),
-                    ('interval_seconds', 'i:10;'),
-                    ('lang', 's:2:\"en\";'),
-                    ('latitude', 'd:52.229999999999997;'),
-                    ('longitude', 'd:21.010000000000002;'),
-                    ('map_api', 's:10:\"openlayers\";'),
-                    ('pass_lenmin', 'i:10;'),
-                    ('pass_strength', 'i:2;'),
-                    ('public_tracks', 'b:1;'),
-                    ('require_auth', 'b:1;'),
-                    ('stroke_color', 's:7:\"#ff0000\";'),
-                    ('stroke_opacity', 'd:1;'),
-                    ('stroke_weight', 'i:2;'),
-                    ('units', 's:6:\"metric\";'),
-                    ('upload_maxsize', 'i:0;')";
-
       $queries[] = "CREATE TABLE $tLayers (
                       id serial PRIMARY KEY,
                       name varchar(50) NOT NULL,
                       url varchar(255) NOT NULL,
                       priority int NOT NULL DEFAULT '0'
                     )";
-
-      $queries[] = "INSERT INTO $tLayers (id, name, url, priority) VALUES
-                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
-                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
-                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
-                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
-                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
-                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
 
       break;
 
@@ -429,42 +377,12 @@ function getQueries($dbDriver) {
                       `value` tinyblob NOT NULL
                     )";
 
-      $queries[] = "INSERT INTO `$tConfig` (`name`, `value`) VALUES
-                    ('color_extra', 's:7:\"#cccccc\";'),
-                    ('color_hilite', 's:7:\"#feff6a\";'),
-                    ('color_normal', 's:7:\"#ffffff\";'),
-                    ('color_start', 's:7:\"#55b500\";'),
-                    ('color_stop', 's:7:\"#ff6a00\";'),
-                    ('google_key', 's:0:\"\";'),
-                    ('interval_seconds', 'i:10;'),
-                    ('lang', 's:2:\"en\";'),
-                    ('latitude', 'd:52.229999999999997;'),
-                    ('longitude', 'd:21.010000000000002;'),
-                    ('map_api', 's:10:\"openlayers\";'),
-                    ('pass_lenmin', 'i:10;'),
-                    ('pass_strength', 'i:2;'),
-                    ('public_tracks', 'b:1;'),
-                    ('require_auth', 'b:1;'),
-                    ('stroke_color', 's:7:\"#ff0000\";'),
-                    ('stroke_opacity', 'd:1;'),
-                    ('stroke_weight', 'i:2;'),
-                    ('units', 's:6:\"metric\";'),
-                    ('upload_maxsize', 'i:0;')";
-
       $queries[] = "CREATE TABLE `$tLayers` (
                      `id` integer PRIMARY KEY AUTOINCREMENT,
                      `name` varchar(50) NOT NULL,
                      `url` varchar(255) NOT NULL,
                      `priority` integer NOT NULL DEFAULT '0'
                     )";
-
-      $queries[] = "INSERT INTO `$tLayers` (`id`, `name`, `url`, `priority`) VALUES
-                    (1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0),
-                    (2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0),
-                    (3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0),
-                    (4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0),
-                    (5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0),
-                    (6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0)";
 
       break;
 
