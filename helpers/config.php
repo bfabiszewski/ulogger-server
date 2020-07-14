@@ -308,7 +308,7 @@ class uConfig {
     $query = "SELECT id, name, url, priority FROM " . self::db()->table('ol_layers');
     $result = self::db()->query($query);
     while ($row = $result->fetch()) {
-      $this->olLayers[] = new uLayer($row["id"], $row["name"], $row["url"], $row["priority"]);
+      $this->olLayers[] = new uLayer((int) $row["id"], $row["name"], $row["url"], (int) $row["priority"]);
     }
   }
 
