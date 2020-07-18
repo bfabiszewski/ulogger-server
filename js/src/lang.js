@@ -159,7 +159,7 @@ export default class uLang {
    */
   coordStr(pos, isLon) {
     const ipos = Math.trunc(pos);
-    const dec = Math.abs((pos - ipos) * 60);
+    const dec = Math.round((Math.abs((pos - ipos) * 60) + Number.EPSILON) * 100) / 100;
     let dir;
 
     if (isLon) {
