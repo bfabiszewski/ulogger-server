@@ -50,6 +50,7 @@ elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   sqlite3 -init /var/www/html/scripts/ulogger.sqlite /data/sqlite/ulogger.db .exit
   sqlite3 -line /data/sqlite/ulogger.db "INSERT INTO users (login, password, admin) VALUES ('${ULOGGER_ADMIN_USER}', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq', 1)"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
+  chown -R nobody:nobody /data/sqlite
 else
   mkdir -p /run/mysqld /data/mysql
   chown mysql:mysql /run/mysqld /data/mysql
