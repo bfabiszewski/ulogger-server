@@ -6,6 +6,7 @@ ARG DB_ROOT_PASS=secret1
 ARG DB_USER_PASS=secret2
 # supported drivers: mysql, pgsql, sqlite
 ARG DB_DRIVER=mysql
+ARG ULOGGER_SERVER_ADDRESS
 
 ENV ULOGGER_ADMIN_USER admin
 ENV ULOGGER_DB_DRIVER ${DB_DRIVER}
@@ -26,6 +27,7 @@ COPY .docker/init.sh /init.sh
 RUN chmod +x /init.sh
 COPY .docker/nginx.conf /etc/nginx/conf.d/default.conf
 RUN chown nginx.nginx /etc/nginx/conf.d/default.conf
+RUN sed -i "s/---SERVER_ADDRESS---/${ULOGGER_SERVER_ADDRESS}/g" /etc/nginx/conf.d/default.conf
 
 RUN rm -rf /var/www/html
 RUN mkdir -p /var/www/html
@@ -38,7 +40,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stdout /var/log/php7/error.log && \
     ln -sf /dev/stderr /var/log/php7/error.log
 
-EXPOSE 80
+EXPOSE 443
 
 VOLUME ["/data"]
 
