@@ -271,6 +271,7 @@ describe('Openlayers map API tests', () => {
     const track = TrackFactory.getTrack();
     spyOn(api, 'setMarker');
     spyOn(api, 'fitToExtent');
+    spyOn(api.map, 'un');
     // when
     api.displayTrack(track, false);
     let zoomControl;
@@ -299,6 +300,7 @@ describe('Openlayers map API tests', () => {
     const track = TrackFactory.getPositionSet();
     spyOn(api, 'setMarker');
     spyOn(api, 'fitToExtent');
+    spyOn(api.map, 'un');
     // when
     api.displayTrack(track, false);
     let zoomControl;
@@ -327,6 +329,7 @@ describe('Openlayers map API tests', () => {
     const markersExtent = [ 3, 2, 1, 0 ];
     spyOn(api, 'fitToExtent').and.callFake((_extent) => _extent);
     spyOn(ol.source.Vector.prototype, 'getExtent').and.returnValue(markersExtent);
+    spyOn(api.map, 'un');
     // when
     api.displayTrack(track, true);
     let zoomControl;

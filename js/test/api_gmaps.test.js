@@ -40,15 +40,9 @@ describe('Google Maps map API tests', () => {
     container = document.createElement('div');
     mockViewModel = { mapElement: container, model: {} };
     api = new GoogleMapsApi(mockViewModel);
-    spyOn(google.maps, 'InfoWindow').and.callThrough();
-    spyOn(google.maps, 'LatLngBounds').and.callThrough();
-    spyOn(google.maps, 'Map').and.callThrough();
-    spyOn(google.maps, 'Marker').and.callThrough();
-    spyOn(google.maps, 'Polyline').and.callThrough();
     spyOnProperty(GoogleMapsApi, 'loadTimeoutMs', 'get').and.returnValue(loadTimeout);
     spyOn(uAlert, 'error');
     spyOn(lang, '_').and.returnValue('{placeholder}');
-    gmStub.applyPrototypes();
   });
 
   afterEach(() => {
@@ -99,6 +93,7 @@ describe('Google Maps map API tests', () => {
 
   it('should initialize map engine with config values', () => {
     // given
+    spyOn(google.maps, 'Map').and.callThrough();
     spyOn(google.maps.InfoWindow.prototype, 'addListener');
     // when
     api.initMap();
@@ -107,13 +102,13 @@ describe('Google Maps map API tests', () => {
     expect(google.maps.Map.calls.mostRecent().args[0]).toEqual(container);
     expect(google.maps.Map.calls.mostRecent().args[1].center.latitude).toEqual(config.initLatitude);
     expect(google.maps.Map.calls.mostRecent().args[1].center.longitude).toEqual(config.initLongitude);
-    expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
     expect(google.maps.InfoWindow.prototype.addListener).toHaveBeenCalledTimes(1);
     expect(google.maps.InfoWindow.prototype.addListener).toHaveBeenCalledWith('closeclick', jasmine.any(Function));
   });
 
   it('should initialize map engine without Google API key', (done) => {
     // given
+    spyOn(google.maps, 'Map').and.callThrough();
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
     // when
     api.init()
@@ -144,6 +139,7 @@ describe('Google Maps map API tests', () => {
 
   it('should show alert if authorization error occurs after initialization', (done) => {
     // given
+    spyOn(google.maps, 'Map').and.callThrough();
     spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
     lang._.and.returnValue('authfailure');
     // when
@@ -230,6 +226,7 @@ describe('Google Maps map API tests', () => {
     // given
     const track = TrackFactory.getTrack();
     spyOn(api, 'setMarker');
+    spyOn(google.maps, 'Polyline').and.callThrough();
     spyOn(google.maps, 'LatLng').and.callThrough();
     spyOn(google.maps.LatLngBounds.prototype, 'extend').and.callThrough();
     const expectedPolyOptions = {
@@ -269,18 +266,18 @@ describe('Google Maps map API tests', () => {
   it('should fit bounds if update without zoom (should not add listener for "bounds_changed")', () => {
     // given
     const track = TrackFactory.getTrack();
-    spyOn(google.maps.event, 'addListenerOnce');
-    spyOn(google.maps.Map.prototype, 'fitBounds');
-    spyOn(api, 'setMarker');
-    spyOn(window, 'setTimeout');
     api.map = new google.maps.Map(container);
+    spyOn(google.maps.event, 'addListenerOnce');
+    spyOn(api, 'setMarker');
+    spyOn(api.map, 'fitBounds');
+    spyOn(window, 'setTimeout');
     // when
     api.displayTrack(track, true);
     // then
     expect(api.polies.length).toBe(1);
     expect(api.polies[0].path.length).toBe(track.length);
     expect(api.setMarker).toHaveBeenCalledTimes(track.length);
-    expect(google.maps.Map.prototype.fitBounds).toHaveBeenCalledTimes(1);
+    expect(api.map.fitBounds).toHaveBeenCalledTimes(1);
     expect(google.maps.event.addListenerOnce).toHaveBeenCalledTimes(1);
     expect(setTimeout).not.toHaveBeenCalled();
   });
@@ -308,8 +305,7 @@ describe('Google Maps map API tests', () => {
     // given
     const track = TrackFactory.getTrack(1);
     track.positions[0].timestamp = 1;
-    spyOn(google.maps.Marker.prototype, 'addListener');
-    spyOn(google.maps.Marker.prototype, 'setIcon');
+    spyOn(google.maps, 'Marker').and.callThrough();
     spyOn(GoogleMapsApi, 'getMarkerIcon');
     api.map = new google.maps.Map(container);
 
@@ -322,12 +318,27 @@ describe('Google Maps map API tests', () => {
     expect(google.maps.Marker.calls.mostRecent().args[0].position.longitude).toBe(track.positions[0].longitude);
     expect(google.maps.Marker.calls.mostRecent().args[0].title).toContain('1970');
     expect(google.maps.Marker.calls.mostRecent().args[0].map).toEqual(api.map);
+    expect(api.markers.length).toBe(1);
+  });
+
+  it('should create marker from track position and set its icon and listener', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    track.positions[0].timestamp = 1;
+    spyOn(google.maps.Marker.prototype, 'addListener');
+    spyOn(google.maps.Marker.prototype, 'setIcon');
+    spyOn(GoogleMapsApi, 'getMarkerIcon');
+    api.map = new google.maps.Map(container);
+
+    expect(api.markers.length).toBe(0);
+    // when
+    api.setMarker(0, track);
+    // then
     expect(google.maps.Marker.prototype.setIcon).toHaveBeenCalledTimes(1);
     expect(google.maps.Marker.prototype.addListener).toHaveBeenCalledTimes(3);
     expect(google.maps.Marker.prototype.addListener).toHaveBeenCalledWith('click', jasmine.any(Function));
     expect(google.maps.Marker.prototype.addListener).toHaveBeenCalledWith('mouseover', jasmine.any(Function));
     expect(google.maps.Marker.prototype.addListener).toHaveBeenCalledWith('mouseout', jasmine.any(Function));
-    expect(api.markers.length).toBe(1);
   });
 
   it('should create marker different marker icon for start, end and normal position', () => {

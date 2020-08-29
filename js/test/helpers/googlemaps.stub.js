@@ -17,13 +17,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable func-style */
-const stubObj = {};
-const stubFn = function() {/* ignore */};
-const stubFnObj = function() { return stubObj; };
-
+/* eslint-disable func-style,lines-between-class-members,class-methods-use-this,max-classes-per-file */
 export const setupGmapsStub = () => {
-  // noinspection JSUnresolvedVariable,JSConstantReassignment
+  // noinspection JSUnresolvedVariable,JSConstantReassignment,JSUnusedGlobalSymbols
   window.google = {
     maps: {
       Animation: {
@@ -31,67 +27,72 @@ export const setupGmapsStub = () => {
         DROP: 2
       },
       event: {
-        addListener: stubFn,
-        addListenerOnce: stubFn,
-        removeListener: stubFn,
-        clearListeners: stubFn
+        addListener: () => {/* ignore */},
+        addListenerOnce: () => {/* ignore */},
+        removeListener: () => {/* ignore */},
+        clearListeners: () => {/* ignore */}
       },
-      Icon: stubFn,
-      InfoWindow: stubFn,
-      LatLng: function(lat, lng) {
-        this.latitude = parseFloat(lat);
-        this.longitude = parseFloat(lng);
+      Icon: class Icon {/* ignore */},
+      InfoWindow: class InfoWindow {
+        addListener() {/* ignore */}
+        open() {/* ignore */}
+        close() {/* ignore */}
+        getMap() {/* ignore */}
+        setContent() {/* ignore */}
       },
-      LatLngBounds: function(sw, ne) {
-        this.sw = sw;
-        this.ne = ne;
+      LatLng: class LatLng {
+        constructor(lat, lng) {
+          this.latitude = parseFloat(lat);
+          this.longitude = parseFloat(lng);
+        }
+        lat() { return this.latitude; }
+        lng() { return this.longitude; }
       },
-      Map: stubFn,
+      LatLngBounds: class LatLngBounds {
+        constructor(sw, ne) {
+          this.sw = sw;
+          this.ne = ne;
+        }
+        extend() {/* ignore */}
+        getNorthEast() { return this.ne; }
+        getSouthWest() { return this.sw; }
+      },
+      Map: class Map {
+        fitBounds() {/* ignore */}
+        getBounds() {/* ignore */}
+        getCenter() {/* ignore */}
+        getDiv() {/* ignore */}
+        getZoom() {/* ignore */}
+        setCenter() {/* ignore */}
+        setMapTypeId() {/* ignore */}
+        setOptions() {/* ignore */}
+        setZoom() {/* ignore */}
+      },
       MapTypeId: {
         HYBRID: 1,
         ROADMAP: 2,
         SATELLITE: 3,
         TERRAIN: 4
       },
-      Marker: stubFn,
-      Point: stubFnObj,
-      Polyline: function(opts) {
-        this.options = opts;
-        this.path = [];
+      Marker: class Marker {
+        addListener() {/* ignore */}
+        getIcon() {/* ignore */}
+        getPosition() {/* ignore */}
+        setAnimation() {/* ignore */}
+        setIcon() {/* ignore */}
+        setMap() {/* ignore */}
+      },
+      Point: class Point {/* ignore */},
+      Polyline: class Polyline {
+        constructor(opts) {
+          this.options = opts;
+          this.path = [];
+        }
+        getPath() { return this.path; }
+        setMap() {/* ignore */}
       }
     }
   };
-  applyPrototypes(stubFn, stubObj);
-};
-
-export const applyPrototypes = () => {
-  window.google.maps.InfoWindow.prototype.addListener = stubFn;
-  window.google.maps.InfoWindow.prototype.close = stubFn;
-  window.google.maps.InfoWindow.prototype.getMap = stubFn;
-  window.google.maps.InfoWindow.prototype.open = stubFn;
-  window.google.maps.InfoWindow.prototype.setContent = stubFn;
-  window.google.maps.LatLng.prototype.lat = function () { return this.latitude; };
-  window.google.maps.LatLng.prototype.lng = function () { return this.longitude; };
-  window.google.maps.LatLngBounds.prototype.extend = stubFn;
-  window.google.maps.LatLngBounds.prototype.getNorthEast = function () { return this.ne; };
-  window.google.maps.LatLngBounds.prototype.getSouthWest = function () { return this.sw; };
-  window.google.maps.Map.prototype.fitBounds = stubFn;
-  window.google.maps.Map.prototype.getBounds = stubFn;
-  window.google.maps.Map.prototype.getCenter = stubFn;
-  window.google.maps.Map.prototype.getDiv = stubFn;
-  window.google.maps.Map.prototype.getZoom = stubFn;
-  window.google.maps.Map.prototype.setCenter = stubFn;
-  window.google.maps.Map.prototype.setMapTypeId = stubFn;
-  window.google.maps.Map.prototype.setOptions = stubFn;
-  window.google.maps.Map.prototype.setZoom = stubFn;
-  window.google.maps.Marker.prototype.addListener = stubFn;
-  window.google.maps.Marker.prototype.getIcon = stubFn;
-  window.google.maps.Marker.prototype.getPosition = stubFn;
-  window.google.maps.Marker.prototype.setAnimation = stubFn;
-  window.google.maps.Marker.prototype.setIcon = stubFn;
-  window.google.maps.Marker.prototype.setMap = stubFn;
-  window.google.maps.Polyline.prototype.getPath = function () { return this.path; };
-  window.google.maps.Polyline.prototype.setMap = stubFn;
 };
 
 export const clear = () => {

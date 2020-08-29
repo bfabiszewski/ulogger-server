@@ -19,6 +19,12 @@
 
       <div id="summary" class="section" data-bind="summary"></div>
 
+      <div class="section" data-bind="trackColor">
+        <div class="menu-title">Track color</div>
+        <input id="color-speed" type="checkbox" data-bind="speedVisible"> <label for="color-speed">Speed</label><br>
+        <input id="color-altitude" type="checkbox" data-bind="altitudeVisible"> <label for="color-altitude">Altitude</label><br>
+      </div>
+
       <div id="other" class="section">
         <a id="altitudes" data-bind="onChartToggle">Altitudes chart</a>
       </div>

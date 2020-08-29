@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -16,7 +16,7 @@ module.exports = merge(common, {
             pure_funcs: [ 'console.log' ]
           },
           output: {
-            comments: false,
+            comments: false
           }
         },
         extractComments: false
