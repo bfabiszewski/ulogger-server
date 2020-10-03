@@ -30,6 +30,7 @@
      * @var array
      */
     private static $languages = [
+      "ca" => "Català",
       "cs" => "Čeština",
       "de" => "Deutsch",
       "en" => "English",
