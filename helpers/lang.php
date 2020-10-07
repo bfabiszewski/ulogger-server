@@ -35,6 +35,7 @@
       "de" => "Deutsch",
       "en" => "English",
       "es" => "Español",
+      "eu" => "Euskera",
       "fr" => "Français",
       "it" => "Italiano",
       "hu" => "Magyar",
