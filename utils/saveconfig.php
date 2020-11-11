@@ -20,8 +20,12 @@
 
 require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
+$config = uConfig::getInstance();
+$lang = (new uLang($config))->getStrings();
 $auth = new uAuth();
+
 if (!$auth->isAdmin()) {
   uUtils::exitWithError($lang["notauthorized"]);
 }
@@ -51,7 +55,6 @@ $data = [
   'upload_maxsize' => uUtils::postInt('uploadMaxSize')
 ];
 
-$config = uConfig::getInstance();
 $config->setFromArray($data);
 if (!is_null($olLayers)) {
   $config->olLayers = [];
@@ -64,6 +67,6 @@ if (!is_null($olLayers)) {
 }
 
 if ($config->save() === false) {
-  uUtils::exitWithError("Server error");
+  uUtils::exitWithError($lang["servererror"]);
 }
 uUtils::exitWithSuccess();
