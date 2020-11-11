@@ -20,12 +20,15 @@
 require_once(dirname(__DIR__) . "/helpers/auth.php");
 require_once(ROOT_DIR . "/helpers/config.php");
 require_once(ROOT_DIR . "/helpers/utils.php");
+require_once(ROOT_DIR . "/helpers/lang.php");
 
 $auth = new uAuth();
 $config = uConfig::getInstance();
+$lang = (new uLang($config))->getStrings();
+
 if (!$auth->isAuthenticated()) {
   $auth->sendUnauthorizedHeader();
-  uUtils::exitWithError("Unauthorized");
+  uUtils::exitWithError($lang["notauthorized"]);
 }
 
 $login = uUtils::postString('login');
@@ -33,31 +36,31 @@ $oldpass = uUtils::postPass('oldpass');
 $pass = uUtils::postPass('pass');
 // FIXME: strings need to be localized
 if (empty($pass)) {
-  uUtils::exitWithError("Empty password");
+  uUtils::exitWithError($lang["passempty"]);
 }
 if (!$config->validPassStrength($pass)) {
-  uUtils::exitWithError("Invalid password strength");
+  uUtils::exitWithError($lang["passstrengthwarn"]);
 }
 if (empty($login)) {
-  uUtils::exitWithError("Empty login");
+  uUtils::exitWithError($lang["loginempty"]);
 }
 if ($auth->user->login === $login) {
   // current user
   $passUser = $auth->user;
   if (!$passUser->validPassword($oldpass)) {
-    uUtils::exitWithError("Wrong old password");
+    uUtils::exitWithError($lang["oldpassinvalid"]);
   }
 } else if ($auth->isAdmin()) {
   // different user, only admin
   $passUser = new uUser($login);
   if (!$passUser->isValid) {
-    uUtils::exitWithError("User unknown");
+    uUtils::exitWithError($lang["userunknown"]);
   }
 } else {
-  uUtils::exitWithError("Unauthorized");
+  uUtils::exitWithError($lang["notauthorized"]);
 }
 if ($passUser->setPass($pass) === false) {
-  uUtils::exitWithError("Server error");
+  uUtils::exitWithError($lang["servererror"]);
 }
 $auth->updateSession();
 uUtils::exitWithSuccess();
