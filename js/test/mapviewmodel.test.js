@@ -336,7 +336,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: 4 }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: 5 })
@@ -354,7 +353,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: null }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: null })
@@ -372,7 +370,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: 4 }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: 5 })
@@ -390,7 +387,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, altitude: 4 }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, altitude: 5 })
@@ -408,7 +404,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: null }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: null })
@@ -426,7 +421,6 @@ describe('MapViewModel tests', () => {
     // given
     spyOn(vm, 'setSpeedStyle');
     spyOn(vm, 'setAltitudeStyle');
-    spyOn(vm.api, 'setTrackDefaultStyle');
     const positions = [
       TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, altitude: 4 }),
       TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, altitude: 5 })
