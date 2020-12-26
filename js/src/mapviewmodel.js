@@ -158,6 +158,7 @@ export default class MapViewModel extends ViewModel {
         uObserve.observe(track, 'positions', () => {
           this.displayTrack(track, false);
           this.api.zoomToExtent();
+          this.toggleStyleOptions();
         });
         this.displayTrack(track, true);
       }
