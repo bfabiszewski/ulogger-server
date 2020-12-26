@@ -332,4 +332,112 @@ describe('MapViewModel tests', () => {
     expect(MapViewModel.getMarkerExtra).toHaveBeenCalledWith(isLarge);
   });
 
+  it('should set speed track style when speedVisible is on and track has speeds', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: 4 }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: 5 })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.speedVisible = true;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setSpeedStyle).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not set speed track style when speedVisible is on but track does not have speeds', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: null }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: null })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.speedVisible = true;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setSpeedStyle).toHaveBeenCalledTimes(0);
+  });
+
+  it('should not set speed track style when speedVisible is off even if track has speeds', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: 4 }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: 5 })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.speedVisible = false;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setSpeedStyle).toHaveBeenCalledTimes(0);
+  });
+
+  it('should set altitude track style when altitudeVisible is on and track has altitudes', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, altitude: 4 }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, altitude: 5 })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.altitudeVisible = true;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setAltitudeStyle).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not set altitude track style when altitudeVisible is on but track does not have altitudes', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, speed: null }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, speed: null })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.altitudeVisible = true;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setAltitudeStyle).toHaveBeenCalledTimes(0);
+  });
+
+  it('should not set altitude track style when altitudeVisible is off even if track has altitudes', () => {
+    // given
+    spyOn(vm, 'setSpeedStyle');
+    spyOn(vm, 'setAltitudeStyle');
+    spyOn(vm.api, 'setTrackDefaultStyle');
+    const positions = [
+      TrackFactory.getPosition({ id: 1, latitude: 2, longitude: 3, altitude: 4 }),
+      TrackFactory.getPosition({ id: 2, latitude: 3, longitude: 4, altitude: 5 })
+    ];
+    state.currentTrack = TrackFactory.getTrack(positions);
+    vm.model.altitudeVisible = false;
+    vm.api = mockApi;
+    // when
+    vm.setTrackStyle()
+    // then
+    expect(vm.setSpeedStyle).toHaveBeenCalledTimes(0);
+  });
+
 });
