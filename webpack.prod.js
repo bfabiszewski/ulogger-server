@@ -8,9 +8,7 @@ module.exports = merge(common, {
   optimization: {
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: true,
         terserOptions: {
           compress: {
             pure_funcs: [ 'console.log' ]

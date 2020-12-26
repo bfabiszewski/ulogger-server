@@ -13,7 +13,7 @@ const path = require('path');
 module.exports = function(config) {
   config.set({
     basePath: 'js/',
-    frameworks: [ 'jasmine' ],
+    frameworks: [ 'jasmine', 'webpack' ],
     files: [
       { pattern: 'test/*.test.js', type: 'module' },
       { pattern: 'test/helpers/*.js', type: 'module', included: false },
