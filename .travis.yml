@@ -3,7 +3,7 @@ os: linux
 dist: xenial
 
 php:
-  - 7.4
+  - 7.2
 
 env:
   jobs:
