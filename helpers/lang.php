@@ -33,6 +33,7 @@
       "ca" => "Català",
       "cs" => "Čeština",
       "de" => "Deutsch",
+      "el" => "Ελληνικά",
       "en" => "English",
       "es" => "Español",
       "eu" => "Euskera",
