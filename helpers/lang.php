@@ -39,12 +39,9 @@
       "eu" => "Euskera",
       "fr" => "Français",
       "it" => "Italiano",
-      "hu" => "Magyar",
-      "nl" => "Nederlands",
       "pl" => "Polski",
       "ru" => "Русский",
-      "sk" => "Slovenčina",
-      "zh" => "中文"
+      "sk" => "Slovenčina"
     ];
 
     /**

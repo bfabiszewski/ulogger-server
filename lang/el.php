@@ -1,5 +1,5 @@
 <?php
-/* μlogger Version 1.1-beta Μετάφραση: 2021-01-21
+/* μlogger
  *
  * Copyright(C) 2017 Bartek Fabiszewski (www.fabiszewski.net)
  *
@@ -19,7 +19,7 @@
 
 // default language for translations
 
-// strings only used in setup - Μόνο για την εγκατάσταση
+// strings only used in setup
 $langSetup["dbconnectfailed"] = "Αποτυχία σύνδεσης στη Βάση Δεδομένων.";
 $langSetup["serversaid"] = " Ο Server λέει: %s"; // substitutes server error message
 $langSetup["checkdbsettings"] = "Παρακαλώ ελέγξτε τις ρυθμίσεις της Βάση Δεδομένων στο 'config.php'";
