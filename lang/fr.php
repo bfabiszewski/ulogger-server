@@ -171,4 +171,9 @@ $lang["edit"] = "Editer";
 $lang["delete"] = "Effacer";
 $lang["settings"] = "Configuration";
 $lang["trackcolor"] = "Couleur dynamique";
+$lang["oldpassinvalid"] = "Ancien mot de passe incorrect";
+$lang["passempty"] = "Mot de passe vide";
+$lang["loginempty"] = "Identifiant vide";
+$lang["passstrengthwarn"] = "Force du mot de passe incorrecte";
+$lang["userunknown"] = "Utilisateur inconnu";
 ?>
