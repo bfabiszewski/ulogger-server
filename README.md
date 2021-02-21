@@ -4,9 +4,9 @@ This is a web application for real-time collection of geolocation data, tracks v
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
 
 ## Live demo:
-- http://ulogger-demo.herokuapp.com 
+- https://ulogger.lima.zone 
 - for testing track upload with Android app or track editing login with user: demo, password: demo
-- image upload is not supported because of heroku's ephemeral storage (any ideas for another free hosting?)
+- hosted by lima-city.de
 
 ## Minimum requirements:
 - PHP 5.5
