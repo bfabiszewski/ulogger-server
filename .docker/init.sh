@@ -51,6 +51,7 @@ elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   sqlite3 -line /data/sqlite/ulogger.db "INSERT INTO users (login, password, admin) VALUES ('${ULOGGER_ADMIN_USER}', '\$2y\$10\$7OvZrKgonVZM9lkzrTbiou.CVhO3HjPk5y0W9L68fVwPs/osBRIMq', 1)"
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else
+  sed -i "s|.*skip-networking.*|#skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
   mkdir -p /run/mysqld /data/mysql
   chown mysql:mysql /run/mysqld /data/mysql
   mysql_install_db --user=mysql --datadir=/data/mysql
