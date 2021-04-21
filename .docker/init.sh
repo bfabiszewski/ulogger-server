@@ -51,7 +51,7 @@ elif [ "$ULOGGER_DB_DRIVER" = "sqlite" ]; then
   chown -R nobody:nobody /data/sqlite
   sed -i "s/^\$dbdsn = .*$/\$dbdsn = \"sqlite:\/data\/sqlite\/ulogger.db\";/" /var/www/html/config.php
 else
-  sed -i "s|.*skip-networking.*|#skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
+  sed -i "s/.*skip-networking.*/#skip-networking/" /etc/my.cnf.d/mariadb-server.cnf
   mkdir -p /run/mysqld /data/mysql
   chown mysql:mysql /run/mysqld /data/mysql
   mysql_install_db --user=mysql --datadir=/data/mysql
