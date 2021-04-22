@@ -96,9 +96,14 @@ switch ($command) {
       foreach ($queries as $query) {
         $pdo->exec($query);
       }
-      $pdo->commit();
+      // MySQL autocommits queries that change schema
+      if ($pdo->inTransaction()) {
+        $pdo->commit();
+      }
     } catch (PDOException $e) {
-      $pdo->rollBack();
+      if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+      }
       $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
       $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
       $error = true;

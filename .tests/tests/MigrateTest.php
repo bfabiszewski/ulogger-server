@@ -129,9 +129,14 @@ class MigrateTest extends UloggerDatabaseTestCase {
         foreach ($queries[0] as $query) {
           uDb::getInstance()->exec($query);
         }
-        uDb::getInstance()->commit();
+        // make sure the transaction wasn't autocommitted
+        if (uDb::getInstance()->inTransaction()) {
+          uDb::getInstance()->commit();
+        }
       } catch (PDOException $e) {
-        uDb::getInstance()->rollBack();
+        if (uDb::getInstance()->inTransaction()) {
+          uDb::getInstance()->rollBack();
+        }
         throw $e;
       }
     }

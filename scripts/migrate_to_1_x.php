@@ -89,11 +89,16 @@ function updateSchemas() {
     foreach ($queries as $query) {
       uDb::getInstance()->exec($query);
     }
-    uDb::getInstance()->commit();
+    // make sure the transaction wasn't autocommitted
+    if (uDb::getInstance()->inTransaction()) {
+      uDb::getInstance()->commit();
+    }
   } catch (PDOException $e) {
     echo "Database query failed: {$e->getMessage()}" . PHP_EOL;
-    echo "Reverting changes..." . PHP_EOL;
-    uDb::getInstance()->rollBack();
+    if (uDb::getInstance()->inTransaction()) {
+      echo "Reverting changes..." . PHP_EOL;
+      uDb::getInstance()->rollBack();
+    }
     return false;
   }
   echo PHP_EOL;
