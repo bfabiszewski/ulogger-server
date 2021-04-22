@@ -10,34 +10,34 @@ class LangTest extends TestCase {
 
   protected $mockConfig;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->mockConfig = new uConfig(false);
   }
 
-  public function testGetLanguages() {
+  public function testGetLanguages(): void {
     $languages = uLang::getLanguages();
-    $this->assertNotEmpty($languages);
-    $this->assertArrayHasKey("en", $languages);
-    $this->assertArrayHasKey("pl", $languages);
-    $this->assertEquals("English", $languages["en"]);
-    $this->assertEquals("Polski", $languages["pl"]);
+    self::assertNotEmpty($languages);
+    self::assertArrayHasKey("en", $languages);
+    self::assertArrayHasKey("pl", $languages);
+    self::assertEquals("English", $languages["en"]);
+    self::assertEquals("Polski", $languages["pl"]);
   }
 
-  public function testGetStrings() {
+  public function testGetStrings(): void {
     $lang = new uLang($this->mockConfig);
-    $this->assertEquals("User", $lang->getStrings()["user"]);
+    self::assertEquals("User", $lang->getStrings()["user"]);
     $this->mockConfig->lang = "pl";
     $lang = new uLang($this->mockConfig);
-    $this->assertEquals("Użytkownik", $lang->getStrings()["user"]);
+    self::assertEquals("Użytkownik", $lang->getStrings()["user"]);
   }
 
-  public function testGetSetupStrings() {
+  public function testGetSetupStrings(): void {
     $lang = new uLang($this->mockConfig);
-    $this->assertEquals("Congratulations!", $lang->getSetupStrings()["congratulations"]);
+    self::assertEquals("Congratulations!", $lang->getSetupStrings()["congratulations"]);
     $this->mockConfig->lang = "pl";
     $lang = new uLang($this->mockConfig);
-    $this->assertEquals("Gratulacje!", $lang->getSetupStrings()["congratulations"]);
+    self::assertEquals("Gratulacje!", $lang->getSetupStrings()["congratulations"]);
   }
 }
 ?>

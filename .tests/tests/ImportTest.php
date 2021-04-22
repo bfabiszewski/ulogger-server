@@ -1,6 +1,6 @@
 <?php /** @noinspection HtmlUnknownAttribute */
 
-use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
@@ -9,19 +9,21 @@ require_once(ROOT_DIR . "/helpers/lang.php");
 
 class ImportTest extends UloggerAPITestCase {
 
-  public function testImportGPX10() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportGPX10(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx10 = '<?xml version="1.0"?>
     <gpx version="1.0" creator="test software"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.topografix.com/GPX/1/0"
-    xsi:schemaLocation="http://www.topografix.com/GPX/1/0
-    http://www.topografix.com/GPX/1/0/gpx.xsd">
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
       <time>2017-09-19T11:00:08Z</time>
       <trk>
         <name>' . $this->testTrackName . '</name>
@@ -52,18 +54,18 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(1, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -116,12 +118,15 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportGPX11() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportGPX11(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx11 = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
     <gpx version="1.1"
@@ -134,7 +139,7 @@ class ImportTest extends UloggerAPITestCase {
         <desc>Track for testing ulogger</desc>
         <author>
           <name>Bartek Fabiszewski</name>
-          <link href="http://www.fabiszewski.net"><text>fabiszewski.net</text></link>
+          <link href="https://www.fabiszewski.net"><text>fabiszewski.net</text></link>
         </author>
         <time>2017-09-19T09:22:06Z</time>
         <keywords>Test, ulogger</keywords>
@@ -142,7 +147,7 @@ class ImportTest extends UloggerAPITestCase {
       </metadata>
       <trk>
         <src>Crafted by Bartek Fabiszewski</src>
-        <link href="http://www.fabiszewski.net"><text>fabiszewski.net</text></link>
+        <link href="https://www.fabiszewski.net"><text>fabiszewski.net</text></link>
         <trkseg>
           <trkpt lat="' . $this->testLat . '" lon="' . $this->testLon . '">
             <ele>' . $this->testAltitude . '</ele>
@@ -169,19 +174,19 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(1, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -217,12 +222,15 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportExtensions() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportExtensions(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
     <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1
@@ -271,19 +279,19 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(1, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -319,16 +327,18 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportNoTime() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportNoTime(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
-    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1
-    http://www.topografix.com/GPX/1/1/gpx.xsd"
+    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.topografix.com/GPX/1/1"
     creator="μlogger" version="1.1">
@@ -354,19 +364,19 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(1, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -402,12 +412,15 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportMultipleSegments() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportMultipleSegments(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
     <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
@@ -443,19 +456,19 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 1, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(1, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -507,12 +520,15 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportMultipleTracks() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportMultipleTracks(): void {
 
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
     <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
@@ -550,23 +566,23 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(count($json), 2, "Wrong count of tracks");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertCount(2, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    $this->assertEquals(2, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(2, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
     $track = $json[1];
-    $this->assertEquals(1, (int) $track->id, "Wrong track id");
-    $this->assertEquals($this->testTrackName, $track->name, "Wrong track name");
+    self::assertEquals(1, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, $track->name, "Wrong track name");
 
-    $this->assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(2, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $expected = [
       "id" => 1,
@@ -625,16 +641,18 @@ class ImportTest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testImportNoLongitude() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportNoLongitude(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
-    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1
-    http://www.topografix.com/GPX/1/1/gpx.xsd"
+    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.topografix.com/GPX/1/1"
     creator="μlogger" version="1.1">
@@ -660,28 +678,30 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(1, (int) $json->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
   }
 
-  public function testImportNoLatitude() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportNoLatitude(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
-    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1
-    http://www.topografix.com/GPX/1/1/gpx.xsd"
+    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.topografix.com/GPX/1/1"
     creator="μlogger" version="1.1">
@@ -707,24 +727,27 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(1, (int) $json->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
   }
 
-  public function testImportNoGPX() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportNoGPX(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
       <trk>
@@ -748,28 +771,30 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(1, (int) $json->error, "Wrong error status");
-    $this->assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["iparsefailure"], (string) $json->message, "Wrong error status");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
   }
 
-  public function testImportCorrupt() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testImportCorrupt(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
 
     $gpx = '<?xml version="1.0" encoding="UTF-8"?>
-    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1
-    http://www.topografix.com/GPX/1/1/gpx.xsd"
+    <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.topografix.com/GPX/1/1"
     creator="μlogger" version="1.1">
@@ -793,16 +818,16 @@ class ImportTest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post("/utils/import.php", $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
 
     $json = json_decode($response->getBody());
 
-    $this->assertNotNull($json, "JSON object is null");
-    $this->assertEquals(1, (int) $json->error, "Wrong error status");
-    $this->assertEquals(0, strpos((string) $json->message, $lang["iparsefailure"]), "Wrong error status");
+    self::assertNotNull($json, "JSON object is null");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals(0, strpos((string) $json->message, $lang["iparsefailure"]), "Wrong error status");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount("positions"), "Wrong row count");
   }
 
   private function getStream($string) {

@@ -1,16 +1,19 @@
 <?php
 
+use PHPUnit\DbUnit\Database\Connection;
+use PHPUnit\DbUnit\DataSet\IDataSet;
+
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(__DIR__ . "/../../helpers/config.php");
 
-abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase {
+abstract class BaseDatabaseTestCase extends PHPUnit\DbUnit\TestCase {
 
   /**
    * @var PDO $pdo
    */
   static private $pdo;
   /**
-   * @var PHPUnit_Extensions_Database_DB_IDatabaseConnection $conn
+   * @var PHPUnit\DbUnit\Database\Connection $conn
    */
   private $conn;
   static private $driver = "mysql";
@@ -42,24 +45,24 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 
   // Fixes PostgreSQL: "cannot truncate a table referenced in a foreign key constraint"
   protected function getSetUpOperation() {
-    return PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT(TRUE);
+    return PHPUnit\DbUnit\Operation\Factory::CLEAN_INSERT(true);
   }
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->mockConfig = new uConfig(false);
   }
 
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = Dotenv\Dotenv::create(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['DB_DSN', 'DB_USER', 'DB_PASS']);
     }
 
-    $db_dsn = getenv('DB_DSN');
-    $db_user = getenv('DB_USER');
-    $db_pass = getenv('DB_PASS');
+    $db_dsn = $_ENV['DB_DSN'];
+    $db_user = $_ENV['DB_USER'];
+    $db_pass = $_ENV['DB_PASS'];
 
     // pdo connection
     if (self::$pdo == null) {
@@ -68,7 +71,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
     }
   }
 
-  public static function tearDownAfterClass() {
+  public static function tearDownAfterClass(): void {
     self::$pdo = null;
   }
 
@@ -76,9 +79,9 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * Set up database connection
    * This will also override uDb class connection
    *
-   * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
+   * @return Connection
    */
-  public function getConnection() {
+  public function getConnection(): Connection {
     if ($this->conn === null) {
       $this->conn = $this->createDefaultDBConnection(self::$pdo, getenv('DB_NAME'));
     }
@@ -88,14 +91,14 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
   /**
    * Create data set from xml fixture
    *
-   * @return PHPUnit_Extensions_Database_DataSet_IDataSet
+   * @return PHPUnit\DbUnit\DataSet\IDataSet
    */
-  protected function getDataSet() {
+  protected function getDataSet(): IDataSet {
     $this->resetAutoincrement();
     return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_empty.xml');
   }
 
-  protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1, $layers = 1) {
+  protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1, $layers = 1): void {
     if (self::$driver === "pgsql") {
       self::$pdo->exec("ALTER SEQUENCE IF EXISTS users_id_seq RESTART WITH $users");
       self::$pdo->exec("ALTER SEQUENCE IF EXISTS tracks_id_seq RESTART WITH $tracks");
@@ -125,7 +128,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * Reset connection
    * Fixes sqlite error when db schema changes in another connection.
    */
-  protected function resetConnection() {
+  protected function resetConnection(): void {
     $this->closeConnection($this->conn);
     $this->conn = null;
     self::tearDownAfterClass();
@@ -139,7 +142,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * @param array $rowsArr Array of rows
    * @return int|null Last insert id if available, NULL otherwise
    */
-  private function pdoInsert($table, $rowsArr = []) {
+  private function pdoInsert(string $table, array $rowsArr = []): ?int {
     $ret = NULL;
     if (!empty($rowsArr)) {
       $values = ':' . implode(', :', array_keys($rowsArr));
@@ -160,8 +163,8 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * @param string $query Insert query
    * @return int|null Last insert id if available, NULL otherwise
    */
-  private function pdoInsertRaw($query) {
-    $ret = NULL;
+  private function pdoInsertRaw(string $query): ?int {
+    $ret = null;
     if (self::$pdo->exec($query) !== false) {
       $ret = self::$pdo->lastInsertId();
     }
@@ -175,7 +178,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * @param int $columnNumber Optional column number (default is first column)
    * @return string|bool Column  or false if no data
    */
-  protected function pdoGetColumn($query, $columnNumber = 0) {
+  protected function pdoGetColumn(string $query, int $columnNumber = 0) {
     $column = false;
     $stmt = self::$pdo->query($query);
     if ($stmt !== false) {
@@ -189,12 +192,12 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * Insert user data to database
    * If parameters are omitted they default test values are used
    *
-   * @param string $user User login
-   * @param string $pass User password
+   * @param string|null $user User login
+   * @param string|null $pass User password
    * @param bool $isAdmin User is admin
    * @return int|bool User id or false on error
    */
-  protected function addTestUser($user = NULL, $pass = NULL, $isAdmin = false) {
+  protected function addTestUser(?string $user = null, ?string $pass = null, bool $isAdmin = false) {
     if (is_null($user)) { $user = $this->testUser; }
     if (is_null($pass)) { $pass = $this->testPass; }
     $id = $this->pdoInsert('users', [ 'login' => $user, 'password' => $pass, 'admin' => (int) $isAdmin ]);
@@ -208,12 +211,12 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * Insert track data to database.
    * If parameters are omitted they default test values are used
    *
-   * @param int $userId Optional track id
-   * @param string $trackName Optional track name
-   * @param string $comment Optional comment
+   * @param int|null $userId Optional track id
+   * @param string|null $trackName Optional track name
+   * @param string|null $comment Optional comment
    * @return int|bool Track id or false on error
    */
-  protected function addTestTrack($userId = NULL, $trackName = NULL, $comment = NULL) {
+  protected function addTestTrack(?int $userId = null, ?string $trackName = null, ?string $comment = null) {
     if (is_null($userId)) { $userId = $this->testUserId; }
     if (is_null($trackName)) { $trackName = $this->testTrackName; }
     if (is_null($comment)) { $comment = $this->testTrackComment; }
@@ -228,14 +231,14 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
    * Insert position data to database
    * If parameters are omitted they default test values are used
    *
-   * @param int $userId
-   * @param int $trackId
-   * @param int $timeStamp
-   * @param double $latitude
-   * @param double $longitude
-   * @return int|bool Position id or false on error
+   * @param int|null $userId
+   * @param int|null $trackId
+   * @param int|null $timeStamp
+   * @param float|null $latitude
+   * @param float|null $longitude
+   * @return int|null Position id or false on error
    */
-  protected function addTestPosition($userId = NULL, $trackId = NULL, $timeStamp = NULL, $latitude = NULL, $longitude = NULL) {
+  protected function addTestPosition(?int $userId = null, ?int $trackId = null, ?int $timeStamp = null, ?float $latitude = null, ?float $longitude = null): ?int {
     if (is_null($userId)) { $userId = $this->testUserId; }
     if (is_null($trackId)) { $trackId = $this->testTrackId; }
     if (is_null($timeStamp)) { $timeStamp = $this->testTimestamp; }
@@ -247,33 +250,27 @@ abstract class BaseDatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
     return $this->pdoInsertRaw($query);
   }
 
-  public function unix_timestamp($column) {
+  public function unix_timestamp(string $column): string {
     switch (self::$driver) {
       default:
       case "mysql":
         return "UNIX_TIMESTAMP($column)";
-        break;
       case "pgsql":
         return "EXTRACT(EPOCH FROM $column)";
-        break;
       case "sqlite":
         return "STRFTIME('%s', $column)";
-        break;
     }
   }
 
-  public function from_unixtime($column) {
+  public function from_unixtime(string $column): string {
     switch (self::$driver) {
       default:
       case "mysql":
         return "FROM_UNIXTIME($column)";
-        break;
       case "pgsql":
         return "TO_TIMESTAMP($column)";
-        break;
       case "sqlite":
         return "DATETIME($column, 'unixepoch')";
-        break;
     }
   }
 }

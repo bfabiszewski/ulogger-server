@@ -66,9 +66,10 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
 - For example: `docker run --name ulogger -e ULOGGER_LANG="pl" -p 8080:80 -d bfabiszewski/ulogger`
 - You may also build the image yourself. Run `docker build .` from the root folder where `Dockerfile` reside. There are optional build-time arguments that allow you to set default database passwords for root and ulogger users
 - For example: `docker build --build-arg DB_ROOT_PASS=secret1 --build-arg DB_USER_PASS=secret2 --build-arg DB_DRIVER=sqlite .`
+- Docker was created to facilitate development and testing. It is not production ready. If you want to use it in production, you will have to adjust it to your needs.
 
 ## Tests
-- Install tests dependecies.
+- Install tests dependecies. PHP tests require PHP >= 7.3.
   - `composer install`
   - `npm install`
 - Integration tests may be run against docker image. We need exposed http and optionally database ports (eg. mapped to localhost 8080 and 8081). Below example for MySQL setup
@@ -80,7 +81,7 @@ Together with a dedicated [μlogger mobile client](https://github.com/bfabiszews
   - `DB_PASS=secret2`
   - `ULOGGER_URL="http://127.0.0.1:8080"`
 - PHP tests
-  - `./vendor/bin/phpunit -c .tests/phpunit.xml`
+  - `XDEBUG_MODE=coverage ./vendor/bin/phpunit -c .tests/phpunit.xml`
 - JS tests
   - `npm test`  
 - Other tests

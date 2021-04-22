@@ -3,7 +3,7 @@ os: linux
 dist: xenial
 
 php:
-  - 7.2
+  - 7.4
 
 env:
   jobs:
@@ -63,7 +63,7 @@ after_failure:
   - docker logs ulogger
 
 script:
-  - ./vendor/bin/phpunit  -c .tests/phpunit.xml
+  - XDEBUG_MODE=coverage ./vendor/bin/phpunit  -c .tests/phpunit.xml
   - npm test
   - npm run lint:js
   - npm run lint:css

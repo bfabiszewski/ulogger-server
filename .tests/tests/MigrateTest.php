@@ -24,42 +24,42 @@ require_once(dirname(__DIR__) . "/lib/UloggerDatabaseTestCase.php");
 
 class MigrateTest extends UloggerDatabaseTestCase {
 
-  protected function tearDown() {
+  protected function tearDown(): void {
     if ($this->getName() === "testUpdateSchemas") {
       self::runSqlScript(dirname(__DIR__) . "/../scripts/ulogger." . $this->getDbDriverName());
     }
     parent::tearDown();
   }
 
-  public function testUpdateSchemas() {
+  public function testUpdateSchemas(): void {
     self::runSqlScript(dirname(__DIR__) . "/fixtures/ulogger_0_6." . $this->getDbDriverName());
     $this->loadDataSet("fixture_0_6.xml");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
-    $this->assertNotContains("admin", $this->getConnection()->getMetaData()->getTableColumns("users"));
-    $this->assertContains("image_id", $this->getConnection()->getMetaData()->getTableColumns("positions"));
-    $this->assertNotContains("ol_layers", $this->getConnection()->getMetaData()->getTableNames());
-    $this->assertNotContains("config", $this->getConnection()->getMetaData()->getTableNames());
+    self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
+    self::assertNotContains("admin", $this->getConnection()->getMetaData()->getTableColumns("users"));
+    self::assertContains("image_id", $this->getConnection()->getMetaData()->getTableColumns("positions"));
+    self::assertNotContains("ol_layers", $this->getConnection()->getMetaData()->getTableNames());
+    self::assertNotContains("config", $this->getConnection()->getMetaData()->getTableNames());
     $this->setOutputCallback(static function() {});
     $ret = updateSchemas();
     $this->resetConnection();
-    $this->assertTrue($ret, "Function updateSchemas() failed");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
-    $this->assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
-    $this->assertContains("admin", $this->getConnection()->getMetaData()->getTableColumns("users"), "Missing table column");
-    $this->assertContains("image", $this->getConnection()->getMetaData()->getTableColumns("positions"), "Missing table column");
-    $this->assertContains("ol_layers", $this->getConnection()->getMetaData()->getTableNames(), "Missing table");
-    $this->assertContains("config", $this->getConnection()->getMetaData()->getTableNames(), "Missing table");
+    self::assertTrue($ret, "Function updateSchemas() failed");
+    self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("positions"), "Wrong row count");
+    self::assertContains("admin", $this->getConnection()->getMetaData()->getTableColumns("users"), "Missing table column");
+    self::assertContains("image", $this->getConnection()->getMetaData()->getTableColumns("positions"), "Missing table column");
+    self::assertContains("ol_layers", $this->getConnection()->getMetaData()->getTableNames(), "Missing table");
+    self::assertContains("config", $this->getConnection()->getMetaData()->getTableNames(), "Missing table");
   }
 
-  public function testUpdateConfig() {
+  public function testUpdateConfig(): void {
     $this->loadDataSet("fixture_non_admin.xml");
     $this->setOutputCallback(static function() {});
     $ret = updateConfig(dirname(__DIR__) . "/fixtures/config_0_6.php");
-    $this->assertTrue($ret, "Function updateConfig() failed");
+    self::assertTrue($ret, "Function updateConfig() failed");
     // admin user imported from config file
-    $this->assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
-    $this->assertTrue((bool) $this->pdoGetColumn("SELECT admin FROM users WHERE login = 'admin'"), "User should be admin");
+    self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
+    self::assertTrue((bool) $this->pdoGetColumn("SELECT admin FROM users WHERE login = 'admin'"), "User should be admin");
     // settings imported from config file
     $expected = [ "config" => [
       ["name" => "color_extra", "value" => "s:7:\"#cccccc\";"], // default
@@ -90,7 +90,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
     $expected = $this->createArrayDataSet($expected)->getTable("config");
     self::assertTablesEqual($expected, $actual);
     // layers imported from config file
-    $this->assertEquals(1, $this->getConnection()->getRowCount("ol_layers"), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount("ol_layers"), "Wrong row count");
     $expected = [ "id" => 1, "name" => "TestLayer", "url" => "https://test_tile.png", "priority" => 0 ];
     $actual = $this->getConnection()->createQueryTable(
       "ol_layers",
@@ -99,19 +99,19 @@ class MigrateTest extends UloggerDatabaseTestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testWaitForUser() {
+  public function testWaitForUser(): void {
     $this->setOutputCallback(static function() {});
     $yes = tmpfile();
     fwrite($yes, "yes");
     $ret = waitForUser(stream_get_meta_data($yes)['uri']);
     fclose($yes);
-    $this->assertTrue($ret, "Wrong return status");
+    self::assertTrue($ret, "Wrong return status");
 
     $no = tmpfile();
     fwrite($no, "no");
     $ret = waitForUser(stream_get_meta_data($no)['uri']);
     fclose($no);
-    $this->assertFalse($ret, "Wrong return status");
+    self::assertFalse($ret, "Wrong return status");
   }
 
   /**
@@ -120,7 +120,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
    * @param string $path Script path
    * @throws PDOException
    */
-  private static function runSqlScript($path) {
+  private static function runSqlScript(string $path): void {
     $script = file_get_contents($path);
     $count = preg_match_all('/^(?:(?:DROP|CREATE) (?:TABLE|INDEX)|INSERT|PRAGMA|SET) .*?;\s*$/smi', $script, $queries);
     if ($count) {
@@ -146,7 +146,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
     return uDb::getInstance()->getAttribute(PDO::ATTR_DRIVER_NAME);
   }
 
-  private function loadDataSet($name) {
+  private function loadDataSet($name): void {
     $this->resetAutoincrement();
     $dataSet = $this->createFlatXMLDataSet(dirname(__DIR__) . '/fixtures/' . $name);
     $this->getDatabaseTester()->setDataSet($dataSet);

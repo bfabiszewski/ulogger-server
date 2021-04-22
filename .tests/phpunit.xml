@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="../vendor/autoload.php">
-    <testsuites>
-        <testsuite name="µlogger test suite">
-            <directory suffix=".php">tests</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-      <whitelist>
-        <directory suffix=".php">..</directory>
-        <exclude>
-          <directory suffix=".php">../.tests</directory>
-          <directory suffix=".php">../vendor</directory>
-        </exclude>
-      </whitelist>
-    </filter>
-    <logging>
-      <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
-    </logging>
-    <php>
-        <server name='HTTP_HOST' value='http://127.0.0.1' />
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="../vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">..</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">../.tests</directory>
+      <directory suffix=".php">../vendor</directory>
+    </exclude>
+    <report>
+      <text outputFile="php://stdout" showUncoveredFiles="false"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="µlogger test suite">
+      <directory suffix=".php">tests</directory>
+    </testsuite>
+  </testsuites>
+  <logging/>
+  <php>
+    <server name="HTTP_HOST" value="http://127.0.0.1"/>
+  </php>
 </phpunit>

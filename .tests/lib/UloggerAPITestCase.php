@@ -1,5 +1,7 @@
 <?php
-use PHPUnit\Framework\TestCase;
+
+use GuzzleHttp\Exception\GuzzleException;
+use PHPUnit\DbUnit\DataSet\IDataSet;
 
 require_once("BaseDatabaseTestCase.php");
 
@@ -8,27 +10,27 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
   /**
    * @var null|GuzzleHttp\Client $http
    */
-  protected $http = null;
+  protected $http;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = Dotenv\Dotenv::create(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['ULOGGER_URL']);
     }
 
-    $url = getenv('ULOGGER_URL');
+    $url = $_ENV['ULOGGER_URL'];
 
     $this->http = new GuzzleHttp\Client([ 'base_uri' => $url, 'cookies' => true ]);
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
     $this->http = null;
   }
 
-  protected function getDataSet() {
+  protected function getDataSet(): IDataSet {
     $this->resetAutoincrement(2);
     return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_admin.xml');
   }
@@ -38,8 +40,9 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
    * @param string|null $user Login (defaults to test user)
    * @param string|null $pass Optional password (defaults to test password)
    * @return bool true on success, false otherwise
+   * @throws GuzzleException
    */
-  public function authenticate($user = NULL, $pass = NULL) {
+  public function authenticate(?string $user = null, ?string $pass = null): bool {
 
     if (is_null($user)) { $user = $this->testAdminUser; }
     if (is_null($pass)) { $pass = $this->testAdminPass; }
@@ -50,7 +53,7 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
     ];
 
     $response = $this->http->post('/client/index.php', $options);
-    return ($response->getStatusCode() == 200);
+    return $response->getStatusCode() === 200;
   }
 }
 ?>

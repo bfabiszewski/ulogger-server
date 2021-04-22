@@ -1,33 +1,38 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . "/../../helpers/utils.php");
 
 class UtilsTest extends TestCase {
 
-  public function testGetUploadMaxSize() {
+  /**
+   * @throws ReflectionException
+   */
+  public function testGetUploadMaxSize(): void {
     $iniGetBytes = new ReflectionMethod('uUtils', 'iniGetBytes');
     $iniGetBytes->setAccessible(true);
 
     ini_set("memory_limit", "1G");
     $result = $iniGetBytes->invoke(null, "memory_limit");
-    $this->assertEquals(1024 * 1024 * 1024, $result);
+    self::assertEquals(1024 * 1024 * 1024, $result);
 
     ini_set("memory_limit", 100 . "M");
     $result = $iniGetBytes->invoke(null, "memory_limit");
-    $this->assertEquals(100 * 1024 * 1024, $result);
+    self::assertEquals(100 * 1024 * 1024, $result);
 
     ini_set("memory_limit", 100 * 1024 . "K");
     $result = $iniGetBytes->invoke(null, "memory_limit");
-    $this->assertEquals(100 * 1024 * 1024, $result);
+    self::assertEquals(100 * 1024 * 1024, $result);
 
     ini_set("memory_limit", 100 * 1024 * 1024);
     $result = $iniGetBytes->invoke(null, "memory_limit");
-    $this->assertEquals(100 * 1024 * 1024, $result);
+    self::assertEquals(100 * 1024 * 1024, $result);
 
   }
 
-  public function testGetBaseUrlMain() {
+  /** @noinspection HttpUrlsUsage */
+  public function testGetBaseUrlMain(): void {
     if (!defined("ROOT_DIR")) {
       define("ROOT_DIR", "/var/www/html/ulogger");
     }
@@ -38,10 +43,11 @@ class UtilsTest extends TestCase {
     $_SERVER["PHP_SELF"] = "/index.php";
     $result = uUtils::getBaseUrl();
     $expected = "http://www.example.com/";
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
   }
 
-  public function testGetBaseUrlScript() {
+  /** @noinspection HttpUrlsUsage */
+  public function testGetBaseUrlScript(): void {
     if (!defined("ROOT_DIR")) {
       define("ROOT_DIR", "/var/www/html");
     }
@@ -52,10 +58,11 @@ class UtilsTest extends TestCase {
     $_SERVER["PHP_SELF"] = "/utils/test.php";
     $result = uUtils::getBaseUrl();
     $expected = "http://www.example.com/";
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
   }
 
-  public function testGetBaseUrlSubfolder() {
+  /** @noinspection HttpUrlsUsage */
+  public function testGetBaseUrlSubfolder(): void {
     if (!defined("ROOT_DIR")) {
       define("ROOT_DIR", "/var/www/html");
     }
@@ -66,10 +73,10 @@ class UtilsTest extends TestCase {
     $_SERVER["PHP_SELF"] = "/ulogger/index.php";
     $result = uUtils::getBaseUrl();
     $expected = "http://www.example.com/ulogger/";
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
   }
 
-  public function testGetBaseUrlHttps() {
+  public function testGetBaseUrlHttps(): void {
     if (!defined("ROOT_DIR")) {
       define("ROOT_DIR", "/var/www/html");
     }
@@ -80,10 +87,11 @@ class UtilsTest extends TestCase {
     $_SERVER["PHP_SELF"] = "/index.php";
     $result = uUtils::getBaseUrl();
     $expected = "https://www.example.com/";
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
   }
 
-  public function testGetBaseUrlHttp() {
+  /** @noinspection HttpUrlsUsage */
+  public function testGetBaseUrlHttp(): void {
     if (!defined("ROOT_DIR")) {
       define("ROOT_DIR", "/var/www/html");
     }
@@ -94,26 +102,26 @@ class UtilsTest extends TestCase {
     $_SERVER["PHP_SELF"] = "/index.php";
     $result = uUtils::getBaseUrl();
     $expected = "http://www.example.com/";
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
 
     unset($_SERVER["HTTPS"]);
-    $this->assertEquals($expected, $result);
+    self::assertEquals($expected, $result);
   }
 
-  public function testIsAbsolutePath() {
-    $this->assertTrue(uUtils::isAbsolutePath("/foo"));
-    $this->assertTrue(uUtils::isAbsolutePath("/foo/bar"));
-    $this->assertTrue(uUtils::isAbsolutePath("/"));
-    $this->assertTrue(uUtils::isAbsolutePath("/."));
-    $this->assertTrue(uUtils::isAbsolutePath("\\"));
-    $this->assertTrue(uUtils::isAbsolutePath("C:\\\\foo"));
-    $this->assertTrue(uUtils::isAbsolutePath("Z:\\\\FOO/BAR"));
+  public function testIsAbsolutePath(): void {
+    self::assertTrue(uUtils::isAbsolutePath("/foo"));
+    self::assertTrue(uUtils::isAbsolutePath("/foo/bar"));
+    self::assertTrue(uUtils::isAbsolutePath("/"));
+    self::assertTrue(uUtils::isAbsolutePath("/."));
+    self::assertTrue(uUtils::isAbsolutePath("\\"));
+    self::assertTrue(uUtils::isAbsolutePath("C:\\\\foo"));
+    self::assertTrue(uUtils::isAbsolutePath("Z:\\\\FOO/BAR"));
 
-    $this->assertFalse(uUtils::isAbsolutePath("foo"));
-    $this->assertFalse(uUtils::isAbsolutePath("foo/bar"));
-    $this->assertFalse(uUtils::isAbsolutePath("./foo"));
-    $this->assertFalse(uUtils::isAbsolutePath("../"));
-    $this->assertFalse(uUtils::isAbsolutePath(".\\foo"));
+    self::assertFalse(uUtils::isAbsolutePath("foo"));
+    self::assertFalse(uUtils::isAbsolutePath("foo/bar"));
+    self::assertFalse(uUtils::isAbsolutePath("./foo"));
+    self::assertFalse(uUtils::isAbsolutePath("../"));
+    self::assertFalse(uUtils::isAbsolutePath(".\\foo"));
   }
 }
 ?>

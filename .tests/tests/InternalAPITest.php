@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Exception\GuzzleException;
+
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(ROOT_DIR . "/helpers/config.php");
@@ -9,7 +11,10 @@ class InternalAPITest extends UloggerAPITestCase {
 
   /* getpositions */
 
-  public function testGetPositionsAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsAdmin(): void {
 
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -47,7 +52,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
   }
 
-  public function testGetPositionsUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsUser(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -86,7 +94,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
   }
 
-  public function testGetPositionsOtherUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsOtherUser(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $userId);
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -110,7 +121,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of positions");
   }
 
-  public function testGetPositionsOtherUserByAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsOtherUserByAdmin(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $userId);
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -150,7 +164,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
   }
 
-  public function testGetPositionsUserLatest() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsUserLatest(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $trackId = $this->addTestTrack($this->testUserId);
@@ -186,7 +203,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
   }
 
-  public function testGetPositionsAllUsersLatest() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsAllUsersLatest(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
 
@@ -231,7 +251,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($trackName, (string) $position->trackname,"Wrong trackname");
   }
 
-  public function testGetPositionsNoTrackId() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsNoTrackId(): void {
 
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -253,7 +276,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of positions");
   }
 
-  public function testGetPositionsNoUserId() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsNoUserId(): void {
 
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -275,7 +301,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of positions");
   }
 
-  public function testGetPositionsNoAuth() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsNoAuth(): void {
 
     $trackId = $this->addTestTrack($this->testUserId);
     $this->addTestPosition($this->testUserId, $trackId, $this->testTimestamp);
@@ -294,7 +323,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of positions");
   }
 
-  public function testGetPositionsAfterId() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetPositionsAfterId(): void {
 
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -331,7 +363,10 @@ class InternalAPITest extends UloggerAPITestCase {
   /* gettracks.php */
 
 
-  public function testGetTracksAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetTracksAdmin(): void {
 
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -360,7 +395,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $track->name,"Wrong track name");
   }
 
-  public function testGetTracksUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetTracksUser(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -390,7 +428,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($this->testTrackName, (string) $track->name,"Wrong track name");
   }
 
-  public function testGetTracksOtherUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetTracksOtherUser(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -412,7 +453,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of tracks");
   }
 
-  public function testGetTracksNoUserId() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetTracksNoUserId(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -432,7 +476,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(0, $json, "Wrong count of tracks");
   }
 
-  public function testGetTracksNoAuth() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testGetTracksNoAuth(): void {
 
     $this->addTestTrack($this->testUserId);
     $this->addTestTrack($this->testUserId, $this->testTrackName . "2");
@@ -454,7 +501,10 @@ class InternalAPITest extends UloggerAPITestCase {
 
   /* changepass.php */
 
-  public function testChangePassNoAuth() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassNoAuth(): void {
 
     $options = [
       "http_errors" => false,
@@ -473,7 +523,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("User not authorized", (string) $json->message, "Wrong error message");
   }
 
-  public function testChangePassEmpty() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassEmpty(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -489,7 +542,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("Empty password", (string) $json->message, "Wrong error message");
   }
 
-  public function testChangePassUserUnknown() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassUserUnknown(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -508,7 +564,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("User unknown", (string) $json->message, "Wrong error message");
   }
 
-  public function testChangePassEmptyLogin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassEmptyLogin(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -526,7 +585,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("Empty login", (string) $json->message, "Wrong error message");
   }
 
-  public function testChangePassWrongOldpass() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassWrongOldpass(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -546,7 +608,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("Wrong old password", (string) $json->message, "Wrong error message");
   }
 
-  public function testChangePassNoOldpass() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassNoOldpass(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $options = [
@@ -565,7 +630,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals("Wrong old password", (string) $json->message,"Wrong error message");
   }
 
-  public function testChangePassSelfAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassSelfAdmin(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
 
     $newPass = "Newpass1234567890";
@@ -586,7 +654,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users")), "Wrong actual password hash");
   }
 
-  public function testChangePassSelfUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassSelfUser(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
 
@@ -608,7 +679,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE id = $userId")), "Wrong actual password hash");
   }
 
-  public function testChangePassOtherAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassOtherAdmin(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
 
@@ -629,7 +703,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE id = $userId")), "Wrong actual password hash");
   }
 
-  public function testChangePassOtherUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testChangePassOtherUser(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     $this->addTestUser($this->testUser2, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -654,7 +731,10 @@ class InternalAPITest extends UloggerAPITestCase {
 
   /* handletrack.php */
 
-  public function testHandleTrackDeleteAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackDeleteAdmin(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -676,7 +756,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($trackId2, $this->pdoGetColumn("SELECT id FROM tracks WHERE id = $trackId2"), "Wrong actual track id");
   }
 
-  public function testHandleTrackDeleteSelf() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackDeleteSelf(): void {
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
@@ -698,7 +781,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($trackId2, $this->pdoGetColumn("SELECT id FROM tracks WHERE id = $trackId2"), "Wrong actual track id");
   }
 
-  public function testHandleTrackDeleteOtherUser() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackDeleteOtherUser(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -720,7 +806,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($lang["notauthorized"], (string) $json->message, "Wrong error message");
   }
 
-  public function testHandleTrackUpdate() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackUpdate(): void {
     $newName = "New name";
     self::assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -760,7 +849,10 @@ class InternalAPITest extends UloggerAPITestCase {
     $this->assertTableContains($row2, $actual, "Wrong actual table data");
   }
 
-  public function testHandleTrackUpdateEmptyName() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackUpdateEmptyName(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
     $userId = $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -784,7 +876,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
   }
 
-  public function testHandleTrackUpdateNonexistantTrack() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackUpdateNonexistantTrack(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     $newName = "New name";
     self::assertTrue($this->authenticate(), "Authentication failed");
@@ -808,7 +903,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
   }
 
-  public function testHandleTrackMissingAction() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleTrackMissingAction(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -826,7 +924,10 @@ class InternalAPITest extends UloggerAPITestCase {
 
   /* handleuser.php */
 
-  public function testHandleUserMissingAction() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserMissingAction(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
 
@@ -841,7 +942,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
   }
 
-  public function testHandleUserNonAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserNonAdmin(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -861,7 +965,10 @@ class InternalAPITest extends UloggerAPITestCase {
 
   }
 
-  public function testHandleUserSelf() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserSelf(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -879,7 +986,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
-  public function testHandleUserEmptyLogin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserEmptyLogin(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -897,7 +1007,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
-  public function testHandleUserNoAuth() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserNoAuth(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -916,7 +1029,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
-  public function testHandleUserAdd() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserAdd(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
@@ -940,7 +1056,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($this->testPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }
 
-  public function testHandleUserAddSameLogin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserAddSameLogin(): void {
     $lang = (new uLang($this->mockConfig))->getStrings();
     self::assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -959,7 +1078,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
-  public function testHandleUserUpdate() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserUpdate(): void {
     $newPass = $this->testPass . "new";
     self::assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
@@ -977,7 +1099,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($newPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }
 
-  public function testHandleUserUpdateEmptyPass() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserUpdateEmptyPass(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -993,7 +1118,10 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertTrue(password_verify($this->testPass, $this->pdoGetColumn("SELECT password FROM users WHERE login = '$this->testUser'")), "Wrong actual password hash");
   }
 
-  public function testHandleUserDelete() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testHandleUserDelete(): void {
     self::assertTrue($this->authenticate(), "Authentication failed");
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");

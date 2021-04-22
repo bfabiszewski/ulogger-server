@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\DbUnit\DataSet\IDataSet;
+
 if (!defined("ROOT_DIR")) { define("ROOT_DIR", __DIR__ . "/../.."); }
 require_once(__DIR__ . "/../../helpers/config.php");
 require_once(__DIR__ . "/../lib/UloggerDatabaseTestCase.php");
@@ -26,16 +28,13 @@ class ConfigTest extends UloggerDatabaseTestCase {
   private $testUrl;
   private $testPriority;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->config = uConfig::getInstance();
     $this->initConfigValues();
   }
 
-  /**
-   * @throws ReflectionException
-   */
-  protected function tearDown() {
+  protected function tearDown(): void {
     parent::tearDown();
     $configClass = new ReflectionClass("uConfig");
     $configInstance = $configClass->getProperty('instance');
@@ -43,7 +42,7 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $configInstance->setValue(null);
   }
 
-  protected function getDataSet() {
+  protected function getDataSet(): IDataSet {
     $this->initConfigValues();
     $this->resetAutoincrement();
     $dataset = [
@@ -71,28 +70,28 @@ class ConfigTest extends UloggerDatabaseTestCase {
     return $this->createArrayDataSet($dataset);
   }
 
-  public function testSetFromDatabase() {
-    $this->assertEquals($this->mapApi, $this->config->mapApi);
-    $this->assertEquals($this->latitude, $this->config->initLatitude);
-    $this->assertEquals($this->longitude, $this->config->initLongitude);
-    $this->assertEquals($this->googleKey, $this->config->googleKey);
-    $this->assertEquals($this->requireAuth, $this->config->requireAuthentication);
-    $this->assertEquals($this->publicTracks, $this->config->publicTracks);
-    $this->assertEquals($this->passLenMin, $this->config->passLenMin);
-    $this->assertEquals($this->passStrength, $this->config->passStrength);
-    $this->assertEquals($this->interval, $this->config->interval);
-    $this->assertEquals($this->lang, $this->config->lang);
-    $this->assertEquals($this->units, $this->config->units);
-    $this->assertEquals($this->strokeWeight, $this->config->strokeWeight);
-    $this->assertEquals($this->strokeColor, $this->config->strokeColor);
-    $this->assertEquals($this->strokeOpacity, $this->config->strokeOpacity);
+  public function testSetFromDatabase(): void {
+    self::assertEquals($this->mapApi, $this->config->mapApi);
+    self::assertEquals($this->latitude, $this->config->initLatitude);
+    self::assertEquals($this->longitude, $this->config->initLongitude);
+    self::assertEquals($this->googleKey, $this->config->googleKey);
+    self::assertEquals($this->requireAuth, $this->config->requireAuthentication);
+    self::assertEquals($this->publicTracks, $this->config->publicTracks);
+    self::assertEquals($this->passLenMin, $this->config->passLenMin);
+    self::assertEquals($this->passStrength, $this->config->passStrength);
+    self::assertEquals($this->interval, $this->config->interval);
+    self::assertEquals($this->lang, $this->config->lang);
+    self::assertEquals($this->units, $this->config->units);
+    self::assertEquals($this->strokeWeight, $this->config->strokeWeight);
+    self::assertEquals($this->strokeColor, $this->config->strokeColor);
+    self::assertEquals($this->strokeOpacity, $this->config->strokeOpacity);
 
-    $this->assertEquals($this->testLayer, $this->config->olLayers[0]->name);
-    $this->assertEquals($this->testUrl, $this->config->olLayers[0]->url);
-    $this->assertEquals($this->testPriority, $this->config->olLayers[0]->priority);
+    self::assertEquals($this->testLayer, $this->config->olLayers[0]->name);
+    self::assertEquals($this->testUrl, $this->config->olLayers[0]->url);
+    self::assertEquals($this->testPriority, $this->config->olLayers[0]->priority);
   }
 
-  public function testSave() {
+  public function testSave(): void {
     $this->config->mapApi = 'newApi';
     $this->config->initLatitude = 33.11;
     $this->config->initLongitude = 22.11;
@@ -129,16 +128,16 @@ class ConfigTest extends UloggerDatabaseTestCase {
       "stroke_opacity" => $this->config->strokeOpacity
     ];
     $cnt = count($expected);
-    $this->assertGreaterThanOrEqual($cnt, $this->getConnection()->getRowCount('config'), "Wrong row count");
+    self::assertGreaterThanOrEqual($cnt, $this->getConnection()->getRowCount('config'), "Wrong row count");
     $actual = $this->getConnection()->createQueryTable("config", "SELECT * FROM config");
     for ($i = 0; $i < $cnt; $i++) {
       $row = $actual->getRow($i);
       $actualValue = $row['value'];
       if (isset($expected[$row['name']])) {
-        $this->assertEquals(serialize($expected[$row['name']]), is_resource($actualValue) ? stream_get_contents($actualValue) : $actualValue);
+        self::assertEquals(serialize($expected[$row['name']]), is_resource($actualValue) ? stream_get_contents($actualValue) : $actualValue);
       }
     }
-    $this->assertEquals(1, $this->getConnection()->getRowCount('ol_layers'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('ol_layers'), "Wrong row count");
     $expected = [
       "id" => $this->config->olLayers[0]->id,
       "name" => $this->config->olLayers[0]->name,
@@ -149,7 +148,7 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data: " . implode(', ', $actual->getRow(0)));
   }
 
-  private function initConfigValues() {
+  private function initConfigValues(): void {
     $this->mapApi = 'testApi';
     $this->latitude = 33.33;
     $this->longitude = 22.22;
@@ -169,7 +168,7 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $this->testPriority = 5;
   }
 
-  public function testPassRegex() {
+  public function testPassRegex(): void {
     $this->config->passLenMin = 0;
     $this->config->passStrength = 0;
     $password0 = "password";
@@ -178,49 +177,49 @@ class ConfigTest extends UloggerDatabaseTestCase {
     $password3 = "PASSword1234-;";
 
     $regex = $this->config->passRegex();
-    $this->assertRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
-    $this->assertRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
-    $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
-    $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
+    self::assertMatchesRegularExpression($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
+    self::assertMatchesRegularExpression($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
+    self::assertMatchesRegularExpression($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
+    self::assertMatchesRegularExpression($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
     $this->config->passStrength = 1;
     $regex = $this->config->passRegex();
-    $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
-    $this->assertRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
-    $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
-    $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
+    self::assertMatchesRegularExpression($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
+    self::assertMatchesRegularExpression($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
+    self::assertMatchesRegularExpression($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
     $this->config->passStrength = 2;
     $regex = $this->config->passRegex();
-    $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
-    $this->assertNotRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
-    $this->assertRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
-    $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
+    self::assertMatchesRegularExpression($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
+    self::assertMatchesRegularExpression($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
     $this->config->passStrength = 3;
     $regex = $this->config->passRegex();
-    $this->assertNotRegExp($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
-    $this->assertNotRegExp($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
-    $this->assertNotRegExp($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
-    $this->assertRegExp($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password0, "Regex: \"$regex\", password: \"$password0\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password1, "Regex: \"$regex\", password: \"$password1\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password2, "Regex: \"$regex\", password: \"$password2\"");
+    self::assertMatchesRegularExpression($regex, $password3, "Regex: \"$regex\", password: \"$password3\"");
 
     $password_len5 = "12345";
     $password_len10 = "1234567890";
     $this->config->passLenMin = 5;
     $this->config->passStrength = 0;
     $regex = $this->config->passRegex();
-    $this->assertRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
-    $this->assertRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
+    self::assertMatchesRegularExpression($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
+    self::assertMatchesRegularExpression($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
 
     $this->config->passLenMin = 7;
     $regex = $this->config->passRegex();
-    $this->assertNotRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
-    $this->assertRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
+    self::assertMatchesRegularExpression($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
 
     $this->config->passLenMin = 12;
     $regex = $this->config->passRegex();
-    $this->assertNotRegExp($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
-    $this->assertNotRegExp($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password_len5, "Regex: \"$regex\", password: \"$password_len5\"");
+    self::assertDoesNotMatchRegularExpression($regex, $password_len10, "Regex: \"$regex\", password: \"$password_len10\"");
   }
 }
 ?>

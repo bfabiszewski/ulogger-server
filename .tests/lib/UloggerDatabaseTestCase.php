@@ -13,29 +13,29 @@ class UloggerDatabaseTestCase extends BaseDatabaseTestCase {
   /**
    * @throws ReflectionException
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
 
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = Dotenv\Dotenv::create(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['DB_DSN', 'DB_USER', 'DB_PASS']);
     }
 
-    $db_dsn = getenv('DB_DSN');
-    $db_user = getenv('DB_USER');
-    $db_pass = getenv('DB_PASS');
+    $db_dsn = $_ENV['DB_DSN'];
+    $db_user = $_ENV['DB_USER'];
+    $db_pass = $_ENV['DB_PASS'];
 
     // uDb connection
     if (self::$udb == null) {
-      self::$udb = new ReflectionClass("uDb");
+      self::$udb = new ReflectionClass('uDb');
       $dbInstance = self::$udb->getProperty('instance');
       $dbInstance->setAccessible(true);
       $dbInstance->setValue(new uDb($db_dsn, $db_user, $db_pass));
     }
   }
 
-  public static function tearDownAfterClass() {
+  public static function tearDownAfterClass(): void {
     parent::tearDownAfterClass();
     self::$udb = null;
   }

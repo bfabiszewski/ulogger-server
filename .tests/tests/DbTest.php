@@ -6,7 +6,7 @@ require_once(__DIR__ . "/../../helpers/db.php");
 
 class DbTest extends TestCase {
 
-  public function testGetDbNameValidNames() {
+  public function testGetDbNameValidNames(): void {
     $testDbName = "testDbName";
     $defaultDSNs = [
       "mysql:host=db.example.com;port=3306;dbname=$testDbName",
@@ -22,11 +22,11 @@ class DbTest extends TestCase {
     ];
 
     foreach ($defaultDSNs as $dsn) {
-      $this->assertEquals($testDbName, uDb::getDbName($dsn));
+      self::assertEquals($testDbName, uDb::getDbName($dsn));
     }
   }
 
-  public function testGetDbNameEmptyNames() {
+  public function testGetDbNameEmptyNames(): void {
     $testDbName = "";
     $defaultDSNs = [
       "mysql:host=db.example.com;port=3306;dbname=",
@@ -42,12 +42,12 @@ class DbTest extends TestCase {
     ];
 
     foreach ($defaultDSNs as $dsn) {
-      $this->assertEquals($testDbName, uDb::getDbName($dsn));
+      self::assertEquals($testDbName, uDb::getDbName($dsn));
     }
 
   }
 
-  public function testGetDbFilename() {
+  public function testGetDbFilename(): void {
     $testFileNames = [
       "C:\\Program Files\\Database.db",
       ":memory:",
@@ -55,11 +55,11 @@ class DbTest extends TestCase {
     ];
 
     foreach ($testFileNames as $fileName) {
-      $this->assertEquals($fileName, uDb::getDbName("sqlite:$fileName"));
+      self::assertEquals($fileName, uDb::getDbName("sqlite:$fileName"));
     }
   }
 
-  public function testNormalizeDsn() {
+  public function testNormalizeDsn(): void {
     $testDbName = "testDbName";
     $nonSqlite = [
       "mysql:host=db.example.com;port=3306;dbname=$testDbName",
@@ -72,12 +72,12 @@ class DbTest extends TestCase {
     ];
 
     foreach ($nonSqlite as $dsn) {
-      $this->assertEquals($dsn, uDb::normalizeDsn($dsn));
+      self::assertEquals($dsn, uDb::normalizeDsn($dsn));
     }
 
-    $this->assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:index.php"));
-    $this->assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:helpers/../index.php"));
-    $this->assertNotEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:../index.php"));
+    self::assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:index.php"));
+    self::assertEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:helpers/../index.php"));
+    self::assertNotEquals("sqlite:" . realpath(ROOT_DIR . "/index.php"), uDb::normalizeDsn("sqlite:../index.php"));
   }
 }
 

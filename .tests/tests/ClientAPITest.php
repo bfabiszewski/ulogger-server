@@ -1,215 +1,253 @@
 <?php
 
+use GuzzleHttp\Exception\GuzzleException;
+
 require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
 
 class ClientAPITest extends UloggerAPITestCase {
 
-  public function testNoAction() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testNoAction(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
     $options = [
       'http_errors' => false
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
+    self::assertTrue($json->{'error'}, "Unexpected success");
   }
 
   /* auth */
 
-  public function testAuthOk() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testAuthOk(): void {
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'auth', 'user' => $this->testAdminUser, 'pass' => $this->testAdminPass ],
     ];
 
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertFalse($json->{'error'}, "Unexpected error");
+    self::assertFalse($json->{'error'}, "Unexpected error");
   }
 
-  public function testAuthFail() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testAuthFail(): void {
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'user' => 'noexist', 'pass' => 'noexist' ],
     ];
 
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(401, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(401, $response->getStatusCode(), "Unexpected status code");
   }
 
   /* adduser */
-
-  public function testAddUser() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUser(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'login' => $this->testUser, 'password' => $this->testPass ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertFalse($json->{'error'}, "Unexpected error");
-    $this->assertEquals(2, $json->{'userid'}, "Wrong user id");
-    $this->assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertFalse($json->{'error'}, "Unexpected error");
+    self::assertEquals(2, $json->{'userid'}, "Wrong user id");
+    self::assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
     $expected = [ "id" => 2, "login" => $this->testUser ];
     $actual = $this->getConnection()->createQueryTable("users", "SELECT id, login FROM users");
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testAddUserExistingLogin() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUserExistingLogin(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'login' => $this->testAdminUser, 'password' => $this->testPass ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'userid'}), "Unexpected user id");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'userid'}), "Unexpected user id");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
   }
 
-  public function testAddUserEmptyLogin() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUserEmptyLogin(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'login' => '', 'password' => $this->testPass ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'userid'}), "Unexpected user id");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'userid'}), "Unexpected user id");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
   }
 
-  public function testAddUserEmptyPass() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUserEmptyPass(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'login' => $this->testUser, 'password' => '' ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'userid'}), "Unexpected user id");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'userid'}), "Unexpected user id");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
   }
 
-  public function testAddUserNoParameters() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUserNoParameters(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser' ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'userid'}), "Unexpected user id");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'userid'}), "Unexpected user id");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
   }
 
-  public function testAddUserByNonAdmin() {
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddUserByNonAdmin(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
+    self::assertTrue($this->authenticate($this->testUser, $this->testPass), "Authentication failed");
 
-    $this->assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'adduser', 'login' => $this->testUser2, 'password' => $this->testPass ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'userid'}), "Unexpected user id");
-    $this->assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'userid'}), "Unexpected user id");
+    self::assertEquals(2, $this->getConnection()->getRowCount('users'), "Wrong row count");
   }
 
   /* addtrack */
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddTrack(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-  public function testAddTrack() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
-
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'addtrack', 'track' => $this->testTrackName ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertFalse($json->{'error'}, "Unexpected error");
-    $this->assertEquals(1, $json->{'trackid'}, "Wrong track id");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertFalse($json->{'error'}, "Unexpected error");
+    self::assertEquals(1, $json->{'trackid'}, "Wrong track id");
+    self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     $expected = [ "id" => 1, "user_id" => 1, "name" => $this->testTrackName ];
     $actual = $this->getConnection()->createQueryTable("users", "SELECT id, user_id, name FROM tracks");
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testAddTrackEmptyName() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddTrackEmptyName(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'addtrack', 'track' => '' ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'trackid'}), "Unexpected track id");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'trackid'}), "Unexpected track id");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
   }
 
-  public function testAddTrackNoParameters() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddTrackNoParameters(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
       'form_params' => [ 'action' => 'addtrack' ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertFalse(isset($json->{'trackid'}), "Unexpected track id");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertFalse(isset($json->{'trackid'}), "Unexpected track id");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
   }
 
   /* addpos */
-
-  public function testAddPosition() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddPosition(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
     $trackId = $this->addTestTrack($this->testUserId);
-    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
@@ -228,10 +266,10 @@ class ClientAPITest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertFalse($json->{'error'}, "Unexpected error");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertFalse($json->{'error'}, "Unexpected error");
+    self::assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $expected = [
       "id" => 1,
       "user_id" => $this->testUserId,
@@ -254,12 +292,15 @@ class ClientAPITest extends UloggerAPITestCase {
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
   }
 
-  public function testAddPositionWithImage() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddPositionWithImage(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
     $trackId = $this->addTestTrack($this->testUserId);
-    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
@@ -317,10 +358,10 @@ class ClientAPITest extends UloggerAPITestCase {
       ]
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertFalse($json->{'error'}, "Unexpected error");
-    $this->assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertFalse($json->{'error'}, "Unexpected error");
+    self::assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
     $expected = [
       "id" => 1,
       "user_id" => $this->testUserId,
@@ -339,26 +380,29 @@ class ClientAPITest extends UloggerAPITestCase {
       "positions",
       "SELECT id, user_id, track_id, " . $this->unix_timestamp('time') . " AS time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image FROM positions"
     );
-    $this->assertEquals($expected['id'], $actual->getValue(0, 'id'));
-    $this->assertEquals($expected['user_id'], $actual->getValue(0, 'user_id'));
-    $this->assertEquals($expected['track_id'], $actual->getValue(0, 'track_id'));
-    $this->assertEquals($expected['time'], $actual->getValue(0, 'time'));
-    $this->assertEquals($expected['latitude'], $actual->getValue(0, 'latitude'));
-    $this->assertEquals($expected['longitude'], $actual->getValue(0, 'longitude'));
-    $this->assertEquals($expected['altitude'], $actual->getValue(0, 'altitude'));
-    $this->assertEquals($expected['speed'], $actual->getValue(0, 'speed'));
-    $this->assertEquals($expected['bearing'], $actual->getValue(0, 'bearing'));
-    $this->assertEquals($expected['accuracy'], $actual->getValue(0, 'accuracy'));
-    $this->assertEquals($expected['provider'], $actual->getValue(0, 'provider'));
-    $this->assertEquals($expected['comment'], $actual->getValue(0, 'comment'));
-    $this->assertContains('.jpg', $actual->getValue(0, 'image'));
+    self::assertEquals($expected['id'], $actual->getValue(0, 'id'));
+    self::assertEquals($expected['user_id'], $actual->getValue(0, 'user_id'));
+    self::assertEquals($expected['track_id'], $actual->getValue(0, 'track_id'));
+    self::assertEquals($expected['time'], $actual->getValue(0, 'time'));
+    self::assertEquals($expected['latitude'], $actual->getValue(0, 'latitude'));
+    self::assertEquals($expected['longitude'], $actual->getValue(0, 'longitude'));
+    self::assertEquals($expected['altitude'], $actual->getValue(0, 'altitude'));
+    self::assertEquals($expected['speed'], $actual->getValue(0, 'speed'));
+    self::assertEquals($expected['bearing'], $actual->getValue(0, 'bearing'));
+    self::assertEquals($expected['accuracy'], $actual->getValue(0, 'accuracy'));
+    self::assertEquals($expected['provider'], $actual->getValue(0, 'provider'));
+    self::assertEquals($expected['comment'], $actual->getValue(0, 'comment'));
+    self::assertStringContainsString('.jpg', $actual->getValue(0, 'image'));
   }
 
-  public function testAddPositionNoexistantTrack() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddPositionNoexistantTrack(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
-    $this->assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
@@ -378,18 +422,21 @@ class ClientAPITest extends UloggerAPITestCase {
       ],
     ];
     $response = $this->http->post('/client/index.php', $options);
-    $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+    self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode((string) $response->getBody());
-    $this->assertTrue($json->{'error'}, "Unexpected success");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertTrue($json->{'error'}, "Unexpected success");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
   }
 
-  public function testAddPositionEmptyParameters() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddPositionEmptyParameters(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
     $trackId = $this->addTestTrack($this->testUserId);
-    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
@@ -414,19 +461,22 @@ class ClientAPITest extends UloggerAPITestCase {
       $optCopy = $options;
       $optCopy['form_params'][$parameter] = '';
       $response = $this->http->post('/client/index.php', $optCopy);
-      $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+      self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
       $json = json_decode((string) $response->getBody());
-      $this->assertTrue($json->{'error'}, "Unexpected success ($parameter)");
+      self::assertTrue($json->{'error'}, "Unexpected success ($parameter)");
     }
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
   }
 
-  public function testAddPositionMissingParameters() {
-    $this->assertTrue($this->authenticate(), "Authentication failed");
+  /**
+   * @throws GuzzleException
+   */
+  public function testAddPositionMissingParameters(): void {
+    self::assertTrue($this->authenticate(), "Authentication failed");
 
     $trackId = $this->addTestTrack($this->testUserId);
-    $this->assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     $options = [
       'http_errors' => false,
@@ -451,11 +501,11 @@ class ClientAPITest extends UloggerAPITestCase {
       $optCopy = $options;
       unset($optCopy['form_params'][$parameter]);
       $response = $this->http->post('/client/index.php', $optCopy);
-      $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+      self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
       $json = json_decode((string) $response->getBody());
-      $this->assertTrue($json->{'error'}, "Unexpected success ($parameter)");
+      self::assertTrue($json->{'error'}, "Unexpected success ($parameter)");
     }
-    $this->assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(0, $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
     // optional
     $optional = [ 'altitude', 'speed', 'bearing', 'accuracy', 'provider', 'comment', 'imageid' ];
@@ -463,11 +513,11 @@ class ClientAPITest extends UloggerAPITestCase {
       $optCopy = $options;
       unset($optCopy['form_params'][$parameter]);
       $response = $this->http->post('/client/index.php', $optCopy);
-      $this->assertEquals(200, $response->getStatusCode(), "Unexpected status code");
+      self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
       $json = json_decode((string) $response->getBody());
-      $this->assertFalse($json->{'error'}, "Unexpected error ($parameter)");
+      self::assertFalse($json->{'error'}, "Unexpected error ($parameter)");
     }
-    $this->assertEquals(count($optional), $this->getConnection()->getRowCount('positions'), "Wrong row count");
+    self::assertEquals(count($optional), $this->getConnection()->getRowCount('positions'), "Wrong row count");
 
   }
 

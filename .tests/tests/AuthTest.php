@@ -6,7 +6,7 @@ require_once(__DIR__ . "/../../helpers/config.php");
 
 class AuthTest extends UloggerDatabaseTestCase {
 
-  public function setUp() {
+  public function setUp(): void {
     $_SESSION = [];
     parent::setUp();
   }
@@ -14,85 +14,85 @@ class AuthTest extends UloggerDatabaseTestCase {
   /**
    * @runInSeparateProcess
    */
-  public function testLogin() {
+  public function testLogin(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
-    $this->assertTrue($auth->isAuthenticated(), "Not authenticated");
-    $this->assertInstanceOf(uUser::class, $auth->user, "User variable not set");
-    $this->assertEquals($this->testUser, $auth->user->login, "Wrong login");
-    $this->assertEquals($_SESSION["user"]->login, $auth->user->login, "Wrong login");
-    $this->assertInstanceOf(uUser::class, $_SESSION["user"], "User not set in session");
+    self::assertTrue($auth->isAuthenticated(), "Not authenticated");
+    self::assertInstanceOf(uUser::class, $auth->user, "User variable not set");
+    self::assertEquals($this->testUser, $auth->user->login, "Wrong login");
+    self::assertEquals($_SESSION["user"]->login, $auth->user->login, "Wrong login");
+    self::assertInstanceOf(uUser::class, $_SESSION["user"], "User not set in session");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testLoginBadPass() {
+  public function testLoginBadPass(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $auth = new uAuth();
     $auth->checkLogin($this->testUser, "badPass");
-    $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertInternalType('null', $auth->user, "User not null");
+    self::assertFalse($auth->isAuthenticated(), "Should not be authenticated");
+    self::assertNull($auth->user, "User not null");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testLoginEmptyLogin() {
+  public function testLoginEmptyLogin(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $auth = new uAuth();
     $auth->checkLogin("", $this->testPass);
-    $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertInternalType('null', $auth->user, "User not null");
+    self::assertFalse($auth->isAuthenticated(), "Should not be authenticated");
+    self::assertNull($auth->user, "User not null");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testLoginNoFormData() {
+  public function testLoginNoFormData(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $auth = new uAuth();
-    $this->assertFalse($auth->isAuthenticated(), "Should not be authenticated");
-    $this->assertInternalType('null', $auth->user, "User not null");
+    self::assertFalse($auth->isAuthenticated(), "Should not be authenticated");
+    self::assertNull($auth->user, "User not null");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testSessionAuth() {
+  public function testSessionAuth(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $user = new uUser($this->testUser);
-    $this->assertTrue($user->isValid, "User not valid");
+    self::assertTrue($user->isValid, "User not valid");
     session_name("ulogger");
     session_start();
     $_SESSION["user"] = $user;
     unset($user);
 
     @$auth = new uAuth();
-    $this->assertTrue($auth->isAuthenticated(), "Should be authenticated");
-    $this->assertEquals($this->testUser, $auth->user->login, "Wrong login");
+    self::assertTrue($auth->isAuthenticated(), "Should be authenticated");
+    self::assertEquals($this->testUser, $auth->user->login, "Wrong login");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testSessionAndRequest() {
+  public function testSessionAndRequest(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     $user = new uUser($this->testUser);
-    $this->assertTrue($user->isValid, "User not valid");
+    self::assertTrue($user->isValid, "User not valid");
     session_name("ulogger");
     session_start();
     $_SESSION["user"] = $user;
@@ -100,35 +100,35 @@ class AuthTest extends UloggerDatabaseTestCase {
 
     @$auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
-    $this->assertTrue($auth->isAuthenticated(), "Should be authenticated");
-    $this->assertEquals($this->testUser, $auth->user->login, "Wrong login");
+    self::assertTrue($auth->isAuthenticated(), "Should be authenticated");
+    self::assertEquals($this->testUser, $auth->user->login, "Wrong login");
   }
 
 
   /**
    * @runInSeparateProcess
    */
-  public function testIsNotAdmin() {
+  public function testIsNotAdmin(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT));
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     @$auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
-    $this->assertTrue($auth->isAuthenticated(), "Should be authenticated");
-    $this->assertFalse($auth->isAdmin(), "Should not be admin");
+    self::assertTrue($auth->isAuthenticated(), "Should be authenticated");
+    self::assertFalse($auth->isAdmin(), "Should not be admin");
   }
 
   /**
    * @runInSeparateProcess
    */
-  public function testIsAdmin() {
+  public function testIsAdmin(): void {
     $this->addTestUser($this->testUser, password_hash($this->testPass, PASSWORD_DEFAULT), true);
-    $this->assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
+    self::assertEquals(1, $this->getConnection()->getRowCount('users'), "Wrong row count");
 
     @$auth = new uAuth();
     $auth->checkLogin($this->testUser, $this->testPass);
-    $this->assertTrue($auth->isAuthenticated(), "Should be authenticated");
-    $this->assertTrue($auth->isAdmin(), "Should be admin");
+    self::assertTrue($auth->isAuthenticated(), "Should be authenticated");
+    self::assertTrue($auth->isAdmin(), "Should be admin");
   }
 
 }
