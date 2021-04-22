@@ -15,12 +15,12 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
   public function setUp(): void {
     parent::setUp();
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['ULOGGER_URL']);
     }
 
-    $url = $_ENV['ULOGGER_URL'];
+    $url = getenv('ULOGGER_URL');
 
     $this->http = new GuzzleHttp\Client([ 'base_uri' => $url, 'cookies' => true ]);
   }

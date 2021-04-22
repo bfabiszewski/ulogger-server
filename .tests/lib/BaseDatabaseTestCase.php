@@ -55,14 +55,14 @@ abstract class BaseDatabaseTestCase extends PHPUnit\DbUnit\TestCase {
 
   public static function setUpBeforeClass(): void {
     if (file_exists(__DIR__ . '/../.env')) {
-      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+      $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
       $dotenv->load();
       $dotenv->required(['DB_DSN', 'DB_USER', 'DB_PASS']);
     }
 
-    $db_dsn = $_ENV['DB_DSN'];
-    $db_user = $_ENV['DB_USER'];
-    $db_pass = $_ENV['DB_PASS'];
+    $db_dsn = getenv('DB_DSN');
+    $db_user = getenv('DB_USER');
+    $db_pass = getenv('DB_PASS');
 
     // pdo connection
     if (self::$pdo == null) {
