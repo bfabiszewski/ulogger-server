@@ -367,6 +367,10 @@ export default class TrackViewModel extends ViewModel {
         <div class="menu-title">${$._('summary')}</div>
         <div><img class="icon" alt="${$._('tdistance')}" title="${$._('tdistance')}" src="images/distance.svg"> ${$.getLocaleDistanceMajor(last.totalMeters, true)}</div>
         <div><img class="icon" alt="${$._('ttime')}" title="${$._('ttime')}" src="images/time.svg"> ${$.getLocaleDuration(last.totalSeconds)}</div>`;
+      if (last.totalSeconds > 0) {
+        summary += `
+          <div><img class="icon" alt="${$._('aspeed')}" title="${$._('aspeed')}" src="images/speed.svg"><b>&#10547;</b> ${$.getLocaleSpeed(last.totalMeters / last.totalSeconds, true)}</div>`;
+      }
       if (track.hasSpeeds) {
         summary += `<div><img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed.svg"><b>&#10138;</b> ${$.getLocaleSpeed(track.maxSpeed, true)}</div>`;
       }
