@@ -64,7 +64,7 @@ describe('Openlayers map API tests', () => {
 
   it('should initialize map engine with config values', () => {
     // given
-    spyOn(ol.Map.prototype, 'on');
+    spyOn(ol.Map.prototype, 'onInternal');
     // when
     api.initMap();
     // then
@@ -72,7 +72,8 @@ describe('Openlayers map API tests', () => {
     expect(api.map.getTarget()).toBe(container);
     expect(api.map.getControls().getLength()).toBe(3);
     expect(api.map.getView().getCenter()).toEqual(ol.proj.fromLonLat([ config.initLongitude, config.initLatitude ]));
-    expect(ol.Map.prototype.on).toHaveBeenCalledWith('pointermove', jasmine.any(Function));
+    // noinspection JSUnresolvedVariable
+    expect(ol.Map.prototype.onInternal).toHaveBeenCalledWith('pointermove', jasmine.any(Function));
   });
 
   it('should initialize map layers with config values', () => {
