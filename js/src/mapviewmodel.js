@@ -25,6 +25,7 @@ import ViewModel from './viewmodel.js';
 import uAlert from './alert.js';
 import uDialog from './dialog.js';
 import uObserve from './observe.js';
+import uTrack from './track.js';
 import uUtils from './utils.js';
 
 /**
@@ -157,7 +158,10 @@ export default class MapViewModel extends ViewModel {
       if (track) {
         uObserve.observe(track, 'positions', () => {
           this.displayTrack(track, false);
-          this.api.zoomToExtent();
+          if (track instanceof uTrack && !this.api.isPositionVisible(track.length - 1)) {
+            console.log('last track position not visible');
+            this.api.centerToPosition(track.length - 1);
+          }
           this.toggleStyleOptions();
         });
         this.displayTrack(track, true);

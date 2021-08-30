@@ -18,7 +18,7 @@
  */
 
 import * as ol from '../src/lib/ol.js';
-import OpenlayersApi from '../src/mapapi/api_openlayers.js';
+import OpenLayersApi from '../src/mapapi/api_openlayers.js';
 import TrackFactory from './helpers/trackfactory.js';
 import { config } from '../src/initializer.js'
 import uLayer from '../src/layer.js';
@@ -35,10 +35,14 @@ describe('Openlayers map API tests', () => {
     config.reinitialize();
     document.body.innerHTML = '';
     container = document.createElement('div');
+    container.setAttribute('style', 'display: block; width: 100px; height: 100px');
     document.body.appendChild(container);
     mockViewModel = { mapElement: container, model: {} };
-    api = new OpenlayersApi(mockViewModel, ol);
-    mockMap = new ol.Map({ target: container });
+    api = new OpenLayersApi(mockViewModel, ol);
+    mockMap = new ol.Map({
+      target: container,
+      view: new ol.View({ zoom: 8, center: [ 0, 0 ] })
+    });
   });
 
   it('should load and initialize api scripts', (done) => {
@@ -353,13 +357,12 @@ describe('Openlayers map API tests', () => {
     // given
     api.map = mockMap;
     spyOn(ol.View.prototype, 'fit');
-    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenlayersApi.ZOOM_MAX - 1);
+    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenLayersApi.ZOOM_MAX - 1);
     const extent = [ 0, 1, 2, 3 ];
     // when
-    const result = api.fitToExtent(extent);
+    api.fitToExtent(extent);
     // then
     expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent, jasmine.any(Object));
-    expect(result).toEqual(extent);
   });
 
   it('should fit to extent and zoom to max value', () => {
@@ -368,7 +371,7 @@ describe('Openlayers map API tests', () => {
     const zoomedExtent = [ 3, 2, 1, 0 ];
     api.map = mockMap;
     spyOn(ol.View.prototype, 'fit');
-    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenlayersApi.ZOOM_MAX);
+    spyOn(ol.View.prototype, 'getZoom').and.returnValue(OpenLayersApi.ZOOM_MAX);
     spyOn(ol.View.prototype, 'setZoom');
     spyOn(ol.View.prototype, 'calculateExtent').and.returnValue(zoomedExtent);
     // when
@@ -392,6 +395,68 @@ describe('Openlayers map API tests', () => {
     // then
     expect(marker.getId()).toBe(id);
     expect(marker.getGeometry().getFirstCoordinate()).toEqual(ol.proj.fromLonLat([ track.positions[0].longitude, track.positions[0].latitude ]));
+  });
+
+  it('should center map to given marker', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    track.positions[0].timestamp = 1;
+    track.positions[0].longitude = coordinates[0];
+    track.positions[0].latitude = coordinates[1];
+    const id = 0;
+    api.map = mockMap;
+    api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
+    spyOn(ol.View.prototype, 'setCenter');
+    spyOn(api, 'getMarkerStyle');
+
+    api.setMarker(id, track);
+    // when
+    api.centerToPosition(id);
+    // then
+    expect(ol.View.prototype.setCenter).toHaveBeenCalledWith(ol.proj.fromLonLat(coordinates));
+  });
+
+  it('should confirm that position is visible', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    track.positions[0].timestamp = 1;
+    track.positions[0].longitude = coordinates[0];
+    track.positions[0].latitude = coordinates[1];
+    const id = 0;
+    api.map = mockMap;
+    api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
+    spyOn(ol.extent, 'containsCoordinate').and.returnValue(true);
+    spyOn(api, 'getMarkerStyle');
+
+    api.setMarker(id, track);
+    // when
+    const result = api.isPositionVisible(id);
+    // then
+    expect(ol.extent.containsCoordinate).toHaveBeenCalledWith(jasmine.any(Array), ol.proj.fromLonLat(coordinates));
+    expect(result).toBeTrue();
+  });
+
+  it('should confirm that position is not visible', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    track.positions[0].timestamp = 1;
+    track.positions[0].longitude = coordinates[0];
+    track.positions[0].latitude = coordinates[1];
+    const id = 0;
+    api.map = mockMap;
+    api.layerMarkers = new ol.layer.VectorLayer({ source: new ol.source.Vector() });
+    spyOn(ol.extent, 'containsCoordinate').and.returnValue(false);
+    spyOn(api, 'getMarkerStyle');
+
+    api.setMarker(id, track);
+    // when
+    const result = api.isPositionVisible(id);
+    // then
+    expect(ol.extent.containsCoordinate).toHaveBeenCalledWith(jasmine.any(Array), ol.proj.fromLonLat(coordinates));
+    expect(result).toBeFalse();
   });
 
   it('should get different marker style for start, end and normal position', () => {
@@ -499,7 +564,7 @@ describe('Openlayers map API tests', () => {
     // when
     api.zoomToExtent();
     // then
-    expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent, { maxZoom: OpenlayersApi.ZOOM_MAX });
+    expect(ol.View.prototype.fit).toHaveBeenCalledWith(extent, { padding: OpenLayersApi.TRACK_PADDING, maxZoom: OpenLayersApi.ZOOM_MAX });
   });
 
   it('should get map bounds and convert to WGS84 (EPSG:4326)', () => {
@@ -510,7 +575,7 @@ describe('Openlayers map API tests', () => {
     // when
     const bounds = api.getBounds();
     // then
-    expect(ol.View.prototype.calculateExtent).toHaveBeenCalledWith(jasmine.any(Array));
+    expect(ol.View.prototype.calculateExtent).toHaveBeenCalledTimes(1);
     expect(bounds[0]).toBeCloseTo(20.597985430276808);
     expect(bounds[1]).toBeCloseTo(52.15547181298076);
     expect(bounds[2]).toBeCloseTo(21.363595171488573);

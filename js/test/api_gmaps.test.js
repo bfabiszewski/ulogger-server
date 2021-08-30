@@ -301,6 +301,70 @@ describe('Google Maps map API tests', () => {
     expect(setTimeout).toHaveBeenCalledTimes(1);
   });
 
+  it('should center map to given marker', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    spyOn(GoogleMapsApi, 'getMarkerIcon');
+    spyOn(google.maps.Map.prototype, 'setCenter');
+    spyOn(google.maps.Marker.prototype, 'getPosition').and.returnValue(coordinates);
+    spyOn(google.maps, 'Marker').and.callThrough();
+
+    api.map = new google.maps.Map(container);
+
+    const id = 0;
+    api.setMarker(id, track);
+    // when
+    api.centerToPosition(id);
+
+    // then
+    expect(google.maps.Map.prototype.setCenter).toHaveBeenCalledWith(coordinates);
+  });
+
+  it('should confirm that position is visible', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    spyOn(GoogleMapsApi, 'getMarkerIcon');
+    spyOn(google.maps.Map.prototype, 'getBounds').and.returnValue(new google.maps.LatLngBounds());
+    spyOn(google.maps.LatLngBounds.prototype, 'contains').and.returnValue(true);
+    spyOn(google.maps.Marker.prototype, 'getPosition').and.returnValue(coordinates);
+    spyOn(google.maps, 'Marker').and.callThrough();
+
+    api.map = new google.maps.Map(container);
+
+    const id = 0;
+    api.setMarker(id, track);
+    // when
+    const result = api.isPositionVisible(id);
+
+    // then
+    expect(google.maps.LatLngBounds.prototype.contains).toHaveBeenCalledWith(coordinates);
+    expect(result).toBeTrue();
+  });
+
+  it('should confirm that position is not visible', () => {
+    // given
+    const track = TrackFactory.getTrack(1);
+    const coordinates = [ 1, 3 ];
+    spyOn(GoogleMapsApi, 'getMarkerIcon');
+    spyOn(google.maps.Map.prototype, 'getBounds').and.returnValue(new google.maps.LatLngBounds());
+    spyOn(google.maps.LatLngBounds.prototype, 'contains').and.returnValue(false);
+    spyOn(google.maps.Marker.prototype, 'getPosition').and.returnValue(coordinates);
+    spyOn(google.maps, 'Marker').and.callThrough();
+
+    api.map = new google.maps.Map(container);
+
+    const id = 0;
+    api.setMarker(id, track);
+    // when
+    const result = api.isPositionVisible(id);
+
+    // then
+    expect(google.maps.LatLngBounds.prototype.contains).toHaveBeenCalledWith(coordinates);
+    expect(result).toBeFalse();
+  });
+
   it('should create marker from track position and add it to markers array', () => {
     // given
     const track = TrackFactory.getTrack(1);

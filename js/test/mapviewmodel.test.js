@@ -60,7 +60,9 @@ describe('MapViewModel tests', () => {
       'setTrackDefaultStyle': { /* ignored */ },
       'setTrackGradientStyle': { /* ignored */ },
       'clearMap': { /* ignored */ },
-      'updateSize': { /* ignored */ }
+      'updateSize': { /* ignored */ },
+      'isPositionVisible': { /* ignored */ },
+      'centerToPosition': { /* ignored */ }
     });
     state = new uState();
     vm = new MapViewModel(state);
@@ -251,7 +253,6 @@ describe('MapViewModel tests', () => {
       state.currentTrack.positions.push(TrackFactory.getPosition(100));
       // then
       setTimeout(() => {
-        expect(mockApi.zoomToExtent).toHaveBeenCalledTimes(1);
         expect(mockApi.displayTrack).toHaveBeenCalledTimes(1);
         expect(mockApi.displayTrack).toHaveBeenCalledWith(track, false);
         done();

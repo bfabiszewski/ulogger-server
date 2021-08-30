@@ -53,6 +53,7 @@ export const setupGmapsStub = () => {
           this.sw = sw;
           this.ne = ne;
         }
+        contains() {/* ignore */}
         extend() {/* ignore */}
         getNorthEast() { return this.ne; }
         getSouthWest() { return this.sw; }

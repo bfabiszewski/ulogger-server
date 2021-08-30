@@ -587,16 +587,36 @@ export default class OpenLayersApi {
   }
 
   /**
-   * Fit to extent, respect max zoom
+   * Fit to extent, respect max zoom, add padding
    * @param {Array.<number>} extent
    * @return {Array.<number>}
    */
   fitToExtent(extent) {
-    this.map.getView().fit(extent, { padding: [ 40, 10, 10, 10 ], maxZoom: OpenLayersApi.ZOOM_MAX });
-    if (this.map.getView().getZoom() === OpenLayersApi.ZOOM_MAX) {
-      extent = this.map.getView().calculateExtent(this.map.getSize());
+    this.map.getView().fit(extent, { padding: OpenLayersApi.TRACK_PADDING, maxZoom: OpenLayersApi.ZOOM_MAX });
+    return this.map.getView().calculateExtent();
+  }
+
+  /**
+   * Is given position within viewport
+   * @param {number} id
+   * @return {boolean}
+   */
+  isPositionVisible(id) {
+    const mapExtent = this.map.getView().calculateExtent();
+    const marker = this.layerMarkers.getSource().getFeatureById(id).getGeometry();
+    return marker ? ol.extent.containsCoordinate(mapExtent, marker.getCoordinates()) : false;
+  }
+
+  /**
+   * Center to given position
+   * @param {number} id
+   */
+  centerToPosition(id) {
+    const marker = this.layerMarkers.getSource().getFeatureById(id).getGeometry();
+    if (marker) {
+      console.log(`Setting center to position ${id}`)
+      this.map.getView().setCenter(marker.getCoordinates());
     }
-    return extent;
   }
 
   /**
@@ -691,17 +711,17 @@ export default class OpenLayersApi {
    * @returns {number[]} Bounds [ lon_sw, lat_sw, lon_ne, lat_ne ]
    */
   getBounds() {
-    const extent = this.map.getView().calculateExtent(this.map.getSize());
+    const extent = this.map.getView().calculateExtent();
     const sw = ol.proj.toLonLat([ extent[0], extent[1] ]);
     const ne = ol.proj.toLonLat([ extent[2], extent[3] ]);
     return [ sw[0], sw[1], ne[0], ne[1] ];
   }
 
   /**
-   * Zoom to track extent, respect max zoom
+   * Zoom to track extent, respect max zoom, add padding
    */
   zoomToExtent() {
-    this.map.getView().fit(this.layerMarkers.getSource().getExtent(), { maxZoom: OpenLayersApi.ZOOM_MAX });
+    this.fitToExtent(this.layerMarkers.getSource().getExtent());
   }
 
   /**
@@ -760,3 +780,5 @@ export default class OpenLayersApi {
 }
 /** @type {number} */
 OpenLayersApi.ZOOM_MAX = 20;
+/** @type {number[]} */
+OpenLayersApi.TRACK_PADDING = [ 40, 10, 10, 10 ];

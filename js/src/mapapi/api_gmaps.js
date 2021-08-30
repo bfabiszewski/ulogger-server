@@ -365,6 +365,28 @@ export default class GoogleMapsApi {
   }
 
   /**
+   * Is given position within viewport
+   * @param {number} id
+   * @return {boolean}
+   */
+  isPositionVisible(id) {
+    if (id >= this.markers.length) {
+      return false;
+    }
+    return this.map.getBounds().contains(this.markers[id].getPosition());
+  }
+
+  /**
+   * Center to given position
+   * @param {number} id
+   */
+  centerToPosition(id) {
+    if (id < this.markers.length) {
+      this.map.setCenter(this.markers[id].getPosition());
+    }
+  }
+
+  /**
    * Update size
    */
   // eslint-disable-next-line class-methods-use-this
