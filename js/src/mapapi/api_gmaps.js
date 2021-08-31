@@ -443,6 +443,9 @@ export default class GoogleMapsApi {
     }
     return null;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  saveState() {/* empty */}
 }
 
 /** @type {boolean} */

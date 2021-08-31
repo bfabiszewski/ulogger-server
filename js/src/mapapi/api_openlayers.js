@@ -777,6 +777,9 @@ export default class OpenLayersApi {
     }
     return null;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  saveState() {/* empty */}
 }
 /** @type {number} */
 OpenLayersApi.ZOOM_MAX = 20;
