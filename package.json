@@ -9,7 +9,8 @@
     "lint:css": "stylelint css/src/main.css",
     "lint:js": "eslint js/src/*.js",
     "build": "webpack --config webpack.prod.js",
-    "build:dev": "webpack --config webpack.dev.js"
+    "build:dev": "webpack --config webpack.dev.js",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -46,7 +47,7 @@
     "regenerator-runtime": "^0.13.9",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
-    "terser-webpack-plugin": "^5.1.4",
+    "terser-webpack-plugin": "^5.2.0",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
     "webpack-merge": "^5.8.0"
@@ -87,10 +88,5 @@
   },
   "browserslist": [
     "defaults"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-push": "node .githooks/build-status.js"
-    }
-  }
+  ]
 }
