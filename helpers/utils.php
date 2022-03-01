@@ -214,7 +214,7 @@
       return self::requestValue($name, $default, $type, FILTER_VALIDATE_INT);
     }
 
-    private static function requestValue($name, $default, $type, $filters = FILTER_DEFAULT, $flags = NULL) {
+    private static function requestValue($name, $default, $type, $filters = FILTER_DEFAULT, $flags = []) {
       $input = filter_input($type, $name, $filters, $flags);
       if ($input !== false && $input !== null) {
         return $input;
