@@ -38,4 +38,7 @@ $dbpass = "";
 // Optional table names prefix, eg. "ulogger_"
 $dbprefix = "";
 
+// Override base URL
+$base_url = "";
+
 ?>

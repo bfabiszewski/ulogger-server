@@ -6,6 +6,11 @@ if [ "${ULOGGER_ENABLE_SETUP}" = "1" ]; then
   echo "----------------------------"
 fi
 
+if [ "zz$ULOGGER_BASE_URL" != "zz" ]; then
+  sed -i "s~^\$base_url = .*$~\$base_url = \"${ULOGGER_BASE_URL}\";~g" /var/www/html/config.php
+fi
+
+
 # show config variables
 echo "ulogger configuration"
 echo "---------------------"

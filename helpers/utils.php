@@ -119,6 +119,14 @@
      * @return string URL
      */
     public static function getBaseUrl() {
+      $configFile = dirname(__DIR__) . "/config.php";
+      include($configFile);                                           
+      if (isset($base_url) && $base_url !== false && strlen($base_url) > 0) {
+        if (substr($base_url, -1) !== '/') {         
+          $base_url .= '/';                                               
+        }                                                                    
+        return $base_url;                                         
+      }       
       $proto = (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "" || $_SERVER["HTTPS"] === "off") ? "http://" : "https://";
       // Check if we are behind an https proxy
       if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") {
