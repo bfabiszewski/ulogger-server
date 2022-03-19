@@ -63,7 +63,7 @@ jobs:
       - name: PHPUnit tests
         uses: php-actions/phpunit@v3
         with:
-          php_extensions: xdebug
+          php_extensions: pdo_${{ matrix.config.db-driver }} xdebug
           bootstrap: vendor/autoload.php
           configuration: .tests/phpunit.xml
           args: --coverage-text
