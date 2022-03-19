@@ -1,0 +1,83 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  unix-build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: MySQL
+            db-driver: mysql
+            db-dsn: mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8
+            docker-options: -p 8080:80 -p 8081:3306 --expose 3306
+          - name: PostgreSQL
+            db-driver: pgsql
+            db-dsn: pgsql:host=127.0.0.1;port=8081;dbname=ulogger
+            docker-options: -p 8080:80 -p 8081:5432 --expose 5432
+          - name: SQLite
+            db-driver: sqlite
+            db-dsn: sqlite:/tmp/data/sqlite/ulogger.db
+            docker-options: -p 8080:80 -v /tmp/data:/data
+
+    steps:
+      env:
+        DB_DSN="${{ matrix.config.db-dsn }}"
+        DB_USER=ulogger
+        DB_PASS=secret2
+        ULOGGER_URL="http://127.0.0.1:8080"
+    - uses: actions/checkout@v2
+    - name: Prepare for docker
+      if: ${{ matrix.config.db-driver == 'sqlite' }}
+      run: |
+        sudo apt-get install sqlite3
+        rm -rf /tmp/data
+        mkdir -p /tmp/data/sqlite /tmp/data/uploads
+        sqlite3 -init scripts/ulogger.sqlite /tmp/data/sqlite/ulogger.db .exit
+        sudo useradd runner
+        sudo chown -R runner /tmp/data
+        sudo chmod -R 777 /tmp/data
+    - name: Build docker
+      run: docker build -t ulogger --build-arg DB_DRIVER=${{ matrix.config.db-driver }} .
+    - name: Run docker
+      run: |
+        docker run -d --name ulogger ${{ matrix.config.docker-options }} -e ULOGGER_ENABLE_SETUP=1 ulogger
+        until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
+    - name: Install PHP dependencies
+      uses: php-actions/composer@v6
+    - name: Setup node
+      uses: actions/setup-node@v2
+    - name: Install node dependencies
+      run: npm install
+
+    - name: PHPUnit tests
+      uses: php-actions/phpunit@v3
+      with:
+        php_extensions: xdebug
+        bootstrap: vendor/autoload.php
+        configuration: .tests/phpunit.xml
+        args: --coverage-text
+      env:
+        XDEBUG_MODE: coverage
+
+    - name: UI tests
+      run: npm test
+    - name: JS lint
+      run: npm run lint:js
+    - name: CSS lint
+      run: npm run lint:css
+      
+    - name: Show docker logs on failure
+      if: ${{ failure() }}
+      run: docker logs ulogger
