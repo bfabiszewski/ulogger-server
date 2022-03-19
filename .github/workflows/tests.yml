@@ -27,8 +27,8 @@ jobs:
             docker-options: -p 8080:80 -p 8081:5432 --expose 5432
           - name: SQLite
             db-driver: sqlite
-            db-dsn: sqlite:/tmp/data/sqlite/ulogger.db
-            docker-options: -p 8080:80 -v /tmp/data:/data
+            db-dsn: sqlite:${{ runner.temp }}/data/sqlite/ulogger.db
+            docker-options: -p 8080:80 -v ${{ runner.temp }}/data:/data
     env:
       DB_DSN: "${{ matrix.config.db-dsn }}"
       DB_USER: ulogger
@@ -40,12 +40,9 @@ jobs:
       - name: Prepare for docker
         if: ${{ matrix.config.db-driver == 'sqlite' }}
         run: |
-          sudo apt-get install sqlite3
-          rm -rf /tmp/data
-          mkdir -p /tmp/data/sqlite /tmp/data/uploads
-          sqlite3 -init scripts/ulogger.sqlite /tmp/data/sqlite/ulogger.db .exit
-          sudo chown -R runner /tmp/data
-          sudo chmod -R 777 /tmp/data
+          rm -rf ${{ runner.temp }}/data
+          mkdir -p ${{ runner.temp }}/data/sqlite ${{ runner.temp }}/data/uploads
+          sqlite3 -init scripts/ulogger.sqlite ${{ runner.temp }}/data/sqlite/ulogger.db .exit
       - name: Build docker
         run: docker build -t ulogger --build-arg DB_DRIVER=${{ matrix.config.db-driver }} .
       - name: Run docker
