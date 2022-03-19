@@ -44,7 +44,6 @@ jobs:
           rm -rf /tmp/data
           mkdir -p /tmp/data/sqlite /tmp/data/uploads
           sqlite3 -init scripts/ulogger.sqlite /tmp/data/sqlite/ulogger.db .exit
-          sudo useradd runner
           sudo chown -R runner /tmp/data
           sudo chmod -R 777 /tmp/data
       - name: Build docker
