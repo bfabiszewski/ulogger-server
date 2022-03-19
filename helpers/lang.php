@@ -17,100 +17,100 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(ROOT_DIR . "/helpers/config.php");
+require_once(ROOT_DIR . "/helpers/config.php");
+
+/**
+ * Localization
+ */
+class uLang {
 
   /**
-  * Localization
-  */
-  class uLang {
+   * Available languages
+   *
+   * @var array
+   */
+  private static $languages = [
+    "ca" => "Català",
+    "cs" => "Čeština",
+    "de" => "Deutsch",
+    "el" => "Ελληνικά",
+    "en" => "English",
+    "es" => "Español",
+    "eu" => "Euskera",
+    "fr" => "Français",
+    "it" => "Italiano",
+    "pl" => "Polski",
+    "ru" => "Русский",
+    "sk" => "Slovenčina"
+  ];
 
-    /**
-     * Available languages
-     *
-     * @var array
-     */
-    private static $languages = [
-      "ca" => "Català",
-      "cs" => "Čeština",
-      "de" => "Deutsch",
-      "el" => "Ελληνικά",
-      "en" => "English",
-      "es" => "Español",
-      "eu" => "Euskera",
-      "fr" => "Français",
-      "it" => "Italiano",
-      "pl" => "Polski",
-      "ru" => "Русский",
-      "sk" => "Slovenčina"
-    ];
+  /**
+   * Application strings
+   * Array of key => translation pairs
+   *
+   * @var array
+   */
+  private $strings;
+  /**
+   * Setup script strings
+   * Array of key => translation pairs
+   *
+   * @var array
+   */
+  private $setupStrings;
 
-    /**
-     * Application strings
-     * Array of key => translation pairs
-     *
-     * @var array
-     */
-    private $strings;
-    /**
-     * Setup script strings
-     * Array of key => translation pairs
-     *
-     * @var array
-     */
-    private $setupStrings;
+  /**
+   * Constructor
+   *
+   * @param uConfig $config Config
+   */
+  public function __construct($config) {
+    $language = $config->lang;
+    $lang = [];
+    $langSetup = [];
+    // always load en base
+    require(ROOT_DIR . "/lang/en.php");
 
-    /**
-     * Constructor
-     *
-     * @param uConfig $config Config
-     */
-    public function __construct($config) {
-      $language = $config->lang;
-      $lang = [];
-      $langSetup = [];
-      // always load en base
-      require(ROOT_DIR . "/lang/en.php");
-
-      // override with translated strings if needed
-      // missing strings will be displayed in English
-      if ($language !== "en" && array_key_exists($language, self::$languages)) {
-        require(ROOT_DIR . "/lang/$language.php");
-      }
-
-      $this->strings = $lang;
-      $this->setupStrings = $langSetup;
+    // override with translated strings if needed
+    // missing strings will be displayed in English
+    if ($language !== "en" && array_key_exists($language, self::$languages)) {
+      require(ROOT_DIR . "/lang/$language.php");
     }
 
-    /**
-     * Get supported languages array
-     * Language code => Native language name
-     *
-     * @return array
-     */
-    public static function getLanguages() {
-      return self::$languages;
-    }
-
-    /**
-     * Get translated strings array
-     * Key => translation string
-     *
-     * @return array
-     */
-    public function getStrings() {
-      return $this->strings;
-    }
-
-    /**
-     * Get translated strings array for setup script
-     * Key => translation string
-     *
-     * @return array
-     */
-    public function getSetupStrings() {
-      return $this->setupStrings;
-    }
-
+    $this->strings = $lang;
+    $this->setupStrings = $langSetup;
   }
 
- ?>
+  /**
+   * Get supported languages array
+   * Language code => Native language name
+   *
+   * @return array
+   */
+  public static function getLanguages() {
+    return self::$languages;
+  }
+
+  /**
+   * Get translated strings array
+   * Key => translation string
+   *
+   * @return array
+   */
+  public function getStrings() {
+    return $this->strings;
+  }
+
+  /**
+   * Get translated strings array for setup script
+   * Key => translation string
+   *
+   * @return array
+   */
+  public function getSetupStrings() {
+    return $this->setupStrings;
+  }
+
+}
+
+?>

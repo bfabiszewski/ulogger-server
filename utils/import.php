@@ -73,7 +73,7 @@ else if (empty($gpx->trk)) {
 $trackList = [];
 foreach ($gpx->trk as $trk) {
   $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
-  $metaName = empty($gpx->metadata->name) ? NULL : (string) $gpx->metadata->name;
+  $metaName = empty($gpx->metadata->name) ? null : (string) $gpx->metadata->name;
   $trackId = uTrack::add($auth->user->id, $trackName, $metaName);
   if ($trackId === false) {
     uUtils::exitWithError($lang["servererror"]);
@@ -89,11 +89,11 @@ foreach ($gpx->trk as $trk) {
         uUtils::exitWithError($lang["iparsefailure"]);
       }
       $time = isset($point->time) ? strtotime($point->time) : 1;
-      $altitude = isset($point->ele) ? (double) $point->ele : NULL;
-      $comment = isset($point->desc) && !empty($point->desc) ? (string) $point->desc : NULL;
-      $speed = NULL;
-      $bearing = NULL;
-      $accuracy = NULL;
+      $altitude = isset($point->ele) ? (double) $point->ele : null;
+      $comment = isset($point->desc) && !empty($point->desc) ? (string) $point->desc : null;
+      $speed = null;
+      $bearing = null;
+      $accuracy = null;
       $provider = "gps";
       if (!empty($point->extensions)) {
         // parse ulogger extensions
@@ -105,7 +105,7 @@ foreach ($gpx->trk as $trk) {
       }
       $ret = $track->addPosition($auth->user->id,
                     $time, (double) $point["lat"], (double) $point["lon"], $altitude,
-                    $speed, $bearing, $accuracy, $provider, $comment, NULL);
+                    $speed, $bearing, $accuracy, $provider, $comment, null);
       if ($ret === false) {
         $track->delete();
         uUtils::exitWithError($lang["servererror"]);

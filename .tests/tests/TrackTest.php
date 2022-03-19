@@ -72,11 +72,11 @@ class TrackTest extends UloggerDatabaseTestCase {
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 
-    $posId = $track->addPosition($userId, NULL, $this->testLat, $this->testLon);
+    $posId = $track->addPosition($userId, null, $this->testLat, $this->testLon);
     self::assertFalse($posId, "Adding position with null time stamp should fail");
-    $posId = $track->addPosition($userId, $this->testTimestamp, NULL, $this->testLon);
+    $posId = $track->addPosition($userId, $this->testTimestamp, null, $this->testLon);
     self::assertFalse($posId, "Adding position with null latitude should fail");
-    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, NULL);
+    $posId = $track->addPosition($userId, $this->testTimestamp, $this->testLat, null);
     self::assertFalse($posId, "Adding position with null longitude should fail");
 
     $posId = $track->addPosition($userId, "", $this->testLat, $this->testLon);
@@ -113,7 +113,7 @@ class TrackTest extends UloggerDatabaseTestCase {
     uTrack::deleteAll($userId);
     self::assertEquals(1, $this->getConnection()->getRowCount('tracks'), "Wrong row count");
     self::assertEquals(1, $this->getConnection()->getRowCount('positions'), "Wrong row count");
-    self::assertFalse(uTrack::deleteAll(NULL), "User id should not be empty");
+    self::assertFalse(uTrack::deleteAll(null), "User id should not be empty");
   }
 
   public function testUpdate(): void {

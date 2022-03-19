@@ -100,8 +100,8 @@ if ($trackId && $userId) {
       $xml->setIndent(true);
       $xml->startDocument("1.0", "utf-8");
       $xml->startElement("kml");
-      $xml->writeAttributeNs("xsi", "schemaLocation", NULL, "http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd");
-      $xml->writeAttributeNs("xmlns", "xsi", NULL, "http://www.w3.org/2001/XMLSchema-instance");
+      $xml->writeAttributeNs("xsi", "schemaLocation", null, "http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd");
+      $xml->writeAttributeNs("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
       $xml->writeAttribute("xmlns", "http://www.opengis.net/kml/2.2");
       $xml->startElement("Document");
       $xml->writeElement("name", $positionsArr[0]->trackName);
@@ -132,7 +132,7 @@ if ($trackId && $userId) {
         if(++$i === count($positionsArr)) { $style = "#greenStyle"; } // last element
         $xml->startElement("Placemark");
         $xml->writeAttribute("id", "point_{$position->id}");
-          $description =
+        $description =
           "<div style=\"font-weight: bolder; padding-bottom: 10px; border-bottom: 1px solid gray;\">" .
           "{$lang["user"]}: " . htmlspecialchars($position->userLogin) . "<br>{$lang["track"]}: " . htmlspecialchars($position->trackName) .
           "</div>" .
@@ -151,7 +151,7 @@ if ($trackId && $userId) {
           $xml->endElement();
           $xml->writeElement("styleUrl", $style);
           $xml->startElement("Point");
-            $coordinate[$i] = "{$position->longitude},{$position->latitude}" . (!is_null($position->altitude) ? ",{$position->altitude}" : "");
+          $coordinate[$i] = "{$position->longitude},{$position->latitude}" . (!is_null($position->altitude) ? ",{$position->altitude}" : "");
             $xml->writeElement("coordinates", $coordinate[$i]);
           $xml->endElement();
         $xml->endElement();
@@ -182,9 +182,9 @@ if ($trackId && $userId) {
       $xml->startDocument("1.0", "utf-8");
       $xml->startElement("gpx");
       $xml->writeAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
-      $xml->writeAttributeNs("xsi", "schemaLocation", NULL, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://github.com/bfabiszewski/ulogger-android/1 https://raw.githubusercontent.com/bfabiszewski/ulogger-server/master/scripts/gpx_extensions1.xsd");
-      $xml->writeAttributeNs("xmlns", "xsi", NULL, "http://www.w3.org/2001/XMLSchema-instance");
-      $xml->writeAttributeNs("xmlns", "ulogger", NULL, "https://github.com/bfabiszewski/ulogger-android/1");
+      $xml->writeAttributeNs("xsi", "schemaLocation", null, "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://github.com/bfabiszewski/ulogger-android/1 https://raw.githubusercontent.com/bfabiszewski/ulogger-server/master/scripts/gpx_extensions1.xsd");
+      $xml->writeAttributeNs("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
+      $xml->writeAttributeNs("xmlns", "ulogger", null, "https://github.com/bfabiszewski/ulogger-android/1");
       $xml->writeAttribute("creator", "μlogger-server " . $config->version);
       $xml->writeAttribute("version", "1.1");
       $xml->startElement("metadata");
@@ -194,46 +194,47 @@ if ($trackId && $userId) {
       $xml->startElement("trk");
         $xml->writeElement("name", $positionsArr[0]->trackName);
         $xml->startElement("trkseg");
-        $i = 0;
-        $totalMeters = 0;
-        $totalSeconds = 0;
-        foreach ($positionsArr as $position) {
-          $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
-          $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
-          $prevPosition = $position;
-          $totalMeters += $distance;
-          $totalSeconds += $seconds;
+      $i = 0;
+      $totalMeters = 0;
+      $totalSeconds = 0;
+      foreach ($positionsArr as $position) {
+        $distance = isset($prevPosition) ? $position->distanceTo($prevPosition) : 0;
+        $seconds = isset($prevPosition) ? $position->secondsTo($prevPosition) : 0;
+        $prevPosition = $position;
+        $totalMeters += $distance;
+        $totalSeconds += $seconds;
           $xml->startElement("trkpt");
             $xml->writeAttribute("lat", $position->latitude);
             $xml->writeAttribute("lon", $position->longitude);
-            if (!is_null($position->altitude)) { $xml->writeElement("ele", $position->altitude); }
+        if (!is_null($position->altitude)) { 
+            $xml->writeElement("ele", $position->altitude); 
+        }
             $xml->writeElement("time", gmdate("Y-m-d\TH:i:s\Z", $position->timestamp));
             $xml->writeElement("name", ++$i);
-            if (!is_null($position->comment)) {
-              $xml->startElement("desc");
+        if (!is_null($position->comment)) {
+            $xml->startElement("desc");
               $xml->writeCData($position->comment);
-              $xml->endElement();
-            }
-            if (!is_null($position->speed) || !is_null($position->bearing) || !is_null($position->accuracy) || !is_null($position->provider)) {
-              $xml->startElement("extensions");
-
-              if (!is_null($position->speed)) {
-                $xml->writeElementNS("ulogger", "speed", NULL, $position->speed);
-              }
-              if (!is_null($position->bearing)) {
-                $xml->writeElementNS("ulogger", "bearing", NULL, $position->bearing);
-              }
-              if (!is_null($position->accuracy)) {
-                $xml->writeElementNS("ulogger", "accuracy", NULL, $position->accuracy);
-              }
-              if (!is_null($position->provider)) {
-                $xml->writeElementNS("ulogger", "provider", NULL, $position->provider);
-              }
-
-              $xml->endElement();
-            }
-          $xml->endElement();
+            $xml->endElement();
         }
+        if (!is_null($position->speed) || !is_null($position->bearing) || !is_null($position->accuracy) || !is_null($position->provider)) {
+            $xml->startElement("extensions");
+
+          if (!is_null($position->speed)) {
+              $xml->writeElementNS("ulogger", "speed", null, $position->speed);
+          }
+          if (!is_null($position->bearing)) {
+              $xml->writeElementNS("ulogger", "bearing", null, $position->bearing);
+          }
+          if (!is_null($position->accuracy)) {
+              $xml->writeElementNS("ulogger", "accuracy", null, $position->accuracy);
+          }
+          if (!is_null($position->provider)) {
+              $xml->writeElementNS("ulogger", "provider", null, $position->provider);
+          }
+            $xml->endElement();
+        }
+          $xml->endElement();
+      }
         $xml->endElement();
       $xml->endElement();
       $xml->endElement();

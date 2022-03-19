@@ -199,7 +199,7 @@ export default class ConfigDialogModel extends ViewModel {
     }
     return `<div><img style="vertical-align: bottom; margin-right: 10px;" src="images/settings.svg" alt="${$._('settings')}"> <b>${$._('editingconfig')}</b></div>
       <div style="clear: both; padding-bottom: 1em;"></div>
-      <form id="configForm">
+      <form id="config-form">
         <label><b>${$._('language')}</b>
         <select data-bind="lang">
           ${langOptions}

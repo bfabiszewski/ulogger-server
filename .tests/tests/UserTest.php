@@ -75,7 +75,7 @@ class UserTest extends UloggerDatabaseTestCase {
   }
 
   public function testIsAdmin(): void {
-    $this->addTestUser($this->testUser, NULL, true);
+    $this->addTestUser($this->testUser, null, true);
     $user = new uUser($this->testUser);
     self::assertTrue($user->isAdmin, "User should be admin");
   }

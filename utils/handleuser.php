@@ -41,7 +41,7 @@ if ($admin && !$auth->isAdmin()) {
 }
 
 $aUser = new uUser($login);
-$data = NULL;
+$data = null;
 
 switch ($action) {
   case 'add':

@@ -17,32 +17,32 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-  require_once(__DIR__ . '/helpers/auth.php');
-  require_once(ROOT_DIR . '/helpers/config.php');
-  require_once(ROOT_DIR . '/helpers/position.php');
-  require_once(ROOT_DIR . '/helpers/track.php');
-  require_once(ROOT_DIR . '/helpers/utils.php');
-  require_once(ROOT_DIR . '/helpers/lang.php');
+require_once(__DIR__ . '/helpers/auth.php');
+require_once(ROOT_DIR . '/helpers/config.php');
+require_once(ROOT_DIR . '/helpers/position.php');
+require_once(ROOT_DIR . '/helpers/track.php');
+require_once(ROOT_DIR . '/helpers/utils.php');
+require_once(ROOT_DIR . '/helpers/lang.php');
 
-  $login = uUtils::postString('user');
-  $pass = uUtils::postPass('pass');
-  $action = uUtils::postString('action');
+$login = uUtils::postString('user');
+$pass = uUtils::postPass('pass');
+$action = uUtils::postString('action');
 
-  $config = uConfig::getInstance();
-  $lang = (new uLang($config))->getStrings();
-  $langsArr = uLang::getLanguages();
+$config = uConfig::getInstance();
+$lang = (new uLang($config))->getStrings();
+$langsArr = uLang::getLanguages();
 
-  $auth = new uAuth();
-  if ($action === 'auth') {
-    $auth->checkLogin($login, $pass);
-  }
+$auth = new uAuth();
+if ($action === 'auth') {
+  $auth->checkLogin($login, $pass);
+}
 
-  if ($action === 'auth' && !$auth->isAuthenticated()) {
-    $auth->exitWithRedirect('login.php?auth_error=1');
-  }
-  if ($config->requireAuthentication && !$auth->isAuthenticated()) {
-    $auth->exitWithRedirect('login.php');
-  }
+if ($action === 'auth' && !$auth->isAuthenticated()) {
+  $auth->exitWithRedirect('login.php?auth_error=1');
+}
+if ($config->requireAuthentication && !$auth->isAuthenticated()) {
+  $auth->exitWithRedirect('login.php');
+}
 
 ?>
 <!DOCTYPE html>

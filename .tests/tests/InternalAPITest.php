@@ -37,19 +37,19 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $position = $json[0];
     self::assertEquals(1, (int) $position->id, "Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testAdminUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testAdminUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
 
     $position = $json[1];
-    self::assertEquals(2, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testAdminUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(2, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testAdminUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
   }
 
   /**
@@ -78,20 +78,20 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(2, $json, "Wrong count of positions");
 
     $position = $json[0];
-    self::assertEquals(1, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(1, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
 
     $position = $json[1];
-    self::assertEquals(2, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(2, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
   }
 
   /**
@@ -148,20 +148,20 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(2, $json, "Wrong count of positions");
 
     $position = $json[0];
-    self::assertEquals(1, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(1, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
 
     $position = $json[1];
-    self::assertEquals(2, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(2, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
   }
 
   /**
@@ -195,12 +195,12 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(1, $json, "Wrong count of positions");
 
     $position = $json[0];
-    self::assertEquals(2, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 3, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testAdminUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(2, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 3, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testAdminUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
   }
 
   /**
@@ -235,20 +235,20 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(2, $json, "Wrong count of positions");
 
     $position = $json[0];
-    self::assertEquals(2, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 3, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testAdminUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(2, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 3, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testAdminUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
 
     $position = $json[1];
-    self::assertEquals(3, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 2, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testUser, (string) $position->username,"Wrong username");
-    self::assertEquals($trackName, (string) $position->trackname,"Wrong trackname");
+    self::assertEquals(3, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 2, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testUser, (string) $position->username, "Wrong username");
+    self::assertEquals($trackName, (string) $position->trackname, "Wrong trackname");
   }
 
   /**
@@ -349,14 +349,14 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(1, $json, "Wrong count of positions");
 
     $position = $json[0];
-    self::assertEquals($afterId + 1, (int) $position->id,"Wrong position id");
-    self::assertEquals($this->testLat + 1, (float) $position->latitude,"Wrong latitude");
-    self::assertEquals($this->testLon, (float) $position->longitude,"Wrong longitude");
-    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp,"Wrong timestamp");
-    self::assertEquals($this->testAdminUser, (string) $position->username,"Wrong username");
-    self::assertEquals($this->testTrackName, (string) $position->trackname,"Wrong trackname");
-    self::assertEquals(111195, (int) $position->meters,"Wrong distance delta");
-    self::assertEquals(1, (int) $position->seconds,"Wrong timestamp delta");
+    self::assertEquals($afterId + 1, (int) $position->id, "Wrong position id");
+    self::assertEquals($this->testLat + 1, (float) $position->latitude, "Wrong latitude");
+    self::assertEquals($this->testLon, (float) $position->longitude, "Wrong longitude");
+    self::assertEquals($this->testTimestamp + 1, (int) $position->timestamp, "Wrong timestamp");
+    self::assertEquals($this->testAdminUser, (string) $position->username, "Wrong username");
+    self::assertEquals($this->testTrackName, (string) $position->trackname, "Wrong trackname");
+    self::assertEquals(111195, (int) $position->meters, "Wrong distance delta");
+    self::assertEquals(1, (int) $position->seconds, "Wrong timestamp delta");
   }
 
 
@@ -387,12 +387,12 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(2, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    self::assertEquals($this->testTrackId2, (int) $track->id,"Wrong track id");
-    self::assertEquals($this->testTrackName . "2", (string) $track->name,"Wrong track name");
+    self::assertEquals($this->testTrackId2, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName . "2", (string) $track->name, "Wrong track name");
 
     $track = $json[1];
-    self::assertEquals($this->testTrackId, (int) $track->id,"Wrong track id");
-    self::assertEquals($this->testTrackName, (string) $track->name,"Wrong track name");
+    self::assertEquals($this->testTrackId, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, (string) $track->name, "Wrong track name");
   }
 
   /**
@@ -420,12 +420,12 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertCount(2, $json, "Wrong count of tracks");
 
     $track = $json[0];
-    self::assertEquals($this->testTrackId2, (int) $track->id,"Wrong track id");
-    self::assertEquals($this->testTrackName . "2", (string) $track->name,"Wrong track name");
+    self::assertEquals($this->testTrackId2, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName . "2", (string) $track->name, "Wrong track name");
 
     $track = $json[1];
-    self::assertEquals($this->testTrackId, (int) $track->id,"Wrong track id");
-    self::assertEquals($this->testTrackName, (string) $track->name,"Wrong track name");
+    self::assertEquals($this->testTrackId, (int) $track->id, "Wrong track id");
+    self::assertEquals($this->testTrackName, (string) $track->name, "Wrong track name");
   }
 
   /**
@@ -626,8 +626,8 @@ class InternalAPITest extends UloggerAPITestCase {
 
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals("Wrong old password", (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals("Wrong old password", (string) $json->message, "Wrong error message");
   }
 
   /**
@@ -871,8 +871,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
     self::assertEquals(2, $this->getConnection()->getRowCount("tracks"), "Wrong row count");
   }
 
@@ -899,8 +899,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
   }
 
   /**
@@ -918,7 +918,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
     self::assertEquals(1, (int) $json->error, "Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
   }
 
 
@@ -938,8 +938,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
   }
 
   /**
@@ -959,8 +959,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
 
   }
@@ -981,8 +981,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -1002,8 +1002,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -1024,8 +1024,8 @@ class InternalAPITest extends UloggerAPITestCase {
     self::assertEquals(200, $response->getStatusCode(), "Unexpected status code");
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
-    self::assertEquals(1, (int) $json->error,"Wrong error status");
-    self::assertEquals($lang["servererror"], (string) $json->message,"Wrong error message");
+    self::assertEquals(1, (int) $json->error, "Wrong error status");
+    self::assertEquals($lang["servererror"], (string) $json->message, "Wrong error message");
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 
@@ -1074,7 +1074,7 @@ class InternalAPITest extends UloggerAPITestCase {
     $json = json_decode($response->getBody());
     self::assertNotNull($json, "JSON object is null");
     self::assertEquals(1, (int) $json->error, "Wrong error status");
-    self::assertEquals($lang["userexists"], (string) $json->message,"Wrong error message");
+    self::assertEquals($lang["userexists"], (string) $json->message, "Wrong error message");
     self::assertEquals(2, $this->getConnection()->getRowCount("users"), "Wrong row count");
   }
 

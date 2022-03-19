@@ -41,11 +41,11 @@ class PositionTest extends UloggerDatabaseTestCase {
     );
     $this->assertTableContains($expected, $actual, "Wrong actual table data");
 
-    $posId = uPosition::add($userId, $trackId, NULL, $this->testLat, $this->testLon);
+    $posId = uPosition::add($userId, $trackId, null, $this->testLat, $this->testLon);
     self::assertFalse($posId, "Adding position with null time stamp should fail");
-    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, NULL, $this->testLon);
+    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, null, $this->testLon);
     self::assertFalse($posId, "Adding position with null latitude should fail");
-    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, $this->testLat, NULL);
+    $posId = uPosition::add($userId, $trackId, $this->testTimestamp, $this->testLat, null);
     self::assertFalse($posId, "Adding position with null longitude should fail");
 
     $posId = uPosition::add($userId, $trackId, "", $this->testLat, $this->testLon);
@@ -156,7 +156,7 @@ class PositionTest extends UloggerDatabaseTestCase {
     self::assertCount(2, $posArr, "Wrong row count");
     $posArr = uPosition::getAll($userId, $trackId);
     self::assertCount(1, $posArr, "Wrong row count");
-    $posArr = uPosition::getAll(NULL, $trackId);
+    $posArr = uPosition::getAll(null, $trackId);
     self::assertCount(1, $posArr, "Wrong row count");
     $posArr = uPosition::getAll($userId3);
     self::assertCount(0, $posArr, "Wrong row count");

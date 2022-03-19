@@ -61,20 +61,20 @@ class uUpload {
   /**
    * Get file extension for given mime
    * @param $mime
-   * @return string|null Extension or NULL if not found
+   * @return string|null Extension or null if not found
    */
   private static function getExtension($mime) {
     if (self::isKnownMime($mime)) {
       return self::getMimeMap()[$mime];
     }
-    return NULL;
+    return null;
   }
 
   /**
    * Save file to uploads, basic sanitizing
    * @param array $uploaded File meta array from $_FILES[]
    * @param int $trackId
-   * @return string|NULL Unique file name, null on error
+   * @return string|null Unique file name, null on error
    */
   public static function add($uploaded, $trackId) {
     try {
@@ -82,7 +82,7 @@ class uUpload {
     } catch (Exception $e) {
       syslog(LOG_ERR, $e->getMessage());
       // save exception to txt file as image replacement?
-      return NULL;
+      return null;
     }
 
     $extension = self::getExtension($fileMeta[self::META_TYPE]);
@@ -93,7 +93,7 @@ class uUpload {
     if (move_uploaded_file($fileMeta[self::META_TMP_NAME], self::$uploadDir . $fileName)) {
       return $fileName;
     }
-    return NULL;
+    return null;
   }
 
   /**
@@ -140,7 +140,7 @@ class uUpload {
     $uploadErrors[UPLOAD_ERR_CANT_WRITE] = "Failed to write file to disk";
     $uploadErrors[UPLOAD_ERR_EXTENSION] = "A PHP extension stopped file upload";
 
-    $file = NULL;
+    $file = null;
     $fileError = isset($fileMeta[self::META_ERROR]) ? $fileMeta[self::META_ERROR] : UPLOAD_ERR_OK;
     if ($fileMeta[self::META_SIZE] > uUtils::getSystemUploadLimit() && $fileError == UPLOAD_ERR_OK) {
       $fileError = UPLOAD_ERR_FORM_SIZE;
