@@ -1,4 +1,4 @@
-/* eslint-disable no-undef,no-process-env,no-underscore-dangle */
+/* eslint-disable no-undef,no-process-env,no-underscore-dangle,no-global-assign,no-native-reassign */
 // noinspection NpmUsedModulesInstalled
 process = require('process');
 process.env.CHROME_BIN = require('puppeteer').executablePath();
@@ -63,7 +63,7 @@ module.exports = function(config) {
             test: /\.js$/,
             include: path.resolve('js/src/'),
             use: {
-              loader: 'istanbul-instrumenter-loader',
+              loader: '@jsdevtools/coverage-istanbul-loader',
               options: { esModules: true }
             }
           }
