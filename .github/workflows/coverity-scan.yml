@@ -16,12 +16,12 @@ jobs:
     - uses: actions/checkout@v2
     - uses: php-actions/composer@v6
     - uses: actions/setup-node@v2
-    - name: install PHP dependencies
-      run: composer install   
+
     - name: install Node dependencies
       run: npm install
-    - name: Build
+    - name: build
       run: npm run build
+      
     - name: download coverity tools
       run: |
         curl -Lf \
@@ -33,10 +33,7 @@ jobs:
         tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
       env:
         TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
-    - name: autogen
-      run: ./autogen.sh
-    - name: configure
-      run: ./configure ${{ matrix.config.options }}
+        
     - name: build with cov-build
       run: |
         export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
