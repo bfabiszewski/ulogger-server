@@ -2,6 +2,7 @@
     "name": "bfabiszewski/ulogger-server",
     "description": "ulogger server",
     "require": {
+        "php": ">=7.4",
         "ulrichsg/getopt-php": "^3.2",
         "ext-json": "*",
         "ext-pdo": "*",
@@ -18,5 +19,10 @@
         "vlucas/phpdotenv": "^5.3",
         "guzzlehttp/guzzle": "^7.3",
         "kornrunner/dbunit": "^6.0"
+    },
+    "config": {
+      "platform": {
+        "php": "7.4"
+      }
     }
 }

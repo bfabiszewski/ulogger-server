@@ -1,4 +1,4 @@
-FROM alpine:3.13
+FROM alpine:3.15
 
 LABEL maintainer="Bartek Fabiszewski (https://github.com/bfabiszewski)"
 
@@ -33,8 +33,8 @@ COPY .docker/run.sh /run.sh
 RUN chmod +x /run.sh
 COPY .docker/init.sh /init.sh
 RUN chmod +x /init.sh
-COPY .docker/nginx.conf /etc/nginx/conf.d/default.conf
-RUN chown nginx.nginx /etc/nginx/conf.d/default.conf
+COPY .docker/nginx.conf /etc/nginx/http.d/default.conf
+RUN chown nginx.nginx /etc/nginx/http.d/default.conf
 
 COPY . /var/www/html
 
