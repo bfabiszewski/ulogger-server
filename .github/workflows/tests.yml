@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, github-actions]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   unix-tests:
@@ -27,8 +27,8 @@ jobs:
             docker-options: -p 8080:80 -p 8081:5432 --expose 5432
           - name: SQLite
             db-driver: sqlite
-            db-dsn: sqlite:${{ runner.temp }}/data/sqlite/ulogger.db
-            docker-options: -p 8080:80 -v ${{ runner.temp }}/data:/data
+            db-dsn: sqlite:$RUNNER_TEMP/data/sqlite/ulogger.db
+            docker-options: -p 8080:80 -v $RUNNER_TEMP/data:/data
     env:
       DB_DSN: "${{ matrix.config.db-dsn }}"
       DB_USER: ulogger
@@ -72,7 +72,7 @@ jobs:
         run: npm run lint:js
       - name: CSS lint
         run: npm run lint:css
-        
+
       - name: Show docker logs on failure
         if: ${{ failure() }}
         run: docker logs ulogger
