@@ -34,8 +34,8 @@ jobs:
             rm -rf ${{ runner.temp }}/data
             mkdir -p ${{ runner.temp }}/data/sqlite ${{ runner.temp }}/data/uploads
             sqlite3 -init scripts/ulogger.sqlite ${{ runner.temp }}/data/sqlite/ulogger.db .exit
-            sudo chown -R runner /tmp/data
-            sudo chmod -R 777 /tmp/data
+            sudo chown -R runner ${{ runner.temp }}/data
+            sudo chmod -R 777 ${{ runner.temp }}/data
       - uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
