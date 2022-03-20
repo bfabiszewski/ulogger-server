@@ -1,0 +1,56 @@
+name: coverity-scan
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  coverity-build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: php-actions/composer@v6
+    - uses: actions/setup-node@v2
+    - name: install PHP dependencies
+      run: composer install   
+    - name: install Node dependencies
+      run: npm install
+    - name: Build
+      run: npm run build
+    - name: download coverity tools
+      run: |
+        curl -Lf \
+          -o cov-analysis-linux64.tar.gz \
+          --form project=bfabiszewski/ulogger-server \
+          --form token=$TOKEN \
+          https://scan.coverity.com/download/linux64 
+        mkdir cov-analysis-linux64
+        tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
+      env:
+        TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
+    - name: autogen
+      run: ./autogen.sh
+    - name: configure
+      run: ./configure ${{ matrix.config.options }}
+    - name: build with cov-build
+      run: |
+        export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
+        cov-build --dir cov-int --no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/
+
+    - name: upload results to coverity-scan
+      run: |
+        tar czvf cov-int.tgz cov-int
+        curl -Lf \
+          --form token=$TOKEN \
+          --form email=scan.coverity@fabiszewski.net \
+          --form file=@cov-int.tgz \
+          --form version="`git describe --tags`" \
+          --form description="ulogger-server `git describe --tags`" \
+          "https://scan.coverity.com/builds?project=bfabiszewski/ulogger-server"
+      env:
+        TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}       
