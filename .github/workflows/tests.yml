@@ -53,6 +53,8 @@ jobs:
         uses: actions/setup-node@v2
       - name: Install node dependencies
         run: npm install
+      - name: Install PHP dependencies
+        run: composer install
 
       - name: PHPUnit tests
         run: ./vendor/bin/phpunit  -c .tests/phpunit.xml
