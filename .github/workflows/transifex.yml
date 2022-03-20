@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [master, github-actions]
+    branches: [master]
 
 name: "Transifex synchronization"
 
