@@ -25,7 +25,7 @@ jobs:
             echo "docker-options=-p 8080:80 -p 8081:3306 --expose 3306" >> $GITHUB_ENV
       - if: matrix.db == 'pgsql'
         run: |
-            echo "pgsql:host=127.0.0.1;port=8081;dbname=ulogger" >> $GITHUB_ENV
+            echo "db-dsn=pgsql:host=127.0.0.1;port=8081;dbname=ulogger" >> $GITHUB_ENV
             echo "docker-options=-p 8080:80 -p 8081:5432 --expose 5432" >> $GITHUB_ENV
       - if: matrix.db == 'sqlite'
         run: |
@@ -34,27 +34,28 @@ jobs:
             rm -rf ${{ runner.temp }}/data
             mkdir -p ${{ runner.temp }}/data/sqlite ${{ runner.temp }}/data/uploads
             sqlite3 -init scripts/ulogger.sqlite ${{ runner.temp }}/data/sqlite/ulogger.db .exit
+            sudo chown -R runner /tmp/data
+            sudo chmod -R 777 /tmp/data
       - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: ctype, json, pdo, pdo_${{ matrix.db }}, session, simplexml, xmlwriter, xdebug
+          tools: composer
       - name: Build docker
         run: docker build -t ulogger --build-arg DB_DRIVER=${{ matrix.db }} .
       - name: Run docker
         run: |
-          docker run -d --name ulogger ${{ env.docker-options }} -e ULOGGER_ENABLE_SETUP=1 ulogger
-          until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
-      - name: Install PHP dependencies
-        uses: php-actions/composer@v6
+            docker run -d --name ulogger ${{ env.docker-options }} -e ULOGGER_ENABLE_SETUP=1 ulogger
+            until netstat -atn 2>/dev/null | grep '8080.*LISTEN'; do sleep 1; done
       - name: Setup node
         uses: actions/setup-node@v2
       - name: Install node dependencies
         run: npm install
 
       - name: PHPUnit tests
-        uses: php-actions/phpunit@v3
-        with:
-          php_extensions: pdo_${{ matrix.db }} xdebug
-          bootstrap: vendor/autoload.php
-          configuration: .tests/phpunit.xml
-          args: --coverage-text
+        run: ./vendor/bin/phpunit  -c .tests/phpunit.xml
         env:
           XDEBUG_MODE: coverage
           DB_DSN: "${{ env.db-dsn }}"
