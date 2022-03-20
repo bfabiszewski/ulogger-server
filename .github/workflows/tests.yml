@@ -19,6 +19,7 @@ jobs:
         db: [mysql, pgsql, sqlite]
 
     steps:
+      - uses: actions/checkout@v2
       - if: matrix.db == 'mysql'
         run: |
             echo "db-dsn=mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8" >> $GITHUB_ENV
@@ -36,7 +37,6 @@ jobs:
             sqlite3 -init scripts/ulogger.sqlite ${{ runner.temp }}/data/sqlite/ulogger.db .exit
             sudo chown -R runner ${{ runner.temp }}/data
             sudo chmod -R 777 ${{ runner.temp }}/data
-      - uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
