@@ -1,4 +1,4 @@
-# ![ulogger_logo_small](https://cloud.githubusercontent.com/assets/3366666/24080878/0288f046-0ca8-11e7-9ffd-753e5c417756.png)μlogger   [![Build Status](https://travis-ci.com/bfabiszewski/ulogger-server.svg?branch=master)](https://travis-ci.com/bfabiszewski/ulogger-server)
+# ![ulogger_logo_small](https://cloud.githubusercontent.com/assets/3366666/24080878/0288f046-0ca8-11e7-9ffd-753e5c417756.png)μlogger   [![Build Status](https://github.com/bfabiszewski/ulogger-server/workflows/Tests/badge.svg)](https://github.com/bfabiszewski/ulogger-server/actions)
 
 This is a web application for real-time collection of geolocation data, tracks viewing and management.
 Together with a dedicated [μlogger mobile client](https://github.com/bfabiszewski/ulogger-android) it may be used as a complete self hosted server–client solution for logging and monitoring users' geolocation.
