@@ -2,7 +2,7 @@ name: coverity-scan
 
 on:
   push:
-    branches: [master, github-actions]
+    branches: [master]
 
 jobs:
   coverity-build:
@@ -37,7 +37,7 @@ jobs:
     - name: build with cov-build
       run: |
         export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
-        cov-build --dir cov-int --no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/
+        cov-build --dir cov-int --no-command --fs-capture-search ./ --fs-capture-search-exclude-regex vendor/ --fs-capture-search-exclude-regex .tests/ --fs-capture-search-exclude-regex config.php --fs-capture-search-exclude-regex .docker/ --fs-capture-search-exclude-regex cov-analysis-linux64/
 
     - name: upload results to coverity-scan
       run: |
