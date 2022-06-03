@@ -178,7 +178,6 @@ describe('UserDialogModel tests', () => {
         expect(passInput.style.display).toBe('none');
         done();
       }, 100);
-      done();
     }, 100);
   });
 
