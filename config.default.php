@@ -24,9 +24,9 @@
 
 // PDO data source name, eg.:
 // mysql:host=localhost;port=3307;dbname=ulogger;charset=utf8
-// mysql:unix_socket=/tmp/mysql.sock;dbname=ulogger;charset=utf8
+// mysql:unix_socket=/path/to/mysql.sock;dbname=ulogger;charset=utf8
 // pgsql:host=localhost;port=5432;dbname=ulogger
-// sqlite:/tmp/ulogger.db
+// sqlite:/path/to/ulogger.db
 $dbdsn = "";
 
 // Database user name
