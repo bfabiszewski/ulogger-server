@@ -41,8 +41,8 @@ describe('PositionDialogModel tests', () => {
     track.positions[positionIndex].comment = comment;
     state.currentTrack = track;
     dm = new PositionDialogModel(state, positionIndex);
-    spyOn(track.positions[positionIndex], 'save').and.returnValue(Promise.resolve());
-    spyOn(track.positions[positionIndex], 'delete').and.returnValue(Promise.resolve());
+    spyOn(track.positions[positionIndex], 'save').and.resolveTo();
+    spyOn(track.positions[positionIndex], 'delete').and.resolveTo();
     spyOn(uObserve, 'forceUpdate');
   });
 

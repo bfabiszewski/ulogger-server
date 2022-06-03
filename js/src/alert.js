@@ -40,6 +40,7 @@ export default class uAlert {
     this.hasButton = typeof options.hasButton !== 'undefined' ? options.hasButton : this.autoClose === 0
     this.fixedPosition = options.fixed || false;
     const html = `<div class="alert"><span>${message}</span></div>`;
+    /** @var HTMLElement */
     this.box = uUtils.nodeFromHtml(html);
     if (options.id) {
       this.box.id = options.id;

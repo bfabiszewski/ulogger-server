@@ -45,12 +45,12 @@ describe('UserDialogModel tests', () => {
     dialogType = 'add';
     dm = new UserDialogModel(mockVM, dialogType);
     dm.user = new uUser(1, 'testUser');
-    spyOn(dm.user, 'delete').and.returnValue(Promise.resolve());
-    spyOn(dm.user, 'setPassword').and.returnValue(Promise.resolve());
+    spyOn(dm.user, 'delete').and.resolveTo();
+    spyOn(dm.user, 'setPassword').and.resolveTo();
     spyOn(dm.user, 'modify').and.callThrough();
-    spyOn(uUser, 'update').and.returnValue(Promise.resolve());
-    spyOn(auth.user, 'setPassword').and.returnValue(Promise.resolve());
-    spyOn(uUser, 'add').and.returnValue(Promise.resolve(newUser));
+    spyOn(uUser, 'update').and.resolveTo();
+    spyOn(auth.user, 'setPassword').and.resolveTo();
+    spyOn(uUser, 'add').and.resolveTo(newUser);
     spyOn(config, 'validPassStrength').and.returnValue(true);
     spyOn(uAlert, 'error');
   });

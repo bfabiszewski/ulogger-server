@@ -243,7 +243,7 @@ describe('Position tests', () => {
 
   it('should delete image on server', (done) => {
     // given
-    spyOn(uPosition, 'update').and.returnValue(Promise.resolve());
+    spyOn(uPosition, 'update').and.resolveTo();
     const position = uPosition.fromJson(jsonPosition);
     // when
     position.imageDelete()
@@ -259,7 +259,7 @@ describe('Position tests', () => {
     // given
     const newImage = 'new_image.jpg';
     const imageFile = 'imageFile';
-    spyOn(uPosition, 'update').and.returnValue(Promise.resolve({ image: newImage }));
+    spyOn(uPosition, 'update').and.resolveTo({ image: newImage });
     const position = uPosition.fromJson(jsonPosition);
     // when
     position.imageAdd(imageFile);

@@ -52,7 +52,7 @@ describe('Google Maps map API tests', () => {
 
   it('should timeout initialization of map engine', (done) => {
     // given
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
+    spyOn(uUtils, 'loadScript').and.resolveTo();
     // when
     api.init()
       .then(() => done.fail('resolve callback called'))
@@ -64,7 +64,7 @@ describe('Google Maps map API tests', () => {
 
   it('should fail loading script', (done) => {
     // given
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.reject(Error('script loading error')));
+    spyOn(uUtils, 'loadScript').and.rejectWith(Error('script loading error'));
     // when
     api.init()
       .then(() => done.fail('resolve callback called'))
@@ -76,7 +76,7 @@ describe('Google Maps map API tests', () => {
 
   it('should load and initialize api scripts', (done) => {
     // given
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
+    spyOn(uUtils, 'loadScript').and.resolveTo();
     spyOn(api, 'initMap');
     config.googleKey = 'key1234567890';
     // when
@@ -109,7 +109,7 @@ describe('Google Maps map API tests', () => {
   it('should initialize map engine without Google API key', (done) => {
     // given
     spyOn(google.maps, 'Map').and.callThrough();
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
+    spyOn(uUtils, 'loadScript').and.resolveTo();
     // when
     api.init()
       .then(() => {
@@ -124,7 +124,7 @@ describe('Google Maps map API tests', () => {
 
   it('should fail with authorization error', (done) => {
     // given
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
+    spyOn(uUtils, 'loadScript').and.resolveTo();
     lang._.and.returnValue('authfailure');
     // when
     api.init()
@@ -140,7 +140,7 @@ describe('Google Maps map API tests', () => {
   it('should show alert if authorization error occurs after initialization', (done) => {
     // given
     spyOn(google.maps, 'Map').and.callThrough();
-    spyOn(uUtils, 'loadScript').and.returnValue(Promise.resolve());
+    spyOn(uUtils, 'loadScript').and.resolveTo();
     lang._.and.returnValue('authfailure');
     // when
     api.init()

@@ -39,8 +39,8 @@ describe('TrackDialogModel tests', () => {
     mockVM = { state: new uState(), onTrackDeleted: {} };
     dm = new TrackDialogModel(mockVM);
     dm.track = TrackFactory.getTrack();
-    spyOn(dm.track, 'delete').and.returnValue(Promise.resolve());
-    spyOn(dm.track, 'saveMeta').and.returnValue(Promise.resolve());
+    spyOn(dm.track, 'delete').and.resolveTo();
+    spyOn(dm.track, 'saveMeta').and.resolveTo();
     spyOn(dm.track, 'setName');
     spyOn(uAlert, 'error');
   });

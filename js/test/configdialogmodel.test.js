@@ -135,7 +135,7 @@ describe('ConfigDialogModel tests', () => {
   it('should save config on positive button clicked', (done) => {
     // given
     spyOn(cm, 'validate').and.returnValue(true);
-    spyOn(config, 'save').and.returnValue(Promise.resolve());
+    spyOn(config, 'save').and.resolveTo();
     cm.init();
     const button = cm.dialog.element.querySelector("[data-bind='onSave']");
     // when
@@ -152,7 +152,7 @@ describe('ConfigDialogModel tests', () => {
   it('should set priority layer on save', (done) => {
     // given
     spyOn(cm, 'validate').and.returnValue(true);
-    spyOn(config, 'save').and.returnValue(Promise.resolve());
+    spyOn(config, 'save').and.resolveTo();
     cm.init();
     cm.model.layerId = '1';
     const button = cm.dialog.element.querySelector("[data-bind='onSave']");
