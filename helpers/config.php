@@ -34,7 +34,7 @@ class uConfig {
   /**
    * @var string Version number
    */
-  public $version = "1.1-beta";
+  public $version = "1.1";
 
   /**
    * @var string Default map drawing framework
@@ -136,7 +136,7 @@ class uConfig {
    * Will be adjusted to system maximum upload size
    */
   public $uploadMaxSize = 5242880;
-  
+
   public function __construct($useDatabase = true) {
     if ($useDatabase) {
       $this->setFromDatabase();
