@@ -84,14 +84,16 @@ export default class uUser extends uListItem {
    *
    * @param {string} login
    * @param {string} password
+   * @param {boolean} isAdmin
    * @return {Promise<uUser>}
    */
-  static add(login, password) {
+  static add(login, password, isAdmin) {
     return uUser.update({
       action: 'add',
       login: login,
-      pass: password
-    }).then((user) => new uUser(user.id, login));
+      pass: password,
+      admin: isAdmin
+    }).then((user) => new uUser(user.id, login, isAdmin));
   }
 
   /**

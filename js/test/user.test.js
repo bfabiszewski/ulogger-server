@@ -147,13 +147,14 @@ describe('User tests', () => {
       const id = 1;
       const login = 'testUser';
       const password = 'password';
+      const isAdmin = true;
       const newUser = new uUser(id, login);
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ id: id }));
+      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ id }));
       // then
-      uUser.add(login, password)
+      uUser.add(login, password, isAdmin)
         .then((user) => {
           expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handleuser.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=add&login=${login}&pass=${password}`);
+          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=add&login=${login}&pass=${password}&admin=${isAdmin}`);
           expect(user).toEqual(newUser);
           done();
         })
