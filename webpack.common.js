@@ -29,7 +29,7 @@ module.exports = {
       patterns: [
         { from: 'css/src/*.css', to: `${cssDist}/[name][ext]`, transform: cssTransform },
         { from: 'node_modules/ol/ol.css', to: `${cssDist}/[name][ext]`, transform: cssTransform },
-        { from: 'node_modules/chartist/dist/chartist.css', to: `${cssDist}/[name][ext]`, transform: cssTransform }
+        { from: 'node_modules/chartist/dist/index.css', to: `${cssDist}/chartist[ext]`, transform: cssTransform }
       ]
     })
   ],

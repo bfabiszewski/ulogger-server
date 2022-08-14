@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+import { AutoScaleAxis, LineChart } from 'chartist';
 import { lang as $ } from './initializer.js';
-import Chartist from 'chartist'
 import ViewModel from './viewmodel.js';
 import ctAxisTitle from 'chartist-plugin-axistitle';
 import uObserve from './observe.js';
@@ -50,7 +50,7 @@ export default class ChartViewModel extends ViewModel {
     this.state = state;
     /** @type {PlotData} */
     this.data = [];
-    /** @type {?Chartist.Line} */
+    /** @type {?LineChart} */
     this.chart = null;
     /** @type {?NodeListOf<SVGLineElement>} */
     this.chartPoints = null;
@@ -74,13 +74,13 @@ export default class ChartViewModel extends ViewModel {
 
   chartSetup() {
     uUtils.addCss('css/dist/chartist.css', 'chartist_css');
-    this.chart = new Chartist.Line(this.chartElement, {
+    this.chart = new LineChart(this.chartElement, {
       series: [ this.data ]
     }, {
       lineSmooth: true,
       showArea: true,
       axisX: {
-        type: Chartist.AutoScaleAxis,
+        type: AutoScaleAxis,
         onlyInteger: true,
         showLabel: false
       },
