@@ -661,8 +661,7 @@ button > * {
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #666;
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 20%));
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 20%));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 20%);
 }
 
 .ol-popup::after, .ol-popup::before {
