@@ -10,8 +10,9 @@ const cssTransform = (content, filename) => {
     filename: basename,
     sourceMap: true
   });
-  fs.writeFile(`css/dist/${basename}.map`, result.map.toString(), (err) => { if (err) { throw err; }});
-  return `${result.css}\n/*# sourceMappingURL=${basename}.map */`;
+  const output = basename === 'index.css' ? 'chartist.css' : basename;
+  fs.writeFile(`css/dist/${output}.map`, result.map.toString(), (err) => { if (err) { throw err; }});
+  return `${result.css}\n/*# sourceMappingURL=${output}.map */`;
 }
 
 module.exports = {
