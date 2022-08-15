@@ -18,7 +18,6 @@
  */
 
 import ChartViewModel from '../src/chartviewmodel.js';
-import Chartist from 'chartist'
 import Fixture from './helpers/fixture.js';
 import TrackFactory from './helpers/trackfactory.js';
 import ViewModel from '../src/viewmodel.js';
@@ -88,7 +87,7 @@ describe('ChartViewModel tests', () => {
       'on': { /* ignored */ },
       'update': { /* ignored */ }
     });
-    spyOn(Chartist, 'Line').and.returnValue(mockChart);
+    spyOn(ChartViewModel, 'getChart').and.returnValue(mockChart);
   });
 
   afterEach(() => {
@@ -126,7 +125,7 @@ describe('ChartViewModel tests', () => {
     vm.chartSetup();
     // then
     expect(uUtils.addCss).toHaveBeenCalledWith('css/dist/chartist.css', 'chartist_css');
-    expect(Chartist.Line).toHaveBeenCalledWith(chartEl, jasmine.any(Object), jasmine.any(Object));
+    expect(ChartViewModel.getChart).toHaveBeenCalledWith(chartEl, []);
     expect(mockChart.on).toHaveBeenCalledWith('created', jasmine.any(Function));
   });
 

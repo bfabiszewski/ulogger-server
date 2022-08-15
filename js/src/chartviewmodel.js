@@ -74,8 +74,13 @@ export default class ChartViewModel extends ViewModel {
 
   chartSetup() {
     uUtils.addCss('css/dist/chartist.css', 'chartist_css');
-    this.chart = new LineChart(this.chartElement, {
-      series: [ this.data ]
+    this.chart = ChartViewModel.getChart(this.chartElement, this.data);
+    this.chart.on('created', () => this.onCreated());
+  }
+
+  static getChart(element, data) {
+    return new LineChart(element, {
+      series: [ data ]
     }, {
       lineSmooth: true,
       showArea: true,
@@ -99,8 +104,6 @@ export default class ChartViewModel extends ViewModel {
         })
       ]
     });
-
-    this.chart.on('created', () => this.onCreated());
   }
 
   onCreated() {
