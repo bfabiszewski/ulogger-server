@@ -66,6 +66,10 @@ module.exports = function(config) {
               loader: '@jsdevtools/coverage-istanbul-loader',
               options: { esModules: true }
             }
+          },
+          {
+            resourceQuery: /raw/,
+            type: 'asset/source'
           }
         ]
       }

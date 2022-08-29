@@ -19,6 +19,10 @@
 
 import MapViewModel from '../mapviewmodel.js';
 import { config } from '../initializer.js';
+// eslint-disable-next-line import/no-unresolved
+import extentSvg from '../../../images/extent.svg?raw';
+// eslint-disable-next-line import/no-unresolved
+import layersSvg from '../../../images/layers.svg?raw';
 import uTrack from '../track.js';
 import uUtils from '../utils.js';
 
@@ -478,8 +482,7 @@ export default class OpenLayersApi {
     });
 
     const switcherButton = document.createElement('button');
-    const layerImg = document.createElement('img');
-    layerImg.src = 'images/layers.svg';
+    const layerImg = uUtils.nodeFromHtml(layersSvg);
     layerImg.style.width = '60%';
     switcherButton.appendChild(layerImg);
 
@@ -707,7 +710,7 @@ export default class OpenLayersApi {
 
   /**
    * Get map bounds
-   * eg. (20.597985430276808, 52.15547181298076, 21.363595171488573, 52.33750879522563)
+   * e.g. (20.597985430276808, 52.15547181298076, 21.363595171488573, 52.33750879522563)
    * @returns {number[]} Bounds [ lon_sw, lat_sw, lon_ne, lat_ne ]
    */
   getBounds() {
@@ -743,11 +746,10 @@ export default class OpenLayersApi {
 
   /**
    * Get extent image
-   * @returns {HTMLImageElement}
+   * @returns {Node|NodeList}
    */
   static getExtentImg() {
-    const extentImg = document.createElement('img');
-    extentImg.src = 'images/extent.svg';
+    const extentImg = uUtils.nodeFromHtml(extentSvg);
     extentImg.style.width = '60%';
     return extentImg;
   }
