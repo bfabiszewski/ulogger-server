@@ -197,7 +197,7 @@ export default class ChartViewModel extends ViewModel {
    * @param {string} $className
    */
   pointAddClass(pointId, $className) {
-    if (this.model.chartVisible && this.chartPoints.length > pointId) {
+    if (this.model.chartVisible && this.chartPoints && this.chartPoints.length > pointId) {
       const point = this.chartPoints[pointId];
       point.classList.add($className);
     }
