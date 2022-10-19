@@ -21,7 +21,7 @@
 
 // strings only used in setup
 $langSetup["dbconnectfailed"] = "Αποτυχία σύνδεσης στη Βάση Δεδομένων.";
-$langSetup["serversaid"] = " Ο Server λέει: %s"; // substitutes server error message
+$langSetup["serversaid"] = " Ο Server είπε: %s"; // substitutes server error message
 $langSetup["checkdbsettings"] = "Παρακαλώ ελέγξτε τις ρυθμίσεις της Βάση Δεδομένων στο 'config.php'";
 $langSetup["dbqueryfailed"] = "Αποτυχία αιτήματος στη Βάση Δεδομένων.";
 $langSetup["dbtablessuccess"] = "Οι πίνακες στη Βάση Δεδομένων δημιουργήθηκαν επιτυχώς!";
