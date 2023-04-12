@@ -1,9 +1,10 @@
 [main]
 host = https://www.transifex.com
 
-[ulogger.strings-php]
-file_filter = ./lang/<lang>.php
+[o:bfabiszewski:p:ulogger:r:strings-php]
+file_filter  = ./lang/<lang>.php
+source_file  = ./lang/en.php
+source_lang  = en
+type         = PHP_ALT_ARRAY
 minimum_perc = 0
-source_file = ./lang/en.php
-source_lang = en
-type = PHP_ALT_ARRAY
+
