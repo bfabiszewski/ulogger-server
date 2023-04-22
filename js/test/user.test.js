@@ -148,7 +148,7 @@ describe('User tests', () => {
       const login = 'testUser';
       const password = 'password';
       const isAdmin = true;
-      const newUser = new uUser(id, login);
+      const newUser = new uUser(id, login, isAdmin);
       spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ id }));
       // then
       uUser.add(login, password, isAdmin)
