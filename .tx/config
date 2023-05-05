@@ -1,5 +1,6 @@
 [main]
 host = https://www.transifex.com
+lang_map = pt_BR: pt-br
 
 [o:bfabiszewski:p:ulogger:r:strings-php]
 file_filter  = ./lang/<lang>.php
