@@ -45,7 +45,7 @@
     "prepush-if-changed": "^1.0.8",
     "puppeteer": "^20.1.1",
     "regenerator-runtime": "^0.13.11",
-    "stylelint": "^15.6.1",
+    "stylelint": "^15.10.1",
     "stylelint-config-standard": "^33.0.0",
     "terser-webpack-plugin": "^5.3.7",
     "webpack": "^5.82.0",
