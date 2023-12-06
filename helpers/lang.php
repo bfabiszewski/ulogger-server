@@ -39,6 +39,7 @@ class uLang {
     "eu" => "Euskera",
     "fi" => "Suomi",
     "fr" => "Français",
+    "gl" => "Galego",
     "it" => "Italiano",
     "pl" => "Polski",
     "pt-br" => "Português (Br)",
