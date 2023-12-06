@@ -63,8 +63,7 @@ select {
   font-size: 0.7em;
   font-weight: bold;
   float: right;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
   order: 2;
   width: 165px;
   height: 100%;

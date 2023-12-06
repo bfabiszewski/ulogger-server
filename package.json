@@ -82,7 +82,6 @@
   "stylelint": {
     "extends": "stylelint-config-standard",
     "rules": {
-      "selector-list-comma-newline-after": "always-multi-line",
       "no-descending-specificity": null,
       "color-function-notation": "legacy",
       "property-no-vendor-prefix": null
