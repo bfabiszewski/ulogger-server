@@ -121,7 +121,9 @@ class Track extends AbstractController {
     } catch (Exception $e) {
       return Response::exception($e);
     } finally {
-      unlink($gpxFile);
+      if (file_exists($gpxFile)) {
+        unlink($gpxFile);
+      }
     }
   }
 
