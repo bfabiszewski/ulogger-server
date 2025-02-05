@@ -41,6 +41,9 @@ class User extends AbstractEntity {
    * @return bool True if matches, false otherwise
    */
   public function validPassword(string $password): bool {
+    if (empty($this->hash)) {
+      return false;
+    }
     return password_verify($password, $this->hash);
   }
 

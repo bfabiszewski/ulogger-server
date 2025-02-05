@@ -18,6 +18,7 @@
   <testsuites>
     <testsuite name="µlogger test suite">
       <directory>Controller</directory>
+      <directory>Entity</directory>
       <directory>Mapper</directory>
     </testsuite>
   </testsuites>

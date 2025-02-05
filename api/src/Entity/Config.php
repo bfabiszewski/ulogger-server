@@ -159,7 +159,7 @@ class Config extends AbstractEntity {
     if (isset($_COOKIE['ulogger_api'])) { $config->mapApi = $_COOKIE['ulogger_api']; }
     if (isset($_COOKIE['ulogger_lang'])) { $config->lang = $_COOKIE['ulogger_lang']; }
     if (isset($_COOKIE['ulogger_units'])) { $config->units = $_COOKIE['ulogger_units']; }
-    if (isset($_COOKIE['ulogger_interval'])) { $config->interval = $_COOKIE['ulogger_interval']; }
+    if (isset($_COOKIE['ulogger_interval'])) { $config->interval = (int) $_COOKIE['ulogger_interval']; }
     return $config;
   }
 
