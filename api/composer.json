@@ -31,7 +31,8 @@
         "vlucas/phpdotenv": "^5.6",
         "guzzlehttp/guzzle": "^7.9",
         "squizlabs/php_codesniffer": "^3.10",
-        "selective/test-traits": "^4.1"
+        "selective/test-traits": "^4.1",
+        "ext-xdebug": "*"
     },
     "config": {
       "platform": {

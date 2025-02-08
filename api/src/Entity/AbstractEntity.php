@@ -87,13 +87,13 @@ abstract class AbstractEntity implements JsonSerializable {
 
         $type = $property->getType();
         if (!$type instanceof ReflectionNamedType) {
-          throw new ServerException("Parameter $name is not named type");
+          throw new ServerException("Parameter '$name' is not named type");
         }
         $property->setValue($instance, Reflection::castArgument($data[$name], $type));
       } elseif ($property->hasDefaultValue()) {
         $property->setValue($instance, $property->getDefaultValue());
       } else {
-        throw new InvalidInputException("Missing value for field {$property->getName()}");
+        throw new InvalidInputException("Missing value for field '{$property->getName()}'");
       }
     }
 

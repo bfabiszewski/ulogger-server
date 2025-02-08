@@ -201,12 +201,12 @@ class Request {
     $f = new ReflectionMethod($handler[0], $handler[1]);
     foreach ($f->getParameters() as $routeParam) {
       if (!$routeParam->hasType()) {
-        throw new ServerException("Parameter $routeParam missing type");
+        throw new ServerException("Parameter '$routeParam' missing type");
       }
       $routeParamName = $routeParam->getName();
       $routeParamType = $routeParam->getType();
       if (!$routeParamType instanceof ReflectionNamedType) {
-        throw new ServerException("Parameter $routeParam is not named type");
+        throw new ServerException("Parameter '$routeParam' is not named type");
       }
       $routeParamTypeName = $routeParamType->getName();
 
@@ -233,7 +233,7 @@ class Request {
         // payload (map param to argument)
         $this->preparedArguments[] = Reflection::castArgument($requestPayload[$routeParamName], $routeParamType);
       } elseif (!$routeParam->isOptional()) {
-        throw new InvalidInputException("Missing parameter $routeParamName type $routeParamTypeName");
+        throw new InvalidInputException("Missing parameter '$routeParamName' type '$routeParamTypeName'");
       }
     }
   }

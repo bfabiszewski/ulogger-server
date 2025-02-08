@@ -194,7 +194,7 @@ class User extends AbstractMapper {
    * @return int User Id
    * @throws NotFoundException
    */
-  public static function getFromSession(): int {
+  public function getFromSession(): int {
     if (isset($_SESSION['user_id'])) {
       return $_SESSION['user_id'];
     }

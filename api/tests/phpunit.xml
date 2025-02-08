@@ -17,9 +17,11 @@
   </coverage>
   <testsuites>
     <testsuite name="µlogger test suite">
+      <directory>Component</directory>
       <directory>Controller</directory>
       <directory>Entity</directory>
       <directory>Mapper</directory>
+      <directory>Middleware</directory>
     </testsuite>
   </testsuites>
   <logging/>

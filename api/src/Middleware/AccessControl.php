@@ -16,6 +16,7 @@ use uLogger\Component\Response;
 use uLogger\Component\Session;
 use uLogger\Entity;
 use uLogger\Exception\DatabaseException;
+use uLogger\Exception\InvalidInputException;
 use uLogger\Exception\NotFoundException;
 use uLogger\Exception\ServerException;
 use uLogger\Mapper;
@@ -47,47 +48,66 @@ class AccessControl implements MiddlewareInterface {
     $this->route = $route;
     $accessType = $this->session->getAccessType();
     $routeAuth = $route->getAuth();
-    $policies = null;
+
+    try {
+      $policies = $this->getPolicies($routeAuth, $accessType);
+      $isAllowed = $this->isAllowed($policies);
+      return $isAllowed ? Response::continue() : Response::notAuthorized();
+    } catch (Exception $e) {
+      return Response::internalServerError($e->getMessage());
+    }
+  }
+
+  /**
+   * @param array $routeAuth
+   * @param string $accessType
+   * @return array
+   * @throws InvalidInputException
+   */
+  private function getPolicies(array $routeAuth, string $accessType): array {
     if (isset($routeAuth[$accessType])) {
       $policies = $routeAuth[$accessType];
     } elseif (isset($routeAuth[Session::ACCESS_ALL])) {
       $policies = $routeAuth[Session::ACCESS_ALL];
+    } else {
+      throw new InvalidInputException('No policies found for route');
     }
+    return $policies;
+  }
 
-    if ($policies === null) {
-      return Response::internalServerError('No policies found for route');
-    }
-
+  /**
+   * @param array $policies
+   * @return bool
+   * @throws DatabaseException
+   * @throws ServerException
+   */
+  private function isAllowed(array $policies): bool {
     foreach ($policies as $policy) {
       switch ($policy) {
         case Session::ALLOW_ALL:
-          return Response::continue();
+          return true;
 
         case Session::ALLOW_AUTHORIZED:
           if ($this->session->isAuthenticated()) {
-            return Response::continue();
+            return true;
           }
           break;
 
         case Session::ALLOW_ADMIN:
           if ($this->session->isAdmin()) {
-            return Response::continue();
+            return true;
           }
           break;
 
         case Session::ALLOW_OWNER:
-          try {
-            if ($this->isResourceOwner()) {
-              return Response::continue();
-            }
-          } catch (Exception $e) {
-            return Response::internalServerError($e->getMessage());
+          if ($this->isResourceOwner()) {
+            return true;
           }
           break;
       }
     }
 
-    return Response::notAuthorized();
+    return false;
   }
 
   /**
@@ -160,7 +180,7 @@ class AccessControl implements MiddlewareInterface {
    */
   private function isFeatureOwner(int $id, string $className): bool {
     if ($className !== Mapper\Position::class && $className !== Mapper\Track::class) {
-      throw new ServerException("Wrong argument $className in feature owner check");
+      throw new ServerException("Wrong argument '$className' in feature owner check");
     }
     /** @var Mapper\Position|Mapper\Track $mapper */
     $mapper = $this->mapperFactory->getMapper($className);
