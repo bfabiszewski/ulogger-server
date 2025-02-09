@@ -23,6 +23,7 @@
       <directory>Helper</directory>
       <directory>Mapper</directory>
       <directory>Middleware</directory>
+      <directory>Script</directory>
     </testsuite>
   </testsuites>
   <logging/>

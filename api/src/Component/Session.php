@@ -144,7 +144,7 @@ class Session {
    *
    * @return void
    */
-  private function sessionEnd(): void {
+  public function sessionEnd(): void {
     $_SESSION = [];
     if (ini_get('session.use_cookies') && isset($_COOKIE[session_name()])) {
       $params = session_get_cookie_params();
@@ -177,6 +177,17 @@ class Session {
   }
 
   /**
+   * @param Entity\User $user
+   * @return void
+   * @throws InvalidInputException
+   */
+  public function setAuthenticatedAndStore(Entity\User $user): void {
+    $this->setAuthenticated($user);
+    $this->sessionCleanup();
+    $this->userMapper->storeInSession($user);
+  }
+
+  /**
    * Check valid pass for given login
    *
    * @param string $login
@@ -191,9 +202,7 @@ class Session {
     if (!$user->validPassword($password)) {
       throw new NotFoundException();
     }
-    $this->setAuthenticated($user);
-    $this->sessionCleanup();
-    $this->userMapper->storeInSession($user);
+    $this->setAuthenticatedAndStore($user);
   }
 
   /**

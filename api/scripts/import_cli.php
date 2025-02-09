@@ -8,21 +8,30 @@ declare(strict_types = 1);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
-require_once('../../vendor/autoload.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
-use GetOpt\{GetOpt, Option, Operand};
-use uLogger\Component\Lang;
-use uLogger\Entity\Config;
-use uLogger\Entity\Track;
-use uLogger\Helper\Utils;
+use GetOpt\{GetOpt, Operand, Option};
+use uLogger\Component\Db;
+use uLogger\Component\Session;
+use uLogger\Entity;
+use uLogger\Exception\DatabaseException;
+use uLogger\Exception\GpxParseException;
+use uLogger\Exception\InvalidInputException;
+use uLogger\Exception\NotFoundException;
+use uLogger\Exception\ServerException;
+use uLogger\Helper\Gpx;
+use uLogger\Mapper\MapperFactory;
+use uLogger\Mapper;
 
 // check we are running in CLI mode
 if (PHP_SAPI !== 'cli') {
-  exit('Call me on CLI only!' . PHP_EOL);
+  print('Call me on CLI only!' . PHP_EOL);
+  exit(1);
 }
 
 if (!class_exists(GetOpt::class)) {
-  exit('This script needs ulrichsg/getopt-php package. Please install dependencies via Composer.' . PHP_EOL);
+  print('This script needs ulrichsg/getopt-php package. Please install dependencies via Composer.' . PHP_EOL);
+  exit(1);
 }
 
 // set up argument parsing
@@ -55,115 +64,82 @@ try {
 } catch (Exception $exception) {
   // be nice if the user just asked for help
   if (!$getopt->getOption('help')) {
-    exit('ERROR: ' . $exception->getMessage() . PHP_EOL);
+    print('ERROR: ' . $exception->getMessage() . PHP_EOL);
+    exit(1);
   }
 }
 
 // show help and quit
 if ($getopt->getOption('help')) {
-  exit($getopt->getHelpText());
+  print($getopt->getHelpText());
+  exit(0);
 }
+
+$exitCode = 1;
 
 // get all tracks for user id
 $userId = (int) $getopt->getOption('user-id');
 
 // lets import some GPX tracks!
-$gpxFiles = $getopt->getOperand('gpx');
-foreach ($gpxFiles as $i => $gpxFile) {
-  // skip last track?
-  if ($getopt->getOption('skip-last-track') && $i === count($gpxFiles) - 1) {
-    continue;
-  }
+try {
+  $mapperFactory = new MapperFactory(Db::createFromConfig());
+  /** @var Mapper\Track $trackMapper */
+  $trackMapper = $mapperFactory->getMapper(Mapper\Track::class);
+  /** @var Mapper\User $userMapper */
+  $userMapper = $mapperFactory->getMapper(Mapper\User::class);
+  $config = Entity\Config::createFromMapper($mapperFactory);
 
-  $gpxName = basename($gpxFile);
+  $user = $userMapper->fetch($userId);
+  $session = new Session($mapperFactory, $config);
+  $session->init();
+  $session->setAuthenticatedAndStore($user);
 
-  if (!$getopt->getOption('import-existing-track')) {
-    $tracksArr = Track::getAll($userId);
-    foreach ($tracksArr as $track) {
-      if ($track->name === $gpxName) {
-        print('WARNING: ' . $gpxName . ' already present, skipping...' . PHP_EOL);
-        continue 2;
+  $gpxFiles = $getopt->getOperand('gpx');
+  $importedTracks = [];
+  foreach ($gpxFiles as $i => $gpxFile) {
+    // skip last track?
+    if ($getopt->getOption('skip-last-track') && $i === count($gpxFiles) - 1) {
+      continue;
+    }
+
+    $gpxName = basename($gpxFile);
+
+    if (!$getopt->getOption('import-existing-track')) {
+      $tracksArr = $trackMapper->fetchByUser($userId);
+      foreach ($tracksArr as $track) {
+        if ($track->name === $gpxName) {
+          print('WARNING: ' . $gpxName . ' already present, skipping...' . PHP_EOL);
+          continue 2;
+        }
       }
     }
+
+    print('importing ' . $gpxFile . '...' . PHP_EOL);
+
+    $gpx = new Gpx($gpxName, $config, $mapperFactory);
+    $importedTracks += $gpx->import($session->user->id, $gpxFile);
   }
 
-  print('importing ' . $gpxFile.'...' . PHP_EOL);
-
-  $config = Config::getInstance();
-  $lang = (new Lang($config))->getStrings();
-
-  $gpx = false;
-  libxml_use_internal_errors(true);
-  if ($gpxFile && file_exists($gpxFile)) {
-    $gpx = simplexml_load_file($gpxFile);
+  print('Success, imported ' . count($importedTracks));
+  print(count($importedTracks) === 1 ? ' track:' : ' tracks:');
+  print PHP_EOL;
+  foreach ($importedTracks as $track) {
+    print "  - $track->name" . PHP_EOL;
   }
+  $exitCode = 0;
 
-  if ($gpx === false) {
-    $message = $lang["iparsefailure"];
-    $parserMessages = [];
-    foreach(libxml_get_errors() as $parseError) {
-      $parserMessages[] = $parseError->message;
-    }
-    $parserMessage = implode(", ", $parserMessages);
-    if (!empty($parserMessage)) {
-      $message .= ": $parserMessage";
-    }
-    Utils::exitWithError($message);
+} catch (DatabaseException $e) {
+  print("Error, database problem: {$e->getMessage()}" . PHP_EOL);
+} catch (InvalidInputException|NotFoundException $e) {
+  print("Error, user not found by ID $userId ({$e->getMessage()})" . PHP_EOL);
+} catch (GpxParseException $e) {
+  print("Error, GPX parsing problem: {$e->getMessage()}" . PHP_EOL);
+} catch (ServerException $e) {
+  print("Error, server exception: {$e->getMessage()}" . PHP_EOL);
+} finally {
+  if (isset($session)) {
+    $session->sessionEnd();
   }
-  elseif ($gpx->getName() !== "gpx") {
-    Utils::exitWithError($lang["iparsefailure"]);
-  }
-  elseif (empty($gpx->trk)) {
-    Utils::exitWithError($lang["idatafailure"]);
-  }
-
-  $trackList = [];
-  foreach ($gpx->trk as $trk) {
-    $trackName = empty($trk->name) ? $gpxName : (string) $trk->name;
-    $metaName = empty($gpx->metadata->name) ? null : (string) $gpx->metadata->name;
-    $trackId = Track::add($userId, $trackName, $metaName);
-    if ($trackId === false) {
-      Utils::exitWithError($lang["servererror"]);
-    }
-    $track = new Track($trackId);
-    $posCnt = 0;
-
-    foreach($trk->trkseg as $segment) {
-      foreach($segment->trkpt as $point) {
-        if (!isset($point["lat"], $point["lon"])) {
-          $track->delete();
-          Utils::exitWithError($lang["iparsefailure"]);
-        }
-        $time = isset($point->time) ? strtotime((string) $point->time) : 1;
-        $altitude = isset($point->ele) ? (double) $point->ele : null;
-        $comment = !empty($point->desc) ? (string) $point->desc : null;
-        $speed = null;
-        $bearing = null;
-        $accuracy = null;
-        $provider = "gps";
-        if (!empty($point->extensions)) {
-          // parse ulogger extensions
-          $ext = $point->extensions->children('ulogger', true);
-          if (count($ext->speed)) { $speed = (double) $ext->speed; }
-          if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
-          if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
-          if (count($ext->provider)) { $provider = (string) $ext->provider; }
-        }
-        $ret = $track->addPosition($userId,
-          $time, (double) $point["lat"], (double) $point["lon"], $altitude,
-          $speed, $bearing, $accuracy, $provider, $comment);
-        if ($ret === false) {
-          $track->delete();
-          Utils::exitWithError($lang["servererror"]);
-        }
-        $posCnt++;
-      }
-    }
-    if ($posCnt) {
-      array_unshift($trackList, [ "id" => $track->id, "name" => $track->name ]);
-    } else {
-      $track->delete();
-    }
-  }
+  exit($exitCode);
 }
 ?>
