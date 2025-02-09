@@ -1,13 +1,13 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use PHPUnit\DbUnit\DataSet\IDataSet;
 use ReflectionClass;
 use uLogger\Component\Config;
 use uLogger\Entity\Layer;
-use uLogger\Tests\lib\UloggerDatabaseTestCase;
+use uLogger\Tests\_lib\UloggerDatabaseTestCase;
 
 class ConfigTest extends UloggerDatabaseTestCase {
 

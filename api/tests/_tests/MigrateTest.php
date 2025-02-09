@@ -7,13 +7,13 @@ declare(strict_types = 1);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use PDO;
 use PDOException;
 use uLogger\Component\Db;
 use uLogger\Helper\Migration;
-use uLogger\Tests\lib\UloggerDatabaseTestCase;
+use uLogger\Tests\_lib\UloggerDatabaseTestCase;
 
 define("SKIP_RUN", true);
 
@@ -27,7 +27,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
   }
 
   public function testUpdateSchemas(): void {
-    self::runSqlScript(dirname(__DIR__) . "/fixtures/ulogger_0_6." . $this->getDbDriverName());
+    self::runSqlScript(dirname(__DIR__) . "/_fixtures/ulogger_0_6." . $this->getDbDriverName());
     $this->loadDataSet("fixture_0_6.xml");
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
     self::assertNotContains("admin", $this->getConnection()->getMetaData()->getTableColumns("users"));
@@ -50,7 +50,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
   public function testUpdateConfig(): void {
     $this->loadDataSet("fixture_non_admin.xml");
     $this->setOutputCallback(static function () { });
-    $ret = Migration::updateConfig(dirname(__DIR__) . "/fixtures/config_0_6.php");
+    $ret = Migration::updateConfig(dirname(__DIR__) . "/_fixtures/config_0_6.php");
     self::assertTrue($ret, "Function updateConfig() failed");
     // admin user imported from config file
     self::assertEquals(1, $this->getConnection()->getRowCount("users"), "Wrong row count");
@@ -143,7 +143,7 @@ class MigrateTest extends UloggerDatabaseTestCase {
 
   private function loadDataSet($name): void {
     $this->resetAutoincrement();
-    $dataSet = $this->createFlatXMLDataSet(dirname(__DIR__) . '/fixtures/' . $name);
+    $dataSet = $this->createFlatXMLDataSet(dirname(__DIR__) . '/_fixtures/' . $name);
     $this->getDatabaseTester()->setDataSet($dataSet);
     $this->getDatabaseTester()->onSetUp();
   }

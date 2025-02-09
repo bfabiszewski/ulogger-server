@@ -1,10 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use GuzzleHttp\Exception\GuzzleException;
-use uLogger\Tests\lib\UloggerAPITestCase;
+use uLogger\Tests\_lib\UloggerAPITestCase;
 
 class SetupTest extends UloggerAPITestCase {
   private $script = "/scripts/setup.php";

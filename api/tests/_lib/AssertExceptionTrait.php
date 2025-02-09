@@ -7,7 +7,7 @@ declare(strict_types = 1);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
-namespace uLogger\Tests\lib;
+namespace uLogger\Tests\_lib;
 
 use Error;
 use PHPUnit\Framework\TestCase;

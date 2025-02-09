@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use PHPUnit\Framework\TestCase;
 use uLogger\Component\Db;

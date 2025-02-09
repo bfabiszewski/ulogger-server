@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use uLogger\Entity\Position;
-use uLogger\Tests\lib\AssertExceptionTrait;
-use uLogger\Tests\lib\UloggerDatabaseTestCase;
+use uLogger\Tests\_lib\AssertExceptionTrait;
+use uLogger\Tests\_lib\UloggerDatabaseTestCase;
 
 class PositionTest extends UloggerDatabaseTestCase {
 

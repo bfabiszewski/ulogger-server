@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\lib;
+namespace uLogger\Tests\_lib;
 
 use Dotenv;
 use uLogger\Component\Db;

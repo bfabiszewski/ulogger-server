@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 /** @noinspection HtmlUnknownAttribute */
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use GuzzleHttp\Exception\GuzzleException;
 use uLogger\Component\Lang;
-use uLogger\Tests\lib\UloggerAPITestCase;
+use uLogger\Tests\_lib\UloggerAPITestCase;
 
 class ImportTest extends UloggerAPITestCase {
 

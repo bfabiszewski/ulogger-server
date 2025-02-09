@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use GuzzleHttp\Exception\GuzzleException;
-use uLogger\Tests\lib\UloggerAPITestCase;
+use uLogger\Tests\_lib\UloggerAPITestCase;
 
-require_once(__DIR__ . "/../lib/UloggerAPITestCase.php");
+require_once(__DIR__ . "/../_lib/UloggerAPITestCase.php");
 
 class ClientAPITest extends UloggerAPITestCase {
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\lib;
+namespace uLogger\Tests\_lib;
 
 use Dotenv;
 use GuzzleHttp;
@@ -37,7 +37,7 @@ class UloggerAPITestCase extends BaseDatabaseTestCase {
 
   protected function getDataSet(): IDataSet {
     $this->resetAutoincrement(2);
-    return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_admin.xml');
+    return $this->createFlatXMLDataSet(__DIR__ . '/../_fixtures/fixture_admin.xml');
   }
 
   /**

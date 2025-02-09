@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\lib;
+namespace uLogger\Tests\_lib;
 
 use Dotenv;
 use Exception;
@@ -100,7 +100,7 @@ abstract class BaseDatabaseTestCase extends PHPUnit\DbUnit\TestCase {
    */
   protected function getDataSet(): IDataSet {
     $this->resetAutoincrement();
-    return $this->createFlatXMLDataSet(__DIR__ . '/../fixtures/fixture_empty.xml');
+    return $this->createFlatXMLDataSet(__DIR__ . '/../_fixtures/fixture_empty.xml');
   }
 
   protected function resetAutoincrement($users = 1, $tracks = 1, $positions = 1, $layers = 1): void {

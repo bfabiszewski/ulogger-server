@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace uLogger\Tests\tests;
+namespace uLogger\Tests\_tests;
 
 use uLogger\Component\Session;
 use uLogger\Entity\User;
-use uLogger\Tests\lib\UloggerDatabaseTestCase;
+use uLogger\Tests\_lib\UloggerDatabaseTestCase;
 
 class AuthTest extends UloggerDatabaseTestCase {
 
