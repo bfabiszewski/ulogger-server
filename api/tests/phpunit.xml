@@ -20,6 +20,7 @@
       <directory>Component</directory>
       <directory>Controller</directory>
       <directory>Entity</directory>
+      <directory>Helper</directory>
       <directory>Mapper</directory>
       <directory>Middleware</directory>
     </testsuite>
