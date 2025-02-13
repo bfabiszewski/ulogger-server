@@ -17,6 +17,7 @@
   </coverage>
   <testsuites>
     <testsuite name="µlogger test suite">
+      <directory>API</directory>
       <directory>Component</directory>
       <directory>Controller</directory>
       <directory>Entity</directory>
@@ -28,9 +29,15 @@
   </testsuites>
   <logging/>
   <php>
-    <server name="HTTP_HOST" value="http://127.0.0.1"/>
-    <var name="DB_DSN" value="mysql:unix_socket=/tmp/mysql.sock;dbname=ulogger_tests;charset=utf8"/>
-    <var name="DB_USER" value="ulogger_tests"/>
-    <var name="DB_PASSWD" value="Tests0nly"/>
+<!--    <server name="HTTP_HOST" value="http://127.0.0.1"/>-->
+<!--    <var name="DB_DSN" value="mysql:unix_socket=/tmp/mysql.sock;dbname=ulogger_tests;charset=utf8"/>-->
+<!--    <var name="DB_USER" value="ulogger_tests"/>-->
+<!--    <var name="DB_PASSWD" value="Tests0nly"/>-->
+    <server name="HTTP_HOST" value="http://127.0.0.1:8080"/>
+    <var name="DB_DSN" value="mysql:host=127.0.0.1;port=8081;dbname=ulogger;charset=utf8"/>
+<!--    <var name="DB_DSN" value="pgsql:host=127.0.0.1;port=8081;dbname=ulogger"/>-->
+<!--    <var name="DB_DSN" value="sqlite:~/data/sqlite/ulogger.db"/>-->
+    <var name="DB_USER" value="ulogger"/>
+    <var name="DB_PASSWD" value="secret2"/>
   </php>
 </phpunit>

@@ -9,6 +9,8 @@ declare(strict_types = 1);
 
 namespace uLogger\Tests\Mapper;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\Exception;
@@ -39,6 +41,7 @@ class PositionTest extends AbstractMapperTestCase {
    * @throws ServerException
    * @throws DatabaseException
    * @throws NotFoundException
+   * @throws \Exception
    */
   public function testFetchSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -92,6 +95,7 @@ class PositionTest extends AbstractMapperTestCase {
    * @throws ServerException
    * @throws DatabaseException
    * @throws NotFoundException
+   * @throws \Exception
    */
   public function testFetchLastSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -122,6 +126,7 @@ class PositionTest extends AbstractMapperTestCase {
    * @throws ServerException
    * @throws DatabaseException
    * @throws NotFoundException
+   * @throws \Exception
    */
   public function testFetchLastAllUsersSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -151,6 +156,7 @@ class PositionTest extends AbstractMapperTestCase {
   /**
    * @throws ServerException
    * @throws DatabaseException
+   * @throws \Exception
    */
   public function testFindAllSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -169,6 +175,7 @@ class PositionTest extends AbstractMapperTestCase {
   /**
    * @throws ServerException
    * @throws DatabaseException
+   * @throws \Exception
    */
   public function testFindAllAfterIdSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -185,6 +192,7 @@ class PositionTest extends AbstractMapperTestCase {
 
   /**
    * @throws DatabaseException
+   * @throws \Exception
    */
   public function testCreateSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -229,6 +237,7 @@ class PositionTest extends AbstractMapperTestCase {
 
   /**
    * @throws DatabaseException
+   * @throws \Exception
    */
   public function testUpdateSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
@@ -711,12 +720,14 @@ class PositionTest extends AbstractMapperTestCase {
    * @param array|null $record
    * @param Entity\Position $position
    * @return void
+   * @throws \Exception
    */
   private function assertPositionEquals(?array $record, Entity\Position $position): void {
     $this->assertEquals($record['id'], $position->id);
     $this->assertEquals($record['user_id'], $position->userId);
     $this->assertEquals($record['track_id'], $position->trackId);
-    $this->assertEquals(strtotime($record['time']), $position->timestamp);
+    $date = new DateTimeImmutable($record['time'], new DateTimeZone('UTC'));
+    $this->assertEquals($date->getTimestamp(), $position->timestamp);
     $this->assertEquals($record['longitude'], $position->longitude);
     $this->assertEquals($record['latitude'], $position->latitude);
     $this->assertEquals($record['altitude'], $position->altitude);

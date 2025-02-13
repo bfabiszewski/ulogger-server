@@ -297,7 +297,7 @@ class UserTest extends AbstractControllerTestCase
 
     $response = $this->controller->update($userId, $user);
 
-    $this->assertResponseInternalServerError($response, 'Setting pass failed');
+    $this->assertResponseUnprocessableError($response, 'passstrengthwarn');
   }
 
   /**

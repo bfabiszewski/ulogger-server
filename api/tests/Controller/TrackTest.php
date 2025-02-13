@@ -135,6 +135,7 @@ class TrackTest extends AbstractControllerTestCase
 
     $trackMock = $this->createMock(Entity\Track::class);
     $trackMock->id = $trackId;
+    $trackMock->name = 'Test track';
 
     $this->mapperMock(Mapper\Track::class)
       ->expects($this->once())
@@ -149,12 +150,33 @@ class TrackTest extends AbstractControllerTestCase
   /**
    * @throws MockException|ServerException
    */
+  public function testAddTrackEmptyName() {
+    $trackId = 123;
+
+    $trackMock = $this->createMock(Entity\Track::class);
+    $trackMock->id = $trackId;
+    $trackMock->name = '';
+
+    $this->mapperMock(Mapper\Track::class)
+      ->expects($this->never())
+      ->method('create')
+      ->with($trackMock);
+
+    $response = $this->controller->add($trackMock);
+
+    $this->assertResponseUnprocessableError($response, 'Track name cannot be empty');
+  }
+
+  /**
+   * @throws MockException|ServerException
+   */
   public function testAddTrackException() {
     $trackId = 123;
     $exception = new DatabaseException();
 
     $trackMock = $this->createMock(Entity\Track::class);
     $trackMock->id = $trackId;
+    $trackMock->name = 'Test track';
 
     $this->mapperMock(Mapper\Track::class)
       ->expects($this->once())
