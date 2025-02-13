@@ -9,6 +9,8 @@ declare(strict_types = 1);
 
 namespace uLogger\Helper;
 
+use uLogger\Component\FileUpload;
+
 /**
  * Various util functions
  */
@@ -79,6 +81,21 @@ class Utils {
       }
     }
     return (int) $val;
+  }
+
+  /**
+   * @param string $name
+   * @param mixed|null $default
+   * @return FileUpload|mixed
+   */
+  public static function requestFile(string $name, mixed $default = null): mixed {
+    if (isset($_FILES[$name])) {
+      $files = $_FILES[$name];
+      if (isset($files['name'], $files['type'], $files['size'], $files['tmp_name'])) {
+        return new FileUpload($_FILES[$name]);
+      }
+    }
+    return $default;
   }
 
 }

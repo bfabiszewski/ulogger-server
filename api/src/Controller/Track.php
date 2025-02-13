@@ -78,6 +78,9 @@ class Track extends AbstractController {
   public function add(Entity\Track $track): Response {
 
     try {
+      if (empty($track->name)) {
+        throw new InvalidInputException('Track name cannot be empty');
+      }
       $this->mapper(Mapper\Track::class)->create($track);
     } catch (Exception $e) {
       return Response::exception($e);

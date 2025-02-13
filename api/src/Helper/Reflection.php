@@ -14,6 +14,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionNamedType;
+use uLogger\Exception\InvalidInputException;
 use uLogger\Exception\ServerException;
 
 /**
@@ -27,18 +28,35 @@ class Reflection {
    * @param ReflectionNamedType $type
    * @return mixed
    * @throws ServerException
+   * @throws InvalidInputException
    */
   public static function castArgument(mixed $value, ReflectionNamedType $type): mixed {
-    if (is_null($value) && !$type->allowsNull()) {
+    if (is_null($value)) {
+      if ($type->allowsNull()) {
+        return null;
+      }
       throw new ServerException('Unexpected null value in route parameter');
     }
     $typeName = $type->getName();
-    return match ($typeName) {
-      'int' => (int) $value,
-      'float' => (float) $value,
-      'bool' => (bool) $value,
-      default => $value
-    };
+    switch ($typeName) {
+      case 'int':
+        if (!is_numeric($value)) {
+          throw new InvalidInputException('Input cannot be cast to an integer');
+        }
+        return (int) $value;
+      case 'float':
+        if (!is_numeric($value)) {
+          throw new InvalidInputException('Input cannot be cast to a float');
+        }
+        return (float) $value;
+      case 'bool':
+        if (!in_array($value, [ '0', '1', 0, 1, false, true ], true)) {
+          throw new InvalidInputException('Input cannot be cast to a boolean');
+        }
+        return (bool) $value;
+      default:
+        return $value;
+    }
   }
 
   /**

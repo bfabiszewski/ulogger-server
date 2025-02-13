@@ -124,7 +124,7 @@ class Legacy extends AbstractController {
         'trackId' => $params['trackid'] ?? null,
         'userId' => $this->session->user->id ?? throw new UnauthorizedException()
       ],
-      uploads: $params['image'] ? [ 'image' => $params['image'] ] : []
+      uploads: !empty($params['image']) ? [ 'image' => $params['image'] ] : []
     );
     return $this->rewriteResponse($this->router->dispatch($request));
   }

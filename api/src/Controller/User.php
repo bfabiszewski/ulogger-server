@@ -15,6 +15,7 @@ use uLogger\Component\Request;
 use uLogger\Component\Response;
 use uLogger\Component\Session;
 use uLogger\Entity;
+use uLogger\Exception\InvalidInputException;
 use uLogger\Exception\NotFoundException;
 use uLogger\Mapper;
 
@@ -132,7 +133,7 @@ class User extends AbstractController {
 
       if (!empty($password)) {
         if (!$this->config->validPassStrength($password)) {
-          return Response::internalServerError('Setting pass failed');
+          return Response::unprocessableError('passstrengthwarn');
         }
         $currentUser->password = $password;
         $this->mapper(Mapper\User::class)->updatePassword($currentUser);
@@ -188,6 +189,9 @@ class User extends AbstractController {
   public function add(Entity\User $user): Response {
 
     try {
+      if (empty($user->password)) {
+        throw new InvalidInputException('Missing password');
+      }
       try {
         $this->mapper(Mapper\User::class)->fetchByLogin($user->login);
         return Response::conflictError('userexists');
@@ -201,7 +205,8 @@ class User extends AbstractController {
     } catch (Exception $e) {
       return Response::exception($e);
     }
-
+    // remove password
+    $user->password = null;
     return Response::created($user);
   }
 

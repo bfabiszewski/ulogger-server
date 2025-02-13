@@ -21,6 +21,7 @@ class User extends AbstractEntity {
   public string $login;
   #[Column(name: 'password')]
   public ?string $hash = null;
+  #[JsonField]
   public ?string $password = null;
   #[Column(name: 'admin')]
   #[JsonField]
