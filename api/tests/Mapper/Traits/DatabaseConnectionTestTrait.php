@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 /**
  * @package    μlogger
@@ -13,17 +14,15 @@ use PDO;
 use PDOStatement;
 use UnexpectedValueException;
 
-trait DatabaseConnectionTestTrait
-{
+trait DatabaseConnectionTestTrait {
     /**
      * Get database connection.
      *
      * @return PDO The PDO instance
      */
-    protected function getConnection(): PDO
-    {
-        return $this->container->get(PDO::class);
-    }
+  protected function getConnection(): PDO {
+      return $this->container->get(PDO::class);
+  }
 
     /**
      * Create PDO statement.
@@ -34,14 +33,13 @@ trait DatabaseConnectionTestTrait
      *
      * @return PDOStatement The statement
      */
-    private function createPreparedStatement(string $sql): PDOStatement
-    {
-        $statement = $this->getConnection()->prepare($sql);
+  private function createPreparedStatement(string $sql): PDOStatement {
+      $statement = $this->getConnection()->prepare($sql);
 
-        if (!$statement instanceof PDOStatement) {
-            throw new UnexpectedValueException('Invalid SQL statement');
-        }
-
-        return $statement;
+    if (!$statement instanceof PDOStatement) {
+        throw new UnexpectedValueException('Invalid SQL statement');
     }
+
+      return $statement;
+  }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 /**
  * @package    μlogger
@@ -15,8 +16,7 @@ use PDO;
 /**
  * Database test.
  */
-trait DatabaseTableTestTrait
-{
+trait DatabaseTableTestTrait {
     /**
      * Asserts that a given table is the same as the given row.
      *
@@ -28,19 +28,19 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRow(
+  protected function assertTableRow(
         array $expectedRow,
         string $table,
         int $id,
         array $fields = null,
         string $message = ''
     ): void {
-        $this->assertSame(
-            $expectedRow,
-            $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
-            $message
-        );
-    }
+      $this->assertSame(
+          $expectedRow,
+          $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
+          $message
+      );
+  }
 
     /**
      * Fetch row by ID.
@@ -53,24 +53,23 @@ trait DatabaseTableTestTrait
      *
      * @return array Row
      */
-    protected function getTableRowById(string $table, int $id, array $fields = null): array
-    {
-        $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
-        $statement = $this->createPreparedStatement($sql);
-        $statement->execute(['id' => $id]);
+  protected function getTableRowById(string $table, int $id, array $fields = null): array {
+      $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
+      $statement = $this->createPreparedStatement($sql);
+      $statement->execute(['id' => $id]);
 
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
+      $row = $statement->fetch(PDO::FETCH_ASSOC);
 
-        if (empty($row)) {
-            throw new DomainException(sprintf('Row not found: %s', $id));
-        }
-
-        if ($fields) {
-            $row = array_intersect_key($row, array_flip($fields));
-        }
-
-        return $row;
+    if (empty($row)) {
+        throw new DomainException(sprintf('Row not found: %s', $id));
     }
+
+    if ($fields) {
+        $row = array_intersect_key($row, array_flip($fields));
+    }
+
+      return $row;
+  }
 
     /**
      * Asserts that a given table equals the given row.
@@ -83,19 +82,19 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRowEquals(
+  protected function assertTableRowEquals(
         array $expectedRow,
         string $table,
         int $id,
         array $fields = null,
         string $message = ''
     ): void {
-        $this->assertEquals(
-            $expectedRow,
-            $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
-            $message
-        );
-    }
+      $this->assertEquals(
+          $expectedRow,
+          $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
+          $message
+      );
+  }
 
     /**
      * Asserts that a given table contains a given row value.
@@ -108,16 +107,16 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRowValue(
+  protected function assertTableRowValue(
         $expected,
         string $table,
         int $id,
         string $field,
         string $message = ''
     ): void {
-        $actual = $this->getTableRowById($table, $id, [$field])[$field];
-        $this->assertSame($expected, $actual, $message);
-    }
+      $actual = $this->getTableRowById($table, $id, [$field])[$field];
+      $this->assertSame($expected, $actual, $message);
+  }
 
     /**
      * Asserts that a given table contains a given number of rows.
@@ -128,10 +127,9 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRowCount(int $expected, string $table, string $message = ''): void
-    {
-        $this->assertSame($expected, $this->getTableRowCount($table), $message);
-    }
+  protected function assertTableRowCount(int $expected, string $table, string $message = ''): void {
+      $this->assertSame($expected, $this->getTableRowCount($table), $message);
+  }
 
     /**
      * Get table row count.
@@ -140,14 +138,13 @@ trait DatabaseTableTestTrait
      *
      * @return int The number of rows
      */
-    protected function getTableRowCount(string $table): int
-    {
-        $sql = sprintf('SELECT COUNT(*) AS counter FROM `%s`;', $table);
-        $statement = $this->createQueryStatement($sql);
-        $row = $statement->fetch(PDO::FETCH_ASSOC) ?: [];
+  protected function getTableRowCount(string $table): int {
+      $sql = sprintf('SELECT COUNT(*) AS counter FROM `%s`;', $table);
+      $statement = $this->createQueryStatement($sql);
+      $row = $statement->fetch(PDO::FETCH_ASSOC) ?: [];
 
-        return (int)($row['counter'] ?? 0);
-    }
+      return (int) ($row['counter'] ?? 0);
+  }
 
     /**
      * Asserts that a given table contains a given number of rows.
@@ -158,10 +155,9 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRowExists(string $table, int $id, string $message = ''): void
-    {
-        $this->assertTrue((bool)$this->findTableRowById($table, $id), $message);
-    }
+  protected function assertTableRowExists(string $table, int $id, string $message = ''): void {
+      $this->assertTrue((bool) $this->findTableRowById($table, $id), $message);
+  }
 
     /**
      * Fetch row by ID.
@@ -171,14 +167,13 @@ trait DatabaseTableTestTrait
      *
      * @return array Row
      */
-    protected function findTableRowById(string $table, int $id): array
-    {
-        $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
-        $statement = $this->createPreparedStatement($sql);
-        $statement->execute(['id' => $id]);
+  protected function findTableRowById(string $table, int $id): array {
+      $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
+      $statement = $this->createPreparedStatement($sql);
+      $statement->execute(['id' => $id]);
 
-        return $statement->fetch(PDO::FETCH_ASSOC) ?: [];
-    }
+      return $statement->fetch(PDO::FETCH_ASSOC) ?: [];
+  }
 
     /**
      * Asserts that a given table contains a given number of rows.
@@ -189,8 +184,7 @@ trait DatabaseTableTestTrait
      *
      * @return void
      */
-    protected function assertTableRowNotExists(string $table, int $id, string $message = ''): void
-    {
-        $this->assertFalse((bool)$this->findTableRowById($table, $id), $message);
-    }
+  protected function assertTableRowNotExists(string $table, int $id, string $message = ''): void {
+      $this->assertFalse((bool) $this->findTableRowById($table, $id), $message);
+  }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 /**
  * @package    μlogger
@@ -9,8 +10,7 @@
 
 namespace uLogger\Tests\Mapper\Traits;
 
-trait DatabaseTestTrait
-{
+trait DatabaseTestTrait {
     use DatabaseConnectionTestTrait;
     use DatabaseSchemaTestTrait;
     use DatabaseTableTestTrait;
