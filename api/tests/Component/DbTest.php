@@ -81,11 +81,11 @@ final class DbTest extends TestCase {
 
     // For PostgreSQL:
     $driverProp->setValue(null, 'pgsql');
-    $this->assertSame('EXTRACT(EPOCH FROM col::TIMESTAMP WITH TIME ZONE)', $this->db->unixTimestamp('col'));
+    $this->assertSame('EXTRACT(EPOCH FROM col::TIMESTAMP WITH TIME ZONE)::INT', $this->db->unixTimestamp('col'));
 
     // For SQLite:
     $driverProp->setValue(null, 'sqlite');
-    $this->assertSame("STRFTIME('%s', col)", $this->db->unixTimestamp('col'));
+    $this->assertSame('UNIXEPOCH(col)', $this->db->unixTimestamp('col'));
   }
 
   public function testLobPlaceholder(): void {

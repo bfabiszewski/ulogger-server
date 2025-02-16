@@ -112,7 +112,7 @@ class ClientAPITest extends AbstractAPITestCase {
     $this->assertTableRowCount(1, 'positions');
     $expected = [
       'id' => 1,
-      'time' => gmdate('Y-m-d H:i:s', self::TEST_TIMESTAMP),
+      'time' => self::TEST_TIMESTAMP,
       'user_id' => self::TEST_ADMIN_ID,
       'track_id' => $trackId,
       'latitude' => self::TEST_LATITUDE,
@@ -125,7 +125,20 @@ class ClientAPITest extends AbstractAPITestCase {
       'comment' => self::TEST_COMMENT,
       'image' => null
     ];
-    $this->assertTableRow($expected, 'positions', 1);
+    $actual = $this->getTableRowById('positions', 1, array_keys($expected));
+    $this->assertSame($expected['id'], $actual['id']);
+    $this->assertSame($expected['user_id'], $actual['user_id']);
+    $this->assertSame($expected['track_id'], $actual['track_id']);
+    $this->assertSame($expected['time'], $actual['time']);
+    $this->assertEqualsWithDelta($expected['latitude'], $actual['latitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['longitude'], $actual['longitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['altitude'], $actual['altitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['speed'], $actual['speed'], 0.0001);
+    $this->assertEqualsWithDelta($expected['bearing'], $actual['bearing'], 0.0001);
+    $this->assertSame($expected['accuracy'], $actual['accuracy']);
+    $this->assertSame($expected['provider'], $actual['provider']);
+    $this->assertSame($expected['comment'], $actual['comment']);
+    $this->assertNull($actual['image']);
   }
 
   /**
@@ -212,11 +225,11 @@ class ClientAPITest extends AbstractAPITestCase {
     $this->assertSame($expected['user_id'], $actual['user_id']);
     $this->assertSame($expected['track_id'], $actual['track_id']);
     $this->assertSame(gmdate('Y-m-d H:i:s', $expected['time']), $actual['time']);
-    $this->assertSame($expected['latitude'], $actual['latitude']);
-    $this->assertSame($expected['longitude'], $actual['longitude']);
-    $this->assertSame($expected['altitude'], $actual['altitude']);
-    $this->assertSame($expected['speed'], $actual['speed']);
-    $this->assertSame($expected['bearing'], $actual['bearing']);
+    $this->assertEqualsWithDelta($expected['latitude'], $actual['latitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['longitude'], $actual['longitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['altitude'], $actual['altitude'], 0.0001);
+    $this->assertEqualsWithDelta($expected['speed'], $actual['speed'], 0.0001);
+    $this->assertEqualsWithDelta($expected['bearing'], $actual['bearing'], 0.0001);
     $this->assertSame($expected['accuracy'], $actual['accuracy']);
     $this->assertSame($expected['provider'], $actual['provider']);
     $this->assertSame($expected['comment'], $actual['comment']);

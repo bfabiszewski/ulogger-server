@@ -24,7 +24,7 @@ final class ImportCliTest extends TestCase {
 
   public function testHelpOptionDisplaysUsage(): void {
     // Run the script with the --help option.
-    $command = escapeshellcmd("php {$this->scriptPath} --help");
+    $command = escapeshellcmd("php $this->scriptPath --help");
     exec($command, $output, $exitCode);
 
     $outputStr = implode("\n", $output);
@@ -37,7 +37,7 @@ final class ImportCliTest extends TestCase {
   public function testNonExistingGpxFileCausesError(): void {
     // Provide a filename that does not exist.
     $nonExistingFile = 'nonexistent_file.gpx';
-    $command = escapeshellcmd("php {$this->scriptPath} {$nonExistingFile}");
+    $command = escapeshellcmd("php $this->scriptPath $nonExistingFile");
     exec($command, $output, $exitCode);
 
     $outputStr = implode("\n", $output);
@@ -49,7 +49,7 @@ final class ImportCliTest extends TestCase {
 
   public function testInvalidArgumentsCauseError(): void {
     // Run the script without the required operand(s)
-    $command = escapeshellcmd("php {$this->scriptPath}");
+    $command = escapeshellcmd("php $this->scriptPath");
     exec($command, $output, $exitCode);
 
     $outputStr = implode("\n", $output);

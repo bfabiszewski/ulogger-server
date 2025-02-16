@@ -141,9 +141,9 @@ class Db extends PDO {
       case 'mysql':
         return "UNIX_TIMESTAMP($column)";
       case 'pgsql':
-        return "EXTRACT(EPOCH FROM $column::TIMESTAMP WITH TIME ZONE)";
+        return "EXTRACT(EPOCH FROM $column::TIMESTAMP WITH TIME ZONE)::INT";
       case 'sqlite':
-        return "STRFTIME('%s', $column)";
+        return "UNIXEPOCH($column)";
     }
   }
 

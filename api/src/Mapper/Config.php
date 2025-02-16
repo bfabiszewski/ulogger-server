@@ -141,10 +141,10 @@ class Config extends AbstractMapper {
 
   /**
    * Unserialize data from database
-   * @param object|string $data Resource returned by pgsql, string otherwise
+   * @param resource|string $data Resource returned by pgsql, string otherwise
    * @return mixed
    */
-  private function unserialize(object|string $data): mixed {
+  private function unserialize(mixed $data): mixed {
     if (is_resource($data)) {
       $data = stream_get_contents($data);
     }

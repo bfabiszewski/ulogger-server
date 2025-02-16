@@ -91,12 +91,11 @@ class ConfigTest extends AbstractMapperTestCase {
     $layersRows = $this->getTableAllRows('ol_layers');
 
     $this->assertTableRowCount($rowCount, 'config');
-    $this->assertEquals($config->colorStart, unserialize($this->getArrayRowByKey($configRows, 'name', 'color_start')['value']));
-    $this->assertEquals($config->googleKey, unserialize($this->getArrayRowByKey($configRows, 'name', 'google_key')['value']));
-    $this->assertEquals($config->uploadMaxSize, unserialize($this->getArrayRowByKey($configRows, 'name', 'upload_maxsize')['value']));
-    $this->assertEquals($config->initLatitude, unserialize($this->getArrayRowByKey($configRows, 'name', 'latitude')['value']));
-    $this->assertEquals($config->initLongitude, unserialize($this->getArrayRowByKey($configRows, 'name', 'longitude')['value']));
-    $this->assertEquals($config->initLongitude, unserialize($this->getArrayRowByKey($configRows, 'name', 'longitude')['value']));
+    $this->assertEquals($config->colorStart, $this->unserialize($this->getArrayRowByKey($configRows, 'name', 'color_start')['value']));
+    $this->assertEquals($config->googleKey, $this->unserialize($this->getArrayRowByKey($configRows, 'name', 'google_key')['value']));
+    $this->assertEquals($config->uploadMaxSize, $this->unserialize($this->getArrayRowByKey($configRows, 'name', 'upload_maxsize')['value']));
+    $this->assertEquals($config->initLatitude, $this->unserialize($this->getArrayRowByKey($configRows, 'name', 'latitude')['value']));
+    $this->assertEquals($config->initLongitude, $this->unserialize($this->getArrayRowByKey($configRows, 'name', 'longitude')['value']));
     $this->assertEquals(count($config->olLayers), count($layersRows));
     $this->assertEquals($config->olLayers[0]->id, $layersRows[0]['id']);
     $this->assertEquals($config->olLayers[0]->name, $layersRows[0]['name']);

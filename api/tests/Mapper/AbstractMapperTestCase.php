@@ -11,10 +11,10 @@ namespace uLogger\Tests\Mapper;
 
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Selective\TestTrait\Traits\DatabaseTestTrait;
 use uLogger\Component\Db;
 use uLogger\Exception\DatabaseException;
 use uLogger\Mapper\MapperFactory;
+use uLogger\Tests\Mapper\Traits\DatabaseTestTrait;
 
 abstract class AbstractMapperTestCase extends TestCase {
 
@@ -54,31 +54,11 @@ abstract class AbstractMapperTestCase extends TestCase {
     parent::setUp();
 
     $this->setUpConnection($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD']);
-    $this->setUpDatabase(__DIR__ . '/Schemas/mysql.sql');
+    $this->setUpDatabase(__DIR__ . "/Schemas/$this->driver.sql");
   }
 
   public function getConnection(): PDO {
     return $this->pdo;
-  }
-
-  /**
-   * @param class-string $className
-   * @param string $key
-   * @param mixed $value
-   * @return array|null
-   */
-  public function getRecordByKey(string $className, string $key, mixed $value): array|null {
-    $array = (new $className())->records;
-    return $this->getArrayRowByKey($array, $key, $value);
-  }
-
-  /**
-   * @param class-string $className
-   * @param int $id
-   * @return array|null
-   */
-  public function getRecordById(string $className, int $id): array|null {
-    return $this->getRecordByKey($className, 'id', $id);
   }
 
   /**
@@ -93,90 +73,6 @@ abstract class AbstractMapperTestCase extends TestCase {
     $this->db = new Db($dsn, $user, $password);
     $this->mapperFactory = new MapperFactory($this->db);
     $this->driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-  }
-
-  /**
-   * Fetch row by ID.
-   *
-   * @param string $table Table name
-   * @return array Row
-   */
-  protected function getTableAllRows(string $table): array {
-    $sql = sprintf('SELECT * FROM `%s`', $table);
-    $statement = $this->createPreparedStatement($sql);
-    $statement->execute();
-
-    return $statement->fetchAll(PDO::FETCH_ASSOC);
-  }
-
-  /**
-   * @param mixed $array
-   * @param string $key
-   * @param mixed $value
-   * @return mixed|null
-   */
-  public function getArrayRowByKey(array $array, string $key, mixed $value): array|null {
-    foreach ($array as $record) {
-      if ($record[$key] === $value) {
-        return $record;
-      }
-    }
-    return null;
-  }
-
-
-
-  /**
-   * Insert to database from array
-   *
-   * @param string $table Table name
-   * @param array $rowsArr Array of rows
-   * @return int|null Last insert id if available, null otherwise
-   */
-  private function pdoInsert(string $table, array $rowsArr = []): ?int {
-    $ret = null;
-    if (!empty($rowsArr)) {
-      $values = ':' . implode(', :', array_keys($rowsArr));
-      $columns = implode(', ', array_keys($rowsArr));
-      $query = "INSERT INTO $table ($columns) VALUES ($values)";
-      $stmt = $this->pdo->prepare($query);
-      if ($stmt !== false) {
-        $stmt->execute(array_combine(explode(', ', $values), array_values($rowsArr)));
-      }
-      $ret = (int) $this->pdo->lastInsertId();
-    }
-    return $ret;
-  }
-
-  /**
-   * Execute raw insert query on database
-   *
-   * @param string $query Insert query
-   * @return int|null Last insert id if available, null otherwise
-   */
-  private function pdoInsertRaw(string $query): ?int {
-    $ret = null;
-    if ($this->pdo->exec($query) !== false) {
-      $ret = (int) $this->pdo->lastInsertId();
-    }
-    return $ret;
-  }
-
-  /**
-   * Get single column from first row of query result
-   *
-   * @param string $query SQL query
-   * @param int $columnNumber Optional column number (default is first column)
-   * @return string|bool Column  or false if no data
-   */
-  protected function pdoGetColumn(string $query, int $columnNumber = 0): bool|string {
-    $column = false;
-    $stmt = $this->pdo->query($query);
-    if ($stmt !== false) {
-      $column = $stmt->fetchColumn($columnNumber);
-      $stmt->closeCursor();
-    }
-    return $column;
   }
 
   /**
@@ -268,42 +164,15 @@ abstract class AbstractMapperTestCase extends TestCase {
     }
 
     $query = "INSERT INTO positions (user_id, track_id, time, latitude, longitude)
-              VALUES ('$userId', '$trackId', " . $this->fromUnixtime($timeStamp) . ", '$latitude', '$longitude')";
+              VALUES ('$userId', '$trackId', " . $this->fromUnixTime($timeStamp) . ", '$latitude', '$longitude')";
     return $this->pdoInsertRaw($query);
   }
 
-  /**
-   * Get function that converts date time column to unix timestamp for current PDO driver
-   * @param string $column Column name or timestamp value
-   * @return string
-   */
-  public function unixTimestamp(string $column): string {
-    switch ($this->driver) {
-      default:
-      case 'mysql':
-        return "UNIX_TIMESTAMP($column)";
-      case 'pgsql':
-        return "EXTRACT(EPOCH FROM $column)";
-      case 'sqlite':
-        return "STRFTIME('%s', $column)";
+  protected function unserialize(mixed $data): mixed {
+    if (is_resource($data)) {
+      $data = stream_get_contents($data);
     }
-  }
-
-  /**
-   * Get function that converts unix timestamp to date time for current PDO driver
-   * @param int|string $column Column name or timestamp value
-   * @return string
-   */
-  public function fromUnixtime(int|string $column): string {
-    switch ($this->driver) {
-      default:
-      case 'mysql':
-        return "FROM_UNIXTIME($column)";
-      case 'pgsql':
-        return "TO_TIMESTAMP($column)";
-      case 'sqlite':
-        return "DATETIME($column, 'unixepoch')";
-    }
+    return unserialize($data, [ 'allowed_classes' => false ]);
   }
 
 }

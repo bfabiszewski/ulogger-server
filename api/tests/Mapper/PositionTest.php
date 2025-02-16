@@ -99,12 +99,12 @@ class PositionTest extends AbstractMapperTestCase {
    */
   public function testFetchLastSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
+    $expected = $this->getRecordById(Fixtures\Positions::class, 4);
 
     $userId = 1;
     $position = $this->mapper->fetchLast($userId);
 
-    $record = $this->getRecordById(Fixtures\Positions::class, 4);
-    $this->assertPositionEquals($record, $position);
+    $this->assertPositionEquals($expected, $position);
   }
 
   /**
@@ -131,10 +131,10 @@ class PositionTest extends AbstractMapperTestCase {
   public function testFetchLastAllUsersSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
 
-    $positions = $this->mapper->fetchLastAllUsers();
-
     $record1 = $this->getRecordById(Fixtures\Positions::class, 3);
     $record2 = $this->getRecordById(Fixtures\Positions::class, 4);
+
+    $positions = $this->mapper->fetchLastAllUsers();
 
     $this->assertCount(2, $positions);
     $this->assertPositionEquals($record1, $positions[0]);
@@ -161,11 +161,11 @@ class PositionTest extends AbstractMapperTestCase {
   public function testFindAllSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
 
-    $trackId = 1;
-    $positions = $this->mapper->findAll($trackId);
-
     $record1 = $this->getRecordById(Fixtures\Positions::class, 1);
     $record2 = $this->getRecordById(Fixtures\Positions::class, 2);
+
+    $trackId = 1;
+    $positions = $this->mapper->findAll($trackId);
 
     $this->assertCount(2, $positions);
     $this->assertPositionEquals($record1, $positions[0]);
@@ -179,12 +179,11 @@ class PositionTest extends AbstractMapperTestCase {
    */
   public function testFindAllAfterIdSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
+    $record1 = $this->getRecordById(Fixtures\Positions::class, 2);
 
     $trackId = 1;
     $afterId = 1;
     $positions = $this->mapper->findAll($trackId, $afterId);
-
-    $record1 = $this->getRecordById(Fixtures\Positions::class, 2);
 
     $this->assertCount(1, $positions);
     $this->assertPositionEquals($record1, $positions[0]);
@@ -196,7 +195,6 @@ class PositionTest extends AbstractMapperTestCase {
    */
   public function testCreateSuccess() {
     $this->insertFixtures([ Fixtures\Users::class, Fixtures\Tracks::class, Fixtures\Positions::class ]);
-
     $position = new Entity\Position(1727964315, 1, 1, 55.0, 22.0);
     $position->altitude = 0.1;
     $position->speed = 0.2;
@@ -717,25 +715,25 @@ class PositionTest extends AbstractMapperTestCase {
   }
 
   /**
-   * @param array|null $record
-   * @param Entity\Position $position
+   * @param array|null $expected
+   * @param Entity\Position $actualPosition
    * @return void
    * @throws \Exception
    */
-  private function assertPositionEquals(?array $record, Entity\Position $position): void {
-    $this->assertEquals($record['id'], $position->id);
-    $this->assertEquals($record['user_id'], $position->userId);
-    $this->assertEquals($record['track_id'], $position->trackId);
-    $date = new DateTimeImmutable($record['time'], new DateTimeZone('UTC'));
-    $this->assertEquals($date->getTimestamp(), $position->timestamp);
-    $this->assertEquals($record['longitude'], $position->longitude);
-    $this->assertEquals($record['latitude'], $position->latitude);
-    $this->assertEquals($record['altitude'], $position->altitude);
-    $this->assertEquals($record['speed'], $position->speed);
-    $this->assertEquals($record['bearing'], $position->bearing);
-    $this->assertEquals($record['accuracy'], $position->accuracy);
-    $this->assertEquals($record['provider'], $position->provider);
-    $this->assertEquals($record['comment'], $position->comment);
-    $this->assertEquals($record['image'], $position->image);
+  private function assertPositionEquals(?array $expected, Entity\Position $actualPosition): void {
+    $this->assertEquals($expected['id'], $actualPosition->id);
+    $this->assertEquals($expected['user_id'], $actualPosition->userId);
+    $this->assertEquals($expected['track_id'], $actualPosition->trackId);
+    $date = new DateTimeImmutable($expected['time'], new DateTimeZone('UTC'));
+    $this->assertEquals($date->getTimestamp(), $actualPosition->timestamp);
+    $this->assertEquals($expected['longitude'], $actualPosition->longitude);
+    $this->assertEquals($expected['latitude'], $actualPosition->latitude);
+    $this->assertEquals($expected['altitude'], $actualPosition->altitude);
+    $this->assertEquals($expected['speed'], $actualPosition->speed);
+    $this->assertEquals($expected['bearing'], $actualPosition->bearing);
+    $this->assertEquals($expected['accuracy'], $actualPosition->accuracy);
+    $this->assertEquals($expected['provider'], $actualPosition->provider);
+    $this->assertEquals($expected['comment'], $actualPosition->comment);
+    $this->assertEquals($expected['image'], $actualPosition->image);
   }
 }

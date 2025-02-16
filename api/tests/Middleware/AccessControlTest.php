@@ -332,7 +332,7 @@ class AccessControlTest extends TestCase {
 
     $this->sessionMock->user = new User('test');
     $this->sessionMock->user->id = $userId;
-    $trackId = 123;
+
     // The resource owner check requires the session to be authenticated.
     $this->sessionMock->method('isSessionUser')
       ->willReturn($ownerMatch);

@@ -37,7 +37,7 @@ final class RequestTest extends TestCase {
 
   public function testMatchPathSuccess(): void {
     $id = '123';
-    $path = "/api/users/{$id}";
+    $path = "/api/users/$id";
     $request = new Request($path, 'GET');
     $result = $request->matchPath('/api/users/{id}');
     $this->assertTrue($result, 'Expected route to match the request path');
@@ -87,7 +87,7 @@ final class RequestTest extends TestCase {
     };
     // Create a request with a path that will extract the "id" parameter.
     $id = 123;
-    $request = new Request("/dummy/{$id}", 'GET', [], [], []);
+    $request = new Request("/dummy/$id", 'GET', [], [], []);
     $request->matchPath('/dummy/{id}');
 
     try {

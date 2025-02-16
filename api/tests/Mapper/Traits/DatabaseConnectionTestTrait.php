@@ -11,35 +11,13 @@ declare(strict_types = 1);
 namespace uLogger\Tests\Mapper\Traits;
 
 use PDO;
-use PDOStatement;
-use UnexpectedValueException;
 
 trait DatabaseConnectionTestTrait {
-    /**
-     * Get database connection.
-     *
-     * @return PDO The PDO instance
-     */
-  protected function getConnection(): PDO {
-      return $this->container->get(PDO::class);
-  }
+  /**
+   * Get database connection.
+   *
+   * @return PDO The PDO instance
+   */
+  abstract protected function getConnection(): PDO;
 
-    /**
-     * Create PDO statement.
-     *
-     * @param string $sql The sql
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return PDOStatement The statement
-     */
-  private function createPreparedStatement(string $sql): PDOStatement {
-      $statement = $this->getConnection()->prepare($sql);
-
-    if (!$statement instanceof PDOStatement) {
-        throw new UnexpectedValueException('Invalid SQL statement');
-    }
-
-      return $statement;
-  }
 }

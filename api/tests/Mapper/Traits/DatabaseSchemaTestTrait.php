@@ -10,15 +10,17 @@ declare(strict_types = 1);
 
 namespace uLogger\Tests\Mapper\Traits;
 
+use Exception;
 use PDO;
 use PDOStatement;
 use UnexpectedValueException;
+use function PHPUnit\Framework\assertInstanceOf;
 
 trait DatabaseSchemaTestTrait {
   /**
    * @var string Path to schema.sql
    */
-  protected $schemaFile = '';
+  protected string $schemaFile = '';
 
   /**
    * Create tables and insert fixtures.
@@ -34,10 +36,11 @@ trait DatabaseSchemaTestTrait {
       $this->schemaFile = $schemaFile;
     }
 
-    $this->getConnection();
+    assertInstanceOf(PDO::class, $this->getConnection());
 
     $this->createTables();
     $this->truncateTables();
+    $this->resetAutoincrement();
 
     if (!empty($this->fixtures)) {
       $this->insertFixtures($this->fixtures);
@@ -83,6 +86,7 @@ trait DatabaseSchemaTestTrait {
     return (string) $row['Value'];
   }
 
+
   /**
    * Clean up database. Truncate tables.
    *
@@ -91,26 +95,22 @@ trait DatabaseSchemaTestTrait {
   protected function dropTables(): void {
     $pdo = $this->getConnection();
 
-    $pdo->exec('SET unique_checks=0; SET foreign_key_checks=0;');
+    $this->setTableChecks(false);
 
-    $statement = $this->createQueryStatement(
-      'SELECT TABLE_NAME
-                FROM information_schema.tables
-                WHERE table_schema = database()'
-    );
+    $sql = $this->getTableNamesQuery();
+    $statement = $this->createQueryStatement($sql);
 
-    $rows = (array) $statement->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 
     $sql = [];
     foreach ($rows as $row) {
-      $sql[] = sprintf('DROP TABLE `%s`;', $row['TABLE_NAME']);
+      $sql[] = $this->getDropQuery($row['name']);
     }
 
     if ($sql) {
       $pdo->exec(implode("\n", $sql));
     }
-
-    $pdo->exec('SET unique_checks=1; SET foreign_key_checks=1;');
+    $this->setTableChecks(true);
   }
 
   /**
@@ -137,7 +137,6 @@ trait DatabaseSchemaTestTrait {
    *
    * @return void
    * @throws UnexpectedValueException
-   *
    */
   protected function importSchema(): void {
     if (!$this->schemaFile) {
@@ -149,9 +148,9 @@ trait DatabaseSchemaTestTrait {
     }
 
     $pdo = $this->getConnection();
-    $pdo->exec('SET unique_checks=0; SET foreign_key_checks=0;');
+    $this->setTableChecks(false);
     $pdo->exec((string) file_get_contents($this->schemaFile));
-    $pdo->exec('SET unique_checks=1; SET foreign_key_checks=1;');
+    $this->setTableChecks(true);
   }
 
   /**
@@ -162,39 +161,34 @@ trait DatabaseSchemaTestTrait {
   protected function truncateTables(): void {
     $pdo = $this->getConnection();
 
-    $pdo->exec('SET unique_checks=0; SET foreign_key_checks=0;');
+    $this->setTableChecks(false);
 
-    $expiry = $this->getDatabaseVariable('information_schema_stats_expiry');
-    if ($expiry === null) {
-      // MariaDB: Truncate only changed tables
-      $statement = $this->createQueryStatement(
-        'SELECT TABLE_NAME
-                FROM information_schema.tables
-                WHERE table_schema = database()
-                AND (update_time IS NOT NULL OR auto_increment IS NOT NULL)'
-      );
-    } else {
-      // MySQL: Truncate all tables
-      // Workaround for MySQL 8: update_time not working.
-      // Even SET information_schema_stats_expiry=0; has no affect anymore.
-      // https://bugs.mysql.com/bug.php?id=95407
-      $statement = $this->createQueryStatement(
-        'SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = database()'
-      );
+    $tableNamesQuery = $this->getTableNamesQuery();
+    $statement = $this->createQueryStatement(
+      $tableNamesQuery
+    );
+    if ($this->driver === 'mysql') {
+      $expiry = $this->getDatabaseVariable('information_schema_stats_expiry');
+      if ($expiry === null) {
+        // MariaDB: Truncate only changed tables
+        $statement = $this->createQueryStatement(
+          $tableNamesQuery . ' AND (update_time IS NOT NULL OR auto_increment IS NOT NULL)'
+        );
+      }
     }
 
-    $rows = (array) $statement->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 
     $sql = [];
     foreach ($rows as $row) {
-      $sql[] = sprintf('TRUNCATE TABLE `%s`;', $row['TABLE_NAME']);
+      $sql[] = $this->getTruncateQuery($row['name']);
     }
 
     if ($sql) {
       $pdo->exec(implode("\n", $sql));
     }
 
-    $pdo->exec('SET unique_checks=1; SET foreign_key_checks=1;');
+    $this->setTableChecks(true);
   }
 
   /**
@@ -211,6 +205,11 @@ trait DatabaseSchemaTestTrait {
       foreach ($object->records as $row) {
         $this->insertFixture($object->table, $row);
       }
+      if ($this->driver === 'pgsql') {
+        $this->pdo->exec("ALTER SEQUENCE IF EXISTS {$object->table}_id_seq RESTART WITH " . count($object->records) + 1);
+      } elseif ($this->driver === 'sqlite') {
+        $this->pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = '$object->table'");
+      }
     }
   }
 
@@ -219,24 +218,99 @@ trait DatabaseSchemaTestTrait {
    *
    * @param string $table The table name
    * @param array $row The row data
-   *
-   * @return int|null last insert id of auto increment column otherwise null
    */
-  protected function insertFixture(string $table, array $row): ?int {
-    $fields = array_keys($row);
+  protected function insertFixture(string $table, array $row): void {
+    if (!empty($row)) {
+      $this->insertRow($table, $row);
+    }
+  }
 
-    array_walk(
-      $fields,
-      function (&$value) {
-        $value = sprintf('`%s`=:%s', $value, $value);
-      }
-    );
+  /**
+   * @return string
+   */
+  private function getTableNamesQuery(): string {
+    $query = null;
+    if ($this->driver === 'mysql') {
+      $query = 'SELECT TABLE_NAME as name
+                FROM information_schema.tables
+                WHERE table_schema = database()';
+    } elseif ($this->driver === 'pgsql') {
+      $query = "SELECT table_name as name
+            FROM information_schema.tables
+            WHERE table_schema = 'public' AND table_type = 'BASE TABLE'";
+    } elseif ($this->driver === 'sqlite') {
+      $query = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';";
+    }
+    return $query;
+  }
 
-    $statement = $this->createPreparedStatement(sprintf('INSERT INTO `%s` SET %s', $table, implode(',', $fields)));
-    $statement->execute($row);
+  /**
+   * @param bool $isOn
+   * @return void
+   */
+  private function setTableChecks(bool $isOn): void {
+    $value = $isOn ? 1 : 0;
+    $pdo = $this->getConnection();
+    if ($this->driver === 'mysql') {
+      $pdo->exec("SET unique_checks=$value; SET foreign_key_checks=$value;");
+    }
+  }
 
-    $lastInsertId = $this->getConnection()->lastInsertId();
+  /**
+   * @param string $tableName
+   * @return string
+   */
+  private function getDropQuery(string $tableName): string {
+    $query = "DROP TABLE `$tableName`;";
+    if ($this->driver === 'pgsql') {
+      $query = "DROP TABLE IF EXISTS \"$tableName\" CASCADE;";
+    }
+    return $query;
+  }
 
-    return $lastInsertId !== false ? (int) $lastInsertId : null;
+  /**
+   * @param $tableName
+   * @return string
+   */
+  private function getTruncateQuery($tableName): string {
+    $query = "TRUNCATE TABLE `$tableName`;";
+    if ($this->driver === 'pgsql') {
+      $query = "TRUNCATE TABLE \"$tableName\" CASCADE;";
+    } elseif ($this->driver === 'sqlite') {
+      $query = "DELETE FROM $tableName;";
+    }
+    return $query;
+  }
+
+  /**
+   * @param int $users
+   * @param int $tracks
+   * @param int $positions
+   * @param int $layers
+   * @return void
+   */
+  protected function resetAutoincrement(int $users = 1, int $tracks = 1, int $positions = 1, int $layers = 1): void {
+    if ($this->driver === 'pgsql') {
+      $this->pdo->exec("ALTER SEQUENCE IF EXISTS users_id_seq RESTART WITH $users");
+      $this->pdo->exec("ALTER SEQUENCE IF EXISTS tracks_id_seq RESTART WITH $tracks");
+      $this->pdo->exec("ALTER SEQUENCE IF EXISTS positions_id_seq RESTART WITH $positions");
+      $this->pdo->exec("ALTER SEQUENCE IF EXISTS ol_layers_id_seq RESTART WITH $layers");
+    } elseif ($this->driver === 'sqlite') {
+      $retry = 1;
+      do {
+        try {
+          $this->pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'users'");
+          $this->pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'tracks'");
+          $this->pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'positions'");
+          $this->pdo->exec("DELETE FROM sqlite_sequence WHERE NAME = 'ol_layers'");
+          $retry = 0;
+        } catch (Exception $e) {
+          // sqlite raises error when db schema changes in another connection.
+          if (str_contains($e->getMessage(), 'database schema has changed')) {
+            self::setUpBeforeClass();
+          }
+        }
+      } while ($retry--);
+    }
   }
 }
