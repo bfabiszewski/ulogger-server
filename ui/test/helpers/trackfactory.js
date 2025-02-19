@@ -84,10 +84,10 @@ export default class TrackFactory {
     position.accuracy = params.accuracy || null;
     position.provider = params.provider || null;
     position.comment = params.comment || null;
-    position.image = params.image || null;
-    position.username = params.username || 'testUser';
-    position.trackid = params.trackid || 1;
-    position.trackname = params.trackname || 'test track';
+    position.hasImage = params.hasImage || false;
+    position.userName = params.userName || 'testUser';
+    position.trackId = params.trackId || 1;
+    position.trackName = params.trackName || 'test track';
     position.meters = params.meters || 0;
     position.seconds = params.seconds || 0;
     return position;

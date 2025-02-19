@@ -20,79 +20,108 @@ describe('Ajax tests', () => {
   form.appendChild(input);
 
   beforeEach(() => {
-    spyOn(XMLHttpRequest.prototype, 'open').and.callThrough();
-    spyOn(XMLHttpRequest.prototype, 'setRequestHeader').and.callThrough();
-    spyOn(XMLHttpRequest.prototype, 'send');
-    spyOnProperty(XMLHttpRequest.prototype, 'readyState').and.returnValue(XMLHttpRequest.DONE);
+    spyOn(window, 'fetch').and.resolveTo();
   });
 
   it('should make POST request', () => {
     // when
     Http.post(url).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.setRequestHeader).toHaveBeenCalledWith('Content-type', 'application/x-www-form-urlencoded');
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('POST');
+    expect(init.body).toEqual('{}');
+    expect(headers.get('Content-type')).toEqual('application/json');
   });
 
   it('should make GET request', () => {
     // when
     Http.get(url).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', url, true);
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('GET');
+    expect(init.body).toBeUndefined();
+    expect(headers.get('Content-type')).toBeNull();
   });
 
   it('should make GET request with parameters', () => {
     // when
     Http.get(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `${url}?p1=1&p2=test`, true);
-    expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(null);
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(`${url}?p1=1&p2=test`, jasmine.any(Object));
+    expect(init.method).toEqual('GET');
+    expect(init.body).toBeUndefined();
+    expect(headers.get('Content-type')).toBeNull();
   });
 
   it('should make POST request with parameters', () => {
     // when
     Http.post(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
-    expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith('p1=1&p2=test');
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('POST');
+    expect(init.body).toEqual('{"p1":1,"p2":"test"}');
+    expect(headers.get('Content-type')).toEqual('application/json');
   });
 
   it('should make POST request with form data', () => {
     // when
     Http.post(url, form).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', url, true);
-    expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(new FormData(form));
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('POST');
+    expect(init.body).toEqual(new FormData(form));
+    expect(headers.get('Content-type')).toBeNull();
   });
 
   it('should make GET request with form data', () => {
     // when
     Http.get(url, form).catch(() => { /* ignore */ });
     // then
-    expect(XMLHttpRequest.prototype.setRequestHeader).not.toHaveBeenCalled();
-    expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `${url}?p1=test`, true);
-    expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(null);
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(`${url}?p1=test`, jasmine.any(Object));
+    expect(init.method).toEqual('GET');
+    expect(init.body).toBeUndefined();
+    expect(headers.get('Content-type')).toBeNull();
   });
 
   it('should make successful request and return value', (done) => {
     // when
-    spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validResponse));
+    const headers = new Headers();
+    headers.set('Content-type', 'application/json');
+    const response = new Response(JSON.stringify(validResponse), { status: 200, statusText: 'OK', headers: headers });
+    window.fetch.and.resolveTo(response);
     // then
     Http.get(url)
       .then((result) => {
-      expect(result).toEqual(validResponse);
-      done();
-    })
+        expect(result).toEqual(validResponse);
+        done();
+      })
       .catch((e) => done.fail(`reject callback called (${e})`));
   });
 
-  it('should make successful request and return error with message', (done) => {
+  it('should make request and return error with message', (done) => {
     // when
-    spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(errorResponse));
+    const headers = new Headers();
+    headers.set('Content-type', 'application/json');
+    const response = new Response(JSON.stringify(errorResponse), { status: 422, statusText: 'Unprocessable entity', headers: headers });
+    window.fetch.and.resolveTo(response);
     // then
     Http.get(url)
       .then(() => done.fail('resolve callback called'))
@@ -102,36 +131,40 @@ describe('Ajax tests', () => {
       });
   });
 
-  it('should make successful request and return error without message', (done) => {
+  it('should make request and return json error with generic error message', (done) => {
     // when
-    spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ error: true }));
+    const headers = new Headers();
+    headers.set('Content-type', 'application/json');
+    const response = new Response(JSON.stringify({ error: true }), { status: 422, statusText: 'Unprocessable entity', headers: headers });
+    window.fetch.and.resolveTo(response);
     // then
     Http.get(url)
       .then(() => done.fail('resolve callback called'))
       .catch((e) => {
-        expect(e.message).toBe('');
+        expect(e.message).toBe('Unprocessable entity');
         done();
       });
   });
 
-  it('should make request and fail with HTTP error code', (done) => {
+  it('should make request and fail with generic error message', (done) => {
     // when
-    const status = 401;
-    spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(status);
+    const response = new Response(JSON.stringify({ error: true }), { status: 401, statusText: 'Unauthorized' });
+    window.fetch.and.resolveTo(response);
     // then
     Http.get(url)
       .then(() => done.fail('resolve callback called'))
       .catch((e) => {
-        expect(e.message).toBe(`HTTP error ${status}`);
+        expect(e.message).toBe('Unauthorized');
         done();
       });
   });
 
   it('should make request and fail with JSON parse error', (done) => {
     // when
-    spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(invalidResponse);
+    const headers = new Headers();
+    headers.set('Content-type', 'application/json');
+    const response = new Response(invalidResponse, { status: 200, statusText: 'Ok', headers: headers });
+    window.fetch.and.resolveTo(response);
     // then
     Http.get(url)
       .then(() => done.fail('resolve callback called'))

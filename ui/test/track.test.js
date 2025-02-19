@@ -4,6 +4,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
+import Http from '../src/Http.js';
+import HttpError from '../src/HttpError';
 import Position from '../src/Position.js';
 import Track from '../src/Track.js';
 import User from '../src/User.js';
@@ -23,10 +25,10 @@ describe('Track tests', () => {
   let accuracy;
   let provider;
   let comment;
-  let image;
-  let username;
-  let trackid;
-  let trackname;
+  let hasImage;
+  let userName;
+  let trackId;
+  let trackName;
   let meters;
   let seconds;
 
@@ -47,10 +49,10 @@ describe('Track tests', () => {
     accuracy = 9;
     provider = 'gps';
     comment = null;
-    image = '134_5d3c8fa92ebac.jpg';
-    username = 'test';
-    trackid = 134;
-    trackname = 'Test name';
+    hasImage = true;
+    userName = 'test';
+    trackId = 134;
+    trackName = 'Test name';
     meters = 0;
     seconds = 0;
 
@@ -65,10 +67,10 @@ describe('Track tests', () => {
       accuracy: accuracy,
       provider: provider,
       comment: comment,
-      image: image,
-      username: username,
-      trackid: trackid,
-      trackname: trackname,
+      hasImage: hasImage,
+      userName: userName,
+      trackId: trackId,
+      trackName: trackName,
       meters: meters,
       seconds: seconds
     };
@@ -219,10 +221,10 @@ describe('Track tests', () => {
       expect(position.accuracy).toBe(accuracy);
       expect(position.provider).toBe(provider);
       expect(position.comment).toBe(comment);
-      expect(position.image).toBe(image);
-      expect(position.username).toBe(username);
-      expect(position.trackid).toBe(trackid);
-      expect(position.trackname).toBe(trackname);
+      expect(position.hasImage).toBe(hasImage);
+      expect(position.userName).toBe(userName);
+      expect(position.trackId).toBe(trackId);
+      expect(position.trackName).toBe(trackName);
       expect(position.meters).toBe(meters);
       expect(position.seconds).toBe(seconds);
     });
@@ -266,21 +268,18 @@ describe('Track tests', () => {
     const invalidListResponse = [ { 'name': 'Track 1' }, { 'id': 144, 'name': 'Track 2' } ];
 
     beforeEach(() => {
-      spyOn(XMLHttpRequest.prototype, 'open').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'setRequestHeader').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'send');
-      spyOnProperty(XMLHttpRequest.prototype, 'readyState').and.returnValue(XMLHttpRequest.DONE);
-      spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
+      spyOn(Http, 'get').and.resolveTo();
+      spyOn(Http, 'post').and.resolveTo();
     });
 
     it('should make successful request and return track array', (done) => {
       // given
       const user = new User(1, 'testLogin');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validListResponse));
+      Http.get.and.resolveTo(validListResponse);
       // when
       Track.fetchList(user)
         .then((result) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/gettracks.php?userid=1', true);
+          expect(Http.get).toHaveBeenCalledWith(`api/users/${user.id}/tracks`);
           expect(result).toEqual(jasmine.arrayContaining([ new Track(validListResponse[0].id, validListResponse[0].name, user) ]));
           expect(result.length).toBe(2);
           done();
@@ -291,7 +290,7 @@ describe('Track tests', () => {
     it('should throw error on invalid JSON', (done) => {
       // given
       const user = new User(1, 'testLogin');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(invalidListResponse));
+      Http.get.and.resolveTo(invalidListResponse);
       // when
       Track.fetchList(user)
         .then(() => {
@@ -306,13 +305,13 @@ describe('Track tests', () => {
     it('should make successful request and return latest track position for given user', (done) => {
       // given
       const user = new User(1, 'testLogin');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([ jsonPosition ]));
+      Http.get.and.resolveTo(jsonPosition);
       // when
       Track.fetchLatest(user)
         .then((result) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/getpositions.php?last=true&userid=1', true);
+          expect(Http.get).toHaveBeenCalledWith(`api/users/${user.id}/position`);
           expect(result).toBeInstanceOf(Track);
-          expect(result.id).toEqual(jsonPosition.trackid);
+          expect(result.id).toEqual(jsonPosition.trackId);
           expect(result.length).toBe(1);
           done();
         })
@@ -322,7 +321,7 @@ describe('Track tests', () => {
     it('should make successful request and return null when there are no positions for the user', (done) => {
       // given
       const user = new User(1, 'testLogin');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      Http.get.and.rejectWith(new HttpError('Not found', 404));
       // when
       Track.fetchLatest(user)
         .then((result) => {
@@ -334,12 +333,12 @@ describe('Track tests', () => {
 
     it('should make successful request and fetch track positions', (done) => {
       // given
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([ jsonPosition ]));
+      Http.get.and.resolveTo([ jsonPosition ]);
       track.clear();
       // when
       track.fetchPositions()
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `utils/getpositions.php?userid=${track.user.id}&trackid=${track.id}`, true);
+          expect(Http.get).toHaveBeenCalledWith(`api/tracks/${track.id}/positions`);
           expect(track.length).toBe(1);
           expect(track.positions[0].id).toEqual(jsonPosition.id);
           done();
@@ -349,17 +348,19 @@ describe('Track tests', () => {
 
     it('should make successful request and append track positions to existing data', (done) => {
       // given
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([ jsonPosition ]));
+      Http.get.and.resolveTo([ jsonPosition ]);
       track.clear();
       // when
       track.fetchPositions()
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `utils/getpositions.php?userid=${track.user.id}&trackid=${track.id}`, true);
+          expect(Http.get).toHaveBeenCalledTimes(1);
+          expect(Http.get).toHaveBeenCalledWith(`api/tracks/${track.id}/positions`);
           expect(track.length).toBe(1);
           expect(track.positions[0].id).toEqual(jsonPosition.id);
           // eslint-disable-next-line jasmine/no-promise-without-done-fail
           track.fetchPositions().then(() => {
-            expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', `utils/getpositions.php?userid=${track.user.id}&trackid=${track.id}&afterid=${track.positions[0].id}`, true);
+            expect(Http.get).toHaveBeenCalledTimes(2);
+            expect(Http.get).toHaveBeenCalledWith(`api/tracks/${track.id}/positions?afterId=${track.positions[0].id}`);
             expect(track.length).toBe(2);
             expect(track.positions[0].id).toEqual(jsonPosition.id);
             done();
@@ -371,13 +372,13 @@ describe('Track tests', () => {
     it('should make successful track import request', (done) => {
       // given
       const authUser = new User(1, 'admin');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validListResponse));
+      Http.post.and.resolveTo(validListResponse);
       const form = document.createElement('form');
       // when
       Track.import(form, authUser)
         .then((tracks) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/import.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(new FormData(form));
+          expect(Http.post).toHaveBeenCalledTimes(1);
+          expect(Http.post).toHaveBeenCalledWith('api/tracks/import', form);
           expect(tracks.length).toBe(2);
           done();
         })
@@ -402,17 +403,16 @@ describe('Track tests', () => {
       // when
       track.export(type);
       // then
-      expect(Utils.openUrl).toHaveBeenCalledWith(`utils/export.php?type=${type}&userid=${track.user.id}&trackid=${track.id}`);
+      expect(Utils.openUrl).toHaveBeenCalledWith(`api/tracks/${track.id}/export?format=${type}`);
     });
 
     it('should delete track', (done) => {
       // given
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      spyOn(Http, 'delete').and.resolveTo();
       // when
       track.delete()
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handletrack.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=delete&trackid=${track.id}`);
+          expect(Http.delete).toHaveBeenCalledWith(`api/tracks/${track.id}`);
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));
@@ -420,12 +420,12 @@ describe('Track tests', () => {
 
     it('should save track meta', (done) => {
       // given
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      spyOn(Http, 'put').and.resolveTo();
       // when
       track.saveMeta()
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handletrack.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=update&trackid=${track.id}&trackname=${track.name}`);
+          expect(Http.put).toHaveBeenCalledWith(`api/tracks/${track.id}`,
+            { id: track.id, name: track.name, userId: track.user.id });
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));

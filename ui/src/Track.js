@@ -142,17 +142,6 @@ export default class Track extends PositionSet {
     return Http.get(url).then((_positions) => {
       this.fromJson(_positions, this.maxId > 0);
     });
-
-    // const params = {
-    //   userid: this.user.id,
-    //   trackid: this.id
-    // };
-    // if (this.maxId) {
-    //   params.afterid = this.maxId;
-    // }
-    // return PositionSet.fetch(params).then((_positions) => {
-    //   this.fromJson(_positions, params.afterid > 0);
-    // });
   }
 
   /**
@@ -163,13 +152,21 @@ export default class Track extends PositionSet {
   static fetchLatest(user) {
     return Http.get(`api/users/${user.id}/position`)
       .then((_position) => {
-      if (_position) {
-        const track = new Track(_position.trackId, _position.trackName, user);
-        track.fromJson([ _position ]);
-        return track;
-      }
-      return null;
-    });
+        if (_position) {
+          const id = Utils.getInteger(_position.trackId);
+          const name = Utils.getString(_position.trackName);
+          const track = new Track(id, name, user);
+          track.fromJson([ _position ]);
+          return track;
+        }
+        return null;
+      })
+      .catch((e) => {
+        if (e.status === Http.ERROR_NOT_FOUND) {
+          return null;
+        }
+        throw e;
+      });
   }
 
   /**
@@ -187,7 +184,9 @@ export default class Track extends PositionSet {
       (_tracks) => {
         const tracks = [];
         for (const track of _tracks) {
-          tracks.push(new Track(track.id, track.name, user));
+          const id = Utils.getInteger(track.id);
+          const name = Utils.getString(track.name);
+          tracks.push(new Track(id, name, user));
         }
         return tracks;
     });
@@ -205,7 +204,7 @@ export default class Track extends PositionSet {
   }
 
   /**
-   * Imports tracks submitted with HTML form and returns last imported track id
+   * Imports tracks submitted with HTML form and returns imported tracks metadata
    * @param {HTMLFormElement} form
    * @param {User} user
    * @return {Promise<Track[], Error>}
@@ -220,7 +219,9 @@ export default class Track extends PositionSet {
         (_tracks) => {
           const tracks = [];
           for (const track of _tracks) {
-            tracks.push(new Track(track.id, track.name, user));
+            const id = Utils.getInteger(track.id);
+            const name = Utils.getString(track.name);
+            tracks.push(new Track(id, name, user));
           }
           return tracks;
       });

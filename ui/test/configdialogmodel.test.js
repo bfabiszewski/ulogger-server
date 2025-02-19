@@ -21,7 +21,7 @@ describe('ConfigDialogModel tests', () => {
     spyOn(lang, '_').and.callFake((arg) => arg);
     cm = new ConfigDialogModel();
     layers = new LayerCollection(new Layer(0, 'layer0', '', 0), new Layer(1, 'layer1', '', 0));
-    cm.model.layers = layers;
+    cm.model.olLayers = layers;
   });
 
   afterEach(() => {
@@ -38,7 +38,7 @@ describe('ConfigDialogModel tests', () => {
 
   const testElements = [
     'interval', 'units', 'lang', 'mapApi', 'googleKey', 'layerName', 'layerId', 'layerUrl', 'initLatitude', 'initLongitude',
-    'requireAuth', 'publicTracks', 'passStrength', 'passLenMin', 'strokeWeight', 'strokeColor', 'strokeOpacity',
+    'requireAuthentication', 'publicTracks', 'passStrength', 'passLenMin', 'strokeWeight', 'strokeColor', 'strokeOpacity',
     'colorNormal', 'colorStart', 'colorStop', 'colorExtra', 'colorHilite', 'uploadMaxSizeMB'
   ];
   testElements.forEach((name) => {
@@ -147,7 +147,7 @@ describe('ConfigDialogModel tests', () => {
     button.click();
     // then
     setTimeout(() => {
-      expect(cm.model.layers[1].priority).toBe(1);
+      expect(cm.model.olLayers[1].priority).toBe(1);
       done();
     }, 100);
   });
@@ -167,7 +167,7 @@ describe('ConfigDialogModel tests', () => {
 
   it('should show edit on non-default layer select', (done) => {
     // given
-    cm.model.layers = new LayerCollection(new Layer(0, 'layer0', '', 0), new Layer(1, 'layer1', '', 0));
+    cm.model.olLayers = new LayerCollection(new Layer(0, 'layer0', '', 0), new Layer(1, 'layer1', '', 0));
     cm.init();
     const element = cm.getBoundElement('layerId');
     // when

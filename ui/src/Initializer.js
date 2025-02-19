@@ -32,8 +32,12 @@ export class Initializer {
     const langPromise = Http.get('api/locales');
     return Promise.allSettled([ authPromise, configPromise, langPromise ])
       .then((result) => {
-        if (result[1].status === 'rejected' || result[2].status === 'rejected') {
+        if (result[1].status === 'rejected' || result[2].status === 'rejected' ||
+          (result[0].status === 'rejected' && result[0].reason.status !== 401)) {
           let reason = '';
+          if (result[0].reason) {
+            reason += result[0].reason;
+          }
           if (result[1].reason) {
             reason += result[1].reason;
           }

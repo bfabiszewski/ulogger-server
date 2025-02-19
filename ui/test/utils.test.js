@@ -193,6 +193,19 @@ describe('Utils tests', () => {
     expect(() => Utils.getFloat('a1')).toThrowError(/Invalid value/);
   });
 
+  it('should parse boolean values', () => {
+    expect(Utils.getBoolean(1)).toBeTrue();
+    expect(Utils.getBoolean(true)).toBeTrue();
+    expect(Utils.getBoolean(0)).toBeFalse();
+    expect(Utils.getBoolean(false)).toBeFalse();
+    expect(Utils.getBoolean(null, true)).toBeNull();
+    // eslint-disable-next-line no-undefined
+    expect(() => Utils.getBoolean(undefined)).toThrowError(/Invalid value/);
+    expect(() => Utils.getBoolean(null)).toThrowError(/Invalid value/);
+    expect(() => Utils.getBoolean('0')).toThrowError(/Invalid value/);
+    expect(() => Utils.getBoolean('1')).toThrowError(/Invalid value/);
+  });
+
   it('should parse integer values', () => {
     expect(Utils.getInteger('1234')).toEqual(jasmine.any(Number));
     expect(Utils.getInteger('1234')).toBe(1234);

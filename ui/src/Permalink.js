@@ -82,8 +82,8 @@ export default class Permalink {
       }
       return Track.getMeta(trackId)
         .then((meta) => {
-          const userId = meta.userId;
-          const title = meta.name;
+          const userId = Utils.getInteger(meta.userId);
+          const title = Utils.getString(meta.name);
           return { title, userId, trackId, mapApi, mapParams };
         })
         .catch((e) => {

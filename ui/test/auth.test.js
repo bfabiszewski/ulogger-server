@@ -70,15 +70,13 @@ describe('AuthReadOnly tests', () => {
     // given
     auth.user = null;
     const data = {
-      isAdmin: false,
       isAuthenticated: true,
-      userId: 5,
-      userLogin: 'dataUser'
+      user: new User(5, 'dataUser', false)
     };
     // when
     auth.load(data);
     // then
-    expect(auth.user).toEqual(new User(data.userId, data.userLogin));
+    expect(auth.user).toEqual(new User(data.user.id, data.user.login, data.user.isAdmin));
     expect(auth.isAuthenticated).toBe(true);
     expect(auth.isAdmin).toBe(false);
   });
@@ -87,15 +85,13 @@ describe('AuthReadOnly tests', () => {
     // given
     auth.user = null;
     const data = {
-      isAdmin: true,
       isAuthenticated: true,
-      userId: 5,
-      userLogin: 'dataUser'
+      user: new User(5, 'dataUser', true)
     };
     // when
     auth.load(data);
     // then
-    expect(auth.user).toEqual(new User(data.userId, data.userLogin));
+    expect(auth.user).toEqual(new User(data.user.id, data.user.login, data.user.isAdmin));
     expect(auth.isAuthenticated).toBe(true);
     expect(auth.isAdmin).toBe(true);
   });

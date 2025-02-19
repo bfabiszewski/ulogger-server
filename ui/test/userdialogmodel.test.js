@@ -7,6 +7,7 @@
 import { auth, config, lang } from '../src/Initializer.js';
 import Alert from '../src/Alert.js';
 import Dialog from '../src/Dialog.js';
+import Http from '../src/Http';
 import Observer from '../src/Observer.js';
 import State from '../src/State.js';
 import User from '../src/User.js';
@@ -34,8 +35,8 @@ describe('UserDialogModel tests', () => {
     dm.user = new User(1, 'testUser');
     spyOn(dm.user, 'delete').and.resolveTo();
     spyOn(dm.user, 'setPassword').and.resolveTo();
-    spyOn(dm.user, 'modify').and.callThrough();
-    spyOn(User, 'update').and.resolveTo();
+    spyOn(dm.user, 'modify').and.resolveTo();
+    // spyOn(User, 'update').and.resolveTo();
     spyOn(auth.user, 'setPassword').and.resolveTo();
     spyOn(User, 'add').and.resolveTo(newUser);
     spyOn(config, 'validPassStrength').and.returnValue(true);
@@ -171,6 +172,8 @@ describe('UserDialogModel tests', () => {
   it('should update user admin status and hide edit dialog on positive button clicked', (done) => {
     // given
     spyOn(dm, 'validate').and.returnValue(true);
+    dm.user.modify.and.callThrough();
+    spyOn(Http, 'put').and.resolveTo();
     dm.type = 'edit';
     dm.init();
     const button = dm.dialog.element.querySelector("[data-bind='onUserUpdate']");

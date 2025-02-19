@@ -61,19 +61,22 @@ export default class Http {
     options = options || {};
     const method = options.method || 'GET';
 
+    if (data instanceof HTMLFormElement) {
+      data = new FormData(data);
+    }
     const init = {};
     init.method = method;
     init.headers = new Headers();
     if (method === 'POST' || method === 'PUT') {
-      if (data instanceof HTMLFormElement) {
-        data = new FormData(data);
-      }
       if (data instanceof FormData) {
         init.body = data;
       } else {
         init.headers.append('Content-Type', 'application/json');
         init.body = JSON.stringify(data);
       }
+    } else if (method === 'GET') {
+      const query = this.dataToQueryString(data);
+      url += query.length ? `?${query}` : '';
     }
     return fetch(url, init).then((response) => {
       const statusClass = Math.trunc(response.status / 100);
@@ -111,83 +114,27 @@ export default class Http {
   }
 
   /**
-   * Perform HTTP request
-   * @param {string} url Request URL
-   * @param {Object|HTMLFormElement|FormData} [data] Optional request parameters: key/value pairs or form element
-   * @param {Object} [options] Optional options
-   * @param {string} [options.method='GET'] Optional query method, default 'GET'
-   * @return {Promise<Object, Error>}
+   * @param {Object} data
+   * @return {string}
    */
-  static request2(url, data, options) {
+  static dataToQueryString(data) {
+    if (data instanceof FormData) {
+      return new URLSearchParams(data).toString();
+    }
     const params = [];
-    data = data || {};
-    options = options || {};
-    const method = options.method || 'GET';
-    const xhr = new XMLHttpRequest();
-    return new Promise((resolve, reject) => {
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState !== XMLHttpRequest.DONE) { return; }
-        let message = '';
-        let error = true;
-        if (xhr.status === 200) {
-          try {
-            const obj = JSON.parse(xhr.responseText);
-            if (obj) {
-              if (!obj.error) {
-                if (resolve && typeof resolve === 'function') {
-                  resolve(obj);
-                }
-                error = false;
-              } else if (obj.message) {
-                  message = obj.message;
-              }
-            }
-          } catch (err) {
-            message = err.message;
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        if (Array.isArray(data[key])) {
+          for (const value of data[key]) {
+            params.push(`${key}[]=${this.encodeValue(value)}`);
           }
         } else {
-          message = `HTTP error ${xhr.status}`;
+          params.push(`${key}=${this.encodeValue(data[key])}`);
         }
-        if (error && reject && typeof reject === 'function') {
-          reject(new Error(message));
-        }
-      };
-      if (data instanceof HTMLFormElement) {
-        data = new FormData(data);
       }
-      let body;
-      if (data instanceof FormData) {
-        if (method === 'POST') {
-          body = data;
-        } else {
-          // noinspection JSCheckFunctionSignatures
-          body = new URLSearchParams(data).toString();
-        }
-      } else {
-        for (const key in data) {
-          if (data.hasOwnProperty(key)) {
-            if (Array.isArray(data[key])) {
-              for (const value of data[key]) {
-                params.push(`${key}[]=${this.encodeValue(value)}`);
-              }
-            } else {
-              params.push(`${key}=${this.encodeValue(data[key])}`);
-            }
-          }
-        }
-        body = params.join('&');
-        body = body.replace(/%20/g, '+');
-      }
-      if (method === 'GET' && body.length) {
-        url += `?${body}`;
-        body = null;
-      }
-      xhr.open(method, url, true);
-      if (method === 'POST' && !(data instanceof FormData)) {
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      }
-      xhr.send(body);
-    });
+    }
+    const query = params.join('&');
+    return query.replace(/%20/g, '+');
   }
 
   static encodeValue(value) {

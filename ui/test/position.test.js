@@ -15,19 +15,19 @@ describe('Position tests', () => {
     'bearing',
     'accuracy',
     'provider',
-    'comment',
-    'image'
+    'comment'
   ];
   const nonNullableProperties = [
     'id',
     'latitude',
     'longitude',
     'timestamp',
-    'username',
-    'trackid',
-    'trackname',
+    'userName',
+    'trackId',
+    'trackName',
     'meters',
-    'seconds'
+    'seconds',
+    'hasImage'
   ];
   const properties = nullableProperties.concat(nonNullableProperties);
 
@@ -41,10 +41,10 @@ describe('Position tests', () => {
   let accuracy;
   let provider;
   let comment;
-  let image;
-  let username;
-  let trackid;
-  let trackname;
+  let hasImage;
+  let userName;
+  let trackId;
+  let trackName;
   let meters;
   let seconds;
 
@@ -61,10 +61,10 @@ describe('Position tests', () => {
     accuracy = 9;
     provider = 'gps';
     comment = null;
-    image = '134_5d3c8fa92ebac.jpg';
-    username = 'test';
-    trackid = 134;
-    trackname = 'Test name';
+    hasImage = true;
+    userName = 'test';
+    trackId = 134;
+    trackName = 'Test name';
     meters = 0;
     seconds = 0;
 
@@ -79,10 +79,10 @@ describe('Position tests', () => {
       'accuracy': accuracy,
       'provider': provider,
       'comment': comment,
-      'image': image,
-      'username': username,
-      'trackid': trackid,
-      'trackname': trackname,
+      'hasImage': hasImage,
+      'userName': userName,
+      'trackId': trackId,
+      'trackName': trackName,
       'meters': meters,
       'seconds': seconds
     };
@@ -101,10 +101,10 @@ describe('Position tests', () => {
     expect(position.accuracy).toBe(accuracy);
     expect(position.provider).toBe(provider);
     expect(position.comment).toBe(comment);
-    expect(position.image).toBe(image);
-    expect(position.username).toBe(username);
-    expect(position.trackid).toBe(trackid);
-    expect(position.trackname).toBe(trackname);
+    expect(position.hasImage).toBe(hasImage);
+    expect(position.userName).toBe(userName);
+    expect(position.trackId).toBe(trackId);
+    expect(position.trackName).toBe(trackName);
     expect(position.meters).toBe(meters);
     expect(position.seconds).toBe(seconds);
   });
@@ -175,28 +175,38 @@ describe('Position tests', () => {
   });
 
 
-  it('should result false on null image', () => {
+  it('should raise error on null hasImage', () => {
     // when
-    jsonPosition.image = null;
-    const position = Position.fromJson(jsonPosition);
+    jsonPosition.hasImage = null;
     // then
-    expect(position.hasImage()).toBe(false);
+    expect(() => {
+      Position.fromJson(jsonPosition);
+    }).toThrow(new Error('Invalid value'));
   });
 
-  it('should result false on empty image', () => {
+  it('should raise error on empty hasImage', () => {
     // when
-    jsonPosition.image = '';
-    const position = Position.fromJson(jsonPosition);
+    jsonPosition.hasImage = '';
     // then
-    expect(position.hasImage()).toBe(false);
+    expect(() => {
+      Position.fromJson(jsonPosition);
+    }).toThrow(new Error('Invalid value'));
   });
 
-  it('should result true on non-null image', () => {
+  it('should result true on true hasImage', () => {
     // when
-    jsonPosition.image = 'image';
+    jsonPosition.hasImage = true;
     const position = Position.fromJson(jsonPosition);
     // then
-    expect(position.hasImage()).toBe(true);
+    expect(position.hasImage).toBeTrue();
+  });
+
+  it('should result false on false hasImage', () => {
+    // when
+    jsonPosition.hasImage = false;
+    const position = Position.fromJson(jsonPosition);
+    // then
+    expect(position.hasImage).toBeFalse();
   });
 
   it('should calculate speed', () => {
@@ -210,70 +220,56 @@ describe('Position tests', () => {
 
   it('should delete position on server', () => {
     // given
-    spyOn(Position, 'update');
+    spyOn(Http, 'delete');
     const position = Position.fromJson(jsonPosition);
     // when
     position.delete()
     // then
-    expect(Position.update).toHaveBeenCalledWith({ action: 'delete', posid: posId });
+    expect(Http.delete).toHaveBeenCalledWith(`/api/positions/${posId}`);
   });
 
   it('should save position on server', () => {
     // given
-    spyOn(Position, 'update');
+    spyOn(Http, 'put');
     const position = Position.fromJson(jsonPosition);
     // when
     position.save()
     // then
-    expect(Position.update).toHaveBeenCalledWith({ action: 'update', posid: posId, comment: comment });
+    expect(Http.put.calls.mostRecent().args[0]).toEqual(`/api/positions/${posId}`);
+    expect(Http.put.calls.mostRecent().args[1]).toEqual(position);
   });
 
   it('should delete image on server', (done) => {
     // given
-    spyOn(Position, 'update').and.resolveTo();
+    spyOn(Http, 'delete').and.resolveTo();
     const position = Position.fromJson(jsonPosition);
     // when
     position.imageDelete()
     // then
     setTimeout(() => {
-      expect(Position.update).toHaveBeenCalledWith({ action: 'imagedel', posid: posId });
-      expect(position.image).toBeNull();
+      expect(Http.delete.calls.mostRecent().args[0]).toEqual(`/api/positions/${posId}/image`);
+      expect(position.hasImage).toBeFalse();
       done();
     }, 100);
   });
 
   it('should add image on server', (done) => {
     // given
-    const newImage = 'new_image.jpg';
-    const imageFile = 'imageFile';
-    spyOn(Position, 'update').and.resolveTo({ image: newImage });
+    const imageFile = new File([ 'blob' ], '/path/filepath.gpx');
+    spyOn(Http, 'post').and.resolveTo({ hasImage: true });
     const position = Position.fromJson(jsonPosition);
     // when
     position.imageAdd(imageFile);
     // then
     setTimeout(() => {
-      expect(Position.update).toHaveBeenCalledWith(jasmine.any(FormData));
-
+      expect(Http.post).toHaveBeenCalledWith(`/api/positions/${posId}/image`, jasmine.any(FormData));
       /** @var {FormData} */
-      const data = Position.update.calls.mostRecent().args[0];
+      const data = Http.post.calls.mostRecent().args[1];
 
-      expect(data.get('image')).toBe(imageFile);
-      expect(data.get('action')).toBe('imageadd');
-      expect(data.get('posid')).toBe(posId.toString());
-      expect(position.image).toBe(newImage);
+      expect(data.get('imageUpload')).toBe(imageFile);
+      expect(position.hasImage).toBeTrue();
       done();
     }, 100);
-  });
-
-  it('should call ajax post with url and params', () => {
-    // given
-    const url = 'utils/handleposition.php';
-    spyOn(Http, 'post');
-    const data = 'test data';
-    // when
-    Position.update(data);
-    // then
-    expect(Http.post).toHaveBeenCalledWith(url, data);
   });
 
   it('should calculate distance to another position', () => {

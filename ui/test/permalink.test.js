@@ -173,7 +173,7 @@ describe('Permalink tests', () => {
     state.currentUser = new User(userId, 'test');
     state.currentTrack = new Track(trackId, trackName, state.currentUser);
     tm.init();
-    um.init();
+    um.init().start();
     mm.init();
     permalink.init();
     const historyState = {
@@ -208,7 +208,7 @@ describe('Permalink tests', () => {
     state.currentTrack = track;
     spyOn(User, 'fetchList').and.resolveTo([ user ]);
     tm.init();
-    um.init();
+    um.init().start();
     mm.init();
     permalink.init();
     const historyState = {
@@ -244,7 +244,7 @@ describe('Permalink tests', () => {
     spyOn(User, 'fetchList').and.resolveTo([ user ]);
     tm.model.currentTrackId = trackId.toString();
     tm.init();
-    um.init();
+    um.init().start();
     mm.init();
     permalink.init();
     const historyState = {
@@ -281,7 +281,7 @@ describe('Permalink tests', () => {
     spyOn(User, 'fetchList').and.resolveTo([ user ]);
     tm.model.currentTrackId = trackId.toString();
     tm.init();
-    um.init();
+    um.init().start();
     mm.init();
     permalink.init();
     const historyState = {

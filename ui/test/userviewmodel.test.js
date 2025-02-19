@@ -66,7 +66,7 @@ describe('UserViewModel tests', () => {
     // given
     spyOn(User, 'fetchList').and.resolveTo(users);
     // when
-    vm.init();
+    vm.init().start();
     // then
     setTimeout(() => {
       expect(vm.model.userList.length).toBe(users.length);
@@ -83,9 +83,11 @@ describe('UserViewModel tests', () => {
     spyOn(User, 'fetchList').and.resolveTo(users);
     // when
     auth.user = user2;
-    vm.init();
+    config.publicTracks = true;
+    vm.init().start();
     // then
     setTimeout(() => {
+      expect(User.fetchList).toHaveBeenCalledWith()
       expect(vm.model.userList.length).toBe(users.length);
       expect(userEl.value).toBe(user2.listValue);
       expect(userEl.options.length).toBe(users.length + 1);

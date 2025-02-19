@@ -73,9 +73,16 @@ export default class PositionSet extends ListItem {
    */
   fetchLatest() {
     this.clear();
-    return Http.get('api/users/position').then((_positions) => {
-      this.fromJson(_positions);
-    });
+    return Http.get('api/users/position')
+      .then((_positions) => {
+        this.fromJson(_positions);
+      })
+      .catch((e) => {
+        if (e.status === Http.ERROR_NOT_FOUND) {
+          return null;
+        }
+        throw e;
+      });
   }
 
   /**

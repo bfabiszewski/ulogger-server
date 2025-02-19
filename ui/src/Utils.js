@@ -228,31 +228,57 @@ export default class Utils {
   /**
    * @throws On invalid input
    * @param {*} input
+   * @param {boolean=} isNullable
+   * @return {(null|boolean)}
+   */
+  static getBoolean(input, isNullable = false) {
+    return Utils.getParsed(input, isNullable, 'boolean');
+  }
+
+  /**
+   * @throws On invalid input
+   * @param {*} input
    * @param {boolean} isNullable
    * @param {string} type
    * @return {(null|number|string)}
    */
   static getParsed(input, isNullable, type) {
-    if (isNullable && input === null) {
-      return null;
+    if (typeof input === 'undefined') {
+      throw new Error('Invalid value');
+    }
+    if (input === null) {
+      if (isNullable) {
+        return null;
+      }
+      throw new Error('Invalid value');
     }
     let output;
     switch (type) {
       case 'float':
         output = parseFloat(input);
+        if (isNaN(output)) {
+          throw new Error('Invalid value');
+        }
         break;
       case 'int':
         output = Math.round(parseFloat(input));
+        if (isNaN(output)) {
+          throw new Error('Invalid value');
+        }
         break;
       case 'string':
         output = String(input);
         break;
+      case 'boolean':
+        if (input === 1 || input === 0 ||
+          input === true || input === false) {
+          output = Boolean(input);
+        } else {
+          throw new Error('Invalid value');
+        }
+        break;
       default:
         throw new Error('Unknown type');
-    }
-    if (typeof input === 'undefined' || input === null ||
-      (type !== 'string' && isNaN(output))) {
-      throw new Error('Invalid value');
     }
     return output;
   }

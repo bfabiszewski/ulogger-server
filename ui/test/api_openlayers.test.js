@@ -499,9 +499,9 @@ describe('Openlayers map API tests', () => {
   it('should create different marker for position with image', () => {
     // given
     const track = TrackFactory.getTrack(3);
-    track.positions[0].image = 'image';
-    track.positions[1].image = 'image';
-    track.positions[2].image = 'image';
+    track.positions[0].hasImage = true;
+    track.positions[1].hasImage = true;
+    track.positions[2].hasImage = true;
     api.markerStyles = {
       extra: 'extra',
       stopExtra: 'stopExtra',

@@ -46,7 +46,7 @@ export default class Position {
     position.accuracy = Utils.getInteger(pos.accuracy, true); // may be null
     position.provider = Utils.getString(pos.provider, true); // may be null
     position.comment = Utils.getString(pos.comment, true); // may be null
-    position.hasImage = pos.hasImage;
+    position.hasImage = Utils.getBoolean(pos.hasImage);
     position.userName = Utils.getString(pos.userName);
     position.trackName = Utils.getString(pos.trackName);
     position.trackId = Utils.getInteger(pos.trackId);
@@ -113,7 +113,7 @@ export default class Position {
    */
   imageDelete() {
     return Http.delete(`/api/positions/${this.id}/image`)
-      .then(() => { this.image = null; });
+      .then(() => { this.hasImage = false; });
   }
 
   /**
@@ -126,9 +126,9 @@ export default class Position {
     return Http.post(`/api/positions/${this.id}/image`, data).then(
       /**
        * @param {Object} result
-       * @param {string} result.image
+       * @param {boolean} result.hasImage
        */
-      (result) => { this.image = result.image; });
+      (result) => { this.hasImage = result.hasImage; });
   }
 
   /**

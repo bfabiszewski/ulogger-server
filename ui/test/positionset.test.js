@@ -4,6 +4,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
+import Http from '../src/Http.js';
 import Position from '../src/Position.js';
 import PositionSet from '../src/PositionSet.js';
 
@@ -21,10 +22,10 @@ describe('PositionSet tests', () => {
   let accuracy;
   let provider;
   let comment;
-  let image;
-  let username;
-  let trackid;
-  let trackname;
+  let hasImage;
+  let userName;
+  let trackId;
+  let trackName;
   let meters;
   let seconds;
 
@@ -44,10 +45,10 @@ describe('PositionSet tests', () => {
     accuracy = 9;
     provider = 'gps';
     comment = null;
-    image = '134_5d3c8fa92ebac.jpg';
-    username = 'test';
-    trackid = 134;
-    trackname = 'Test name';
+    hasImage = true;
+    userName = 'test';
+    trackId = 134;
+    trackName = 'Test name';
     meters = 0;
     seconds = 0;
 
@@ -62,10 +63,10 @@ describe('PositionSet tests', () => {
       'accuracy': accuracy,
       'provider': provider,
       'comment': comment,
-      'image': image,
-      'username': username,
-      'trackid': trackid,
-      'trackname': trackname,
+      'hasImage': hasImage,
+      'userName': userName,
+      'trackId': trackId,
+      'trackName': trackName,
       'meters': meters,
       'seconds': seconds
     };
@@ -132,10 +133,10 @@ describe('PositionSet tests', () => {
       expect(position.accuracy).toBe(accuracy);
       expect(position.provider).toBe(provider);
       expect(position.comment).toBe(comment);
-      expect(position.image).toBe(image);
-      expect(position.username).toBe(username);
-      expect(position.trackid).toBe(trackid);
-      expect(position.trackname).toBe(trackname);
+      expect(position.hasImage).toBe(hasImage);
+      expect(position.userName).toBe(userName);
+      expect(position.trackId).toBe(trackId);
+      expect(position.trackName).toBe(trackName);
       expect(position.meters).toBe(meters);
       expect(position.seconds).toBe(seconds);
     });
@@ -167,44 +168,18 @@ describe('PositionSet tests', () => {
 
   });
 
-  describe('request tests', () => {
-
-    beforeEach(() => {
-      spyOn(XMLHttpRequest.prototype, 'open').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'setRequestHeader').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'send');
-      spyOnProperty(XMLHttpRequest.prototype, 'readyState').and.returnValue(XMLHttpRequest.DONE);
-      spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    });
-
-    it('should make successful request and return latest position for each user', (done) => {
-      // given
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([ jsonPosition ]));
-      // when
-      PositionSet.fetchLatest()
-        .then((result) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/getpositions.php?last=true', true);
-          expect(result).toBeInstanceOf(PositionSet);
-          expect(result.length).toBe(1);
-          done();
-        })
-        .catch((e) => done.fail(`reject callback called (${e})`));
-    });
-
-
-    it('should call getpositions with params', (done) => {
-      // given
-      const params = { param: 'test' };
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([ jsonPosition ]));
-      // when
-      PositionSet.fetch(params)
-        .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/getpositions.php?param=test', true);
-          done();
-        })
-        .catch((e) => done.fail(`reject callback called (${e})`));
-    });
-
+  it('should make successful request and return latest position for each user', (done) => {
+    // given
+    spyOn(Http, 'get').and.resolveTo([ jsonPosition ]);
+    // when
+    PositionSet.fetchLatest()
+      .then((result) => {
+        expect(Http.get).toHaveBeenCalledWith('api/users/position');
+        expect(result).toBeInstanceOf(PositionSet);
+        expect(result.length).toBe(1);
+        done();
+      })
+      .catch((e) => done.fail(`reject callback called (${e})`));
   });
 
 });

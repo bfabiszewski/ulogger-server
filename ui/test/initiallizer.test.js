@@ -6,6 +6,7 @@
 
 import Config from '../src/Config.js';
 import Http from '../src/Http.js';
+import HttpError from '../src/HttpError';
 import { Initializer } from '../src/Initializer.js';
 import Locale from '../src/Locale.js';
 import Session from '../src/Session.js';
@@ -13,19 +14,19 @@ import Session from '../src/Session.js';
 describe('Initializer tests', () => {
 
   let initializer;
-  let data;
+  const auth = {};
+  const config = {};
+  const lang = {};
 
   beforeEach(() => {
-    data = {
-      auth: {},
-      config: {},
-      lang: {}
-    };
     initializer = new Initializer();
     spyOn(initializer.auth, 'load');
     spyOn(initializer.config, 'load');
     spyOn(initializer.lang, 'init');
-    spyOn(Http, 'get').and.resolveTo(data);
+    spyOn(Http, 'get')
+      .withArgs('api/session').and.resolveTo(auth)
+      .withArgs('api/config').and.resolveTo(config)
+      .withArgs('api/locales').and.resolveTo(lang);
   });
 
   it('should create instance', () => {
@@ -38,17 +39,18 @@ describe('Initializer tests', () => {
     // when
     initializer.initialize().then(() => {
       // then
-      expect(Http.get).toHaveBeenCalledWith('utils/getinit.php');
-      expect(initializer.auth.load).toHaveBeenCalledWith(data.auth);
-      expect(initializer.config.load).toHaveBeenCalledWith(data.config);
-      expect(initializer.lang.init).toHaveBeenCalledWith(initializer.config, data.lang);
+      expect(Http.get).toHaveBeenCalledTimes(3);
+      expect(Http.get.calls.allArgs()).toEqual([ [ 'api/session' ], [ 'api/config' ], [ 'api/locales' ] ]);
+      expect(initializer.auth.load).toHaveBeenCalledWith(auth);
+      expect(initializer.config.load).toHaveBeenCalledWith(config);
+      expect(initializer.lang.init).toHaveBeenCalledWith(initializer.config, lang);
       done();
     }).catch((e) => done.fail(`reject callback called (${e})`));
   });
 
-  it('should throw error on missing data.config', (done) => {
+  it('should throw error on missing config', (done) => {
     // given
-    delete data.config;
+    Http.get.withArgs('api/config').and.rejectWith(new HttpError('server error', 500));
     // when
     initializer.initialize().then(() => {
       // then
@@ -59,9 +61,9 @@ describe('Initializer tests', () => {
     });
   });
 
-  it('should throw error on missing data.auth', (done) => {
+  it('should throw error on missing auth', (done) => {
     // given
-    delete data.auth;
+    Http.get.withArgs('api/session').and.rejectWith(new HttpError('server error', 500));
     // when
     initializer.initialize().then(() => {
       // then
@@ -72,9 +74,19 @@ describe('Initializer tests', () => {
     });
   });
 
-  it('should throw error on missing data.lang', (done) => {
+  it('should not throw error on unauthorized session', (done) => {
     // given
-    delete data.lang;
+    Http.get.withArgs('api/session').and.rejectWith(new HttpError('unauthorized', 401));
+    // when
+    initializer.initialize().then(() => {
+      // then
+      done();
+    }).catch((e) => done.fail(`reject callback called (${e})`));
+  });
+
+  it('should throw error on missing locales', (done) => {
+    // given
+    Http.get.withArgs('api/locales').and.rejectWith(new HttpError('server error', 500));
     // when
     initializer.initialize().then(() => {
       // then

@@ -4,6 +4,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
  */
 
+import Http from '../src/Http.js';
 import Track from '../src/Track.js';
 import User from '../src/User.js';
 
@@ -76,24 +77,16 @@ describe('User tests', () => {
   });
 
   describe('request tests', () => {
-    const validResponse = [ { 'id': 1, 'login': 'test' }, { 'id': 2, 'login': 'test2' }, { 'id': 18, 'login': 'demo' } ];
+    const validResponse = [ { 'id': 1, 'login': 'test', 'isAdmin': false }, { 'id': 2, 'login': 'test2', 'isAdmin': false }, { 'id': 18, 'login': 'demo', 'isAdmin': false } ];
     const invalidResponse = [ { 'login': 'test' }, { 'id': 2, 'login': 'test2' }, { 'id': 18, 'login': 'demo' } ];
-
-    beforeEach(() => {
-      spyOn(XMLHttpRequest.prototype, 'open').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'setRequestHeader').and.callThrough();
-      spyOn(XMLHttpRequest.prototype, 'send');
-      spyOnProperty(XMLHttpRequest.prototype, 'readyState').and.returnValue(XMLHttpRequest.DONE);
-      spyOnProperty(XMLHttpRequest.prototype, 'status').and.returnValue(200);
-    });
 
     it('should make successful request and return user array', (done) => {
       // when
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(validResponse));
+      spyOn(Http, 'get').and.resolveTo(validResponse);
       // then
       User.fetchList()
         .then((result) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('GET', 'utils/getusers.php', true);
+          expect(Http.get).toHaveBeenCalledWith('api/users');
           expect(result).toEqual(jasmine.arrayContaining([ new User(1, 'test') ]));
           expect(result.length).toBe(3);
           done();
@@ -103,7 +96,7 @@ describe('User tests', () => {
 
     it('should throw error on invalid data in JSON', (done) => {
       // when
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify(invalidResponse));
+      spyOn(Http, 'get').and.resolveTo(invalidResponse);
       // then
       User.fetchList()
         .then(() => {
@@ -118,12 +111,11 @@ describe('User tests', () => {
     it('should delete user', (done) => {
       // when
       const user = new User(1, 'testUser');
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      spyOn(Http, 'delete').and.resolveTo();
       // then
       user.delete()
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handleuser.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=delete&login=${user.login}`);
+          expect(Http.delete).toHaveBeenCalledWith(`api/users/${user.id}`);
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));
@@ -136,12 +128,11 @@ describe('User tests', () => {
       const password = 'password';
       const isAdmin = true;
       const newUser = new User(id, login, isAdmin);
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify({ id }));
+      spyOn(Http, 'post').and.resolveTo({ id, login, isAdmin });
       // then
       User.add(login, password, isAdmin)
         .then((user) => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/handleuser.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`action=add&login=${login}&pass=${password}&admin=${isAdmin}`);
+          expect(Http.post).toHaveBeenCalledWith('api/users', { login, password, isAdmin });
           expect(user).toEqual(newUser);
           done();
         })
@@ -153,12 +144,11 @@ describe('User tests', () => {
       const user = new User(1, 'testUser');
       const password = 'password';
       const oldPassword = 'oldPassword';
-      spyOnProperty(XMLHttpRequest.prototype, 'responseText').and.returnValue(JSON.stringify([]));
+      spyOn(Http, 'put').and.resolveTo();
       // then
       user.setPassword(password, oldPassword)
         .then(() => {
-          expect(XMLHttpRequest.prototype.open).toHaveBeenCalledWith('POST', 'utils/changepass.php', true);
-          expect(XMLHttpRequest.prototype.send).toHaveBeenCalledWith(`login=${user.login}&pass=${password}&oldpass=${oldPassword}`);
+          expect(Http.put).toHaveBeenCalledWith(`api/users/${user.id}/password`, { password, oldPassword });
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));

@@ -7,6 +7,7 @@
 import Http from './Http.js';
 import ListItem from './ListItem.js';
 import Track from './Track.js';
+import Utils from './Utils';
 
 /**
  * @class User
@@ -54,7 +55,10 @@ export default class User extends ListItem {
     return Http.get('api/users').then((_users) => {
       const users = [];
       for (const user of _users) {
-        users.push(new User(user.id, user.login, user.isAdmin));
+        const id = Utils.getInteger(user.id);
+        const login = Utils.getString(user.login);
+        const isAdmin = Utils.getBoolean(user.isAdmin);
+        users.push(new User(id, login, isAdmin));
       }
       return users;
     });
@@ -73,7 +77,12 @@ export default class User extends ListItem {
    */
   static add(login, password, isAdmin) {
     return Http.post('api/users', { login, password, isAdmin })
-      .then((user) => new User(user.id, login, isAdmin));
+      .then((user) => {
+        const userId = Utils.getInteger(user.id);
+        const userLogin = Utils.getString(user.login);
+        const userIsAdmin = Utils.getBoolean(user.isAdmin);
+        return new User(userId, userLogin, userIsAdmin);
+      });
   }
 
   /**
