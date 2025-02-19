@@ -19,7 +19,7 @@ module.exports = {
       ]
     }),
     new HtmlWebpackPlugin({
-      template: 'src/index.html'
+      template: 'src/assets/index.html'
     })
   ],
   optimization: {
@@ -37,7 +37,7 @@ module.exports = {
       {
         resourceQuery: /raw/,
         type: 'asset/source'
-      },
+    },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
@@ -45,14 +45,14 @@ module.exports = {
         generator: {
           filename: 'images/[name][ext][query]'
         }
-      },
+    },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
         generator: {
           filename: 'fonts/[hash][ext][query]'
         }
-      }
+    }
     ]
   }
 };
