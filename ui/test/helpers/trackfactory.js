@@ -86,6 +86,7 @@ export default class TrackFactory {
     position.comment = params.comment || null;
     position.hasImage = params.hasImage || false;
     position.userName = params.userName || 'testUser';
+    position.userId = params.userId || 1;
     position.trackId = params.trackId || 1;
     position.trackName = params.trackName || 'test track';
     position.meters = params.meters || 0;

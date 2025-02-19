@@ -35,13 +35,13 @@ export default class PositionDialogModel extends ViewModel {
     this.positionIndex = positionIndex;
     this.position = this.state.currentTrack.positions[positionIndex];
     this.model.comment = this.position.hasComment() ? this.position.comment : '';
-    this.model.image = this.position.image;
+    this.model.image = this.position.getImagePath();
     this.model.onPositionDelete = () => this.onPositionDelete();
     this.model.onPositionUpdate = () => this.onPositionUpdate();
     this.model.onCancel = () => this.onCancel();
     this.model.onImageDelete = () => this.onImageDelete();
     this.onChanged('image', (image) => {
-      if (image && image !== this.position.image) { this.readImage(); }
+      if (image && image !== this.position.getImagePath()) { this.readImage(); }
     });
   }
 
@@ -62,7 +62,7 @@ export default class PositionDialogModel extends ViewModel {
       this.showThumbnail();
     }, false);
     this.reader.addEventListener('error', () => {
-      this.model.image = this.position.image;
+      this.model.image = this.position.getImagePath();
     }, false);
   }
 
@@ -71,7 +71,7 @@ export default class PositionDialogModel extends ViewModel {
     if (file) {
       if (file.size > config.uploadMaxSize) {
         Alert.error($._('isizefailure', config.uploadMaxSize));
-        this.model.image = this.position.image;
+        this.model.image = this.position.getImagePath();
         return;
       }
       this.reader.readAsDataURL(file);
@@ -82,7 +82,7 @@ export default class PositionDialogModel extends ViewModel {
     this.previewEl.onload = () => this.toggleImage();
     this.previewEl.onerror = () => {
       Alert.error($._('iuploadfailure'));
-      this.model.image = this.position.image;
+      this.model.image = this.position.getImagePath();
     };
     this.previewEl.src = this.reader.result;
   }
@@ -149,7 +149,7 @@ export default class PositionDialogModel extends ViewModel {
    */
   updateImage() {
     let promise = Promise.resolve();
-    if (this.model.image !== this.position.image) {
+    if (this.model.image !== this.position.getImagePath()) {
       if (this.model.image === null) {
         promise = this.position.imageDelete();
       } else {
@@ -164,7 +164,10 @@ export default class PositionDialogModel extends ViewModel {
     if (this.validate()) {
       this.position.comment = this.model.comment;
       this.updateImage()
-        .then(() => this.position.save())
+        .then(() => {
+          this.position.hasImage = this.model.image !== null;
+          return this.position.save();
+        })
         .then(() => {
           Observer.forceUpdate(this.state, 'currentTrack');
           this.dialog.destroy()
@@ -182,7 +185,6 @@ export default class PositionDialogModel extends ViewModel {
    * @return {boolean} True if valid
    */
   validate() {
-    return !(this.model.comment === this.position.comment && this.model.image === this.position.image);
-
+    return !(this.model.comment === this.position.comment && this.model.image === this.position.getImagePath());
   }
 }

@@ -20,6 +20,7 @@ import Utils from './Utils.js';
  * @property {?string} comment
  * @property {boolean} hasImage
  * @property {string} userName
+ * @property {number} userId
  * @property {string} trackName
  * @property {number} trackId
  * @property {number} timestamp
@@ -48,6 +49,7 @@ export default class Position {
     position.comment = Utils.getString(pos.comment, true); // may be null
     position.hasImage = Utils.getBoolean(pos.hasImage);
     position.userName = Utils.getString(pos.userName);
+    position.userId = Utils.getInteger(pos.userId);
     position.trackName = Utils.getString(pos.trackName);
     position.trackId = Utils.getInteger(pos.trackId);
     position.timestamp = Utils.getInteger(pos.timestamp);

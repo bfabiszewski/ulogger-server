@@ -23,6 +23,7 @@ describe('Position tests', () => {
     'longitude',
     'timestamp',
     'userName',
+    'userId',
     'trackId',
     'trackName',
     'meters',
@@ -43,6 +44,7 @@ describe('Position tests', () => {
   let comment;
   let hasImage;
   let userName;
+  let userId;
   let trackId;
   let trackName;
   let meters;
@@ -63,6 +65,7 @@ describe('Position tests', () => {
     comment = null;
     hasImage = true;
     userName = 'test';
+    userId = 1;
     trackId = 134;
     trackName = 'Test name';
     meters = 0;
@@ -81,6 +84,7 @@ describe('Position tests', () => {
       'comment': comment,
       'hasImage': hasImage,
       'userName': userName,
+      'userId': userId,
       'trackId': trackId,
       'trackName': trackName,
       'meters': meters,
@@ -103,6 +107,7 @@ describe('Position tests', () => {
     expect(position.comment).toBe(comment);
     expect(position.hasImage).toBe(hasImage);
     expect(position.userName).toBe(userName);
+    expect(position.userId).toBe(userId);
     expect(position.trackId).toBe(trackId);
     expect(position.trackName).toBe(trackName);
     expect(position.meters).toBe(meters);

@@ -27,6 +27,7 @@ describe('Track tests', () => {
   let comment;
   let hasImage;
   let userName;
+  let userId;
   let trackId;
   let trackName;
   let meters;
@@ -51,6 +52,7 @@ describe('Track tests', () => {
     comment = null;
     hasImage = true;
     userName = 'test';
+    userId = 1;
     trackId = 134;
     trackName = 'Test name';
     meters = 0;
@@ -69,6 +71,7 @@ describe('Track tests', () => {
       comment: comment,
       hasImage: hasImage,
       userName: userName,
+      userId: userId,
       trackId: trackId,
       trackName: trackName,
       meters: meters,
@@ -223,6 +226,7 @@ describe('Track tests', () => {
       expect(position.comment).toBe(comment);
       expect(position.hasImage).toBe(hasImage);
       expect(position.userName).toBe(userName);
+      expect(position.userId).toBe(userId);
       expect(position.trackId).toBe(trackId);
       expect(position.trackName).toBe(trackName);
       expect(position.meters).toBe(meters);

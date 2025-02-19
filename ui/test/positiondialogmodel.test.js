@@ -30,6 +30,8 @@ describe('PositionDialogModel tests', () => {
     dm = new PositionDialogModel(state, positionIndex);
     spyOn(track.positions[positionIndex], 'save').and.resolveTo();
     spyOn(track.positions[positionIndex], 'delete').and.resolveTo();
+    spyOn(track.positions[positionIndex], 'imageAdd').and.resolveTo();
+    spyOn(track.positions[positionIndex], 'imageDelete').and.resolveTo();
     spyOn(Observer, 'forceUpdate');
   });
 
@@ -50,6 +52,26 @@ describe('PositionDialogModel tests', () => {
     expect(document.querySelector('#modal')).toBeInstanceOf(HTMLDivElement);
     expect(dm.dialog.element.querySelector("[data-bind='onPositionUpdate']")).toBeInstanceOf(HTMLButtonElement);
     expect(dm.dialog.element.querySelector("[data-bind='comment']").value).toEqual(comment);
+  });
+
+  it('should show dialog with position image preview', () => {
+    // when
+    track.positions[positionIndex].hasImage = true;
+    dm.init();
+    // then
+    expect(document.querySelector('#modal')).toBeInstanceOf(HTMLDivElement);
+    expect(dm.dialog.element.querySelector("[data-bind='onPositionUpdate']")).toBeInstanceOf(HTMLButtonElement);
+    expect(dm.dialog.element.querySelector("[data-bind='imagePreview']").src).not.toBe('');
+  });
+
+  it('should show dialog without position image preview', () => {
+    // when
+    track.positions[positionIndex].hasImage = false;
+    dm.init();
+    // then
+    expect(document.querySelector('#modal')).toBeInstanceOf(HTMLDivElement);
+    expect(dm.dialog.element.querySelector("[data-bind='onPositionUpdate']")).toBeInstanceOf(HTMLButtonElement);
+    expect(dm.dialog.element.querySelector("[data-bind='imagePreview']").src).toBe('');
   });
 
   it('should hide edit dialog on negative button clicked', (done) => {
