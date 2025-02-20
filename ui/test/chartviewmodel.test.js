@@ -39,19 +39,19 @@ describe('ChartViewModel tests', () => {
   beforeEach(() => {
     // language=XML
     chartFixture = `<svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="100%" class="ct-chart-line">
-                          <g class="ct-grids"/>
-                          <g class="ct-series ct-series-a">
-                              <path d="1" class="ct-area"/>
-                              <path d="1" class="ct-line"/>
-                              <line x1="50" y1="115" x2="50" y2="115" class="ct-point" ct:value="0,130"/>
-                              <line x1="173" y1="158" x2="173" y2="158" class="ct-point" ct:value="48,104"/>
-                              <line x1="286" y1="23" x2="286" y2="23" class="ct-point" ct:value="92,185"/>
-                              <line x1="400" y1="23" x2="400" y2="23" class="ct-point" ct:value="136,185"/>
-                              <line x1="657" y1="135" x2="657" y2="135" class="ct-point" ct:value="236,118"/>
-                              <line x1="1046" y1="135" x2="1046" y2="135" class="ct-point" ct:value="387,118"/>
-                          </g>
-                          <g class="ct-labels"/>
-                        </svg>`;
+                      <g class="ct-grids"/>
+                      <g class="ct-series ct-series-a">
+                          <path d="1" class="ct-area"/>
+                          <path d="1" class="ct-line"/>
+                          <line x1="50" y1="115" x2="50" y2="115" class="ct-point" ct:value="0,130"/>
+                          <line x1="173" y1="158" x2="173" y2="158" class="ct-point" ct:value="48,104"/>
+                          <line x1="286" y1="23" x2="286" y2="23" class="ct-point" ct:value="92,185"/>
+                          <line x1="400" y1="23" x2="400" y2="23" class="ct-point" ct:value="136,185"/>
+                          <line x1="657" y1="135" x2="657" y2="135" class="ct-point" ct:value="236,118"/>
+                          <line x1="1046" y1="135" x2="1046" y2="135" class="ct-point" ct:value="387,118"/>
+                      </g>
+                      <g class="ct-labels"/>
+                    </svg>`;
     chartData = [
       { x: 0, y: 130 },
       { x: 48, y: 104 },

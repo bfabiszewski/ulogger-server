@@ -62,6 +62,19 @@ describe('Ajax tests', () => {
     expect(headers.get('Content-type')).toBeNull();
   });
 
+  it('should make GET request with array parameters', () => {
+    // when
+    Http.get(url, { p1: 1, p2: [ '1', '2' ] }).catch(() => { /* ignore */ });
+    // then
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(`${url}?p1=1&p2[]=1&p2[]=2`, jasmine.any(Object));
+    expect(init.method).toEqual('GET');
+    expect(init.body).toBeUndefined();
+    expect(headers.get('Content-type')).toBeNull();
+  });
+
   it('should make POST request with parameters', () => {
     // when
     Http.post(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
@@ -85,6 +98,32 @@ describe('Ajax tests', () => {
     expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
     expect(init.method).toEqual('POST');
     expect(init.body).toEqual(new FormData(form));
+    expect(headers.get('Content-type')).toBeNull();
+  });
+
+  it('should make PUT request with parameters', () => {
+    // when
+    Http.put(url, { p1: 1, p2: 'test' }).catch(() => { /* ignore */ });
+    // then
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('PUT');
+    expect(init.body).toEqual('{"p1":1,"p2":"test"}');
+    expect(headers.get('Content-type')).toEqual('application/json');
+  });
+
+  it('should make DELETE request', () => {
+    // when
+    Http.delete(url).catch(() => { /* ignore */ });
+    // then
+    const init = window.fetch.calls.mostRecent().args[1];
+    const headers = init.headers;
+
+    expect(window.fetch).toHaveBeenCalledWith(url, jasmine.any(Object));
+    expect(init.method).toEqual('DELETE');
+    expect(init.body).toBeUndefined();
     expect(headers.get('Content-type')).toBeNull();
   });
 

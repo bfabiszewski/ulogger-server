@@ -33,10 +33,7 @@ export default class Session {
 
   logout() {
     this.init();
-    return Http.delete('api/session', {
-      route: 'session',
-      method: 'delete'
-    });
+    return Http.delete('api/session');
   }
 
   /**

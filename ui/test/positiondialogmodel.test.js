@@ -5,6 +5,7 @@
  */
 
 import { config, lang } from '../src/Initializer.js';
+import Alert from '../src/Alert.js';
 import Dialog from '../src/Dialog.js';
 import Observer from '../src/Observer.js';
 import PositionDialogModel from '../src/models/PositionDialogModel.js';
@@ -108,6 +109,43 @@ describe('PositionDialogModel tests', () => {
     }, 100);
   });
 
+  it('should update position adding image and hide edit dialog on positive button clicked', (done) => {
+    // given
+    spyOn(dm, 'validate').and.returnValue(true);
+    dm.init();
+    const button = dm.dialog.element.querySelector("[data-bind='onPositionUpdate']");
+    // when
+    dm.model.image = ''; // not null value
+    button.click();
+    // then
+    setTimeout(() => {
+      expect(track.positions[positionIndex].save).toHaveBeenCalledTimes(1);
+      expect(track.positions[positionIndex].imageAdd).toHaveBeenCalledTimes(1);
+      expect(document.querySelector('#modal')).toBe(null);
+      expect(Observer.forceUpdate).toHaveBeenCalledWith(dm.state, 'currentTrack');
+      done();
+    }, 100);
+  });
+
+  it('should update position deleting image and hide edit dialog on positive button clicked', (done) => {
+    // given
+    spyOn(dm, 'validate').and.returnValue(true);
+    dm.init();
+    const button = dm.dialog.element.querySelector("[data-bind='onPositionUpdate']");
+    // when
+    track.positions[positionIndex].hasImage = true;
+    dm.model.image = null;
+    button.click();
+    // then
+    setTimeout(() => {
+      expect(track.positions[positionIndex].save).toHaveBeenCalledTimes(1);
+      expect(track.positions[positionIndex].imageDelete).toHaveBeenCalledTimes(1);
+      expect(document.querySelector('#modal')).toBe(null);
+      expect(Observer.forceUpdate).toHaveBeenCalledWith(dm.state, 'currentTrack');
+      done();
+    }, 100);
+  });
+
   it('should show confirmation dialog on position delete button click', (done) => {
     // given
     spyOn(Dialog, 'isConfirmed').and.returnValue(false);
@@ -158,6 +196,45 @@ describe('PositionDialogModel tests', () => {
     // then
     setTimeout(() => {
       expect(result).toBeFalse();
+      done();
+    }, 100);
+  });
+
+  it('should read image and show thumbnail', (done) => {
+    // given
+    spyOn(Alert, 'error');
+    dm.init();
+    const base64 = 'R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+    const file = new File([ atob(base64) ], 'filepath.gif', { type: 'image/gif' });
+    config.uploadMaxSize = file.size + 1;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    dm.fileEl.files = dt.files;
+    // when
+    expect(dm.previewEl.classList.contains('hidden')).toBeTrue();
+    dm.readImage();
+    // then
+    setTimeout(() => {
+      expect(dm.previewEl.src).not.toBe('');
+      expect(dm.previewEl.classList.contains('hidden')).toBeFalse();
+      expect(Alert.error).toHaveBeenCalledTimes(0);
+      done();
+    }, 100);
+  });
+
+  it('should remove thumbnail on image delete', (done) => {
+    // given
+    spyOn(Alert, 'error');
+    dm.init();
+    dm.previewEl.classList.remove('hidden')
+    // when
+    expect(dm.previewEl.classList.contains('hidden')).toBeFalse();
+    dm.onImageDelete();
+    // then
+    setTimeout(() => {
+      expect(dm.previewEl.src).toBe('');
+      expect(dm.previewEl.classList.contains('hidden')).toBeTrue();
+      expect(Alert.error).toHaveBeenCalledTimes(0);
       done();
     }, 100);
   });

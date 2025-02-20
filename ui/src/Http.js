@@ -105,10 +105,10 @@ export default class Http {
         throw new HttpError(errorMessage, response.status);
 
       }).catch((error) => {
-        if (error instanceof HttpError) {
-          return Promise.reject(error);
+        if (!(error instanceof HttpError)) {
+          error = new HttpError(error.message, response.status);
         }
-        return Promise.reject(new HttpError(error.message, response.status));
+        return Promise.reject(error);
       });
     });
   }

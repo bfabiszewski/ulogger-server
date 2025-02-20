@@ -435,6 +435,17 @@ describe('Track tests', () => {
         .catch((e) => done.fail(`reject callback called (${e})`));
     });
 
+    it('should get track meta', (done) => {
+      // given
+      // when
+      Track.getMeta(track.id)
+        .then(() => {
+          expect(Http.get).toHaveBeenCalledWith(`api/tracks/${track.id}`);
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
   });
 
 });

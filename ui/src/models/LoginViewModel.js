@@ -61,7 +61,7 @@ export default class LoginViewModel extends ViewModel {
   getHtml() {
     let cancelButton = '';
     if (!config.requireAuthentication) {
-      cancelButton = `<div data-bind="onLoginCancel" id="cancel">${$._('cancel')}</div>`;
+      cancelButton = `<button data-bind="onLoginCancel" id="cancel">${$._('cancel')}</button>`;
     }
 
     return `

@@ -65,7 +65,7 @@ describe('User tests', () => {
       expect(result).toBe(false);
     });
 
-    it('should not be equal to null track', () => {
+    it('should not be equal to null user', () => {
       // given
       const user = new User(1, 'testUser');
       const otherUser = null;
@@ -149,6 +149,35 @@ describe('User tests', () => {
       user.setPassword(password, oldPassword)
         .then(() => {
           expect(Http.put).toHaveBeenCalledWith(`api/users/${user.id}/password`, { password, oldPassword });
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should modify user and set isAdmin', (done) => {
+      // when
+      const user = new User(1, 'testUser', false);
+      spyOn(Http, 'put').and.resolveTo();
+      // then
+      user.modify(true)
+        .then(() => {
+          expect(Http.put).toHaveBeenCalledWith(`api/users/${user.id}`, { id: user.id, login: user.login, isAdmin: true });
+          expect(user.isAdmin).toBeTrue();
+          done();
+        })
+        .catch((e) => done.fail(`reject callback called (${e})`));
+    });
+
+    it('should modify user and set password', (done) => {
+      // when
+      const user = new User(1, 'testUser', false);
+      const password = 'newPassword';
+      spyOn(Http, 'put').and.resolveTo();
+      // then
+      user.modify(false, password)
+        .then(() => {
+          expect(Http.put).toHaveBeenCalledWith(`api/users/${user.id}`, { id: user.id, login: user.login, isAdmin: false, password: password });
+          expect(user.isAdmin).toBeFalse();
           done();
         })
         .catch((e) => done.fail(`reject callback called (${e})`));
