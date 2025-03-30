@@ -14,25 +14,28 @@ $enabled = false;
 /* -------------------------------------------- */
 /* no user modifications should be needed below */
 
-if (PHP_VERSION_ID < 70300) {
-  die("Sorry, ulogger will not work with PHP version lower than 7.3 (you have " . PHP_VERSION . ")");
+if (PHP_VERSION_ID < 80100) {
+  die('Sorry, ulogger will not work with PHP version lower than 8.1 (you have ' . PHP_VERSION . ')');
 }
 
-require_once('../../vendor/autoload.php');
+require_once('../vendor/autoload.php');
 
 use uLogger\Component\Db;
 use uLogger\Component\Lang;
-use uLogger\Entity\Config;
-use uLogger\Entity\Layer;
-use uLogger\Entity\User;
+use uLogger\Entity;
+use uLogger\Exception\DatabaseException;
+use uLogger\Exception\InvalidInputException;
+use uLogger\Exception\ServerException;
 use uLogger\Helper\Utils;
+use uLogger\Mapper;
+use uLogger\Mapper\MapperFactory;
 
-$dbConfig = Utils::getRootDir() . "/config.php";
+$dbConfig = Utils::getRootDir() . '/config/config.php';
 $dbConfigLoaded = false;
-$configDSN = "";
-$configUser = "";
-$configPass = "";
-$configPrefix = "";
+$configDSN = '';
+$configUser = '';
+$configPass = '';
+$configPrefix = '';
 if (file_exists($dbConfig)) {
   include($dbConfig);
   $dbConfigLoaded = true;
@@ -42,40 +45,43 @@ if (file_exists($dbConfig)) {
   if (isset($dbprefix)) { $configPrefix = $dbprefix; }
 }
 
-$command = Utils::postString("command");
-$language = Utils::getString("lang", "en");
+$command = !empty($_POST['command']) ? $_POST['command'] : null;
+$language = !empty($_GET['lang']) ? $_GET['lang'] : 'en';
 
-$config = Config::getOfflineInstance();
+$config = Entity\Config::createFromCookies();
 $config->lang = $language;
-$config->olLayers[] = new Layer(1, "OpenCycleMap", "https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png", 0);
-$config->olLayers[] = new Layer(2, "OpenTopoMap", "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png", 0);
-$config->olLayers[] = new Layer(3, "OpenSeaMap", "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png", 0);
-$config->olLayers[] = new Layer(4, "ESRI", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 0);
-$config->olLayers[] = new Layer(5, "UMP", "http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png", 0);
-$config->olLayers[] = new Layer(6, "Osmapa.pl", "http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png", 0);
+$config->olLayers[] = new Entity\Layer(1, 'OpenCycleMap', 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', 0);
+$config->olLayers[] = new Entity\Layer(2, 'OpenTopoMap', 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', 0);
+$config->olLayers[] = new Entity\Layer(3, 'OpenSeaMap', 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', 0);
+$config->olLayers[] = new Entity\Layer(4, 'ESRI', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 0);
+$config->olLayers[] = new Entity\Layer(5, 'UMP', 'http://{1-3}.tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png', 0);
+$config->olLayers[] = new Entity\Layer(6, 'Osmapa.pl', 'http://{a-c}.tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png', 0);
 
 $lang = (new Lang($config))->getStrings();
 $langSetup = (new Lang($config))->getSetupStrings();
 
-$prefix = preg_replace("/[^a-z0-9_]/i", "", $configPrefix);
-$tPositions = $prefix . "positions";
-$tTracks = $prefix . "tracks";
-$tUsers = $prefix . "users";
-$tConfig = $prefix . "config";
-$tLayers = $prefix . "ol_layers";
+$prefix = preg_replace('/[^a-z0-9_]/i', '', $configPrefix);
+$tPositions = $prefix . 'positions';
+$tTracks = $prefix . 'tracks';
+$tUsers = $prefix . 'users';
+$tConfig = $prefix . 'config';
+$tLayers = $prefix . 'ol_layers';
 
 $messages = [];
 
 switch ($command) {
-  case "setup":
-
+  case 'setup':
+    if (!isset($enabled) || $enabled === false) {
+      $messages[] = sprintf($langSetup['disabledwarn'], "<b>\$enabled</b>", '<b>true</b>');
+      break;
+    }
     $error = false;
     try {
       $pdo = getPdo();
     } catch (PDOException $e) {
-      $messages[] = "<span class=\"warn\">{$langSetup["dbconnectfailed"]}</span>";
-      $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
-      $messages[] = $langSetup["checkdbsettings"];
+      $messages[] = "<span class=\"warn\">{$langSetup['dbconnectfailed']}</span>";
+      $messages[] = sprintf($langSetup['serversaid'], '<b>' . htmlentities($e->getMessage()) . '</b>');
+      $messages[] = $langSetup['checkdbsettings'];
       break;
     }
     try {
@@ -92,44 +98,55 @@ switch ($command) {
       if ($pdo->inTransaction()) {
         $pdo->rollBack();
       }
-      $messages[] = "<span class=\"warn\">{$langSetup["dbqueryfailed"]}</span>";
-      $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
+      $messages[] = "<span class=\"warn\">{$langSetup['dbqueryfailed']}</span>";
+      $messages[] = sprintf($langSetup['serversaid'], '<b>' . htmlentities($e->getMessage()) . '</b>');
       $error = true;
     }
     $pdo = null;
     if (!$error) {
-      $messages[] = "<span class=\"ok\">{$langSetup["dbtablessuccess"]}</span>";
-      $messages[] = $langSetup["setupuser"];
+      $messages[] = "<span class=\"ok\">{$langSetup['dbtablessuccess']}</span>";
+      $messages[] = $langSetup['setupuser'];
       $form = "<form id=\"userForm\" method=\"post\" action=\"setup.php?lang=$language\" onsubmit=\"return validateForm()\"><input type=\"hidden\" name=\"command\" value=\"adduser\">";
-      $form .= "<label><b>{$lang["username"]}</b></label><input type=\"text\" placeholder=\"{$lang["usernameenter"]}\" name=\"login\" required>";
-      $form .= "<label><b>{$lang["password"]}</b></label><input type=\"password\" placeholder=\"{$lang["passwordenter"]}\" name=\"pass\" required>";
-      $form .= "<label><b>{$lang["passwordrepeat"]}</b></label><input type=\"password\" placeholder=\"{$lang["passwordenter"]}\" name=\"pass2\" required>";
-      $form .= "<div class=\"buttons\"><button type=\"submit\">{$lang["submit"]}</button></div>";
-      $form .= "</form>";
+      $form .= "<label><b>{$lang['username']}</b></label><input type=\"text\" placeholder=\"{$lang['usernameenter']}\" name=\"login\" required>";
+      $form .= "<label><b>{$lang['password']}</b></label><input type=\"password\" placeholder=\"{$lang['passwordenter']}\" name=\"pass\" required>";
+      $form .= "<label><b>{$lang['passwordrepeat']}</b></label><input type=\"password\" placeholder=\"{$lang['passwordenter']}\" name=\"pass2\" required>";
+      $form .= "<div class=\"buttons\"><button type=\"submit\">{$lang['submit']}</button></div>";
+      $form .= '</form>';
       $messages[] = $form;
     }
     break;
 
-  case "adduser":
-    $config->save();
-    $login = Utils::postString("login");
-    $pass = Utils::postPass("pass");
+  case 'adduser':
+    $login = !empty($_POST['login']) ? $_POST['login'] : '';
+    $pass = !empty($_POST['pass']) ? $_POST['pass'] : '';
 
-    if (User::add($login, $pass, true) !== false) {
-      $messages[] = "<span class=\"ok\">{$langSetup["congratulations"]}</span>";
-      $messages[] = $langSetup["setupcomplete"];
-      $messages[] = "<span class=\"warn\">{$langSetup["disablewarn"]}</span><br>";
-      $messages[] = sprintf($langSetup["disabledesc"], "<b>\$enabled</b>", "<b>false</b>");
-    } else {
-      $messages[] = "<span class=\"warn\">{$langSetup["setupfailed"]}</span>";
+    if (!isset($enabled) || $enabled === false) {
+      $messages[] = sprintf($langSetup['disabledwarn'], "<b>\$enabled</b>", '<b>true</b>');
+      break;
+    }
+
+    try {
+      $mapperFactory = new MapperFactory(Db::createFromConfig());
+      $mapperFactory->getMapper(Mapper\Config::class)->update($config);
+
+      $user = new Entity\User($login);
+      $user->password = $pass;
+      $mapperFactory->getMapper(Mapper\User::class)->create($user);
+
+      $messages[] = "<span class=\"ok\">{$langSetup['congratulations']}</span>";
+      $messages[] = $langSetup['setupcomplete'];
+      $messages[] = "<span class=\"warn\">{$langSetup['disablewarn']}</span><br>";
+      $messages[] = sprintf($langSetup['disabledesc'], "<b>\$enabled</b>", '<b>false</b>');
+    } catch (DatabaseException|InvalidInputException|ServerException $e) {
+      $messages[] = "<span class=\"warn\">{$langSetup['setupfailed']}</span>";
     }
     break;
 
   default:
     $langsArr = Lang::getLanguages();
-    $langsOpts = "";
+    $langsOpts = '';
     foreach ($langsArr as $langCode => $langName) {
-      $langsOpts .= "<option value=\"$langCode\"" . ($config->lang === $langCode ? " selected" : "") . ">$langName</option>";
+      $langsOpts .= "<option value=\"$langCode\"" . ($config->lang === $langCode ? ' selected' : '') . ">$langName</option>";
     }
     $messages[] = "<div id=\"language\">
       <label for=\"lang\">{$lang['language']}</label>
@@ -137,65 +154,65 @@ switch ($command) {
         $langsOpts
       </select>
     </div>";
-    $messages[] = "<img src=\"../icons/favicon-32x32.png\" alt=\"µLogger\">" . $langSetup["welcome"];
+    $messages[] = "<img src=\"icons/favicon-32x32.png\" alt=\"µLogger\">" . $langSetup['welcome'];
     if (!isset($enabled) || $enabled === false) {
-      $messages[] = sprintf($langSetup["disabledwarn"], "<b>\$enabled</b>", "<b>true</b>");
-      $messages[] = sprintf($langSetup["lineshouldread"], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = sprintf($langSetup['disabledwarn'], "<b>\$enabled</b>", '<b>true</b>');
+      $messages[] = sprintf($langSetup['lineshouldread'], "<br><span class=\"warn\">\$enabled = false;</span><br>", "<br><span class=\"ok\">\$enabled = true;</span>");
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
     if (!$dbConfigLoaded) {
-      $messages[] = $langSetup["createconfig"];
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = $langSetup['createconfig'];
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
-    if (ini_get("session.auto_start") === "1") {
-      $messages[] = sprintf($langSetup["optionwarn"], "session.auto_start", "0 (off)");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+    if (ini_get('session.auto_start') === '1') {
+      $messages[] = sprintf($langSetup['optionwarn'], 'session.auto_start', '0 (off)');
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
-    if (!extension_loaded("pdo")) {
-      $messages[] = sprintf($langSetup["extensionwarn"], "PDO");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+    if (!extension_loaded('pdo')) {
+      $messages[] = sprintf($langSetup['extensionwarn'], 'PDO');
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
     if (empty($configDSN)) {
-      $messages[] = sprintf($langSetup["nodbsettings"], "\$dbdsn");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = sprintf($langSetup['nodbsettings'], "\$dbdsn");
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
-    if (!is_writable(Utils::getRootDir() . "/uploads")) {
-      $messages[] = sprintf($langSetup["notwritable"], Utils::getRootDir() . "/uploads");
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+    if (!is_writable(Utils::getRootDir() . '/uploads')) {
+      $messages[] = sprintf($langSetup['notwritable'], Utils::getRootDir() . '/uploads');
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
     try {
       $pdo = getPdo();
     } catch (PDOException $e) {
-      $isSqlite = stripos($configDSN, "sqlite") === 0;
+      $isSqlite = stripos($configDSN, 'sqlite') === 0;
       if (!$isSqlite && empty($configUser)) {
-        $messages[] = sprintf($langSetup["nodbsettings"], "\$dbuser, \$dbpass");
+        $messages[] = sprintf($langSetup['nodbsettings'], "\$dbuser, \$dbpass");
       } else {
-        $messages[] = $langSetup["dbconnectfailed"];
-        $messages[] = $langSetup["checkdbsettings"];
-        $messages[] = sprintf($langSetup["serversaid"], "<b>" . htmlentities($e->getMessage()) . "</b>");
+        $messages[] = $langSetup['dbconnectfailed'];
+        $messages[] = $langSetup['checkdbsettings'];
+        $messages[] = sprintf($langSetup['serversaid'], '<b>' . htmlentities($e->getMessage()) . '</b>');
       }
-      $messages[] = $langSetup["dorestart"];
-      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup["restartbutton"]}</button></form>";
+      $messages[] = $langSetup['dorestart'];
+      $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><button>{$langSetup['restartbutton']}</button></form>";
       break;
     }
     $pdo = null;
     $dbName = Db::getDbName($configDSN);
-    $dbName = empty($dbName) ? '""' : "<b>" . htmlentities($dbName) . "</b>";
-    $messages[] = sprintf($langSetup["scriptdesc"], "'$tPositions', '$tTracks', '$tUsers', '$tConfig', '$tLayers'", $dbName);
-    $messages[] = $langSetup["scriptdesc2"];
-    $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup["startbutton"]}</button></form>";
+    $dbName = empty($dbName) ? '""' : '<b>' . htmlentities($dbName) . '</b>';
+    $messages[] = sprintf($langSetup['scriptdesc'], "'$tPositions', '$tTracks', '$tUsers', '$tConfig', '$tLayers'", $dbName);
+    $messages[] = $langSetup['scriptdesc2'];
+    $messages[] = "<form method=\"post\" action=\"setup.php?lang=$language\"><input type=\"hidden\" name=\"command\" value=\"setup\"><button>{$langSetup['startbutton']}</button></form>";
     break;
 }
 
@@ -208,7 +225,7 @@ function getQueries(string $dbDriver): array {
 
   $queries = [];
   switch ($dbDriver) {
-    case "mysql":
+    case 'mysql':
       $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
       $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
@@ -266,7 +283,7 @@ function getQueries(string $dbDriver): array {
 
       break;
 
-    case "pgsql":
+    case 'pgsql':
       $queries[] = "DROP TABLE IF EXISTS $tPositions";
       $queries[] = "DROP TABLE IF EXISTS $tTracks";
       $queries[] = "DROP TABLE IF EXISTS $tUsers";
@@ -323,7 +340,7 @@ function getQueries(string $dbDriver): array {
 
       break;
 
-    case "sqlite":
+    case 'sqlite':
       $queries[] = "DROP TABLE IF EXISTS `$tPositions`";
       $queries[] = "DROP TABLE IF EXISTS `$tTracks`";
       $queries[] = "DROP TABLE IF EXISTS `$tUsers`";
@@ -380,7 +397,7 @@ function getQueries(string $dbDriver): array {
       break;
 
     default:
-      throw new InvalidArgumentException("Driver not supported");
+      throw new InvalidArgumentException('Driver not supported');
   }
   return $queries;
 }
@@ -400,11 +417,18 @@ function getPdo(): PDO {
 <!DOCTYPE html>
 <html lang="<?= $language ?>">
 <head>
-  <title><?= $lang["title"] ?></title>
+  <title><?= $lang['title'] ?></title>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-  <link href="../ui/src/assets/css/dist/main.css" type="text/css" rel="stylesheet">
-  <link href="../ui/src/assets/css/dist/fonts.css" type="text/css" rel="stylesheet">
+  <link href="main.css" type="text/css" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="icons/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="manifest.json">
+  <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="icons/favicon.ico">
+  <meta name="msapplication-config" content="browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
   <style>
     #message {
       font-family: 'Open Sans', Verdana, sans-serif;
