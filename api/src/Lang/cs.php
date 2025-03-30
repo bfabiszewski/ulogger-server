@@ -15,7 +15,7 @@ $langSetup["serversaid"] = "Server reaguje: %s"; // substitutes server error mes
 $langSetup["checkdbsettings"] = "Zkontrolujte prosím nastavení databáze v souboru 'config.php'.";
 $langSetup["dbqueryfailed"] = "Databázový dotaz selhal";
 $langSetup["dbtablessuccess"] = "Databázové tabulky byly úspěšně vytvořeny!";
-$langSetup["setupuser"] = "Nyní si nastavte uživatele µlogger .";
+$langSetup["setupuser"] = "Nyní si nastavte uživatele µlogger.";
 $langSetup["congratulations"] = "Gratulujeme";
 $langSetup["setupcomplete"] = "Nastavení je nyní dokončeno. Nyní můžete přejít na <a href=\"../index.php\">hlavní stránku</a> a přihlásit se pomocí nového uživatelského účtu";
 $langSetup["disablewarn"] = "DŮLEŽITÉ! MUSÍTE VYPNOUT 'setup.php' SCRIPT NEBO JEJ ODSTRANIT ZE SERVERU.";
