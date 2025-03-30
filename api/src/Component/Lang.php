@@ -37,7 +37,8 @@ class Lang {
     'pl' => 'Polski',
     'pt-br' => 'Português (Br)',
     'ru' => 'Русский',
-    'sk' => 'Slovenčina'
+    'sk' => 'Slovenčina',
+    'zh-cn' => '简体中文'
   ];
 
   /**
