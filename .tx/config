@@ -3,8 +3,8 @@ host = https://www.transifex.com
 lang_map = pt_BR: pt-br, fi_FI: fi
 
 [o:bfabiszewski:p:ulogger:r:strings-php]
-file_filter  = ./lang/<lang>.php
-source_file  = ./lang/en.php
+file_filter  = ./api/src/Lang/<lang>.php
+source_file  = ./api/src/Lang/en.php
 source_lang  = en
 type         = PHP_ALT_ARRAY
 minimum_perc = 0
