@@ -176,4 +176,5 @@ $lang["edit"] = "Edit";
 $lang["delete"] = "Verwijderen";
 $lang["settings"] = "Settings";
 $lang["trackcolor"] = "Track color";
+$lang["battery"] = "Batterij";
 ?>

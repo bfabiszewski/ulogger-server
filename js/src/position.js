@@ -29,6 +29,7 @@ import uUtils from './utils.js';
  * @property {?number} speed
  * @property {?number} bearing
  * @property {?number} accuracy
+ * @property {?number} battery
  * @property {?string} provider
  * @property {?string} comment
  * @property {?string} image
@@ -57,6 +58,7 @@ export default class uPosition {
     position.speed = uUtils.getFloat(pos.speed, true); // may be null
     position.bearing = uUtils.getInteger(pos.bearing, true); // may be null
     position.accuracy = uUtils.getInteger(pos.accuracy, true); // may be null
+    position.battery = uUtils.getInteger(pos.battery, true); // may be null
     position.provider = uUtils.getString(pos.provider, true); // may be null
     position.comment = uUtils.getString(pos.comment, true); // may be null
     position.image = uUtils.getString(pos.image, true); // may be null
@@ -99,6 +101,13 @@ export default class uPosition {
     return this.altitude != null;
   }
 
+  /**
+   * @return {boolean}
+   */
+  hasBattery() {
+    return this.battery != null;
+  }
+  
   /**
    * @return {?string}
    */

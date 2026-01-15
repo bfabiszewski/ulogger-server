@@ -72,6 +72,7 @@ if ($positionsArr === false) {
       "bearing" => $position->bearing,
       "timestamp" => $position->timestamp,
       "accuracy" => $position->accuracy,
+      "battery" => $position->battery,
       "provider" => $position->provider,
       "comment" => $position->comment,
       "image" => $position->image,

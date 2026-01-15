@@ -177,4 +177,5 @@ $lang["edit"] = "Bearbeiten";
 $lang["delete"] = "Löschen";
 $lang["settings"] = "Einstellungen";
 $lang["trackcolor"] = "Trackfarbe";
+$lang["battery"] = "Batterie";
 ?>

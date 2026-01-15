@@ -111,9 +111,9 @@ class uTrack {
    */
   public function addPosition($userId, $timestamp, $lat, $lon,
                               $altitude = null, $speed = null, $bearing = null, $accuracy = null,
-                              $provider = null, $comment = null, $imageId = null) {
+                              $battery = null, $provider = null, $comment = null, $imageId = null) {
     return uPosition::add($userId, $this->id, $timestamp, $lat, $lon,
-                                  $altitude, $speed, $bearing, $accuracy, $provider, $comment, $imageId);
+                                  $altitude, $speed, $bearing, $accuracy, $battery, $provider, $comment, $imageId);
   }
 
   /**
