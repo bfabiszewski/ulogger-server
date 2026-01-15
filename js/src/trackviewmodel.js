@@ -381,6 +381,9 @@ export default class TrackViewModel extends ViewModel {
         }
         summary += `<div><img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude.svg"> ${altitudes}</div>`;
       }
+      if (last.hasBattery()) {
+      summary += `<div><img class="icon" alt="${$._('battery')}" title="${$._('battery')}" src="images/battery.svg"> ${last.battery}%</div>`;
+      }
       this.model.summary = summary;
     }
   }

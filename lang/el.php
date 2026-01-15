@@ -176,4 +176,5 @@ $lang["edit"] = "Τροποποίηση";
 $lang["delete"] = "Διαγραφή";
 $lang["settings"] = "Ρυθμίσεις";
 $lang["trackcolor"] = "Χρώμα Διαδρομής";
+$lang["battery"] = "Μπαταρία";
 ?>

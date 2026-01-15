@@ -138,6 +138,7 @@ if ($trackId && $userId) {
           "</div>" .
           "<div>" .
           "<div style=\"padding-top: 10px;\"><b>{$lang["time"]}:</b> " . date("Y-m-d H:i:s (e)", $position->timestamp) . "<br>" .
+          (!is_null($position->battery) ? "<b>{$lang["battery"]}:</b> " . $position->battery . "%<br>" : "") .
           (!is_null($position->comment) ? "<b>{$position->comment}</b><br>" : "") .
           (!is_null($position->speed) ? "<b>{$lang["speed"]}:</b> " . round($position->speed * 3.6 * $factor_kmh, 2) . " {$unit_kmh}<br>" : "") .
           (!is_null($position->altitude) ? "<b>{$lang["altitude"]}:</b> " . round($position->altitude * $factor_m) . " {$unit_m}<br>" : "") .
@@ -228,6 +229,9 @@ if ($trackId && $userId) {
           if (!is_null($position->accuracy)) {
               $xml->writeElementNS("ulogger", "accuracy", null, $position->accuracy);
           }
+          if (!is_null($position->battery)) {
+			  $xml->writeElementNS("ulogger", "battery", null, $position->battery);
+		  }
           if (!is_null($position->provider)) {
               $xml->writeElementNS("ulogger", "provider", null, $position->provider);
           }

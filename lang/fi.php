@@ -176,4 +176,5 @@ $lang["edit"] = "Muokkaa";
 $lang["delete"] = "Poista";
 $lang["settings"] = "Asetukset";
 $lang["trackcolor"] = "Reitin väri";
+$lang["battery"] = "Akku";
 ?>

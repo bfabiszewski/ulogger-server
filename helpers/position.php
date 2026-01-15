@@ -49,6 +49,8 @@ class uPosition {
   public $bearing;
   /** @param int Accuracy */
   public $accuracy;
+  /** @param int Battery */
+  public $battery;
   /** @param String Provider */
   public $provider;
   /** @param String Comment */
@@ -66,7 +68,7 @@ class uPosition {
 
     if (!empty($positionId)) {
       $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
-                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+                p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.battery, p.provider,
                 p.comment, p.image, u.login, t.name
                 FROM " . self::db()->table('positions') . " p
                 LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
@@ -112,6 +114,7 @@ class uPosition {
    * @param double $speed Optional
    * @param double $bearing Optional
    * @param int $accuracy Optional
+   * @param int $battery Optional
    * @param string $provider Optional
    * @param string $comment Optional
    * @param int $image Optional
@@ -119,7 +122,7 @@ class uPosition {
    */
   public static function add($userId, $trackId, $timestamp, $lat, $lon,
                               $altitude = null, $speed = null, $bearing = null, $accuracy = null,
-                              $provider = null, $comment = null, $image = null) {
+                              $battery = null, $provider = null, $comment = null, $image = null) {
     $positionId = false;
     if (is_numeric($lat) && is_numeric($lon) && is_numeric($timestamp) && is_numeric($userId) && is_numeric($trackId)) {
       $track = new uTrack($trackId);
@@ -128,11 +131,11 @@ class uPosition {
           $table = self::db()->table('positions');
           $query = "INSERT INTO $table
                     (user_id, track_id,
-                    time, latitude, longitude, altitude, speed, bearing, accuracy, provider, comment, image)
-                    VALUES (?, ?, " . self::db()->from_unixtime('?') . ", ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    time, latitude, longitude, altitude, speed, bearing, accuracy, battery, provider, comment, image)
+                    VALUES (?, ?, " . self::db()->from_unixtime('?') . ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
           $stmt = self::db()->prepare($query);
           $params = [ $userId, $trackId,
-                  $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $image ];
+                  $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $battery, $provider, $comment, $image ];
           $stmt->execute($params);
           $positionId = (int) self::db()->lastInsertId("{$table}_id_seq");
         } catch (PDOException $e) {
@@ -155,7 +158,7 @@ class uPosition {
       try {
         $query = "UPDATE " . self::db()->table('positions') . " SET 
                   time = " . self::db()->from_unixtime('?') . ", user_id = ?, track_id = ?, latitude = ?, longitude = ?, altitude = ?, 
-                  speed = ?, bearing = ?, accuracy = ?, provider = ?, comment = ?, image = ? WHERE id = ?";
+                  speed = ?, bearing = ?, accuracy = ?, battery = ?, provider = ?, comment = ?, image = ? WHERE id = ?";
         $stmt = self::db()->prepare($query);
         $params = [
           $this->timestamp,
@@ -167,6 +170,7 @@ class uPosition {
           $this->speed,
           $this->bearing,
           $this->accuracy,
+          $this->battery,
           $this->provider,
           $this->comment,
           $this->image,
@@ -253,7 +257,7 @@ class uPosition {
       $params = null;
     }
     $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
-              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.battery, p.provider,
               p.comment, p.image, u.login, t.name
               FROM " . self::db()->table('positions') . " p
               LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
@@ -277,7 +281,7 @@ class uPosition {
    */
   public static function getLastAllUsers() {
     $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
-              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.battery, p.provider,
               p.comment, p.image, u.login, t.name
               FROM " . self::db()->table('positions') . " p
               LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
@@ -327,7 +331,7 @@ class uPosition {
       $where = "";
     }
     $query = "SELECT p.id, " . self::db()->unix_timestamp('p.time') . " AS tstamp, p.user_id, p.track_id,
-              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.provider,
+              p.latitude, p.longitude, p.altitude, p.speed, p.bearing, p.accuracy, p.battery, p.provider,
               p.comment, p.image, u.login, t.name
               FROM " . self::db()->table('positions') . " p
               LEFT JOIN " . self::db()->table('users') . " u ON (p.user_id = u.id)
@@ -463,6 +467,7 @@ class uPosition {
     $position->speed = (double) $row['speed'];
     $position->bearing = (double) $row['bearing'];
     $position->accuracy = (int) $row['accuracy'];
+    $position->battery = isset($row['battery']) ? (int) $row['battery'] : null;
     $position->provider = $row['provider'];
     $position->comment = $row['comment'];
     $position->image = $row['image'];
@@ -491,6 +496,7 @@ class uPosition {
     $stmt->bindColumn('speed', $this->speed);
     $stmt->bindColumn('bearing', $this->bearing);
     $stmt->bindColumn('accuracy', $this->accuracy, PDO::PARAM_INT);
+    $stmt->bindColumn('battery', $this->battery);
     $stmt->bindColumn('provider', $this->provider);
     $stmt->bindColumn('comment', $this->comment);
     $stmt->bindColumn('image', $this->image);

@@ -63,6 +63,7 @@ CREATE TABLE positions (
   speed double precision DEFAULT NULL,
   bearing double precision DEFAULT NULL,
   accuracy int DEFAULT NULL,
+  battery int DEFAULT NULL,
   provider varchar(100) DEFAULT NULL,
   comment varchar(255) DEFAULT NULL,
   image varchar(100) DEFAULT NULL,

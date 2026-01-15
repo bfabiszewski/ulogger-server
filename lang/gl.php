@@ -176,4 +176,5 @@ $lang["edit"] = "Editar";
 $lang["delete"] = "Desbotar";
 $lang["settings"] = "Axustes";
 $lang["trackcolor"] = "Cor da ruta";
+$lang["battery"] = "Batería";
 ?>

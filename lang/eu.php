@@ -176,4 +176,5 @@ $lang["edit"] = "Editatu";
 $lang["delete"] = "Ezabatu";
 $lang["settings"] = "Ezarpenak";
 $lang["trackcolor"] = "Ibilbide kolorea";
+$lang["battery"] = "Bateria";
 ?>

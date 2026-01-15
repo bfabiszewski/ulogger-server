@@ -318,6 +318,7 @@ export default class MapViewModel extends ViewModel {
         <div id="pleft">
         <img class="icon" alt="${$._('time')}" title="${$._('time')}" src="images/calendar_dark.svg"> ${date}<br>
         <img class="icon" alt="${$._('time')}" title="${$._('time')}" src="images/clock_dark.svg"> ${time}<br>
+        ${(pos.battery !== null) ? `<img class="icon" alt="${$._('battery')}" title="${$._('battery')}" src="images/battery_dark.svg"> ${pos.battery}%<br>` : ''}
         ${(pos.speed !== null) ? `<img class="icon" alt="${$._('speed')}" title="${$._('speed')}" src="images/speed_dark.svg">${$.getLocaleSpeed(pos.speed, true)}<br>` : ''}
         ${(pos.altitude !== null) ? `<img class="icon" alt="${$._('altitude')}" title="${$._('altitude')}" src="images/altitude_dark.svg">${$.getLocaleAltitude(pos.altitude, true)}<br>` : ''}
         ${(pos.accuracy !== null) ? `<img class="icon" alt="${$._('accuracy')}" title="${$._('accuracy')}" src="images/accuracy_dark.svg">${$.getLocaleAccuracy(pos.accuracy, true)}${provider}<br>` : ''}

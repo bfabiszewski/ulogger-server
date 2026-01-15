@@ -94,6 +94,7 @@ foreach ($gpx->trk as $trk) {
       $speed = null;
       $bearing = null;
       $accuracy = null;
+      $battery = null;
       $provider = "gps";
       if (!empty($point->extensions)) {
         // parse ulogger extensions
@@ -101,11 +102,12 @@ foreach ($gpx->trk as $trk) {
         if (count($ext->speed)) { $speed = (double) $ext->speed; }
         if (count($ext->bearing)) { $bearing = (double) $ext->bearing; }
         if (count($ext->accuracy)) { $accuracy = (int) $ext->accuracy; }
+        if (count($ext->battery)) { $battery = (int) $ext->battery; }
         if (count($ext->provider)) { $provider = (string) $ext->provider; }
       }
       $ret = $track->addPosition($auth->user->id,
                     $time, (double) $point["lat"], (double) $point["lon"], $altitude,
-                    $speed, $bearing, $accuracy, $provider, $comment, null);
+                    $speed, $bearing, $accuracy, $battery, $provider, $comment, null);
       if ($ret === false) {
         $track->delete();
         uUtils::exitWithError($lang["servererror"]);

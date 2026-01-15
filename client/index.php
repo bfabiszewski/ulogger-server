@@ -109,6 +109,7 @@ switch ($action) {
     $speed = uUtils::postFloat('speed');
     $bearing = uUtils::postFloat('bearing');
     $accuracy = uUtils::postInt('accuracy');
+    $battery = uUtils::postInt('battery');
     $provider = uUtils::postString('provider');
     $comment = uUtils::postString('comment');
     $imageMeta = uUtils::requestFile('image');
@@ -125,7 +126,7 @@ switch ($action) {
 
     require_once(ROOT_DIR . "/helpers/position.php");
     $positionId = uPosition::add($auth->user->id, $trackId,
-      $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $provider, $comment, $image);
+      $timestamp, $lat, $lon, $altitude, $speed, $bearing, $accuracy, $battery, $provider, $comment, $image);
 
     if ($positionId === false) {
       exitWithError("Server error");

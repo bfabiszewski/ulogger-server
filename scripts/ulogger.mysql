@@ -62,6 +62,7 @@ CREATE TABLE `positions` (
   `speed` double DEFAULT NULL,
   `bearing` double DEFAULT NULL,
   `accuracy` int(11) DEFAULT NULL,
+  `battery` int(11) DEFAULT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
   `image` varchar(100) DEFAULT NULL,

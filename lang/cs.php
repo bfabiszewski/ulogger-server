@@ -176,4 +176,5 @@ $lang["edit"] = "Upravit";
 $lang["delete"] = "Smazat";
 $lang["settings"] = "Nastavení";
 $lang["trackcolor"] = "Barva stopy";
+$lang["battery"] = "Baterie";
 ?>
