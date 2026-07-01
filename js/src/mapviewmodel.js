@@ -83,6 +83,7 @@ export default class MapViewModel extends ViewModel {
     this.styleEl = this.getBoundElement('trackColor');
     this.savedBounds = null;
     this.api = null;
+    this._lastTrackId = null;
   }
 
   /**
@@ -150,6 +151,11 @@ export default class MapViewModel extends ViewModel {
       this.toggleStyleOptions();
       this.toggleStyleMenu();
     });
+    this.state.onChanged('showLatest', (showLatest) => {
+     if (showLatest) {
+        this._lastTrackId = null;
+      }
+    });
     this.state.onChanged('currentTrack', (track) => {
       if (!this.api) {
         return;
@@ -158,13 +164,22 @@ export default class MapViewModel extends ViewModel {
       if (track) {
         uObserve.observe(track, 'positions', () => {
           this.displayTrack(track, false);
-          if (track instanceof uTrack && !this.api.isPositionVisible(track.length - 1)) {
+          if (!this.state.showLatest && track instanceof uTrack && !this.api.isPositionVisible(track.length - 1)) {
             console.log('last track position not visible');
             this.api.centerToPosition(track.length - 1);
           }
           this.toggleStyleOptions();
         });
-        this.displayTrack(track, true);
+        if (this.state.showLatest) {
+          this.displayTrack(track, false);
+          const isNewTrack = track instanceof uTrack && track.length > 0 && track.id !== this._lastTrackId;
+          if (isNewTrack) {
+            this.api.centerToPosition(track.length - 1);
+            this._lastTrackId = track.id;
+          }
+        } else {
+          this.displayTrack(track, true);
+        }
       }
       this.toggleStyleOptions();
     });
