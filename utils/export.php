@@ -174,7 +174,7 @@ if ($trackId && $userId) {
       break;
 
     case "gpx":
-      header("Content-type: application/application/gpx+xm");
+      header("Content-type: application/gpx+xml");
       header("Content-Disposition: attachment; filename=\"track" . $positionsArr[0]->trackId . ".gpx\"");
       $xml = new XMLWriter();
       $xml->openURI("php://output");
